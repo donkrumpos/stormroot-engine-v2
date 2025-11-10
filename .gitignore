@@ -1,0 +1,29 @@
+# === Stormroot local server ===
+_server_local/
+!_server_local/start.sh        # keep your launcher script under version control
+!.gitignore                    # optional: keep ignore file visible
+
+# === OS cruft ===
+.DS_Store
+Thumbs.db
+
+# === Editor / tooling ===
+.vscode/
+.idea/
+nohup.out
+
+# === Logs / caches ===
+logs/
+*.log
+
+# === Minecraft ===
+crash-reports/
+eula.txt
+usercache.json
+whitelist.json
+banned-players.json
+banned-ips.json
+
+# === Backups ===
+backup/
+backups/

@@ -1,4 +1,22 @@
-# This is a command to initialize a player's stats for testing
+spellbook_transform_world:
+    type: world
+    debug: false
+    events:
+        # When player swaps items to offhand
+        on player swaps items:
+        - if <context.offhand.has_flag[spellbook]>:
+            - wait 1t
+            - run transform_hotbar_task def:<player>
+        - else if <player.item_in_offhand.has_flag[spellbook]>:
+            - run restore_hotbar_task def:<player>
+        
+        # Prevent sigils from being moved/dropped
+        on player clicks item_flagged:spell_sigil in inventory:
+        - determine cancelled
+        
+        on player drops item_flagged:spell_sigil:
+        - determine cancelled
+        
 setup_player_command:
     type: command
     name: magicsetup
@@ -195,51 +213,57 @@ spellbook_command:
 
 spellbook_item:
     type: item
-    material: written_book
+    material: enchanted_book
     display name: <&b>Spellbook
-    mechanisms:
-        book_author: Ancient Knowledge
-        book_pages: <list[<&7>Your grimoire of magical knowledge.]>
+    lore:
+    - <&7>Your grimoire of magical knowledge
     flags:
         spellbook: true
 
-spellbook_transform_world:
-    type: world
-    debug: false
-    events:
-        # When player swaps items to offhand
-        on player swaps items:
-        - if <context.offhand.has_flag[spellbook]>:
-            - wait 1t
-            - run transform_hotbar_task def:<player>
-        - else if <player.item_in_offhand.has_flag[spellbook]>:
-            - run restore_hotbar_task def:<player>
         
-        # RIGHT CLICK WITH SIGIL IN HAND (spellbook in offhand)
-        on player right clicks block with:item_flagged:spell_sigil:
-        - if <player.item_in_offhand.has_flag[spellbook]>:
-            - determine cancelled
-            - define spell_name <player.item_in_hand.flag[spell_name]>
-            - define target <player.target>
-            - run cast_spell_task def:<[spell_name]>|<player>|<[target]>
+# spellbook_transform_world:
+#     type: world
+#     debug: false
+#     events:
+#         on player right clicks block:
+#         - narrate "<red>SIGIL RIGHT CLICK DETECTED!!!!"
+#         - determine cancelled
+#         # on player right clicks block with:spellbook_item:
+#         # - if <player.item_in_offhand.has_flag[spellbook]>:
+#         #     - determine cancelled
+#         # When player swaps items to offhand
+#         on player swaps items:
+#         - if <context.offhand.has_flag[spellbook]>:
+#             - wait 1t
+#             - run transform_hotbar_task def:<player>
+#         - else if <player.item_in_offhand.has_flag[spellbook]>:
+#             - run restore_hotbar_task def:<player>
         
-        on player right clicks entity with:item_flagged:spell_sigil:
-        - if <player.item_in_offhand.has_flag[spellbook]>:
-            - determine cancelled
-            - define spell_name <player.item_in_hand.flag[spell_name]>
-            - run cast_spell_task def:<[spell_name]>|<player>|<context.entity>
+#         # RIGHT CLICK WITH SIGIL IN HAND (spellbook in offhand)
+#         on player right clicks block with:item_flagged:spell_sigil:
+#         - if <player.item_in_offhand.has_flag[spellbook]>:
+#             - determine cancelled
+#             - define spell_name <player.item_in_hand.flag[spell_name]>
+#             - define target <player.target>
+#             - run cast_spell_task def:<[spell_name]>|<player>|<[target]>
         
-        # Prevent sigils from being moved/dropped
-        on player clicks item_flagged:spell_sigil in inventory:
-        - determine cancelled
+#         on player right clicks entity with:item_flagged:spell_sigil:
+#         - if <player.item_in_offhand.has_flag[spellbook]>:
+#             - determine cancelled
+#             - define spell_name <player.item_in_hand.flag[spell_name]>
+#             - run cast_spell_task def:<[spell_name]>|<player>|<context.entity>
         
-        on player drops item_flagged:spell_sigil:
-        - determine cancelled
+#         # Prevent sigils from being moved/dropped
+#         on player clicks item_flagged:spell_sigil in inventory:
+#         - determine cancelled
         
-        # Cleanup on logout
-        on player quits:
-        - if <player.item_in_offhand.has_flag[spellbook]>:
-            - run restore_hotbar_task def:<player>
+#         on player drops item_flagged:spell_sigil:
+#         - determine cancelled
+        
+#         # Cleanup on logout
+#         on player quits:
+#         - if <player.item_in_offhand.has_flag[spellbook]>:
+#             - run restore_hotbar_task def:<player>
    
 
 transform_hotbar_task:
