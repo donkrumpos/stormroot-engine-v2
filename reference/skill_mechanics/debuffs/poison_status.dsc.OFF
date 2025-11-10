@@ -1,0 +1,37 @@
+poison_task:
+    type: task
+    definitions: is_magic|damager|defender|amount|damage
+    script:
+    - if <[defender].exists.not>:
+        - stop
+
+    - if <[damager].is_player>:
+        - narrate format:game_message "You are poisoned!" targets:<[defender]>
+    - define amount_modifier <util.random.int[2].to[<[amount].add[5]>]>
+    - repeat <[amount].add[<[amount_modifier]>]>:
+        - if <[defender].is_online>:
+            - if <[defender].has_flag[stat.status.debuff.poison].not>:
+                - stop
+            - wait <util.random.int[7].to[43]>t
+            - define chance <util.random.int[0].to[2]>
+            - if <[chance]> == 0:
+                - define resist_success <proc[natural_skill_check_proc].context[<[defender]>|day_resist]>
+                - if <[resist_success]> && <[is_magic]>:
+                    - stop
+                - run spell_damage_task def:poison_field|<[defender]>|<[damager]>|<[value]>
+                # - hurt <[value]> <[defender]> cause:entity_attack
+            - if <[chance]> == 1:
+                - define resist_success <proc[natural_skill_check_proc].context[<[defender]>|day_resist]>
+                - if <[resist_success]>  && <[is_magic]>:
+                    - stop
+                - run spell_damage_task def:poison_field|<[defender]>|<[damager]>
+            - playeffect effect:crit_magic offset:0,1,0 at:<[defender].location> quantity:30
+            - playeffect effect:composter at:<[defender].location> quantity:30
+            - if <util.random.int[0].to[20]> == 20:
+                - run raise_resist_spells_task def:<[defender]>|poison
+            
+            
+            # - effectlib type:poison origin:<[defender].location> duration:1t
+        - else:
+            - repeat stop
+    - flag <[defender]> stat.status.debuff.poison:!

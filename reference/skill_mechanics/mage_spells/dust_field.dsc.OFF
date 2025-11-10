@@ -1,0 +1,20 @@
+dust_field_task:
+    type: task
+    debug: true
+    definitions: attacker|defender
+    script:
+    - define target_location <[attacker].cursor_on>
+    - if <[attacker].has_flag[skill.spells.dust_field.level].not>:
+        - flag <[attacker]> skill.spells.dust_field.level:1
+    - define level <[attacker].flag[skill.spells.dust_field.level]>
+    - repeat <[level].mul[5]> as:angle:
+    
+        - wait <util.random.int[1].to[10]>t
+        - playeffect effect:warped_spore at:<[target_location].add[<location[0,1,2].rotate_around_y[<[angle].div[10]>]>]>quantity:<[level].mul[4]> offset:1,0,1
+        - playeffect at:<[target_location].add[<location[0,1,2].rotate_around_y[<[angle].div[10]>]>]> quantity:<[level].mul[10]> effect:DUST_COLOR_TRANSITION special_data:1|<&color[#6b6658]>|<&color[#cfb464]> offset:2,0,2
+        - playeffect effect:block_dust at:<[target_location].add[<location[0,1,2].rotate_around_y[<[angle].div[10]>]>]> special_data:sand visibility:10 quantity:<[level].mul[11]> offset:2,0,2
+        - playeffect effect:falling_dust at:<[target_location].add[<location[0,1,2].rotate_around_y[<[angle].div[10]>]>]> special_data:sand visibility:10 quantity:<[level].mul[9]> offset:2,0,2
+        - if <[target_location].add[<location[0,1,2].rotate_around_y[<[angle].div[10]>]>].find.living_entities.within[<[level]>].exclude[<[attacker]>].any>:
+            - define entity <[target_location].add[<location[0,1,2].rotate_around_y[<[angle].div[10]>]>].find.living_entities.within[<[level]>].exclude[<[attacker]>].first>
+            - run spell_damage_task def:dust_field|<[entity]>|<[attacker]>|<[level].div[10].max[0]>
+    # - run spell_damage_task def:dust_field|<[target_location].find.living_entities.within[2].exclude[<[attacker]>].first>|<[attacker]>

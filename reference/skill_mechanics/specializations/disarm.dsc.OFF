@@ -1,0 +1,23 @@
+disarm_task:
+    type: task
+    definitions: damager|defender
+    script:
+    
+    - define disarm_level <[damager].flag[skill.specializations.disarm.level]||1>
+    - define arms_lore_level <[damager].flag[skill.specializations.arms_lore.level]||0>
+    # - if <util.random.int[0].to[<element[100].sub[<[disarm_level].min[99]>]>]> == 1:
+    #     - narrate BAM
+    - if <[defender].item_in_hand.exists> && <[defender].item_in_hand.naterial.name> != AIR:
+
+        - define disarmed_weapon <[defender].item_in_hand>
+        - if <[defender].is_player>:
+            - take <[disarmed_weapon]> 
+            - narrate "You disarm your opponent." targets:<[damager]>
+            - narrate "You've been disarmed by your opponent." targets:<[defender]>
+            - wait <[damager].flag[skill.specializations.disarm.level].div[<util.random.int[0].to[3]>]||1>s
+            - give <[disarmed_weapon]> player:<[defender]>
+        - else:
+            - wait 2t
+            - equip <[defender]> hand:air
+            - narrate "You disarm you opponent." targets:<[damager]>
+    

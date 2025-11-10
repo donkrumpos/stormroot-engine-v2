@@ -1,0 +1,33 @@
+Fire_Spell:
+  type: task
+  debug: false
+  definitions: Player|PlayerTarget|Range
+  script:
+    - define range 10
+    - define StartPosition <player.location.add[0,1,0]>
+
+    - define FalsePositive <player.eye_location.add[<player.location.direction.vector.mul[<[range].sub[2]>]>]>
+
+    - define MiddleDiff <player.target.eye_location.y.sub[<player.target.location.y>].div[2]||null>
+    - define IsObstructed <player.location.cursor_on.points_between[<[StartPosition]>].distance[1].size.is[LESS].than[<[range]>]>
+
+    - define ObstructedPosition <player.location.cursor_on>
+    - define UnObstructedPosition <player.target.location.add[0,<[MiddleDiff]>,0]||<[FalsePositive]>>
+
+    - define EndPosition <tern[<[IsObstructed]>].pass[<[ObstructedPosition]>].fail[<[UnObstructedPosition]>]>
+
+    - define string <[StartPosition].points_between[<[EndPosition]>].distance[0.02]>
+    - define pitch <player.eye_location.pitch.add[90].to_radians>
+    - define yaw <player.eye_location.yaw.mul[-1].to_radians>
+
+
+    - define therest "quantity:3 offset:0.01,0.01,0.01 visibility:50 effect:REDSTONE special_data:.3|255,<[color1]>,0 data:0"
+    - define Rotation <util.random.decimal[0].to[<util.tau>]> 
+    - define Radius 1
+    - define angularVelocity <util.pi.div[16]>
+    - define yawAngle <[player].location.yaw.mul[-1].to_radians> 
+    - foreach <[string]>:
+      - define <[pos]> <[value]>
+      - define <[pos].add[<[vector]>].rotate_around_x[<[pitchAngle]>].rotate_around_y[<[yawAngle]>]> l@<[Rotation].cos.mul[<[Radius]>]>,<[loop_index]>,<[Rotation].sin.mul[<[radius]>]>
+      - playeffect at:<[value]> <[therest]>
+      - define rotation <[rotation].add[<[angularVelocity]>]> 

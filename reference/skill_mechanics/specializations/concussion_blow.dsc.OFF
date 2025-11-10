@@ -1,0 +1,48 @@
+concussion_blow_task:
+    type: task
+    definitions: damager|damage|target
+    script:
+    - flag <[damager]> stat.core.stamina.level:-:<util.random[10].to[<[damager]flag[skill.specializations.concussion_blow.level].add[10]>]> 
+    - if <[target].has_flag[equipment.head_slot].exists> && <[target].has_flag[equipment].head_slot> != AIR:
+        - define target_head_armor <[target].flag[equipment.head_slot].flag[defense]||1>
+        
+        - narrate "You have given your target a concussion blow!" targets<[damager]>
+        - if <[target].is_player>:
+            - narrate "Your foe has given you a concussion blow!" targets<[target]>
+        - define target_hp_int_difference 0
+        - if <[target].health> > <[target].flag[stat.core.mana.level]>:
+            - define target_hp_int_difference <[target].health.sub[<[target].flag[stat.core.mana.level]>]>
+        
+        - define damage <[target_hp_int_difference].sub[<[target_head_armor]>]>
+        - flag <[target]> stat.core.mana.level:<[target].flag[stat.core.mana.level].round_up.div[2]>
+        
+        
+        - if <util.random.int[0].to[100]> == 100:
+            - if <[target].has_flag[skill.attribute.intelligence.level]>:
+                - flag <[target]> skill.attribute.intelligence.level:-:1
+                - if <[target].is_player>:
+                    - narrate "A concussion blow has reduced your intelligence." targets:<[target]>
+                - narrate "You have delivered a blow hard enough to reduce your foe's intelligence." targets:<[damager]>
+        - if <util.random.int[0].to[20]> == 20:
+            - if <[target].flag[equipment.head_slot].has_flag[current_durability]>:
+                - define slot <[target].inventory.find[<[target].flag[equipment.head_slot].slot>]>
+                - run durability_task def:<[target].flag[equipment.head_slot]>|<[slot]>|2
+        - if <util.random.int[0].to[20]> == 20:
+            - teleport <[target]> <[target].location.left[1]>
+            - wait 3t
+            - teleport <[target]> <[target].location.right[2]>
+            - wait 3t
+            - teleport <[target]> <[target].location.left[1]>
+            - wait 3t
+            - teleport <[target]> <[target].location.left[1]>
+            - wait 3t
+            - teleport <[target]> <[target].location.right[2]>
+            - wait 3t
+            - teleport <[target]> <[target].location.left[1]>
+        - if <util.random.int[1].to[<element[200].sub[<[damager].flag[skill.specializations.concussion_blow.level].min[190]>]>]> == 1:
+            - take <[target].flag[equipment.head_slot]>
+    - else:
+        - hurt <util.random.int[<[target_head_armor]||2>].to[<[damager].flag[skill.specializations.concussion_blow.level]>]> <[target]>
+        - narrate "You have given your target a concussion blow to their unprotected head!" targets<[damager]>
+        - if <[target].is_player>:
+            - narrate "Your foe has given you a concussion blow to your unprotected head!" targets<[target]>

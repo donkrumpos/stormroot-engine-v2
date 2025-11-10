@@ -1,0 +1,40 @@
+anksor_assignment:
+    type: assignment
+    speed: 1t
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:2
+        # on enter proximity:
+        # - narrate "ho hum" 
+        # on exit proximity:
+        # - disengage
+   
+
+
+    interact scripts:
+    - anksor_interact
+    default constants:
+        appearance1: "<npc.name>' has fine kept beard and seems cheery to meet you."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+
+anksor_interact:
+    type: interact
+    steps:
+        default:
+            proximity trigger:
+                entry:
+                    script:
+                    - define test
+                    # - inject description_inject_task
+                    # - narrate " I am anksor"
+                exit:
+                    script:
+                    - define test
+                    # - inject description_inject_task
+                    # - narrate "try this"

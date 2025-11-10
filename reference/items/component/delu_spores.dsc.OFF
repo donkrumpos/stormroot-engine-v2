@@ -1,0 +1,7 @@
+delu_spores:
+  type: item
+  material: bowl
+  display name: Delu Spores
+  mechanisms:
+    custom_model_data: 2110005
+    

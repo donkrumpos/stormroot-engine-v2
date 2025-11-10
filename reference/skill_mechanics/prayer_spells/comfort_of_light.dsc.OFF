@@ -1,0 +1,17 @@
+comfortoflight_task:
+    type: task
+    definitions: caster
+    debug: true
+    script:
+    - if <[caster].has_flag[party]>:
+        # - define party_flag <[caster].flag[party]>
+        - define level <[caster].flag[skill.spells.comfortoflight.level]>
+        # - narrate <server.online_players_flagged[party]>
+        - foreach <server.online_players_flagged[party].exclude[<[caster]>]> as:target:
+            - if <[loop_index]> < <[level]>:
+                - if <[target].flag[party]||null> == <player.flag[party]>:
+                    - if <[target].location.distance[<[caster].location>].round_down> <= <[level]>:
+                        - narrate "You have been comforted by light from <[caster].name>" targets:<[target]>
+                        - cast night_vision <[target]> duration:<[level].add[2]>s
+            - else:
+                - stop

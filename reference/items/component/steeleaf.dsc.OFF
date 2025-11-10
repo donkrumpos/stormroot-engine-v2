@@ -1,0 +1,7 @@
+steeleaf:
+  type: item
+  material: bowl
+  display name: Steeleaf
+  mechanisms:
+    custom_model_data: 2110002
+    

@@ -1,0 +1,44 @@
+sword_silent_night:
+  type: item
+  debug: false
+  material: stick
+  display name: Silent Night
+  
+  lore:
+  - Sleep in heavenly pieces
+  - <&color[#24daff]>Cold Damage 100%
+  - <&color[#24daff]>Luck 20%
+  - <&color[#24daff]>Swing Speed Increase 15%
+  - <&color[#24daff]>Hit Chance Increase 15%
+  
+
+  
+  
+  flags:
+    required_strength: 10
+    weapon_type: sword
+    craftable: true
+    swing_speed_increase: .15
+    hit_chance_increase: .15
+    weapon_speed: 10
+    weapon_damage_min: 10
+    weapon-damage_max: 12
+    luck: 20
+    two_handed: false
+    fire_damage: 0
+    cold_damage: 100
+    poison_damage: 0
+    energy_damage: 0
+    material_qty: 8
+  mechanisms:
+    custom_model_data: 7209000
+   
+
+
+silent_night_world:
+  type: world
+  events:
+    on player clicks air with:sword_silent_night:
+    - playeffect effect:snowflake at:<player.eye_location> quantity:10 visibility:16
+    on player damages entity with:sword_silent_night:
+    - playeffect effect:snowflake at:<player.eye_location> quantity:100 visibility:16

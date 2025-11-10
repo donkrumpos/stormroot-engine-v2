@@ -1,0 +1,166 @@
+thanapy_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:2
+    interact scripts:
+    - thanapy_interact
+
+    default constants:
+        appearance1: "<npc.name> was a hunter of the days before the current Age, but has resolved himself to sell weapons in his favorite town."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+        has_familiarity: true
+       
+
+thanapy_interact:
+    type: interact
+    steps:
+        1:
+            proximity trigger:
+                entry:
+                    script:
+                    - execute as_server "npc skin --url https://minesk.in/ad71c5d1f5dc4cdea721d5abf850f8d0--id <npc.id>"
+
+                # exit:
+                #     script:
+                #     - run reset_thanapy_gaze
+            click trigger:
+                script:
+                - inject description_inject_task
+                - if <player.flag[npc.<npc>.familiarity.level]||0> < 1:
+                    - random:
+                        - repeat 1:
+                            - narrate "Can I interest you in funerary services?" targets<player>
+                            - wait 2s
+                            - narrate "We all know that an adventure's life is nasty, brutish and short." targets<player>
+                            - wait 3s
+                            - narrate "The Underworld is near." targets<player>
+                        - narrate "You've met with a terrible fate, haven't you?" targets<player>
+                    
+                 
+                - else:
+                    - if <player.has_flag[thanapy_spirit].not>:
+                        - flag <player> thanapy_spirit
+                        - narrate "If you're going to to into the tombs on the island, it is best to study the Spirit World." targets:<player>
+                        - if <player.flag[skill.skills.spirit_speak]> < 11:
+                            - flag <player> skill.skills.spirit_speak:++
+                            - narrate format:game_message "Your Spirit Speak skill has raised by 1." targets:<player>
+                        - else:
+                            - run raise_natural_skill_task def:<player>|spirit_speak
+                    
+
+                    - else:
+                        - narrate "All Hail Anona for her goodness!"
+
+                    - wait 3s
+                    - clickable <npc.name>_task_01 save:<npc.name>_clickable_01 until:30s usages:1 for:<player>
+                    - clickable <npc.name>_task_02 save:<npc.name>_clickable_02 until:30s usages:1 for:<player>
+                    - clickable <npc.name>_task_03 save:<npc.name>_clickable_03 until:30s usages:1 for:<player>
+                    - narrate <&nl> targets:<player>
+                    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>That is kind of morbid. What do you mean?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_01].command>]>" targets:<player>
+                    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>What is with the Masks?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" targets:<player>
+                    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>3. <&color[#6fd6cb]>What did you mean by the Spirit World?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_03].command>]>" targets:<player>
+                            
+        # 2:
+        #     chat trigger:
+        #         1:
+        #             trigger: <&7>/1/. I would like to talk to you thanapy.
+        #             script:
+        #             - inject thanapy_task_01
+        #             - zap 1
+      
+       
+thanapy_task_01:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "I am a mortician for Rothigport. so working with corpses all day gets me in a certain frame of mind."
+    - wait 3s
+    - narrate "but it is good to contemplate our eventual deaths fellow mortal, as it usually comes sooner than we think in this bloodthirty world."
+    - wait 4s
+    - narrate "And all these deaths lately keep me busy."
+
+thanapy_task_02:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "It began, at first, as a demand from Rothigport's wealthy families, to have Death Masks made for their tombs, as they passed on to The Other side."
+    - wait 4s
+    - narrate "but demand for all kinds of masks arose, and especially for ones with special properties given to the wearer."
+    - wait 2s
+    
+    - clickable <npc.name>_task_04 save:<npc.name>_clickable_04 until:30s usages:1 for:<player>
+    - narrate <&nl> targets:<player>
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Wow, how do I get a mask like that?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_04].command>]>" targets:<player>
+                      
+
+thanapy_task_03:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "The Spirit World is a special interest to me and I feel like it should be to everyone since our world is filled with Spirits, benevolent and malevolent"
+    - wait 4s
+    - narrate "Having a Spirit Speak skill aids in sensing and talking with the dead and undead."
+    - wait 3s
+    - narrate "As well as many more capabilities such as healing and raising the dead."
+    - wait 2s
+    - if <player.has_flag[thanapy_spirit_speak].not>:
+        - narrate "Here let me teach you a bit about it."
+        - run raise_natural_skill_task def:<player>|spirit_speak
+        - flag <player> thanapy_spirit_speak
+    - wait 2s
+    - narrate "You can also go into a trance to channel the Other Side. Your success is determined by how much you have studied this."
+    - narrate format:game_message "Use the command <element[/spirit_speak].bold> or <element[/ss].bold> to attempt to channel the Other Side."
+    - wait 3s
+    - narrate "A good way to practice is to go into haunted places, cemeteries and tombs, but be very careful and go with defense as those places are often perilous."
+    
+
+thanapy_task_04:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "Well from me of course."
+    - wait 1s
+    - narrate "They are quite expensive actually. I'm only accepting Deluvic Coin, yes, those blue ones, right now."
+    - if <player.has_flag[thanapy_crypts_quest]>:
+        - stop
+    - wait 3s
+    - narrate "but. . ."
+    - wait 1s
+    - narrate "You could retrieve something from the Rothigport Tombs for me."
+    - clickable <npc.name>_task_05 save:<npc.name>_clickable_05 until:30s usages:1 for:<player>
+    - clickable <npc.name>_task_06 save:<npc.name>_clickable_06 until:30s usages:1 for:<player>
+   
+    - narrate <&nl> targets:<player>
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes, I agree to retrive something for you.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_05].command>]>" targets:<player>
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>No Way, that sounds too dangerous.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_06].command>]>" targets:<player>
+
+thanapy_task_05:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "Doomed Idealism! I love it."
+    - wait 2s
+    - flag <player> thanapy_crypts_quest
+    - narrate "It is quite dangerous, so take this."
+    - give death_mask player:<player>
+    - narrate format:game_message "Thanapy has given you a Death Mask."
+    - narrate "It will help you talk to the dead but it won't protect you, so I would find a good weapon, some good armor, and even better, form a party of like-minded treasure hunters."
+    - wait 5s
+    - narrate "I used to work in those crypts often, but now find it far too dangerous as of late. Oh, and I didn't say treasure."
+    - wait 3s
+    - narrate "Go out my back door here and take a left. Saggis, I hear, is ferrying beings across the water to the island."
+    - wait 2s
+    - narrate "And bring me back some of Katrina Ulvid's Ashes please."
+
+thanapy_task_06:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "That's okay, to be frank, I would not want to go into that dreaded hole anymore either, with all respect to those interred there."

@@ -1,0 +1,40 @@
+give_wearable_armor_task:
+    type: task
+    script:
+
+    - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=false;collidable=true;]" <player.location> save:wearable_armor_head
+    - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=false;collidable=true;]" <player.location> save:wearable_armor_chest
+    - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=false;collidable=true;]" <player.location> save:wearable_armor_neck
+    - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=false;collidable=true;]" <player.location> save:wearable_armor_arms
+    - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=false;collidable=true;]" <player.location> save:wearable_armor_gloves
+    - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=false;collidable=true;]" <player.location> save:wearable_armor_cape
+    - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=false;collidable=true;]" <player.location> save:wearable_armor_tail
+    - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=false;collidable=true;]" <player.location> save:wearable_armor_leggings
+    - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=false;collidable=true;]" <player.location> save:wearable_armor_boots
+    # - flag <entry[wearable_armor].spawned_entity>:<player>_wearable_armor
+    - wait 1s
+    - attach <entry[wearable_armor_head].spawned_entity> to:<player> offset:0,0,0
+    - attach <entry[wearable_armor_chest].spawned_entity> to:<player> offset:0,0,0
+    - attach <entry[wearable_armor_neck].spawned_entity> to:<player> offset:0,0,0
+    - attach <entry[wearable_armor_arms].spawned_entity> to:<player> offset:0,0,0
+    - attach <entry[wearable_armor_gloves].spawned_entity> to:<player> offset:0,0,0
+    - attach <entry[wearable_armor_cape].spawned_entity> to:<player> offset:0,0,0
+    - attach <entry[wearable_armor_tail].spawned_entity> to:<player> offset:0,0,0
+    - attach <entry[wearable_armor_leggings].spawned_entity> to:<player> offset:0,0,0
+    - attach <entry[wearable_armor_boots].spawned_entity> to:<player> offset:0,0,0
+    - flag <player> wearable_armor.head:<entry[wearable_armor_head].spawned_entity>
+    - flag <player> wearable_armor.chest:<entry[wearable_armor_chest].spawned_entity>
+    - flag <player> wearable_armor.neck:<entry[wearable_armor_neck].spawned_entity>
+    - flag <player> wearable_armor.arms:<entry[wearable_armor_arms].spawned_entity>
+    - flag <player> wearable_armor.gloves:<entry[wearable_armor_gloves].spawned_entity>
+    - flag <player> wearable_armor.cape:<entry[wearable_armor_cape].spawned_entity>
+    - flag <player> wearable_armor.tail:<entry[wearable_armor_tail].spawned_entity>
+    - flag <player> wearable_armor.leggings:<entry[wearable_armor_leggings].spawned_entity>
+    - flag <player> wearable_armor.boots:<entry[wearable_armor_boots].spawned_entity>
+    
+
+remove_wearable_armor_task:
+    type: task
+    script:
+    - foreach <player.flag[wearable_armor]> as:armor:
+        - remove <[armor]>

@@ -1,0 +1,46 @@
+flesh_eater:
+    type: entity
+    # display_name: "Flesh Eater"
+    entity_type: husk
+    # mechanisms:
+    flags:
+        custom_beast: true
+        karma: -30
+        fame: 60
+        biome: 
+            - forest
+            - river
+            - plains
+        rarity: 1
+        aggression: 5
+        level: 2
+        strength: 10
+        dexterity: 5
+        intelligence: 10
+        health: 30
+        # speed: 0.2
+        light_level: 12
+        no_combusts: true
+        no_explode: true
+        eligible_block_spawn: 
+            - grass_block
+            - stone
+        custom_model_data: 1656572
+        # script: ghoul_task
+        drops:
+            # boar_hide:
+            #     quantity: 4
+            #     chance: .9
+            # boar_tusk:
+            #     quantity: 2
+            #     chance: .8
+        coin_drop:
+            copper: 
+                quantity: 2
+                chance: .5
+        xp: 32
+
+
+
+
+

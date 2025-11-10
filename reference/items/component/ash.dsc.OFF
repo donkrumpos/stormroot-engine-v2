@@ -1,0 +1,7 @@
+ash:
+  type: item
+  material: dried_kelp
+  display name: Ash
+  mechanisms:
+    custom_model_data: 8101740
+    

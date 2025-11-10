@@ -1,0 +1,56 @@
+roganth_assignment:
+    type: assignment
+    speed: 1t
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:4
+        
+
+    interact scripts:
+    - roganth_interact
+    default constants:
+        appearance1: "<npc.name>' has dark silky feathers and an intense gaze."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+
+roganth_interact:
+    type: interact
+    steps:
+        default:
+            
+                        
+            click trigger:
+                script:
+                - inject description_inject_task
+                - if <player.has_flag[roganth_meeks_yes]>:
+                    - narrate "I welcome you to our lands good traveler for you know my sister is safe."
+                - else:
+                    - narrate "Oh sorry if I seem distracted. I feel at a loss without my sister, Meeks. Have you seen her?"
+                    - if <player.has_flag[meeks_brother_yes]>:
+                        - narrate "She was always so serious about the Storms that are coming."
+                        - wait 2s
+                        - narrate "Have you seen her?"
+                        - clickable roganth_meeks_task save:roganth_meeks_task_clickable until:20s
+                        - clickable roganth_meeks_no_task save:roganth_meeks_no_task_clickable until:20s
+                        - wait 1s
+                        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B> Yes, I have and she is safe.<&8><&rb><&end_hover>].on_click[<entry[roganth_meeks_task_clickable].command>]>"
+                        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B> No, I haven't seen her.<&8><&rb><&end_hover>].on_click[<entry[roganth_meeks_no_task_clickable].command>]>"
+
+                
+
+roganth_meeks_task:
+    type: task
+    script:
+    - narrate "That is most benefibilis to hear. Thank you beautiful stranger."
+    - flag <player> roganth_meeks_yes
+
+
+roganth_meeks_no_task:
+    type: task
+    script:
+    - narrate "I fear I will have to go out looking for her soon. She was always so deep and wonderfilled about this world."

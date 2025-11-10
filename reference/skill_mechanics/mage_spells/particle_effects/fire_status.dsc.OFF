@@ -1,0 +1,10 @@
+fire_status_task:
+    type: task
+    script:
+    
+    - spawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<item[carrot_on_a_stick].with[custom_model_data=16752]>]" <player.location> save:fire_sigil
+    - repeat 20:
+        - attach <entry[fire_sigil].spawned_entity> to:<player> 
+        - wait 1s
+        - attach <entry[fire_sigil].spawned_entity> cancel
+    - remove <entry[fire_sigil].spawned_entity>

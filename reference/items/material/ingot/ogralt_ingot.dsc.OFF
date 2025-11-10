@@ -1,0 +1,13 @@
+ogralt_ingot:
+  type: item
+  debug: true
+  material: iron_ingot
+  rarity: 1
+  display name: Ogralt Ingot
+  mechanisms:
+    custom_model_data: 2710407
+  recipes:
+    1:
+      type: furnace
+      input: ogralt_ore
+      cook_time: 8t

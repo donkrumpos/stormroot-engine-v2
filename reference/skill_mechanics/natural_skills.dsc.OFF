@@ -1,0 +1,272 @@
+
+
+
+natural_skill_events:
+    type: world
+    events:
+        on player breaks *_log with:*_axe:
+        - if <context.location.polygons.any> || <context.location.cuboids.any>:
+            - stop
+        # every time player breaks wood block they gain in their lumberjacking
+        - run raise_natural_skill_task def:<player>|lumberjacking|0|0
+       
+        on player breaks *_ore with:*_pickaxe:
+        
+        - if <context.location.polygons.any> || <context.location.cuboids.any>:
+            - stop
+        - define depth <player.location.y>
+        - define depth_modifier 1
+        - if <util.random.int[<player.location.y>].to[200]> <= 0:
+            - define depth_modifier <player.location.y.abs.add[100]>
+        - define ores_size <script[rare_ores_data].data_key[ore].to_list.size>
+        
+        # - define ore_drop <script[rare_ores_data].data_key>
+        - define random_ore <script[rare_ores_data].data_key[ore].keys.random>
+        - if <proc[natural_skill_check_proc].context[<player>|mining]>:
+            - define ore_chance_01 <script[rare_ores_data].data_key[ore.<[random_ore]>.rarity].div[10]>
+            - if <util.random.int[1].to[<[ore_chance_01]>]> == 1:
+                - drop <[random_ore]> <context.location>
+        - else:
+            - define ore_chance <script[rare_ores_data].data_key[ore.<[random_ore]>.rarity]>
+            - if <util.random.int[1].to[<[ore_chance]>]> == 1:
+                - drop <[random_ore]> quantity:<util.random.int[1].to[<player.flag[skill.skills.mining.level].round_up.div[10].max[1]>]> <context.location>
+        - run raise_natural_skill_task def:<player>|mining
+        
+        on player damages stone:
+        - if <player.flag[skill.skills.mining.level]> >= 20:
+            - if <player.has_flag[skill.specializations.excavation.level]>:
+                - if <player.flag[skill.specializations.excavation.level]>:
+                    # - narrate <player.item_in_hand.contains_any[shovel]>
+                    - if <player.item_in_hand.contains_any[shovel]>:
+                        - define y_mod <element[257].sub[<[depth]>].div[70].round_to[2].max[.25]>
+                        - blockcrack <context.location> progress:9
+                        # - narrate <context.material.block_strength>
+                        - wait <context.material.block_strength.div[<player.flag[skill.skills.mining.level].div[33]>]>s
+                        - modifyblock <context.location> air
+                        - drop <context.material> quantity:<player.flag[skill.skills.mining.level].div[19]> <context.location>
+                        - run raise_natural_skill_task def:<player>|mining|<[y_mod]>|0
+                        - define random_instabreak <util.random.int[1].to[10]>
+                        - narrate <[random_instabreak]>
+                        - if <[random_instabreak]> == 10:
+                            - determine instabreak
+                            - narrate "Crushed!"
+
+luck_calculator_proc:
+    type: procedure
+    definitions: player
+    script:
+    - define calculated_luck 0
+    - define base_luck <[player].flag[skill.skills.luck.level]||0>
+    - define calculated_luck <[calculated_luck].add[<[base_luck]>]>
+    - foreach <[player].flag[equipment]> as:equipment:
+        - if <[equipment].material.name> != air:
+            - if <[equipment].flag[stat.bonus.luck].exists>:
+                - define calculated_luck <[calculated_luck].add[<[equipment].flag[stat.bonus.luck]>]||0>
+    - if <[player].item_in_hand.has_flag[stat.bonus.luck]> && <player.item_in_hand.has_flag[stat.bonus.two_handed]>:
+        - define calculated_luck <[calculated_luck].add[<[player].item_in_hand.flag[stat.bonus.luck]>]||0>
+    - determine <[calculated_luck].round_up>
+
+meditation_command:
+    type: command
+    name: meditation
+    aliases:
+        - med
+        - meditate
+        - m
+    script:
+    - if !<proc[medable_armor_proc].context[<player>]>:
+        - narrate "<&color[#990011]>Regenerative Forces cannot penetrate your armor."
+        - stop
+    - define meditation_level <player.flag[skill.skills.meditation.level]>
+    - define meditation_success_random <util.random.int[1].to[100]>
+    - if <[meditation_level]> > <[meditation_success_random]>:
+        - if !<player.has_flag[meditating]>:
+            - flag player meditating
+            - define msg "You start meditating."
+            - run actionbar def:<player>|<[msg]>
+        - else:
+            - define msg "You are already meditating."
+            - run actionbar def:<player>|<[msg]>
+    - else:
+        - define msg "You fail to meditate."
+        - run actionbar def:<player>|<[msg]>
+        - run raise_natural_skill_task def:<player>|meditation|0|0
+
+
+anatomy_command:
+    type: command
+    name: anatomy
+    aliases:
+        - anat
+    script:
+    - define str <player.target.flag[skill.attribute.strength.level]||null>
+    - define dex <player.target.flag[skill.attribute.dexterity.level]||null>
+    - define anat_level <player.flag[skill.skills.anatomy.level]||0>
+    - define distance_between <player.location.points_between[<player.target.location>]>
+    - define random_success <util.random.int[1].to[110]>
+    - define msg "Target's "
+    - if <[random_success].add[<[distance_between]>]> < <[anat_level]>:
+        - if <player.target.has_flag[skill.attribute.strength.level]>:
+            - define msg "<[msg]> STR:<[str]>"
+            # - run actionbar def:<player>|<[msg]>
+        - else:
+            - define msg "<[msg]> Strength is barely anything."
+            # - run actionbar def:<player>|<[msg]>
+        - if <player.target.has_flag[skill.attribute.dexterity.level]>:
+            - define msg "<[msg]> DEX:<[dex]>"
+            # - run actionbar def:<player>|<[msg]>
+        - else:
+            - define msg "<[msg]> Dexterity is barely anything."
+            # - run actionbar def:<player>|<[msg]>
+        - define msg "<[msg]> HP:<player.target.health.round_to[0]>/<player.target.health_max>"
+    
+        - run actionbar def:<player>|<[msg]>
+       
+    - else:
+        - narrate "You are unable to determine anything about this."
+    - run raise_natural_skill_task def:<player>|anatomy|0|0
+
+evaluate_intelligence_command:
+    type: command
+    name: evalintel
+    aliases:
+        - ei
+    script:
+    # - adjust <player.item_in_hand> enchantments:efficiency,5
+    - define intel <player.target.flag[skill.attribute.intelligence.level]||null>
+    - define max_mana <player.target.flag[max_mana]||null>
+    - define mana <player.target.flag[mana]||null>
+    # - define mana <[mana].div[<[max_mana]>]||null>
+    - define eval_level <player.flag[skill.skills.evaluate_intelligence.level]||0>
+    - define random_success <util.random.int[1].to[110]>
+    - if <[random_success]> < <[eval_level]>:
+        - if <player.target.has_flag[skill.attribute.intelligence.level]>:
+            - narrate "Your target's Intelligence is <[intel]>."
+        - else:
+            - narrate "This target has no Intelligence."
+        - if <player.target.has_flag[mana]>:
+            - narrate "Your target's mana left is <[mana]>"
+        - else:
+            - narrate "This target is incapable of mana."
+    - else:
+        - narrate "You are unable to determine anything about this."
+
+
+# item_identification_command:
+#     type: command
+#     name: id
+#     script:
+#     - run item_identification_task
+
+# item_identification_task:
+#     type: task
+#     script:
+#     - if <util.random.int[0].to[10]> == 3:
+#         - run raise_natural_skill_task def:<player>|item_identification|0|0
+#     - define item <player.item_in_hand>
+#     - if <[item].has_flag[bound]>:
+#         - narrate "Magical!"
+#         - stop
+#     - if <[item].script.exists.not> :
+
+#         - narrate "This is <[item].material.name.replace[_].with[<&sp>]>"
+#         - stop 
+#     - define identification_success <proc[natural_skill_check_proc].context[<player>|item_identification|<proc[attribute_skill_check_proc].context[<player>|intelligence]||0>]>
+#     - if <[identification_success].not>:
+
+#         - narrate "You failed to identify the item."
+#         - stop
+#     - narrate "You succeeded in identifying the item"
+#     - define skill_level <player.flag[skill.skills.item_identification.level]>
+#     - if <[item].material.name> != air:
+#         - inventory flag slot:<player.held_item_slot> identified_by:->:<player>
+#         - define lore <proc[lore_builder].context[<[item]>|<player.held_item_slot>|<player>]>
+#         - wait 1t
+#         - inventory flag slot:<player.held_item_slot> identified_as.<player>.<util.random_uuid>:<[lore]>
+#         - inventory adjust slot:<player.held_item_slot> "lore:<[lore]>"
+      
+#         # - narrate  "That is a <player.item_in_hand>"
+#     - else:
+#         - narrate <player.cursor_on.material.name.replace[_].with[<&sp>]>
+    
+
+
+lore_builder:
+    type: procedure
+    definitions: item|slot|player
+    script:
+    # - define lore "<[item].lore><&nl>"
+    - define known_item 0
+    - if <[item].has_flag[identified_as.<player>]>:
+        - define known_item 1
+        - define previous_lore <[item].lore>
+    - define original_lore <[item].script.data_key[lore]><&nl>
+    # - define lore "<[original_lore]><&nl>"
+    # - define lore <list>
+    # - narrate "You succeeded in identifying the item"
+    
+    - foreach <[item].flag[stat.bonus]> as:bonus:
+        - if <[bonus]> == 0:
+            - foreach next
+        
+        - if <[item].lore.contains[<[key].replace[_].with[<&sp>].to_titlecase>:<&sp><[bonus].replace[_].with[<&sp>].to_titlecase>]>:
+            - foreach next
+        - define lore:->:<&color[#dbcb14]><[key].replace[_].with[<&sp>].to_titlecase>:<&sp><gold><[bonus].replace[_].with[<&sp>].to_titlecase>
+        # - narrate "adjusting slot:<[slot]>  with lore: <[key]>: <[bonus]>"
+        # - inventory adjust slot:<[slot]> "lore:<[key]>: <[bonus]>"
+    # - narrate "lore:<[lore]>"
+    # - define shared_contents <[previous_lore].shared_contents[<[lore]>]>
+    # - narrate " shared contents: <[shared_contents]>"
+    # - define shared_contents_size <[previous_lore].shared_contents[<[lore]>].size>
+    - define skill_level_modifier <util.random.int[<element[1].add[<[known_item]>]>].to[<player.flag[skill.skills.item_identification.level].div[11].round_down>]>
+    - define lore <[lore].random[<[skill_level_modifier]>].insert[<[original_lore]>].at[1]>
+    # - define shared_contents <[shared_contents]><[lore]>
+    - define difference  <[item].flag[stat.bonus].size.sub[<[shared_contents].size.sub[0]>]>
+    
+    - repeat <[difference]>:
+        # - narrate <element[?]>
+        # - narrate <[lore].size.add[<[value]>]>
+        - define lore <[lore].insert[<gray><element[?]>].at[<[lore].size.add[<[value]>]>]>
+    - determine <[lore]>
+
+    
+lore_builder2:
+    type: procedure
+    definitions: item|slot|player
+    script:
+    # - define lore "<[item].lore><&nl>"
+    - define known_item 0
+    - if <[item].has_flag[identified_as.<player>]>:
+        - define known_item 1
+        - define previous_lore <[item].lore>
+    - define original_lore <[item].script.data_key[lore]><&nl>
+    # - define lore "<[original_lore]><&nl>"
+    # - define lore <list>
+    # - narrate "You succeeded in identifying the item"
+    
+    - foreach <[item].flag[stat.bonus]> as:bonus:
+        - if <[bonus]> == 0:
+            - foreach next
+        
+        - if <[item].lore.contains[<[key].replace[_].with[<&sp>].to_titlecase>:<&sp><[bonus].replace[_].with[<&sp>].to_titlecase>]>:
+            - foreach next
+        - define lore:->:<&color[#dbcb14]><[key].replace[_].with[<&sp>].to_titlecase>:<&sp><gold><[bonus].replace[_].with[<&sp>].to_titlecase>
+        # - narrate "adjusting slot:<[slot]>  with lore: <[key]>: <[bonus]>"
+        # - inventory adjust slot:<[slot]> "lore:<[key]>: <[bonus]>"
+    # - narrate "lore:<[lore]>"
+    - define shared_contents <[previous_lore].shared_contents[<[lore]>]>
+    # - narrate " shared contents: <[shared_contents]>"
+    - define shared_contents_size <[previous_lore].shared_contents[<[lore]>].size>
+    - define skill_level_modifier <util.random.int[<element[1].add[<[known_item]>]>].to[<player.flag[skill.skills.item_identification.level].div[11].round_down>]>
+    - define shared_contents <[shared_content]><[lore].random[<[skill_level_modifier]>].insert[<[original_lore]>].at[1]>
+    # - define lore <[shared_contents].combine[<[lore]>].deduplicate>
+    - define difference  <[item].flag[stat.bonus].size.sub[<[shared_contents].size.sub[2]>]>
+    
+    - repeat <[difference]>:
+        # - narrate <element[?]>
+        # - narrate <[lore].size.add[<[value]>]>
+        - define lore <[lore].insert[<gray><element[?]>].at[<[lore].size.add[<[value]>]>]>
+    - determine <[lore]>
+
+
+

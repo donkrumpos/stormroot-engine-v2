@@ -1,0 +1,33 @@
+elephant:
+    type: entity
+    entity_type: horse
+    # mechanisms:
+        
+    flags:
+        custom_beast: true
+        karma: -10
+        fame: 0
+        biome: 
+            - savanna
+        rarity: 120
+        level: 100
+        strength: 100
+        dexterity: 5
+        intelligence: 10
+        health: 300
+        no_combusts: true
+        no_explode: true
+        eligible_block_spawn: grass_block
+        custom_model_data: 1656568
+        drops:
+            boar_hide:
+                quantity: 4
+                chance: .9
+            boar_tusk:
+                quantity: 2
+                chance: .8
+        # coin_drop:
+        #     copper: 
+        #         quantity: 8
+        #         chance: .5
+        xp: 32

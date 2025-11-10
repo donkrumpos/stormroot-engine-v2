@@ -1,0 +1,327 @@
+selected:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 35
+    hides: ALL
+  display name: ""
+ 
+gui_platemail_tunic:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 1682
+    hides: ALL
+  display name: Chestplate
+
+gui_platemail_leggings:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 1683
+    hides: ALL
+  display name: Platemail Leggings
+
+gui_chainmail_leggings:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 12336
+    hides: ALL
+  display name: Chainmail Leggings
+
+gui_chainmail_tunic:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 12334
+    hides: ALL
+  display name: Chainmail Tunic
+
+gui_broadsword:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 12136
+    hides: ALL
+  display name: Broadsword
+
+gui_longsword:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 12135
+    hides: ALL
+  display name: Longsword
+
+gui_cutlass:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 12137
+    hides: ALL
+  display name: Cutlass
+
+gui_scimitar:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 12138
+    hides: ALL
+  display name: Scimitar
+
+gui_viking_sword:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 12139
+    hides: ALL
+  display name: Viking Sword
+
+gui_kryss:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 12140
+    hides: ALL
+  display name: Kryss
+
+gui_katana:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 12141
+    hides: ALL
+  display name: Katana
+
+gui_halberd:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 12142
+    hides: ALL
+  display name: Halberd
+
+
+
+gui_bardiche:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 12143
+    hides: ALL
+  display name: Bardiche
+
+gui_scythe:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 12144
+    hides: ALL
+  display name: Scythe
+
+
+gui_harp:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 15
+  display name: " "
+
+gui_ranger_icon:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 16
+  display name: " "
+
+gui_rogue_icon:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 17
+  display name: " "
+    
+gui_cleric_icon:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 19
+  display name: " "
+
+gui_forge_upper:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 33
+    hides: all
+  display name: " "
+
+gui_forge_lower:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 34
+    hides: all
+  display name: " "
+    
+gui_equipment_gui_upper:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 20
+  display name: " "
+
+gui_equipment_gui_lower:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 2
+  display name: " "
+
+gui_magic_lower:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 39
+    hides: all
+  display name: " "
+
+gui_magic_upper:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 40
+    hides: all
+  display name: " "
+
+gui_tailor_upper:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 37
+    hides: all
+  display name: " "
+
+gui_tailor_lower:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 38
+    hides: all
+  display name: " "
+
+gui_mana_bar_0:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 4
+  display name: " "
+
+gui_mana_bar_1:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 5
+  display name: " "
+
+gui_mana_bar_2:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 6
+  display name: " "
+
+gui_mana_bar_3:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 7
+  display name: " "
+
+gui_mana_bar_4:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 8
+  display name: " "
+
+gui_mana_bar_5:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 9
+  display name: " "
+
+gui_mana_bar_6:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 10
+  display name: " "
+
+gui_mana_bar_7:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 11
+  display name: " "
+
+gui_mana_bar_8:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 12
+  display name: " "
+
+gui_mana_bar_9:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 13
+  display name: " "
+
+gui_mana_bar_10:
+  type: item
+  debug: true
+  material: diamond_hoe
+  mechanisms:
+    custom_model_data: 14
+  display name: " "

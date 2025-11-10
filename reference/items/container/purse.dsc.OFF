@@ -1,0 +1,10 @@
+purse:
+  type: item
+  debug: true
+  material: diamond_hoe
+  rarity: 1
+  display name: Purse
+  mechanisms:
+    custom_model_data: 3000103
+  flags:
+    blessed: true

@@ -1,0 +1,23 @@
+rare_ingots_data:
+    type: data
+    ingot:
+        iron_ingot:
+            difficulty: 0
+        dull_copper_ingot:
+            difficulty: 2
+        dark_iron_ingot:
+            difficulty: 4
+        bronze_ingot:
+            difficulty: 8
+        mystrilium_ingot:
+            difficulty: 16
+        turgite_ingot:
+            difficulty: 32
+        arondite_ingot:
+            difficulty: 64
+        ogralt_ingot:
+            difficulty: 128
+        glalium_ingot:
+            difficulty: 256
+        arcanithril_ingot:
+            difficulty: 512

@@ -1,0 +1,74 @@
+helm_of_abyssal_malevolence:
+  type: item
+  debug: false
+  material: LEATHER_HELMET
+  display name: "<&a><&l><&n>Helm of Abyssal Malevolence"
+  lore:
+  - <&b><&l>Enemies trying to attack you
+  - <&b><&l>will be violently inflicted a wither.
+  flags:
+    defense: 10
+    hit_point_increase: 0
+    hit_point_regeneration: 0
+    mana_regeneration: 1
+    defense_chance_increase: 15
+    stamina_loss_reduction: 1
+    defense_modifier: Defense
+    medable: true
+    lower_mana_cost: 0
+    required_strength: 35
+    item_type: sword
+    set: arcane
+    fire_resist: 0
+    cold_resist: 100
+    poison_resist: 0
+    energy_resist: 0
+    slot_type: head
+  mechanisms:
+    custom_model_data: 720501
+    nbt:
+    - defense/10
+    - hit_point_increase/0
+    - hit_point_regeneration/0
+    - mana_regeneration/1
+    - defense_chance_increase/15
+    - stamina_loss_reduction/1
+    - defense_modifier/Defence
+    - medable/true
+    - lower_mana_cost/0
+    - required_strength/35
+    - item_type/sword
+    - set/arcane
+    - fire_resist/0
+    - cold_resist/100
+    - poison_resist/0
+    - energy_resist/0
+    - slot_type/helm
+
+# javelin:
+#   type: item
+#   debug: false
+#   material: trident
+#   display name: Javelin
+#   lore:
+#   - An elegent weapon
+#   - for a more sophisticated time.
+  
+#   mechanisms:
+#     custom_model_data: 720501
+#     nbt:
+#     - durability/80
+#     - swing_speed_increase/0
+#     - hit_chance_increase/0
+#     - weapon_speed/70
+#     - weapon_damage_min/4
+#     - weapon_damage_max/30
+#     - luck/0
+#     - two_handed/false
+#     - fire_damage/0
+#     - cold_damage/0
+#     - poison_damage/0
+#     - energy_damage/0
+#     - required_strength/10
+#     - item_type/sword
+#     - material_qty/8

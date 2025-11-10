@@ -1,0 +1,639 @@
+katrina_ulvid_world:
+    type: world
+    debug: false
+    events:
+        on block ignites location_flagged:ulvid_candle:
+        - define candle_player <context.entity>
+        # - light katrina_ulvid_ghost_spawn 15
+        # - if <[candle_player].has_flag[stat.status.buff.channeling]>:
+        - run raise_natural_skill_task def:<[candle_player]>|spirit_speak
+        - wait 2s
+        - foreach <cuboid[ulvid_tomb].players> as:player:
+            - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Ghost<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<[player]>
+
+            - narrate "<proc[spirit_interpretation].context[<[player]>|Help Me. . .]>" targets:<[player]>
+            # - narrate "<&color[#b5a7bd]>Help Me. . ." targets:<[player]>
+        on delta time secondly:
+        - if <cuboid[ulvid_tomb].players.size> > 0 && <server.has_flag[ulvid_spawned]>:
+            - foreach <cuboid[ulvid_tomb].players> as:player:
+                - if <[player].item_in_hand> == ash:
+                    - run ulvid_complete_task def:<[player]>
+                    - stop
+
+spirited_task:
+    type: task
+    definitions: spirit|player
+    script:
+    - if <[spirit]> ==  ulvid:
+        - if <server.has_flag[ulvid_spawned].not>:
+            - flag server ulvid_spawned
+            - run spawn_mob_task def:katrina_ulvid_ghost|<[player]>|<location[katrina_ulvid_ghost_spawn]>
+            - if <cuboid[ulvid_tomb].players.size> > 0:
+                - if <cuboid[ulvid_tomb].players.filter[has_flag[ulvid_tomb]]>:
+                    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Ghost<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<cuboid[ulvid_tomb].players>
+                    - narrate "<proc[spirit_interpretation].context[<[player]>|You have served my family well. I will haunt Rothigport no more]>" targets:<cuboid[ulvid_tomb].players>
+                    - run despawn_mob_task def:katrina_ulvid_ghost
+                    - wait 3s
+                    - flag <server> ulvid_spawned:!
+                    - flag ulvid_tomb spirited_running:!
+                    - stop
+
+                - foreach <cuboid[ulvid_tomb].players> as:medium:
+                    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Ghost<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<[medium]>
+                    - narrate "Help me. . ." targets:<[medium]>
+                    - wait 5s
+                    - if <server.has_flag[ulvid_spawned]>:
+                        - narrate "<proc[spirit_interpretation].context[<[player]>|What was once alive, now lays still,]>" targets:<[medium]>
+                        - wait 3s
+                    - if <server.has_flag[ulvid_spawned]>:
+                        - narrate "<proc[spirit_interpretation].context[<[player]>|Reduced to remnants of its will.]>" targets:<[medium]>
+                        - wait 3s
+                    - if <server.has_flag[ulvid_spawned]>:
+                        - narrate "<proc[spirit_interpretation].context[<[player]>|A grayish powder, dull and fine,]>" targets:<[medium]>
+                        - wait 3s
+                    - if <server.has_flag[ulvid_spawned]>:
+                        - narrate "<proc[spirit_interpretation].context[<[player]>|What once was bright, has now declined.]>" targets:<[medium]>
+            - if <server.has_flag[ulvid_spawned]>:
+                - if <player.item_in_hand> == ash:
+                    - run ulvid_complete_task def:<player>
+
+ulvid_complete_task:
+    type: task
+    definitions: player
+    script:
+    - narrate "<green>Got to this part!!!"
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Ghost<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<[player]>
+    - narrate "<proc[spirit_interpretation].context[<[player]>|I thank thee, <[player].name>. My soul can now rest]>" targets:<[player]>|<cuboid[ulvid_tomb].players>
+    - give "<item[ash].with[display_name=Katrina Ulvid's Cremains;flag=ulvid_cremains]> player:<[player]>"
+    - wait 1s
+    - run despawn_mob_task def:katrina_ulvid_ghost
+    - flag <server> ulvid_spawned:!
+    - flag ulvid_tomb spirited_running:!
+    - flag <[player]> ulvid_ash_complete
+    - foreach <cuboid[ulvid_tomb].players> as:recipient:
+        - give gold_coin[quantity=5] player:<[recipient]>
+        - flag <[recipient]> ulvid_gold_complete
+        - flag <[recipient]> skill.skills.spirit_speak.level:+:5
+
+
+rothigport_crypts_world:
+    type: world
+    debug: false
+    events:
+        on time changes in overworld:
+        - adjust <world[rothigport_crypts]> time:<context.time>
+        # on block ignites location_flagged:ulvid_candle:
+        # - define candle_player <context.entity>
+        # - announce <[candle_player]>
+        # - announce <location[katrina_ulvid_ghost_spawn]>
+        on soldier_wraith dies:
+        - run open_rothigport_crypts_soldier_tomb_door_task
+        - flag <context.damager> soldier_wraith_kill
+        - run raise_natural_skill_task def:<[candle_player]>|spirit_speak
+        on player exits ulvid_tomb:
+        - flag <player> spirited_location:!
+        - flag <player> stat.status.buff.channeling:!
+        - wait 3s
+        - if <cuboid[ulvid_tomb].players.size> == 0 && <location[ulvid_candle].switched> ==  true:
+            - adjustblock <location[ulvid_candle].block> switched:false
+            - run despawn_mob_task def:katrina_ulvid_ghost
+            - flag <server> ulvid_spawned:!
+            - flag ulvid_tomb spirited_running:!
+        on player enters ulvid_tomb:
+        # - wait 3s
+        - flag <player> spirited_location:ulvid
+        # - if <player.location.cuboids.parse[note_name].contains[ulvid_tomb]>:
+            # - narrate "Help me. . ." targets:<player>
+        - if <proc[natural_skill_check_proc].context[<player>|perception|<player.flag[skill.skills.spirit_speak.level]>]> || <player.has_flag[stat.status.buff.channeling]>:
+            - if <player.flag[perception.ulvid_tomb]||0> < 1: 
+                - narrate "<&color[#d154ff]>You sense something eery about this room."
+                - flag <player> perception.ulvid_tomb:++
+                - run raise_natural_skill_task def:<player>|spirit_speak|0|0
+        - if <player.flag[skill.skills.spirit_speak.level]> < 10:
+            - run raise_natural_skill_task def:<player>|spirit_speak
+
+        on player enters panza_tomb:
+        - narrate 0OOOoooooo....
+        on player enters rothigport_to_rothigport_crypts:
+        - teleport <player> rothigport_crypts_enter_point
+        on player enters rothigport_crypts_to_rothigport:
+        - teleport <player> rothigport_crypts_exit_point
+        # on player dies in:rothigport_crypts:
+        #     - title "title:<red>You Died in cryupts"
+        #     - teleport <context.entity> rothigport_crypts_spawnspot
+        #     - determine cancelled
+        # - determine cancelled
+        
+        # on entity damages player:
+        # - narrate "<context.cause> by <context.damager>"
+        on entity_flagged:mob.skeleton shoots bow:
+        
+        - walk <context.entity> <context.entity.location.find_entities.within[8].first.location>
+        - determine cancelled
+        on entity spawns because natural in:rothigport_crypts:
+        - determine cancelled
+        
+        on player enters rothigport_crypts:
+        - wait 2s
+        # - ratelimit <player> 2s
+        # - if <player.has_flag[rothigport_crypts_visited].not>:
+        #     - title "title:<gold><&font[steamfront:title_font]>Rothcrest Crypts<&r>" "subtitle:<green>The resting place of Rothigport's Gilded Families" targets:<player>
+        
+        - flag <player> rothigport_crypts
+        - flag <player> rothigport_crypts_visited:++
+        - if <player.flag[skill.skills.spirit_speak.level]> < 10:
+            - run raise_natural_skill_task def:<player>|spirit_speak
+        - wait 5s
+        # - playsound <player> sound:steamfront:music.rothigport_crypts custom sound_category:music
+        on player dies in:rothigport_soldiers_crypt:
+        - if <cuboid[rothigport_soldiers_crypt].players.size> == 0:
+            # if all the players die while fighting the soldier wraith, remove/reset the wraith
+            - run reset_rothigport_crypts_soldier_tomb
+            
+        on player exits rothigport_crypts:
+            - wait 7s
+            - flag <player> rothigport_crypts:!
+        # on player animates animation in:rothigport_crypts:
+        # - narrate <red>OPEN
+        # # - determine passively cancelled
+        on player right clicks keyhole_copper with:key_copper:
+        - if <context.entity.has_flag[rothigport_crypt_solidier_tomb_lock]>:
+            - if <cuboid[rothigport_soldiers_crypt].has_flag[rothigport_crypt_solidier_tomb_lock].not>:
+                - take <player.item_in_hand>
+                - flag <player> rothigport_crypts_soldier_tomb_opener
+                - run open_rothigport_crypts_soldier_tomb_door_task
+        # rothigport_crypt_solidier_tomb_lock
+        after player enters rothigport_soldiers_crypt:
+        - if <server.has_flag[soldiers_crypt_door_closed].not> && <player.has_flag[soldier_wraith_kill].not>:
+            - flag <cuboid[rothigport_soldiers_crypt]> rothigport_crypt_solidier_tomb_lock
+            - run raise_natural_skill_task def:<[candle_player]>|spirit_speak
+            - run close_rothigport_crypts_soldier_tomb_door_task
+            - wait 3s
+            - run spawn_mob_task def:soldier_wraith|<context.entity>|soldier_wraith_spawn
+
+        #  soldiers_crypt_door_spot
+        # - ~schematic load name:MySchematic
+        # soldiers_crypt_door_open
+        # soldiers_crypt_door_closed
+        after player right clicks block location_flagged:rothigport_crypts_chest_02:
+        - define inv2 <inventory[generic_loot_chest]>
+        - animatechest <context.location> <player>
+        - inventory open d:<[inv2]>[size=27;title=BestInventory]
+        - if <util.random.int[0].to[13]> == 13:
+            - give splash_potion_of_life[quantity=<[quantity]>] to:<[inv2]> slot:9
+        - else:
+            - if <player.location.find_entities[wraith].within[10].size> <= 4:
+                - run spawn_mob_task def:wraith|<player>|<cuboid[rothigport_crypts_wraith_spawnpoint_02].random>
+                - if <util.random.int[0].to[3]> == 3:
+                    - define quantity:<util.random.int[1].to[4]>
+                    - give lingering_potion_of_life[quantity=<[quantity]>] to:<[inv2]> slot:11
+        - if <player.has_flag[rothigport_crypts_chest_02].not>:
+            - flag <player> rothigport_crypts_chest_02 expire:10m
+            - define quantity:<util.random.int[0].to[9]>
+            
+            - give splash_potion_of_life[quantity=<[quantity]>] to:<[inv2]> slot:5
+        after player right clicks block location_flagged:rothigport_crypts_chest_01:
+        - if <player.has_flag[rothigport_crypts_chest_01].not>:
+            - define random_time <util.random.int[3].to[7]>
+            - flag <player> rothigport_crypts_chest_01 expire:<[random_time]>h
+            - define loot_list <list[potion[potion_effects=SPEED,true,false]|potion[potion_effects=REGEN,false,true,RED]|potion[potion_effects=INSTANT_HEAL,true,false]|a_potion_of_life]>
+            - define luck_loot_list <list[golden_apple|iron_sword|iron_chestplate|potion[potion_effects=SPEED,true,false]|potion[potion_effects=REGEN,false,true,RED]|potion[potion_effects=INSTANT_HEAL,true,false]|a_potion_of_life]>
+            - define random_item <[loot_list].random>
+            - define inv <inventory[generic_loot_chest]>
+            - animatechest <context.location>
+
+            - inventory open d:<[inv]>[size=27;title=BestInventory]
+            - give <[random_item]> to:<[inv]> slot:11
+            - give wooden_sword to:<[inv]> slot:13
+            - give leather_chestplate to:<[inv]> slot:16
+            - give apple quantity:2 to:<[inv]> slot:17
+            - give flint_and_steel to:<[inv]> slot:18
+            - if <player.skill.skills.luck.level> > <util.random.int[1].to[100]>:
+                - define luck_item <[luck_loot_list].random>
+                - give <[random_item]> to:<[inv]> slot:13
+        after player right clicks block location_flagged:rothigport_crypts_barrel_01:
+        - if <player.has_flag[rothigport_crypts_barrel_01].not>:
+            - define random_time <util.random.int[1].to[6]>
+            - flag <player> rothigport_crypts_barrel_01 expire:<[random_time]>m
+            - define loot_list <list[potion_of_life|apple|bread|wooden_pickaxe|oak_planks[quantity=16]|bone|stick|wooden_axe|birch_wood[quantity=8]]>
+            - define luck_loot_list <list[potion_of_life|golden_apple|bread|iron_sword|iron_chestplate|potion[potion_effects=SPEED,true,false]|potion[potion_effects=REGEN,false,true,RED]|potion[potion_effects=INSTANT_HEAL,true,false]]>
+            - define random_item <[loot_list].random>
+            - define random_item2 <[loot_list].random>
+            
+            - define inv <inventory[generic_loot_chest]>
+        
+
+            
+            - animatechest <context.location>
+
+            - inventory open d:<[inv]>[size=27;title=BestInventory]
+            - give <[random_item]> to:<[inv]> slot:16
+            - give <[random_item2]> to:<[inv]> slot:19
+            - give bread quantity:8 to:<[inv]> slot:21
+            - if <player.skill.skills.luck.level> > <util.random.int[1].to[120]>:
+                - define luck_item <[luck_loot_list].random>
+                - give <[random_item]> to:<[inv]> slot:14
+        after player right clicks anvil in:rothigport_crypts_cursed_door_01:
+        - if <player.has_flag[killed.rothigport_cursed_twins]> && <context.item.has_flag[rothigport_crypts_key_02]>:
+            - run open_rothigport_crypts_door_01_task
+            - wait 3s
+            - run close_rothigport_crypts_door_01_task
+        - else:
+            - narrate "This door is locked"
+        - determine cancelled
+        on player enters rothigport_crypts_first_area:
+        - if <polygon[rothigport_crypts].entities[wraith].size> < 3:
+            - run spawn_mob_task def:wraith|<player>|<cuboid[rothigport_crypts_wraith_spawnpoint_01].random>
+            - run spawn_mob_task def:wraith|<player>|<cuboid[rothigport_crypts_wraith_spawnpoint_02].random>
+        on player enters rothigport_crypts_wraith_spawnpoint_01|rothigport_crypts_wraith_spawnpoint_02:
+        # - define skeleton_amount <player.location.find_entities.within[16].filter[has_flag[mob.skeleton]].size>
+        # - if <[skeleton_amount]> < 3:
+        #     - run spawn_skeleton_task
+        # - if <server.has_flag[rothigport_crypts_wraith_spawnpoint_01]].not>:
+        #     - flag <server> rothigport_crypts_wraith_spawnpoint_01 expire:4m
+        - if <player.location.find_entities[wraith].within[10].size> <= 2:
+       
+            - wait <util.random.int[1].to[4]>s
+        
+            - run spawn_mob_task def:wraith|<player>|<cuboid[<context.area.note_name>].random>
+           
+            - wait 1s
+        - run remove_entityless_armorstands_task
+        on player enters rothigport_crypts_skeleton_spawnpoint_01:
+        - define skeleton_amount <player.location.find_entities.within[16].filter[has_flag[mob.skeleton]].size>
+        - if <[skeleton_amount]> < 3:
+            - if <server.has_flag[rothigport_crypts_skeleton_spawnpoint_01]].not>:
+                - flag server rothigport_crypts_skeleton_spawnpoint_01 expire:5m
+                - wait <util.random[0].to[4]>s
+                - run spawn_skeleton_task
+        - wait 1s
+        - run remove_entityless_armorstands_task
+        on player enters rothigport_crypts_cursed_twins_tomb:
+        - if <player.has_flag[location.rothigport_crypts_cursed_twins_tomb].not>:
+            - flag <player> location.rothigport_crypts_cursed_twins_tomb
+            - flag <player> location.rothigport_crypts_cursed_twins_tomb_visited:++
+            - wait 1s
+            - run close_rothigport_crypts_cursed_twins_tomb_door_task
+            - wait 3s
+            - run spawn_cursed_twin_01_task
+
+        # on potion_of_life splashes:
+        # - foreach <context.entities.filter[has_flag[undead]]> as:target:
+        #     - run spell_damage_task def:blossom|<[target]>
+        #     - hurt <element[10].sub[<[loop_index]>]> <[target]>
+        
+        # # - run potion_of_life_task def:<context.entities>
+
+reset_rothigport_crypts_soldier_tomb:
+    type: task
+    script:
+    - run despawn_mob_task def:soldier_wraith|<cuboid[rothigport_soldiers_crypt].center>
+    - run close_rothigport_crypts_soldier_tomb_door_task
+    - foreach <server.players_flagged[rothigport_crypts_soldier_tomb_opener]> as:player:
+        - flag <[player]> rothigport_crypts_soldier_tomb_opener:!
+
+crypt_spawn_world:
+    type: world
+    debug: false 
+    events:
+        on entity_flagged:mob.skeleton targets player:
+        # - if <context.entity>
+        - if <context.entity.location.points_between[<context.target.location>]> < 2:
+            - hurt 1 <context.target>
+        on entity_flagged:mob.mob_wraith_twin_1 dies:
+        - define damager <context.damager>
+        - define timer <context.entity.location.points_between[rothigport_crypts_cursed_twin_01_spawnspot].size>
+        # - announce "time: <[timer].div[2]> seconds"
+        - foreach <context.entity.location.points_between[rothigport_crypts_cursed_twin_01_spawnspot]> as:point:
+            - wait 10t
+            - teleport <context.entity> <[point]>
+        - remove <context.entity.flag[armor_stand.mob_model]>
+        - remove <context.entity>
+        - repeat 50:
+            - playeffect effect:warped_spore at:rothigport_crypts_cursed_twin_01_spawnspot quantity:10 offset:0,0,0
+        - give gold_coin quantity:5 player:<[damager]>
+        - give xp quantity:500 player:<[damager]>
+        - drop spore_blossom rothigport_crypts_cursed_twin_01_spawnspot
+        - wait 5s
+        - run spawn_cursed_twin_02_task
+        - determine cancelled
+        # on entity dies:
+        # # - if <context.entity.has_flag[mob.spawned]>:
+        # # - remove <context.entity.flag[mob.custom_model]>
+        # # - remove <context.entity.flag[hurt_anim]>
+        # - if <context.entity.has_flag[mob]>:
+        #     - if <context.entity.has_flag[mob.entity_type]>:
+        #         - if <context.entity.flag[mob.entity_type]> == "wraith":
+        #             - playsound <context.entity.location> sound:steamfront:mobs.wraith.wraithdying<util.random.int[1].to[2]> custom sound_category:hostile pitch:<util.random.int[3].to[6]>.<util.random.int[3].to[9]>
+        # # # - run get_mob_loot_task def:<context.entity.flag[mob.mob_type]>|<context.entity>|<context.damager>
+        # # - if <context.entity.is_spawned>:
+        # #     - remove <context.entity>
+        # # # - determine cancelled
+        on entity_flagged:mob.mob_wraith_twin_2 dies:
+        - define damager <context.damager||<context.entity.find_entities[player].within[8].first>>
+        - playsound <context.entity.location> sound:steamfront:mobs.wraith.cursed_twin_02_death custom sound_category:hostile
+        - repeat 50:
+            - playeffect effect:warped_spore at:rothigport_crypts_cursed_twin_02_spawnspot quantity:20 offset:0,0,0
+          
+        - give gold_coin quantity:5 player:<[damager]>
+        - give xp quantity:500 player:<[damager]>
+        - flag <[damager]> stat.points.skill_points.level:++
+        # - flag <[damager]> stat.points.attribute_points.level:++
+        - drop spore_blossom rothigport_crypts_cursed_twin_02_spawnspot
+        - run open_rothigport_crypts_cursed_twins_tomb_door_task
+        - showfake chest[flag=rothigport_crypts_twins_chest_flag] rothigport_crypts_twins_chest players:<[damager]> duration:1m
+        - flag <location[rothigport_crypts_twins_chest].up[1]> rothigport_crypts_twins_chest_flag expire:1m
+        - flag <[damager]||<player>> killed.rothigport_cursed_twins
+        - flag <[damager]||<player>> rothigport_crypts_twins_chest_flag_timer expire:1m
+        # after player right clicks block location_flagged:rothigport_crypts_chest_01:
+        after player right clicks block location_flagged:rothigport_crypts_twins_chest_flag:
+        - if <player.has_flag[rothigport_crypts_twins_chest_flag_timer]>:
+         
+            - define inv <inventory[generic_loot_chest]>
+
+            - animatechest rothigport_crypts_twins_chest
+
+            - inventory open d:<[inv]>[size=27;title=BestInventory]
+            - give "key[flag=rothigport_crypts_key_02]" to:<[inv]> slot:10
+            - if <context.damager.skill.skills.luck.level> > <util.random.int[1].to[100]>:
+                - give "potion[potion_effects=INSTANT_HEAL,true,false]" to:<[inv]> slot:15
+
+
+        on player hears sound:
+        # - narrate "music category: <context.category>"
+        - if <context.is_custom.not>:
+        # this is so that we can play custom mob sounds and override the vanilla sounds
+            - if <context.sound_name.contains[bee]>:
+                - determine cancelled
+        on entity_flagged:mob.wraith_twin damaged by player:
+        - random:
+            - playsound <context.entity.location> sound:steamfront:mobs.wraith.cursed_twin_hurt_01 custom sound_category:hostile pitch:<util.random.int[1].to[3]>
+            - playsound <context.entity.location> sound:steamfront:mobs.wraith.cursed_twin_hurt_02 custom sound_category:hostile pitch:<util.random.int[1].to[3]>
+            - playsound <context.entity.location> sound:steamfront:mobs.wraith.cursed_twin_hurt_03 custom sound_category:hostile pitch:<util.random.int[1].to[3]>
+        on entity damaged by player:
+        - if <context.entity.has_flag[mob]>:
+            - if <context.entity.has_flag[mob.entity_type]>:
+                - if <context.entity.flag[mob.entity_type]> == wraith:
+                    - define random_pitch <util.random.int[3].to[9]>
+                    - playsound <player> sound:steamfront:mobs.wraith.wraithhurt<util.random.int[1].to[2]> custom sound_category:hostile pitch:<util.random.int[2].to[5]>.<util.random.int[3].to[9]>
+
+spawn_cursed_twin_01_task:
+    type: task
+    script:
+    - spawn "bee[equipment=air|air|air|air;item_in_hand=air]" rothigport_crypts_cursed_twin_01_spawnspot target:<player> save:wraith_twin_01_mob
+    - invisible <entry[wraith_twin_01_mob].spawned_entity> state:true
+    
+    - spawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<item[nether_brick].with[custom_model_data=656533]>]>]" <entry[wraith_twin_01_mob].spawned_entity.location> save:wraith_twin_01_texture
+    - attach <entry[wraith_twin_01_texture].spawned_entity> to:<entry[wraith_twin_01_mob].spawned_entity>
+    - define this_mob <entry[wraith_twin_01_mob].spawned_entity>
+    - adjust <[this_mob].as_entity> max_health:50
+    - adjust <[this_mob].as_entity> health:50
+    - flag <[this_mob]> mob.wraith_twin
+    - flag <[this_mob]> mob.spawned
+    - flag <[this_mob]> mob.entity_type:wraith_twin
+    - flag <[this_mob]> mob.mob_type:wraith_twin_1
+    - flag <[this_mob]> mob.mob_wraith_twin_1
+    - flag <[this_mob]> reputation.fame.level:100
+    - flag <[this_mob]> reputation.karma.level:100
+    - flag <[this_mob]> mob.custom_model:<entry[wraith_twin_01_texture].spawned_entity>
+    - flag <[this_mob]> undead
+    # flag the armor stand model for later reference
+    - flag <entry[wraith_twin_01_texture].spawned_entity> armor_stand.mob_model:<entry[wraith_twin_01_mob].spawned_entity>
+    # - playsound <player> sound:steamfront:mobs.wraith.wraith<util.random.int[1].to[3]> custom sound_category:hostile pitch:<util.random.int[1].to[3]>.<util.random.int[3].to[9]>
+    - playsound rothigport_crypts_cursed_twin_01_spawnspot sound:steamfront:mobs.wraith.cursed_twin_01 custom sound_category:hostile pitch:3
+    - repeat 10:
+        - if <[this_mob].is_spawned>:
+            - define target <[this_mob].location.find_entities[player].within[4].first>
+            - wait <util.random.int[0].to[2]>s
+            - attack <[this_mob]> target:<[target]>
+            - wait <util.random.int[0].to[2]>s
+            - if <[this_mob].location.distance[<[target].location>]> > 3:
+                - teleport <[this_mob]> <[target].location.forward[1].up[1]>
+                - run spell_damage_task def:blight|<[target]>
+            - wait <util.random.int[1].to[3]>s
+        - else:
+            - repeat stop
+spawn_cursed_twin_02_task:
+    type: task
+    script:
+    - spawn "bee[equipment=air|air|air|air;item_in_hand=air]" rothigport_crypts_cursed_twin_02_spawnspot target:<player> save:wraith_twin_02_mob
+    - invisible <entry[wraith_twin_02_mob].spawned_entity> state:true
+    
+    - spawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<item[nether_brick].with[custom_model_data=656535]>]>]" <entry[wraith_twin_02_mob].spawned_entity.location> save:wraith_twin_02_texture
+    - attach <entry[wraith_twin_02_texture].spawned_entity> to:<entry[wraith_twin_02_mob].spawned_entity>
+    - define this_mob <entry[wraith_twin_02_mob].spawned_entity>
+    - adjust <[this_mob].as_entity> max_health:50
+    - adjust <[this_mob].as_entity> health:50
+    - flag <[this_mob]> mob.wraith_twin
+    - flag <[this_mob]> mob.spawned
+    - flag <[this_mob]> mob.entity_type:wraith_twin
+    - flag <[this_mob]> mob.mob_type:wraith_twin_2
+    - flag <[this_mob]> mob.mob_wraith_twin_2
+    - flag <[this_mob]> mob.custom_model:<entry[wraith_twin_02_texture].spawned_entity>
+    - flag <[this_mob]> reputation.fame.level:150
+    - flag <[this_mob]> reputation.karma.level:150
+    # flag the armor stand model for later reference
+    - flag <entry[wraith_twin_02_texture].spawned_entity> armor_stand.mob_model:<entry[wraith_twin_02_mob].spawned_entity>
+    - flag <[this_mob]> undead
+    - playsound rothigport_crypts_cursed_twin_02_spawnspot sound:steamfront:mobs.wraith.cursed_twin_02 custom sound_category:hostile pitch:3
+    - repeat 10:
+        - if <[this_mob].is_spawned>:
+            - define target <[this_mob].location.find_entities[player].within[4].first>
+            - wait <util.random.int[0].to[2]>s
+            - attack <[this_mob]> target:<[target]>
+            - wait <util.random.int[0].to[2]>s
+            - if <[this_mob].location.distance[<[target].location>]> > 3:
+                - teleport <[this_mob]> <[target].location.forward[1].up[1]>
+                - run spell_damage_task def:blight|<[target]>
+            - wait <util.random.int[1].to[3]>s
+        - else:
+            - repeat stop
+
+
+cursed_twin_01_return_task:
+    type: task
+    script:
+    - foreach <[this_mob].location.points_between[rothigport_crypts_cursed_twin_01_spawnspot]> as:point:
+        - wait 10t
+        - teleport <[this_mob]> <[point]>
+    - despawn <[this_mob]>
+
+
+spawn_skeleton_task:
+    type: task
+    script:
+    - spawn "skeleton[equipment=air|air|air|air;item_in_hand=air]" <location[rothigport_crypts_skeleton_01_spawnspot].random_offset[3,0,3]> target:<player> save:skeleton_mob
+    - ^invisible <entry[skeleton_mob].spawned_entity> state:true
+    - spawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<item[nether_brick].with[custom_model_data=656532]>]>]" <entry[skeleton_mob].spawned_entity.location> save:skeleton_texture
+    - attach <entry[skeleton_texture].spawned_entity> to:<entry[skeleton_mob].spawned_entity>|0,0,0 
+    - define this_mob <entry[skeleton_mob].spawned_entity>
+    - flag <[this_mob]> mob.skeleton
+    - flag <[this_mob]> mob.spawned
+    - flag <[this_mob]> mob.entity_type:skeleton
+    - flag <[this_mob]> mob.mob_type:skeleton
+    - flag <[this_mob]> reputation.fame.level:<script[monster_data].data_key[monster.skeleton.fame]||0>
+    - flag <[this_mob]> reputation.karma.level:<script[monster_data].data_key[monster.skeleton.karma]||0>
+    - flag <[this_mob]> mob.custom_model:<entry[skeleton_texture].spawned_entity>
+    # flag the armor stand model for later reference
+    - flag <entry[skeleton_texture].spawned_entity> armor_stand.mob_model:<entry[skeleton_mob].spawned_entity>
+    - flag <[this_mob]> undead
+    - define target <[this_mob].location.find_entities[player].within[5].random>
+    - attack <[this_mob]> target:<[target]>
+    # - narrate "attacking <[this_mob].location.find_entities[player].within[5]> "
+    # - playsound <player> sound:steamfront:mobs.skeleton.skeleton<util.random.int[1].to[3]> custom sound_category:hostile pitch:<util.random.int[1].to[3]>.<util.random.int[3].to[9]>
+    - if <[this_mob].location.distance[<[target].location>]> < 3:
+        - hurt <[target]> 2
+    - else:
+        - define target <[this_mob].location.find_entities[player].within[5].random>
+
+generic_loot_chest:
+  type: inventory
+  inventory: Chest
+  title: 
+  size: 54
+  slots:
+  - "[] [] [] [] [] [] [] [] []"
+  - "[] [] [] [] [] [] [] [] []"
+  - "[] [] [] [] [] [] [] [] []"
+  - "[] [] [] [] [] [] [] [] []"
+  - "[] [] [] [] [] [] [] [] []"
+  - "[] [] [] [] [] [] [] [] []"
+
+
+
+
+
+
+close_rothigport_crypts_door_01_task:
+    type: task
+    script:
+    - playsound rothigport_crypts_door_01_pastespot sound:steamfront:iron_door custom sound_category:ambient
+    - wait 5t
+    - if <schematic[rothigport_crypts_door_01].exists.not>:
+        - ~schematic load name:rothigport_crypts_door_01
+        - wait 1t
+    - ~schematic paste name:rothigport_crypts_door_01 rothigport_crypts_door_01_pastespot
+    # - wait 1t
+    # - schematic unload name:rothigport_crypts_door_01
+    - flag server rothigport_crypts_door_01_closed
+
+
+
+open_rothigport_crypts_soldier_tomb_door_task:
+    type: task
+    script:
+    # - playsound rothigport_crypts_cursed_twins_tomb_door_pastespot sound:steamfront:iron_door custom sound_category:ambient
+    - wait 5t
+    - if <schematic[soldiers_crypt_door_open].exists.not>:
+        - ~schematic load name:soldiers_crypt_door_open
+        - wait 1t
+    - ~schematic paste name:soldiers_crypt_door_open soldiers_crypt_door_spot
+    # - wait 1t
+    # - schematic unload name:rothigport_crypts_door_01
+    - remove <cuboid[rothigport_crypts_soldier_door].entities[item_frame]>
+    - flag server soldiers_crypt_door_closed:!
+
+close_rothigport_crypts_soldier_tomb_door_task:
+    type: task
+    script:
+    # - playsound rothigport_crypts_cursed_twins_tomb_door_pastespot sound:steamfront:iron_door custom sound_category:ambient
+    - wait 5t
+    - if <schematic[soldiers_crypt_door_closed].exists.not>:
+        - ~schematic load name:soldiers_crypt_door_closed
+        - wait 1t
+    - ~schematic paste name:soldiers_crypt_door_closed soldiers_crypt_door_spot
+    # - wait 1t
+    # - schematic unload name:rothigport_crypts_door_01
+    - spawn keyhole_copper[rotation=south;flag=copper_lock] <location[rothigport_crypts_solder_keyhole].forward[1]>
+    - flag server soldiers_crypt_door_closed
+
+spawn_soldier_wraith_task:
+    type: task
+    script:
+    - narrate "spawning soldier wraith"
+
+    
+
+close_rothigport_crypts_cursed_twins_tomb_door_task:
+    type: task
+    script:
+    # - playsound rothigport_crypts_cursed_twins_tomb_door_pastespot sound:steamfront:iron_door custom sound_category:ambient
+    - wait 5t
+    - if <schematic[soldiers_crypt_door_closed].exists.not>:
+        - ~schematic load name:soldiers_crypt_door_closed
+        - wait 1t
+    - ~schematic paste name:soldiers_crypt_door_closed soldiers_crypt_door_spot
+    # - wait 1t
+    # - schematic unload name:rothigport_crypts_door_01
+    - flag server soldiers_crypt_door_closed
+
+open_rothigport_crypts_cursed_twins_tomb_door_task:
+    type: task
+    script:
+    # - playsound rothigport_crypts_cursed_twins_tomb_door_pastespot sound:steamfront:iron_door custom sound_category:ambient
+    - wait 5t
+    - if <schematic[soldiers_crypt_door_open].exists.not>:
+        - ~schematic load name:soldiers_crypt_door_open
+        - wait 1t
+    - ~schematic paste name:soldiers_crypt_door_open soldiers_crypt_door_spot
+    # - wait 1t
+    # - schematic unload name:rothigport_crypts_door_01
+    - flag server soldiers_crypt_door_closed:!
+
+open_rothigport_crypts_cursed_twins_tomb_door_task:
+    type: task
+    script:
+    # - playsound rothigport_crypts_cursed_twins_tomb_door_pastespot sound:steamfront:iron_door custom sound_category:ambient
+    - wait 5t
+    - if <schematic[rothigport_crypts_cursed_twins_tomb_door_open].exists.not>:
+        - ~schematic load name:rothigport_crypts_cursed_twins_tomb_door_open
+        - wait 1t
+    - ~schematic paste name:rothigport_crypts_cursed_twins_tomb_door_open rothigport_crypts_cursed_twins_tomb_door_pastespot
+    # - wait 1t
+    # - schematic unload name:rothigport_crypts_door_01_open
+    - flag server rothigport_crypts_cursed_twins_tomb_door_closed:!
+
+
+potion_of_life_task:
+    type: task
+    definitions: entities
+    script:
+    - narrate "skull: I do not have eyes but once did see. Once I had thoughts but now I am white and empty"
+    # blood
+#     While it is confined, it chooses lords and beggars.
+# When it is released, it follows war or woe.
+# While it confined, it propels men's passion and rage.
+# When it is released, it drips, gushes, and drains.
+# While it is confined, life abound.
+# When it is released, life cannot follow.
+
+# a key I turn once, what is out will not get in. I turn again, what is in will not get out. What am I?
+
+# feather freedom of fowl and the pen of scribe
+
+# wind Voiceless it cries, Wingless flutters, Toothless bites, Mouthless mutters.
+
+# leaves Walk on the living, they don’t even mumble, Walk on the dead, they mutter and grumble. 
+
+# darkness It cannot be seen, cannot be felt, Cannot be heard, cannot be smelt. It lies behind stars and under hills And empty holes it fills. It comes first and follows after, Ends life, kills laughter.
+
+# dust People are hired to get rid of me. I’m often hiding under your bed. In time I’ll always return you see. Bite me and you’re surely dead.
+
+# tree Dies half its life. Lives the rest. Dances without music. Breathes without breath.
+
+
+tombstone_hover_task:
+    type: task
+    script:
+    - spawn "armor_stand[display=blech;custom_name=Test Test Test;is_small=false;invulnerable=false;custom_name_visible=hover;visible=true;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|air]" <player.location> save:tombstone_test
+    - spawn "armor_stand[display=blech;custom_name=Here lies Miss Katrina;is_small=false;invulnerable=false;custom_name_visible=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=<item[carrot_on_a_stick].with[custom_model_data=16751]>|air|air|air]" <player.location>
+
+
+
+
+
+visible:
+    type: task
+    script:
+    - foreach <server.online_players> as:player:
+        - narrate <player.visible>

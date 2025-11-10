@@ -1,0 +1,16 @@
+stealth_toggle_command:
+    type: command
+    name: stealth
+    script:
+    - if <player.has_flag[skill.stealth].not>:
+        - narrate "You don't have the stealth skill."
+        - stop
+    - if <player.flag[skill.stealth.level]||0> < 1:
+        - narrate "You need an stealth level of at least one to use it."
+        - stop
+    - if <player.has_flag[attempt_stealth]>:
+        - flag <player> attempt_stealth:!
+        - narrate "Stealth toggled off."
+    - else:
+        - flag <player> attempt_stealth
+        - narrate "Stealth toggled on."

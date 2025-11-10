@@ -1,0 +1,119 @@
+fauna_identification_task:
+    type: task
+    definitions: fauna
+    script:
+    - narrate <[fauna]>
+
+tracking_command:
+    type: command
+    name: tracking
+    aliases:
+        - track
+    tab completions:
+        1: <server.list_scripts.filter[data_key[type].is[==].to[entity]].parse[name].parse[replace[_].with[<&sp>]].parse[to_titlecase]>|<server.entity_types.filter_tag[<entity[<[filter_value]>].is_living>].filter_tag[<entity[<[filter_value]>].is_mob>].parse[to_titlecase]>
+    script:
+    - if <player.has_flag[skill.specializations.tracking].not>:
+        - narrate "You don't have the Tracking skill."
+        - stop
+    - if <player.flag[skill.specializations.tracking.level]||0> < 1:
+        - narrate "You need an Tracking level of at least one to use it."
+        - stop
+    - define tracking_skill <player.flag[skill.specializations.tracking.level]>
+    - if <player.has_flag[tracking_cooldown]>:
+        - narrate "You must wait until you can Track again." targets:<player>
+        - stop
+    - else:
+        # - flag <player> tracking_cooldown expire:<element[100].sub[<player.flag[skill.skills.focus.level].add[20]>].min[<util.random.int[9].to[13]>].max[<util.random.int[1].to[3]>]>s
+        - flag <player> tracking_cooldown expire:2s
+    - if <context.args.size> >= 1:
+        - define quarry <context.args.get[1]||null>
+        - if <server.match_player[<[quarry]>].exists>:
+            
+            - define quarry <[quarry].as_player>
+            - define distance <player.location.distance[<[quarry].location>].round>
+            - define urban_penalty <player.location.polygons.filter[has_flag[is_urban]].size.mul[10]||0>
+            - if <util.random.int[1].to[<element[100].sub[<[tracking_skill].sub[<[distance]>].sub[<[urban_penalty]>]]>].min[99].max[2]>]> == 1:
+                - narrate "<[quarry].name> is <[distance]> meters <player.location.direction[<[quarry].location>]>."
+            - else:
+                - narrate "You cannot find this quarry."
+            - stop
+        - else:
+            - narrate "You cannot find this quarry."
+            - stop
+        - define quarry_size <player.location.find.living_entities.within[<[tracking_skill].add[3]>].exclude[<player>]>
+        - if <[quarry_size].size> < 1:
+            - if <proc[natural_skill_check_proc].context[<player>|perception]>:
+                - narrate "There are no living entities around."
+            - else:
+                - narrate "You cannot detect anything."
+            - stop
+       
+        - foreach <[quarry_size]> as:targeted_quarry:
+            # - if <[targeted_quarry].standing_on.exists.not>:
+            #     - narrate "<yellow><[targeted_quarry]> not on ground but <[targeted_quarry].standing_on.material>"
+            - clickable fauna_identification_task def:<[targeted_quarry]> save:fauna_id_clickable_<[loop_index]>
+            - if <[targeted_quarry].name> == <[quarry]>:
+                - define distance <player.location.distance[<[targeted_quarry].location>].round>
+                - define distance_words ""
+                - if <[distance]> <= 8:
+                    - define distance_words "very close"
+                - else if <[distance]> > 8 && <[distance]> <= 16:
+                    - define distance_words "pretty close"
+                - else if <[distance]> > 16 && <[distance]> <= 32:
+                    - define distance_words "not too far"
+                - else if <[distance]> > 32 && <[distance]> <= 64:
+                    - define distance_words "not very close"
+                - else if <[distance]> > 64 && <[distance]> <= 100:
+                    - define distance_words "pretty far"
+                - else if <[distance]> > 100:
+                    - define distance_words "very far."
+
+                - if <[tracking_skill]> > 10:
+                    - if <util.random.int[1].to[<element[100].sub[<[tracking_skill]>].min[99]>].max[2]> == 1:
+                        - define distance_words "<[distance]> meters away"
+                    
+                - if !<[this_quarry].has_flag[hidden]>:
+                    - if <player.flag[skill.specializations.detect_hidden.level]> > <[targeted_quarry].flag[skill.specializations.hide.level]>:
+                        - narrate "You cannot detect anything of significance."
+                        - stop
+                - if <[targeted_quarry].is_mob>:
+                    - define mob_singular <empty>
+                - else:
+                    - define mob_singular "'s"
+                - narrate "You found a <element[<[quarry]><[mob_singular]> ].on_click[<entry[fauna_id_clickable_<[loop_index]>].command>]>to your <player.location.direction[<[quarry].location>]> and it is <[distance_words]>."
+                - run raise_natural_skill_task def:<player>|perception|0|0
+            
+    
+    - else:
+    # this tracks anything but is more difficult
+        # - narrate <[tracking_skill]>
+        - define track_list <player.location.find.living_entities.within[100].exclude[<player>].filter[entity_type.is[!=].to[armor_stand]].parse[name].parse[to_titlecase]>
+        # - narrate <[track_list].separated_by[<&nl>]>
+        - define beast_lore <player.flag[skill.skills.beast_lore.level].round_down||0>
+        - foreach <player.location.find.living_entities.within[100].exclude[<player>].filter[entity_type.is[!=].to[armor_stand]]> as:quarry:
+            - define distance <[quarry].location.distance[<player.location>].round>
+            # - narrate 
+            - define urban_penalty <player.location.polygons.filter[has_flag[is_urban]].size.mul[10]||0>
+            - define beast_bonus 0
+            - define entity_name <[quarry].name>
+            - if <[quarry].has_flag[mob].not> && <[quarry].is_mob>
+                - define beast_bonus <[beast_lore]||1>
+            - if <[quarry].has_flag[mob]>:
+                - define beast_bonus <[beast_lore]||1>
+                - define entity_name <[quarry].flag[mob.entity_type].replace[_].with[<&sp>]>
+
+            - if <[loop_index]> == 1:
+                # the tracker gets one freebie before skill check
+                - narrate "<[entity_name].to_titlecase> is <[distance]> meters away."
+                - foreach next
+            - if <util.random.int[1].to[<element[100].sub[<[tracking_skill].sub[<[distance]>].sub[<[urban_penalty]>].add[<[beast_bonus]>]>].min[99].max[2]>]> == 1:
+                - narrate "<[entity_name].to_titlecase> is <[distance]> meters <player.location.direction[<[quarry].location>]>."
+
+            
+        # - narrate <proc[natural_skill_check_proc].context[<player>|perception]>
+            # - narrate success
+            
+    - if <util.random.int[1].to[3]> == 1:
+        - run raise_natural_skill_task def:<player>|perception
+    - if <util.random.int[1].to[10]> == 1:
+        - run raise_natural_skill_task def:<player>|beast_lore

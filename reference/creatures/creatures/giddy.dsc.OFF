@@ -1,0 +1,20 @@
+giddy:
+    type: entity
+    # display_name: "Giddy"
+    entity_type: axolotl
+    # mechanisms:
+    data:
+        eligible_block_spawn: grass_block
+        custom_model_data: 1656551
+        # script: giddy_task
+    flags:
+        custom_beast: true
+        karma: 30
+        fame: 30
+        biome: swamp
+        rarity: 10
+        level: 10
+        strength: 10
+        dexterity: 10
+        intelligence: 10
+        

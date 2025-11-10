@@ -1,0 +1,17 @@
+blast_of_light_task:
+    type: task
+    debug: true
+    definitions: attacker|defender
+    script:
+    - if <[attacker].has_flag[skill.spells.blast_of_light.level].not>:
+        - flag <[attacker]> skill.spells.blast_of_light.level:1
+    - define level <[attacker].flag[skill.spells.blast_of_light.level]>
+    - define target <[attacker].cursor_on>
+    - repeat <[level].mul[9]>:
+        - playeffect effect:flash at:<[target]> quantity:4
+        - if <[loop_index].is_odd>:
+            - playeffect effect:flash at:<[target]> quantity:<[level].mul[8]> offset:1 targets:<[target].find_entities.within[10].exclude[<[attacker]>]>
+    - define resist_success <proc[natural_skill_check_proc].context[<[entity]>|day_resist]>
+    - if <[resist_success].not>:
+        - run spell_damage_task def:blast_of_light|<[target].find.living_entities.within[2].exclude[<[attacker]>].first>
+    - cast blindness duration:4s <[target].find.living_entities.within[2].exclude[<[attacker]>].first>

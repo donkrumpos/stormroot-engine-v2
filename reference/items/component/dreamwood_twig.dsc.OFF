@@ -1,0 +1,7 @@
+dreamwood_twig:
+  type: item
+  material: bowl
+  display name: Dreamwood Twig
+  mechanisms:
+    custom_model_data: 2110020
+    

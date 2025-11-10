@@ -1,0 +1,459 @@
+rosage_assignment:
+    type: assignment
+    speed: 1t
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:4
+        
+
+    interact scripts:
+    - rosage_interact
+    default constants:
+        appearance1: "<npc.name> is a furry rodent but one that you want to like."
+        appearance2: "Though he is humble, he hides his knowledge and skill under self-doubt."
+        appearance3: "You sense that <npc.name> should maybe not be an Arch Mage's apprentice, but can still provide you some valuable insight."
+        appearance4: "You feel as though <npc.name> will someday be a great mage."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+        has_familiarity: true
+
+
+rosage_interact:
+    type: interact
+    steps:
+        1:
+            proximity trigger:
+                entry:
+                    script:
+                    - execute as_server "npc skin --url https://minesk.in/8a3d6d061fc44184839d636964f29c53 --id <npc.id>"
+
+            click trigger:
+                script:
+                - run default_task
+                
+        2:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, /Yes/ I already know.
+                    script:
+                    - run rosage_nax_1_yes_task 
+                2:
+                    trigger: <&7>/2/, /No. I have not heard of this.
+                    script:
+                    - run rosage_nax_1_no_task 
+        3:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, I will figure this out this mystery to /help/ the realm.
+                    script:
+                    - run rosage_1_yes_2_task
+                2:
+                    trigger: <&7>/2/, I don't care
+                    script:
+                    - run rosage_1_decline_task
+        4:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, In fact I do want to learn the path of magery.
+                    script:
+                    - run rosage_1_magery_yes_task
+                2:
+                    trigger: <&7>/2/, /No/, I am not
+                    script:
+                    - run rosage_1_magery_no_task
+        5:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, /Yes/, I confirm my interest!
+                    script:
+                    - run rosage_1_magery_yes_confirm_task
+                2:
+                    trigger: <&7>/2/, /No/ magery is not for me.
+                    script:
+                    - run rosage_1_magery_no_confirm_task
+        6:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, /Yes/, Please teach me another spell.
+                    script:
+                    - run rosage_learn_clumsy_spell_task
+                2:
+                    trigger: <&7>/2/, /No/ I'll learn other spells elsewhere.
+                    script:
+                    - run rosage_mage_no_learn_spell_task
+        7:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, /Yes/, Please teach me another spell.
+                    script:
+                    - run rosage_learn_weaken_spell_task
+                2:
+                    trigger: <&7>/2/, /No/ I'll learn other spells elsewhere.
+                    script:
+                    - run rosage_mage_no_learn_spell_task
+
+default_task:
+    type: task
+    script:
+    - zap 1
+    - inject description_inject_task
+    - if <player.has_flag[rosage_quest]>:
+        - random:
+            - repeat 1:
+                - narrate "Have you any new information for me <player.name>?" targets:<player>
+                - wait 2s
+                - narrate "I am very nervous about the fate of Deluvia" targets:<player>
+            - repeat 1:
+                - narrate "Have you found the meaning of the Oracle's tablet?" targets:<player>
+
+        - clickable rosage_task_13 save:<npc.name>_clickable_13  until:10s for:<player> usages:1
+        
+        - wait 1s
+        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Can you repeat the story again?<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_13].command>]>" targets:<player>
+        - if <player.flag[class.type]> != mage:
+            - if <player.flag[class.type]> == "Classless" || <player.flag[class.type]||null> == "null":
+                - clickable rosage_task_04 save:<npc.name>_clickable_04  until:10s for:<player> usages:1
+                - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Can you start me down the path of magery still?<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_04].command>]>" targets:<player>
+            - else:
+                - narrate "I would love to, but it looks like you've started studying down a different path."
+            
+        - stop
+    - if <player.has_flag[rosage_talk_01].not> && <player.has_flag[rosage_oracle_01].not> && <player.has_flg[rosage_oracle_02].not>:
+        - narrate "Oh dear, oh dear, such responsibilities" targets:<player>
+        - wait 2s
+        - narrate "I didn't ask for this." targets:<player>
+        - wait 2s
+        - narrate "Did you hear of the great mage Nax Hollum making me his apprentice?" targets:<player>
+        - clickable rosage_task_01 save:<npc.name>_clickable_01  until:10s for:<player> usages:1
+        - clickable rosage_task_02 save:<npc.name>_clickable_02  until:10s for:<player> usages:1
+        - clickable rosage_task_14 save:<npc.name>_clickable_14  until:10s for:<player> usages:1
+
+        - wait 1s
+        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Yes, I already know.<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_01].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>No, I have not heard of this.<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>3. <&B>Who is Nax Hollum?<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_14].command>]>" targets:<player>
+        - flag <player> rosage_talk_01
+        - zap 2 duration:30s
+    - else:
+        - narrate "I am just a humble servant of magic in Deluvia." targets:<player>
+        - wait 2s
+        - narrate "Why did the Gods give me this weight?" targets:<player>
+        - clickable <npc.name>_task_03 save:<npc.name>_clickable_03  until:10s for:<player> usages:1
+        - clickable <npc.name>_task_02 save:<npc.name>_clickable_02 until:10s for:<player> usages:1
+        - wait 1s
+        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Let me help you with it.<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_03].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>Can you tell me again which weight?<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" targets:<player>
+        - zap 2 duration:30s
+
+rosage_task_01:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "Thank the Gods. I knew you would understand my burden." targets:<player>
+        - flag <player> suspend_clickable:!
+        - wait 2s
+        - narrate "Perhaps I don't have to carry it alone." targets:<player>
+        - wait 3s
+        - narrate "I've been looking at my maps in my library for weeks and cannot find the entrance to the West that The Oracle told me about." targets:<player>
+        - wait 3s
+        - narrate "Thanks for listening. I knew you would understand" targets:<player>
+        - wait 3s
+        - narrate "Perhaps you can decipher this enigma The Oracle gave me?" targets:<player>
+        - title title:<white><&font[steamfront:gui_nav]><&chr[3113]> stay:15s targets:<player>
+        - narrate format:game_message "The Tablet says:"
+        - narrate format:game_message "<italic>  West of the City of Wood"
+        - narrate format:game_message "<italic>  Rests a Pond that Could"
+        - narrate format:game_message "<italic>  A Mortal Dive and Swim"
+        - narrate format:game_message "<italic>  And Arrive to Find Him"
+        - narrate format:game_message "<italic>  In a Cavern Lush"
+        - narrate format:game_message "<italic>  The Guardian of Scornful Gush"
+        - wait 15s
+        - narrate "What do you think it means?"
+        - flag <player> rosage_oracle_01
+        - flag <player> suspend_clickable:!
+        
+
+        - clickable <npc.name>_task_03 save:<npc.name>_clickable_03 until:10s for:<player> usages:1
+        - clickable rosage_task_09 save:<npc.name>_clickable_09 until:10s for:<player> usages:1
+       
+        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>I will figure this out this mystery to help the realm.<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_03].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>I don't care.<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_09].command>]>" targets:<player>
+        - zap 3 duration:20s
+        - flag <player> suspend_clickable:!
+    
+
+rosage_task_02:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "Alas, I have been such a minor wizard for so long and now everybody wants me " targets:<player>
+        - wait 1s
+        - narrate "to introduce them to Nax Hollum, or to show them the entrance to the anomaly, or how to get The Oracle to shine wisdom down upon them. . . " targets:<player>
+        - wait 3s
+        - narrate "I just am overwhelmed." targets:<player>
+        - wait 3s
+        - narrate "I was out wandering out near the center of Song Tide, near the Omphalos Shrine, gathering herbs and reagents, and then a great light shone down upon me" targets:<player>
+        - wait 3s
+        - narrate "and a booming goddess's voice said unto me" targets:<player>
+        - wait 3s
+        - narrate "	<&dq><&o>Young rabbit mage, because of your innocence, I must tell you, to warn your kind of impending darkness to come. . .<&dq>" targets:<player>
+        - wait 3s
+        - narrate "	<&dq><&o> I sense the Underground is opening up to Mortals such as yourself and you must find these thresholds and bring this world back into balance.	<&dq>" targets:<player>
+        - wait 5s
+        - narrate "<&r> and then the voice was gone, but I was blind and had to find my way back here to my study and wait for 2 days until I could see again." targets:<player>
+        - wait 3s 
+        - narrate "A map was burned into my minds eye for those two days, and then once I could see again, I then sketched it out over there in my library." targets:<player>
+        - wait 2s
+        - narrate "I don't know where that is except that it must be West of here from other clues the Oracle had left around." targets:<player>
+        - wait 4s
+        - narrate "Once the Great Mage Nax Hollum found out about this, he summoned me with all speed so that we both could investigate together." targets:<player>
+        - wait 3s
+        - narrate "I am unsure if he has told the other Arch Mages of Song Tide. Perhaps he wants to keep it all to himself." targets:<player>
+        - flag <player> rosage_oracle_02
+        - zap 1 
+        
+        - flag <player> suspend_clickable:!
+
+rosage_task_03:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "That makes me happy. I will give you credit as a great hero if you can help me finish this discovery." targets:<player>
+        - wait 3s
+        - narrate "Come back to me when you find anything." targets:<player>
+        - wait 3s
+        - if <player.flag[class.type]> == "mage":
+            - if <player.has_flag[skill.spells.fireball].not>:
+                - narrate "Also, I should teach you this spell which, Nax Hollum taught me. It might help you out there." targets:<player>
+                - flag <player> skill.spells.fireball.level:1
+                - wait 1s
+                - narrate format:game_message "The Fireball spell is now in your spellbook." targets:<player>
+                - zap 1 duration:20s
+            - else if <player.has_flag[skill.spells.fireball.level]> < 5:
+                - flag <player> skill.spells.fireball.level:++
+                - narrate format:game_message "Rosage has helped you learn the Fireball Spell more." targets:<player>
+                - zap 1 duration:20s
+        - else if <player.flag[class.type]> == "Classless" || <player.flag[class.type]||null> == "null":
+            - narrate "Are you interested, by chance, in going down the path of magery?" targets:<player>
+            - wait 3s
+            - clickable rosage_task_04 save:<npc.name>_clickable_04 until:10s for:<player> usages:1
+            - clickable rosage_task_10 save:<npc.name>_clickable_10 until:10s for:<player> usages:1
+            - wait 1s
+            - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>In fact I do want to learn the path of magery.<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_04].command>]>" targets:<player>
+            - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>No, I am not.<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_10].command>]>" targets:<player>
+            - zap 4 duration:20s
+        - else:
+            - zap 1 duration:20s
+        - flag <player> rosage_quest
+        - flag <player> suspend_clickable:!
+
+rosage_task_04:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        # - clickable cancel:<entry[rosage_1_magery_yes_task_clickable].id>
+        # - clickable cancel:<entry[rosage_1_magery_no_task_clickable].id>
+        - inject description_inject_task
+        - narrate "We can always use more magic users in the Song Tide realm." targets:<player>
+        - wait 3s
+        - narrate "Now are you sure you wish me to teach you this, as it is hard to choose a different path, if you change your mind?" targets:<player>
+        - clickable rosage_task_05 save:<npc.name>_clickable_05 until:10s for:<player> usages:1
+        - clickable rosage_task_11 save:<npc.name>_clickable_11  until:10s for:<player> usages:1
+        - wait 1s
+        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Yes, I confirm my interest!<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_05].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>No magery is not for me.<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_11].command>]>" targets:<player>
+        - zap 5 duration:20s
+        - flag <player> suspend_clickable:!
+  
+rosage_task_05:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        # - clickable cancel:<entry[rosage_1_magery_yes_confirm_task_clickable].id>
+        # - clickable cancel:<entry[rosage_1_magery_no_confirm_task_clickable].id>
+        - inject description_inject_task
+        - narrate "I count you as a colleague from this moment forth <player.name>."  targets:<player>
+        - flag <player> class.type:mage
+        - flag <player> rosage_mage_yes
+        # TODO play level up type sound
+        - narrate format:game_message "You are now the mage class." targets:<player>
+        - wait 10t
+        - give xp quantity:100
+        - narrate format:game_message "You have received 100 XP." targets:<player>
+        - wait 2s
+        - random:
+            - repeat 1:
+                - if <player.has_flag[skill.spells.clumsy.level].not>:
+                    - narrate "Now would you like me to teach you a spell?"
+                    - clickable rosage_task_06 save:<npc.name>_clickable_06 until:10s for:<player> usages:1
+                    - clickable rosage_task_08 save:<npc.name>_clickable_08 until:10s for:<player> usages:1
+                    - wait 1s
+                    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B> Yes, Please teach me another spell.<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_06].command>]>" targets:<player>
+                    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B> No I'll learn other spells elsewhere.<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_08].command>]>" targets:<player>
+                    - zap 6 duration:20s
+             
+                
+            - repeat 1:
+                - if <player.has_flag[skill.spells.weaken.level].not>:
+                    - narrate  "Now would you like me to teach you a spell?" targets:<player>
+                    - clickable rosage_task_07 save:<npc.name>_clickable_07 until:10s for:<player> usages:1
+                    - clickable rosage_task_08 save:<npc.name>_clickable_08 until:10s for:<player> usages:1
+                    - wait 1s
+                    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B> Yes, Please teach me another spell.<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_07].command>]>" targets:<player>
+                    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B> No I'll learn other spells elsewhere.<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_08].command>]>" targets:<player>
+                    - zap 7 duration:20s
+            
+        - else:
+            - zap 1
+        - flag <player> suspend_clickable:!
+
+
+rosage_task_06:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "This spell, called Clumsy, when successful, causes your foe to temporarily lose some of their dexterity and stamina." targets:<player>
+        - wait 2s
+        - narrate "I have added it to your spellbook" targets:<player>
+        - flag <player> skill.spells.clumsy.level:1
+        - narrate format:game_message "You now know the Clumsy spell. Type <element[/spells].bold> to see your spells." targets:<player>
+        - flag <player> suspend_clickable:!
+
+rosage_task_07:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "This spell, called Weaken, when successful, causes your foe to temporarily lose some of their strength." targets:<player>
+        - wait 2s
+        - narrate "I have added it to your spellbook" targets:<player>
+        - flag <player> skill.spells.weaken.level:1
+        - narrate format:game_message "You now know the Weaken spell." targets:<player>
+        - flag <player> suspend_clickable:!
+
+rosage_task_08:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "Well there are plenty of places to learn spells out there."
+        - zap 1
+        - flag <player> suspend_clickable:!
+
+rosage_task_09:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        # - clickable cancel:<entry[rosage_1_yes_2_task_clickable].id>
+        # - clickable cancel:<entry[rosage_1_decline_task_clickable].id>
+        - inject description_inject_task
+        - narrate "That makes me sad," targets:<player>
+        - wait 1s
+        - narrate "but this is a harrowing landscape, and I can understand playing it safe." targets:<player>
+        - flag <player> suspend_clickable:!
+
+
+rosage_task_10:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        # - clickable cancel:<entry[rosage_1_magery_yes_confirm_task_clickable].id>
+        # - clickable cancel:<entry[rosage_1_magery_no_confirm_task_clickable].id>
+        - inject description_inject_task
+        - narrate "I do not hold judgment." targets:<player>
+        - wait 1s
+        - narrate "You will find your way." targets:<player>
+        - wait 3s
+        - narrate "There are many out there that can teach you other paths." targets:<player>
+        - wait 2
+        - narrate "Talk to Magrin, just down the path, to learn more about melee and missile combat, or Pardieu in the High Church, to learn about harnessing the blessings of the Gods." targets:<player>
+        - flag <player> suspend_clickable:!
+
+
+rosage_task_11:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+    # - clickable cancel:<entry[rosage_1_magery_yes_task_clickable].id>
+    # - clickable cancel:<entry[rosage_1_magery_no_task_clickable].id>
+        - inject description_inject_task
+        - narrate "The arcane arts are not for everybody." targets:<player>
+        - wait 3s
+        - narrate "If it is the brutish combat arts, go talk to Magrin across, the bridge, down the harbor a few buildings." targets:<player>
+        - wait 2
+        - flag <player> suspend_clickable:!
+
+rosage_task_13:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "I was out wandering out near the center of Song Tide, near the Omphalos Shrine, gathering herbs and reagents, and then a great light shone down upon me" targets:<player>
+    - wait 3s
+    - narrate "and a booming goddess's voice said unto me" targets:<player>
+    - wait 3s
+    - narrate "	<&dq><&o>Young rabbit mage, because of your innocence, I must tell you, to warn your kind of impending darkness to come. . .<&dq>" targets:<player>
+    - wait 3s
+    - narrate "	<&dq><&o> I sense the Underground is opening up to Mortals such as yourself and you must find these thresholds and bring this world back into balance.	<&dq>" targets:<player>
+    - wait 5s
+    - narrate "<&r> and then the voice was gone, but I was blind and had to find my way back here to my study and wait for 2 days until I could see again." targets:<player>
+    - wait 3s 
+    - narrate "A map was burned into my minds eye for those two days, and then once I could see again, I then sketched it out over there in my library." targets:<player>
+    - wait 2s
+    - narrate "I don't know where that is except that it must be West of here from other clues the Oracle had left around." targets:<player>
+  
+    - title title:<white><&font[steamfront:gui_nav]><&chr[3113]> stay:15s targets:<player>
+    - narrate format:game_message "The Tablet says:"
+    - narrate format:game_message "<italic>  West of the City of Wood"
+    - narrate format:game_message "<italic>  Rests a Pond that Could"
+    - narrate format:game_message "<italic>  A Mortal Dive and Swim"
+    - narrate format:game_message "<italic>  And Arrive to Find Him"
+    - narrate format:game_message "<italic>  In a Cavern Lush"
+    - narrate format:game_message "<italic>  The Guardian of Scornful Gush"
+    - wait 15s
+
+rosage_task_14:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "He is my mentor in magery, as well as one of the Four Arch Mages in this area of Deluvia."
+    - wait 3s
+    - narrate "He lives in his castle, Raxelcroft, perched in the mountains north of here, but I wouldn't visit him yet until you receive an invitation. He is quite secretive."
+
+
+warning_book:
+    type: book
+    title: A Warning
+    author: unknow
+    signed: true
+    debug: true
+    text:
+    - "West of the City of Wood<&nl>Rests a pond that could<&nl>a mortal dive and swim<&nl>and arrive to find him in a cavern lush<&nl>the Guardian of scornful gush"
+
+
+
+

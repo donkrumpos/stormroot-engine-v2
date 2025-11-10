@@ -1,0 +1,89 @@
+amphithere:
+    type: entity
+    entity_type: phantom
+    # mechanisms:
+        
+    flags:
+        custom_beast: true
+        karma: -300
+        fame: 600
+        biome: 
+            - forest
+            - river
+            - plains
+        rarity: 10000
+        aggression: 5
+        level: 2
+        strength: 10
+        dexterity: 5
+        intelligence: 10
+        health: 80
+        # speed: 0.3
+        # light_level: 8
+        no_combusts: true
+        no_explode: true
+        eligible_block_spawn: 
+            - air
+            # - grass_block
+        custom_model_data: 1656573
+        # script: ghoul_task
+        drops:
+            amphithere_feather:
+                quantity: 4
+                chance: .9
+            amphithere_skull:
+                quantity: 1
+                chance: .1
+        coin_drop:
+            copper: 
+                quantity: 2
+                chance: .5
+        xp: 32
+
+amphithere_world:
+    type: world
+    events:
+        on player enters amphithere_area:
+        - if <context.entity.location.find_entities[amphithere].within[100].size> == 0 && <util.random.int[1].to[<context.entity.flag[amphithere_spawns]||1>]> == 1:
+            - run spawn_mob_task def:amphithere|amphithere_spawnpoint|<context.entity>
+            - flag <context.entity> amphithere_spawns:++
+        on amphithere combusts:
+        - determine cancelled
+        on amphithere exits amphithere_area:
+        - look <context.entity> amphithere_spawnpoint
+        # - adjust <context.entity> move:amphithere_spawnpoint
+        # - announce <context.entity.location.points_between[amphithere_spawnpoint].get[17]>
+        - push <context.entity> origin:<context.entity.location> destination:amphithere_spawnpoint speed:0.3 ignore_collision no_damage
+        - attack <context.entity> target:<context.entity.location.find_players_within[32].random>
+        # - announce "<context.entity> attacks <context.entity.location.find_players_within[32].random>"
+        - determine passively cancelled
+        on player enters amphithere_area_inner:
+        - define amphithere <context.entity.location.find_entities[amphithere].within[100].first>
+        - wait <util.random.int[1].to[5]>s
+        - if <util.random.int[1].to[4]> == 4:
+            - push <[amphithere]> origin:<[amphithere].location> destination:<context.entity.location> duration:1s
+
+        - wait 5t
+        - attack <[amphithere]> target:<context.entity>
+        on player damages amphithere:
+        - if <player.has_flag[zodiakis_feather]> && <util.random.int[1].to[<player.flag[zodiakis_feather]>]> == 1:
+            - drop amphithere_feather <context.entity.location>
+            - flag <player> zodiakis_feather:++
+        - if <proc[natural_skill_check_proc].context[<context.damager>|beast_lore]> && <util.random.int[1].to[3]> == 3:
+            - drop amphithere_feather <context.entity.location>
+        on amphithere damages player:
+        - if <util.random.int[1].to[2]> == 2:
+            - hurt 7 <context.entity>
+            - repeat <util.random.int[25].to[55]>:
+                - define wrestling <proc[natural_skill_check_proc].context[<context.entity>|wrestling]>
+                - if <[wrestling]> && <util.random.int[1].to[2]> == 2::
+                    - stop
+                - if <util.random.int[1].to[22]> == 11:
+                    - run raise_natural_skill_task def:<context.entity>|wrestling|0|0
+                - teleport <context.entity> <context.damager.location>
+                - wait 1t
+            - determine passively cancelled
+        on amphithere targets player:
+        - announce "<red> <context.reason>"
+        on player dies by:amphithere:
+        - determine "<red> Amphithere's coil claims <context.entity.name>, breath surrenders."

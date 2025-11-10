@@ -1,0 +1,12 @@
+flowertask:
+  type: task
+  script:
+  - flag player poppy:<player.location.find_blocks[poppy].within[10]>
+  - define test <player.location.find_blocks[poppy].within[10]>
+  - define test2 <player.location.find_blocks[dandelion].within[10]>
+  - foreach <[test]> as:number:
+      - foreach <[number].find.living_entities.within[5]> as:target:
+          - run damage_task def:<[target]>|<player>|water|<player.flag[wisdom].mul[2]> 
+  - foreach <[test2]> as:number2:
+      - foreach <[number2].find.living_entities.within[5]> as:target2:
+          - run damage_task def:<[target2]>|<player>|water|<player.flag[wisdom].mul[2]>

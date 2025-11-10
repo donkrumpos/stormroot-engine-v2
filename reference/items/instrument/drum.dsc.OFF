@@ -1,0 +1,16 @@
+drum:
+  type: item
+  material: player_head
+  display name: Drum
+  flags:
+    slot_type: hand
+  mechanisms:
+    skull_skin: d3d5278e-109a-4280-914a-a7abd3666e8a|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjk0OTc5MTkxNjFjZjcxMzE1ZTg1MmYzNTdjNmVmY2JjOWJlNmNjMzhjOWFjNThlMzY3ODRhZTAzNWQyIn19fQ==
+  lore:
+    - "You might be able to make wonderous sounds with this."
+
+
+
+
+
+

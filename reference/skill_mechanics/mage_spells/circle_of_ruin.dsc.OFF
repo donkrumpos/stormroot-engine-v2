@@ -1,0 +1,36 @@
+circletask:
+  type: task
+  script:
+  - create ARMOR_STAND <player.location.relative[0,-2,-2].with_y[<player.location.y.sub[2]>]> "<red>♈" save:circle1
+  - create ARMOR_STAND <player.location.relative[2,-2,2].with_y[<player.location.y.sub[2]>]> "<red>♉" save:circle2
+  - create ARMOR_STAND <player.location.relative[2,-2,-2].with_y[<player.location.y.sub[2]>]> "<red>♊" save:circle3
+  - create ARMOR_STAND <player.location.relative[0,-2,2].with_y[<player.location.y.sub[2]>]> "<red>♋" save:circle4
+  - create ARMOR_STAND <player.location.relative[-2,-2,0].with_y[<player.location.y.sub[2]>]> "<red>♌" save:circle5
+  - create ARMOR_STAND <player.location.relative[2,-2,0].with_y[<player.location.y.sub[2]>]> "<red>♍" save:circle6
+  - create ARMOR_STAND <player.location.relative[-2,-2,-2].with_y[<player.location.y.sub[2]>]> "<red>♎" save:circle7
+  - create ARMOR_STAND <player.location.relative[-2,-2,2].with_y[<player.location.y.sub[2]>]> "<red>♏" save:circle8
+  - adjust <entry[circle1].created_npc> gravity:false
+  - invisible <entry[circle1].created_npc> true
+  - adjust <entry[circle2].created_npc> gravity:false
+  - invisible <entry[circle2].created_npc> true
+  - adjust <entry[circle3].created_npc> gravity:false
+  - invisible <entry[circle3].created_npc> true
+  - adjust <entry[circle4].created_npc> gravity:false
+  - invisible <entry[circle4].created_npc> true
+  - adjust <entry[circle5].created_npc> gravity:false
+  - invisible <entry[circle5].created_npc> true
+  - adjust <entry[circle6].created_npc> gravity:false
+  - invisible <entry[circle6].created_npc> true
+  - adjust <entry[circle7].created_npc> gravity:false
+  - invisible <entry[circle7].created_npc> true
+  - adjust <entry[circle8].created_npc> gravity:false
+  - invisible <entry[circle8].created_npc> true
+  - wait 10s
+  - remove <entry[circle1].created_npc>
+  - remove <entry[circle2].created_npc>
+  - remove <entry[circle3].created_npc>
+  - remove <entry[circle4].created_npc>
+  - remove <entry[circle5].created_npc>
+  - remove <entry[circle6].created_npc>
+  - remove <entry[circle7].created_npc>
+  - remove <entry[circle8].created_npc>

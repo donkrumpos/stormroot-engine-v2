@@ -1,0 +1,63 @@
+potion_of_life:
+  type: item
+  material: potion
+  display name: Potion of Life
+  mechanisms:
+    potion_effects: INSTANT_HEAL,false,false,RED
+    hides: all
+  lore:
+  - <&9><green>>Restores life to the living.
+
+splash_potion_of_life:
+  type: item
+  material: splash_potion
+  display name: Splash Potion of Life
+  mechanisms:
+    potion_effects: INSTANT_HEAL,false,false,RED
+    hides: all
+  lore:
+  - "<red>Restores life to the living."
+  flags:
+    damage_types:
+      - nature
+
+lingering_potion_of_life:
+  type: item
+  material: lingering_potion
+  display name: Lingering Potion of Life
+  mechanisms:
+    potion_effects: INSTANT_HEAL,false,false,RED
+    hides: all
+  lore:
+  - "<red>Restores life to the living."
+  flags:
+    damage_types:
+      - nature
+   
+
+potion_world:
+  type: world
+  events:
+    on lingering lingering_potion_of_life splashes:
+    - repeat <context.duration.in_seconds>:
+      - foreach <context.location.find_entities.within[<context.radius>]> as:entity:
+        - if <[entity].has_flag[undead]>:
+          - hurt <[loop_index].max[1]> <[entity]>
+      - wait 1s
+
+    on splash_potion_of_life splashes:
+    - foreach <context.intensity> as:entity:
+      - if <[entity].get[entity].has_flag[undead]>:
+        - hurt <[entity].get[intensity].mul[10].round_up> <[entity].get[entity]>
+    # - foreach <context.entities.filter[has_flag[undead]]> as:undead:
+    #   - hurt 10 <[undead]>
+
+essence_of_the_undead:
+  type: item
+  material: potion[color=<&color[#003b04]>]
+  display name: "<&6>Essence of the Undead"
+  flags:
+    damage_type:
+      - death
+  lore:
+  - "A component of the most dark deeds"

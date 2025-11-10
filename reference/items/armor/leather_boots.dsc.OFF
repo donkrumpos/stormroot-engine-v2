@@ -1,0 +1,44 @@
+leather_sabaton:
+  type: item
+  debug: false
+  material: leather_boots
+  display name: Leather Boots
+  # lore:
+  # - Let us get crackin
+  # - <&color[#24daff]>Defense Chance Increase 15%
+  # - <&color[#24daff]>Stamina Loss Reduction 10%
+  # - <&color[#24daff]>Resist Cold Damage 100%
+  # mechanisms:
+    # color: <red>
+  #   custom_model_data: 74450001
+  flags:
+    defense: 4
+    stat:
+      bonus:
+        hit_point_increase: 0
+        hit_point_regeneration: 0
+        mana_regeneration: 0
+        defense_chance_increase: 0
+        stamina_loss_reduction: 0
+        stamina_increase: 0
+        dexterity_increase: 0
+        strength_increase: 0
+        intelligence_increase: 0
+        stamina_regeneration: 0
+        lower_mana_cost: 0
+        luck: 0
+        medable: true
+        defense_types:
+          fire_resist: 0
+          cold_resist: 0
+          poison_resist: 0
+          energy_resist: 0
+    defense_modifier: Defense
+    current_durability: 155
+    maximum_durability: 155
+    material_quantity: 2
+    crafting_difficulty: 15
+    required_strength: 7
+    item_type: armor
+    slot_type: legs
+    

@@ -1,0 +1,15 @@
+feeblemind_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    - if <[attacker].has_flag[skill.spells.feeblemind.level].not>:
+        - flag <[attacker]> skill.spells.feeblemind.level:1
+    - define level <[attacker].flag[skill.spells.feeblemind.level]>
+    - flag <[defender]> current_intelligence:-:<[level]>
+    - flag <[defender]> mana:-:<[level]>
+    - flag <[defender]> max_mana:-:<[level]>
+    - narrate "<red>Your mind is under attack from another's spell." targets:<[defender]>
+    - repeat <[level]>:
+        - wait 3s
+    - flag <[defender]> current_intelligence:+:<[level]>
+    - flag <[defender]> max_mana:+:<[level]>

@@ -1,0 +1,6805 @@
+# server_types:
+#   name: all-materials
+#   type: command
+#   script:
+  # - narrate <server.material_types.size>
+  # - ~yaml load:/items/vanilla_items.yml id:vanilla_items
+  # - foreach <server.material_types> as:type:
+    # display_name <&sq><[type].replace_text[_].with[<&sp>].after[m@].before[[]><&sq>
+    # - narrate <[key]>
+    # - yaml id:vanilla_items set item.<[type].after[m@].before[[]>.material:|:<[type]>
+    # - yaml id:vanilla_items set item.<[type].after[m@].before[[]>.rarity:|:3
+    # - yaml id:vanilla_items set item.<[type].after[m@].before[[]>.drop-type:|:mob|dungeon_chest|overworld_chest
+    # - if <[loop_index]> >= 1076:
+  # - ~yaml savefile:/items/vanilla_items.yml id:vanilla_items
+      # - stop\
+
+
+vanilla_armor_data:
+    type: data
+    armor:
+      leather_helmet:
+        armor_bonus: 2
+      leather_chestplate:
+        armor_bonus: 3
+      leather_leggings:
+        armor_bonus: 2
+      leather_boots:
+        armor_bonus: 1
+      chainmail_helmet:
+        armor_bonus: 2
+      chainmail_chestplate:
+        armor_bonus: 5
+      chainmail_leggings:
+        armor_bonus: 4
+      chainmail_boots:
+        armor_bonus: 1
+      iron_helmet:
+        armor_bonus: 2
+      iron_chestplate:
+        armor_bonus: 6
+      iron_leggings:
+        armor_bonus: 5
+      iron_boots:
+        armor_bonus: 2
+      golden_helmet:
+        armor_bonus: 2
+      golden_chestplate:
+        armor_bonus: 5
+      golden_leggins:
+        armor_bonus: 3
+      golden_boots:
+        armor_bonus: 1
+      diamond_helmet:
+        armor_bonus: 3
+      diamond_leggings:
+        armor_bonus: 6
+      diamond_chestplate:
+        armor_bonus: 8
+      diamond_boots:
+        armor_bonus: 3
+      netherite_helmet:
+        armor_bonus: 3
+      netherite_chestplate:
+        armor_bonus: 8
+      netherite_leggings:
+        armor_bonus: 6
+      netherite_boots:
+        armor_bonus: 3
+
+vanilla_items:
+    type:  data
+    debug: true
+    item:
+      gilded_blackstone:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 35
+nether_brick_slab:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+andesite_slab:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 5
+egg:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 20
+music_disc_stal:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 90
+potted_warped_fungus:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 30
+birch_stairs:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 8
+spruce_sign:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 15
+dragon_head:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 95
+green_dye:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 12
+honey_block:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 40
+diamond_ore:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 85
+spruce_fence_gate:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 15
+black_stained_glass_pane:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 15
+azure_bluet:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 5
+slime_ball:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 25
+rabbit:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 25
+prismarine_brick_slab:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 35
+dragon_egg:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 100
+parrot_spawn_egg:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 60
+skeleton_wall_skull:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 70
+warped_pressure_plate:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 20
+light_gray_stained_glass_pane:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 15
+scaffolding:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 15
+mule_spawn_egg:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 60
+suspicious_stew:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 30
+potted_red_mushroom:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 30
+magenta_stained_glass_pane:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 15
+large_fern:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 5
+light_blue_concrete:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 20
+cocoa:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 25
+lapis_ore:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 40
+light_blue_bed:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 15
+birch_pressure_plate:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 20
+honeycomb:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 40
+gold_block:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 75
+writable_book:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 20
+acacia_log:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+tropical_fish_spawn_egg:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 45
+
+zombie_spawn_egg:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 90
+tripwire:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 40
+white_dye:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+potted_crimson_fungus:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 20
+redstone:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+bone_block:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 40
+dead_tube_coral_fan:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 70
+turtle_spawn_egg:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 95
+milk_bucket:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 15
+birch_fence:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+cyan_terracotta:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 30
+prismarine_stairs:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 50
+warped_wall_sign:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 50
+attached_pumpkin_stem:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 70
+iron_boots:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 30
+brown_concrete_powder:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 20
+end_stone:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 50
+glistering_melon_slice:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 20
+nether_sprouts:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 45
+green_concrete:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 20
+acacia_door:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+golden_axe:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 60
+white_stained_glass_pane:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+cobblestone_wall:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+white_glazed_terracotta:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 30
+tube_coral_wall_fan:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 70
+potted_dandelion:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+end_stone_brick_wall:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 50
+cooked_rabbit:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+red_mushroom_block:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 40
+red_sand:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 30
+snow:
+  drop_type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+
+      magenta_carpet:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+powered_rail:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 60
+granite_stairs:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 15
+leather_helmet:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 25
+emerald_ore:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 80
+stripped_spruce_log:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 15
+cut_red_sandstone:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 15
+crimson_fence:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 30
+blue_carpet:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+iron_hoe:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 45
+chicken:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 20
+crimson_stem:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 30
+dead_horn_coral_block:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 35
+cyan_banner:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 30
+warped_door:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 30
+potted_lily_of_the_valley:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 35
+brewing_stand:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 60
+stone_bricks:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 5
+stripped_oak_wood:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 15
+oak_pressure_plate:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 15
+bubble_coral_fan:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 35
+cyan_glazed_terracotta:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 30
+basalt:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+jungle_door:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 25
+oak_wall_sign:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+brown_carpet:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 10
+fishing_rod:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 30
+horse_spawn_egg:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 70
+gray_concrete_powder:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 20
+quartz:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 20
+horn_coral_wall_fan:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  rarity: 35
+
+      beetroot:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+dead_fire_coral:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+music_disc_mall:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+ladder:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 14
+lodestone:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+ravager_spawn_egg:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+pink_wall_banner:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+netherite_hoe:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+infested_stone_bricks:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+end_stone_brick_slab:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 1
+leather_boots:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: armor
+  rarity: 256
+water_bucket:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 769
+light_blue_dye:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 8
+warped_stairs:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 4
+dead_bubble_coral:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+chainmail_helmet:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: armor
+  rarity: 50
+oak_slab:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 1
+spruce_door:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+zombie_head:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+dead_tube_coral:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+chorus_fruit:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+horn_coral:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+prismarine_crystals:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+white_concrete_powder:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+granite_slab:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 1
+sandstone_slab:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 4
+red_wall_banner:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+cake:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 384
+gray_wall_banner:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+acacia_leaves:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 1
+yellow_shulker_box:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+brown_wall_banner:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+brown_banner:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+gunpowder:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 192
+pufferfish_bucket:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 64
+dead_bubble_coral_wall_fan:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+nether_brick:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+pink_stained_glass_pane:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+bamboo:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+red_sand:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+purple_shulker_box:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+clay:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 64
+spruce_fence:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+phantom_spawn_egg:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+lava_bucket:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 128
+torch:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 192
+cyan_stained_glass:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+red_nether_bricks:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+blue_shulker_box:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+
+      diamond_leggings:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 57344
+lectern:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+diamond_helmet:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: "armor"
+  rarity: 40960
+warped_slab:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 1
+quartz_block:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+diamond_chestplate:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 65536
+mossy_cobblestone_slab:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 128
+wooden_hoe:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+music_disc_blocks:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+white_wool:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 48
+end_stone_brick_stairs:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 1
+void_air:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+chainmail_chestplate:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+iron_leggings:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 1792
+light_gray_wall_banner:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+purple_stained_glass:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+purple_terracotta:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+green_bed:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 144
+red_concrete_powder:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+repeater:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+mycelium:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 1
+chiseled_sandstone:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 4
+lingering_potion:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+stripped_birch_log:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+hay_block:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+light_blue_concrete_powder:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+pink_dye:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 8
+orange_carpet:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+bamboo_sapling:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 32
+magenta_concrete_powder:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+andesite_wall:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+yellow_concrete:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+warped_fungus_on_a_stick:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+cobblestone:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+
+sweet_berry_bush:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+gray_banner:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+string:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 12
+white_terracotta:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+book:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 96
+wooden_shovel:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+blackstone_slab:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+lava:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+jungle_trapdoor:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 24
+black_carpet:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+fire_coral:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+magenta_glazed_terracotta:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+gray_bed:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 144
+trident:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+wet_sponge:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+yellow_wool:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 48
+chicken_spawn_egg:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+dried_kelp_block:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+bone:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 96
+yellow_terracotta:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+target:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+magma_block:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+cauldron:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+pink_concrete_powder:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+dragon_wall_head:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+wither_skeleton_spawn_egg:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+crossbow:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+soul_sand:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 49
+horn_coral_block:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+diamond_shovel:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 8200
+piston_head:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+prismarine_brick_stairs:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+experience_bottle:
+  drop-type:
+    - mob
+    - dungeon_chest
+    - overworld_chest
+  category: ""
+  rarity: 50
+
+
+      golden_horse_armor:
+        material: m@golden_horse_armor
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      orange_tulip:
+        material: m@orange_tulip
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      bee_nest:
+        material: m@bee_nest[direction=NORTH;level=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      smooth_red_sandstone_slab:
+        material: m@smooth_red_sandstone_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      cut_sandstone_slab:
+        material: m@cut_sandstone_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      potted_birch_sapling:
+        material: m@potted_birch_sapling
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      grass_block:
+        material: m@grass_block[snowy=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      music_disc_pigstep:
+        material: m@music_disc_pigstep
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      end_gateway:
+        material: m@end_gateway
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      black_bed:
+        material: m@black_bed[direction=NORTH;half=FOOT]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 144
+      minecart:
+        material: m@minecart
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1280
+      dead_horn_coral_fan:
+        material: m@dead_horn_coral_fan[waterlogged=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      spectral_arrow:
+        material: m@spectral_arrow
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      jungle_stairs:
+        material: m@jungle_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 12
+      netherite_shovel:
+        material: m@netherite_shovel
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      piglin_spawn_egg:
+        material: m@piglin_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      oxeye_daisy:
+        material: m@oxeye_daisy
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category: flower
+        rarity: 50
+      smooth_sandstone_stairs:
+        material: m@smooth_sandstone_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      leather_chestplate:
+        material: m@leather_chestplate
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category: armor
+        rarity: 512
+      blue_wool:
+        material: m@blue_wool
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 48
+      popped_chorus_fruit:
+        material: m@popped_chorus_fruit
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      creeper_banner_pattern:
+        material: m@creeper_banner_pattern
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      redstone_wire:
+        material: m@redstone_wire
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      polar_bear_spawn_egg:
+        material: m@polar_bear_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      stripped_dark_oak_log:
+        material: m@stripped_dark_oak_log[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      attached_melon_stem:
+        material: m@attached_melon_stem[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      red_bed:
+        material: m@red_bed[direction=NORTH;half=FOOT]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 144
+      lava_bucket:
+        material: m@lava_bucket
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 832
+      yellow_banner:
+        material: m@yellow_banner[direction=SOUTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      barrel:
+        material: m@barrel[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      chain:
+        material: m@chain[waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dead_brain_coral_fan:
+        material: m@dead_brain_coral_fan[waterlogged=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      rotten_flesh:
+        material: m@rotten_flesh
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 24
+      slime_block:
+        material: m@slime_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      pumpkin_stem:
+        material: m@pumpkin_stem[age=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      emerald_block:
+        material: m@emerald_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      purple_banner:
+        material: m@purple_banner[direction=SOUTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      oak_fence:
+        material: m@oak_fence[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 12
+      chainmail_leggings:
+        material: m@chainmail_leggings
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      tnt_minecart:
+        material: m@tnt_minecart
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      acacia_planks:
+        material: m@acacia_planks
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      iron_ore:
+        material: m@iron_ore
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      blaze_powder:
+        material: m@blaze_powder
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 768
+      quartz_pillar:
+        material: m@quartz_pillar[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dead_bubble_coral_block:
+        material: m@dead_bubble_coral_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      purple_concrete_powder:
+        material: m@purple_concrete_powder
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      polished_diorite_slab:
+        material: m@polished_diorite_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      smooth_stone_slab:
+        material: m@smooth_stone_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      golden_sword:
+        material: m@golden_sword
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category: weapon
+        rarity: 6144
+      prismarine:
+        material: m@prismarine
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      crimson_trapdoor:
+        material: m@crimson_trapdoor[direction=NORTH;half=BOTTOM;switched=false;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 24
+      filled_map:
+        material: m@filled_map
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      lime_concrete:
+        material: m@lime_concrete
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      mossy_cobblestone_stairs:
+        material: m@mossy_cobblestone_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 145
+      potted_blue_orchid:
+        material: m@potted_blue_orchid
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      iron_block:
+        material: m@iron_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 2304
+      birch_sign:
+        material: m@birch_sign[direction=SOUTH;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      weeping_vines_plant:
+        material: m@weeping_vines_plant
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      porkchop:
+        material: m@porkchop
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 64
+      pink_tulip:
+        material: m@pink_tulip
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      warped_fence_gate:
+        material: m@warped_fence_gate[direction=NORTH;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      blue_ice:
+        material: m@blue_ice
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      wolf_spawn_egg:
+        material: m@wolf_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      stripped_warped_stem:
+        material: m@stripped_warped_stem[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      crying_obsidian:
+        material: m@crying_obsidian
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      brown_terracotta:
+        material: m@brown_terracotta
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      vine:
+        material: m@vine[faces=li@]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dark_oak_fence:
+        material: m@dark_oak_fence[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 12
+      quartz_stairs:
+        material: m@quartz_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      rail:
+        material: m@rail[direction=NORTH_SOUTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 96
+      white_banner:
+        material: m@white_banner[direction=SOUTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      blue_stained_glass:
+        material: m@blue_stained_glass
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      potted_wither_rose:
+        material: m@potted_wither_rose
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      green_terracotta:
+        material: m@green_terracotta
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      iron_horse_armor:
+        material: m@iron_horse_armor
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      red_carpet:
+        material: m@red_carpet
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      water:
+        material: m@water[level=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      white_concrete:
+        material: m@white_concrete
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      flower_banner_pattern:
+        material: m@flower_banner_pattern
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      oak_wood:
+        material: m@oak_wood[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      lime_concrete_powder:
+        material: m@lime_concrete_powder
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      red_shulker_box:
+        material: m@red_shulker_box[direction=UP]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      light_blue_terracotta:
+        material: m@light_blue_terracotta
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      blue_dye:
+        material: m@blue_dye
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      sugar:
+        material: m@sugar
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      cat_spawn_egg:
+        material: m@cat_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      music_disc_far:
+        material: m@music_disc_far
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      brown_glazed_terracotta:
+        material: m@brown_glazed_terracotta[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cod_bucket:
+        material: m@cod_bucket
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      crimson_planks:
+        material: m@crimson_planks
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      ink_sac:
+        material: m@ink_sac
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      note_block:
+        material: m@note_block[instrument=PIANO;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 128
+      bowl:
+        material: m@bowl
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cracked_stone_bricks:
+        material: m@cracked_stone_bricks
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      skeleton_skull:
+        material: m@skeleton_skull[direction=SOUTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      purpur_stairs:
+        material: m@purpur_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      orange_dye:
+        material: m@orange_dye
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      yellow_bed:
+        material: m@yellow_bed[direction=NORTH;half=FOOT]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 144
+      jungle_sign:
+        material: m@jungle_sign[direction=SOUTH;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      green_glazed_terracotta:
+        material: m@green_glazed_terracotta[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      scute:
+        material: m@scute
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      golden_chestplate:
+        material: m@golden_chestplate
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 16384
+      netherite_leggings:
+        material: m@netherite_leggings
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      golden_shovel:
+        material: m@golden_shovel
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4096
+      spruce_stairs:
+        material: m@spruce_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 12
+      birch_planks:
+        material: m@birch_planks
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      gray_wool:
+        material: m@gray_wool
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 48
+      silverfish_spawn_egg:
+        material: m@silverfish_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 64
+      white_stained_glass:
+        material: m@white_stained_glass
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      green_stained_glass_pane:
+        material: m@green_stained_glass_pane[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      ancient_debris:
+        material: m@ancient_debris
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cave_air:
+        material: m@cave_air
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      diamond:
+        material: m@diamond
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8192
+      black_concrete_powder:
+        material: m@black_concrete_powder
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      rabbit_spawn_egg:
+        material: m@rabbit_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      lime_carpet:
+        material: m@lime_carpet
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      blue_concrete_powder:
+        material: m@blue_concrete_powder
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      purpur_slab:
+        material: m@purpur_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      redstone_wall_torch:
+        material: m@redstone_wall_torch[direction=NORTH;lit=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 9
+      hopper:
+        material: m@hopper[direction=DOWN]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      strider_spawn_egg:
+        material: m@strider_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dragon_breath:
+        material: m@dragon_breath
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      potted_acacia_sapling:
+        material: m@potted_acacia_sapling
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      polished_diorite:
+        material: m@polished_diorite
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      lime_terracotta:
+        material: m@lime_terracotta
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      beef:
+        material: m@beef
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 64
+      baked_potato:
+        material: m@baked_potato
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      mossy_cobblestone:
+        material: m@mossy_cobblestone
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 145
+      brick_wall:
+        material: m@brick_wall[waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      brain_coral_block:
+        material: m@brain_coral_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      birch_fence_gate:
+        material: m@birch_fence_gate[direction=NORTH;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      music_disc_chirp:
+        material: m@music_disc_chirp
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      netherite_sword:
+        material: m@netherite_sword
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category: weapon
+        rarity: 50
+      yellow_stained_glass_pane:
+        material: m@yellow_stained_glass_pane[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dark_oak_planks:
+        material: m@dark_oak_planks
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      phantom_membrane:
+        material: m@phantom_membrane
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      wooden_sword:
+        material: m@wooden_sword
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category: weapon
+        rarity: 32
+      allium:
+        material: m@allium
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      jungle_leaves:
+        material: m@jungle_leaves[persistent=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      chorus_plant:
+        material: m@chorus_plant[faces=li@]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      bucket:
+        material: m@bucket
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 768
+      warped_button:
+        material: m@warped_button[direction=NORTH;switched=false;switch_face=WALL]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      oak_trapdoor:
+        material: m@oak_trapdoor[direction=NORTH;half=BOTTOM;switched=false;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 24
+      black_stained_glass:
+        material: m@black_stained_glass
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      golden_helmet:
+        material: m@golden_helmet
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category: armor
+        rarity: 50
+      dark_oak_pressure_plate:
+        material: m@dark_oak_pressure_plate[switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 16
+      cut_red_sandstone_slab:
+        material: m@cut_red_sandstone_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      lime_bed:
+        material: m@lime_bed[direction=NORTH;half=FOOT]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 144
+      blast_furnace:
+        material: m@blast_furnace[direction=NORTH;lit=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      sponge:
+        material: m@sponge
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cartography_table:
+        material: m@cartography_table
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      soul_wall_torch:
+        material: m@soul_wall_torch[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      netherite_ingot:
+        material: m@netherite_ingot
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      light_gray_dye:
+        material: m@light_gray_dye
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      potted_oxeye_daisy:
+        material: m@potted_oxeye_daisy
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      daylight_detector:
+        material: m@daylight_detector[switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      slime_spawn_egg:
+        material: m@slime_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      beetroot_soup:
+        material: m@beetroot_soup
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      light_gray_carpet:
+        material: m@light_gray_carpet
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      music_disc_ward:
+        material: m@music_disc_ward
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      grass:
+        material: m@grass
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      end_crystal:
+        material: m@end_crystal
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      vindicator_spawn_egg:
+        material: m@vindicator_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      wheat:
+        material: m@wheat[age=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 24
+      end_rod:
+        material: m@end_rod[direction=UP]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      phantom_spawn_egg:
+        material: m@phantom_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      stone_pickaxe:
+        material: m@stone_pickaxe
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      iron_helmet:
+        material: m@iron_helmet
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1280
+      guardian_spawn_egg:
+        material: m@guardian_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      black_wall_banner:
+        material: m@black_wall_banner[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      pink_stained_glass:
+        material: m@pink_stained_glass
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      piston:
+        material: m@piston[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 348
+      dead_fire_coral_block:
+        material: m@dead_fire_coral_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      melon_slice:
+        material: m@melon_slice
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      ender_chest:
+        material: m@ender_chest[direction=NORTH;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      kelp:
+        material: m@kelp[age=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      light_gray_wool:
+        material: m@light_gray_wool
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 48
+      moving_piston:
+        material: m@moving_piston[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      sunflower:
+        material: m@sunflower[half=BOTTOM]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 16
+      brown_bed:
+        material: m@brown_bed[direction=NORTH;half=FOOT]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 144
+      heart_of_the_sea:
+        material: m@heart_of_the_sea
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      polished_blackstone_bricks:
+        material: m@polished_blackstone_bricks
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      jack_o_lantern:
+        material: m@jack_o_lantern[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 144
+      grass_path:
+        material: m@grass_path
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      polished_granite:
+        material: m@polished_granite
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      smooth_red_sandstone:
+        material: m@smooth_red_sandstone
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      dead_bubble_coral_fan:
+        material: m@dead_bubble_coral_fan[waterlogged=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      furnace:
+        material: m@furnace[direction=NORTH;lit=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      red_stained_glass:
+        material: m@red_stained_glass
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      stone_slab:
+        material: m@stone_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      dandelion:
+        material: m@dandelion
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      pink_bed:
+        material: m@pink_bed[direction=NORTH;half=FOOT]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 144
+      zombified_piglin_spawn_egg:
+        material: m@zombified_piglin_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      rose_bush:
+        material: m@rose_bush[half=BOTTOM]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 16
+      blaze_rod:
+        material: m@blaze_rod
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1536
+      iron_trapdoor:
+        material: m@iron_trapdoor[direction=NORTH;half=BOTTOM;switched=false;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 24
+      drowned_spawn_egg:
+        material: m@drowned_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      stone_pressure_plate:
+        material: m@stone_pressure_plate[switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 2
+      iron_bars:
+        material: m@iron_bars[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 96
+      smooth_red_sandstone_stairs:
+        material: m@smooth_red_sandstone_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      quartz_bricks:
+        material: m@quartz_bricks
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      wheat_seeds:
+        material: m@wheat_seeds
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 16
+      brown_concrete:
+        material: m@brown_concrete
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cyan_concrete:
+        material: m@cyan_concrete
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      stone_shovel:
+        material: m@stone_shovel
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      stripped_birch_wood:
+        material: m@stripped_birch_wood[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      bubble_coral_block:
+        material: m@bubble_coral_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      zombie_horse_spawn_egg:
+        material: m@zombie_horse_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      green_banner:
+        material: m@green_banner[direction=SOUTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      light_gray_banner:
+        material: m@light_gray_banner[direction=SOUTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      frosted_ice:
+        material: m@frosted_ice[age=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      diamond_sword:
+        material: m@diamond_sword
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category: weapon
+        rarity: 16388
+      rabbit_foot:
+        material: m@rabbit_foot
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      yellow_wall_banner:
+        material: m@yellow_wall_banner[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cyan_wall_banner:
+        material: m@cyan_wall_banner[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      bat_spawn_egg:
+        material: m@bat_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      diamond_horse_armor:
+        material: m@diamond_horse_armor
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      netherite_block:
+        material: m@netherite_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      glowstone_dust:
+        material: m@glowstone_dust
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 384
+      crimson_fence_gate:
+        material: m@crimson_fence_gate[direction=NORTH;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      white_carpet:
+        material: m@white_carpet
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      fletching_table:
+        material: m@fletching_table
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      red_concrete:
+        material: m@red_concrete
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cocoa_beans:
+        material: m@cocoa_beans
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cracked_polished_blackstone_bricks:
+        material: m@cracked_polished_blackstone_bricks
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      purple_glazed_terracotta:
+        material: m@purple_glazed_terracotta[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      acacia_slab:
+        material: m@acacia_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      wither_skeleton_skull:
+        material: m@wither_skeleton_skull[direction=SOUTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      fire_coral_fan:
+        material: m@fire_coral_fan[waterlogged=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      husk_spawn_egg:
+        material: m@husk_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      zombie_villager_spawn_egg:
+        material: m@zombie_villager_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dispenser:
+        material: m@dispenser[direction=NORTH;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 119
+      bubble_coral:
+        material: m@bubble_coral[waterlogged=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      stripped_crimson_stem:
+        material: m@stripped_crimson_stem[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      lime_wool:
+        material: m@lime_wool
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 48
+      redstone_lamp:
+        material: m@redstone_lamp[lit=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      diamond_axe:
+        material: m@diamond_axe
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 24584
+      soul_lantern:
+        material: m@soul_lantern
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      orange_wool:
+        material: m@orange_wool
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 48
+      turtle_helmet:
+        material: m@turtle_helmet
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      jungle_wood:
+        material: m@jungle_wood[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      heavy_weighted_pressure_plate:
+        material: m@heavy_weighted_pressure_plate
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      potion:
+        material: m@potion
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      gold_nugget:
+        material: m@gold_nugget
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 228
+      red_sandstone_wall:
+        material: m@red_sandstone_wall[waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      crimson_door:
+        material: m@crimson_door[direction=NORTH;half=BOTTOM;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      warped_stem:
+        material: m@warped_stem[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      acacia_trapdoor:
+        material: m@acacia_trapdoor[direction=NORTH;half=BOTTOM;switched=false;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 24
+      polished_blackstone_pressure_plate:
+        material: m@polished_blackstone_pressure_plate[switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      mossy_cobblestone_wall:
+        material: m@mossy_cobblestone_wall[waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 145
+      chipped_anvil:
+        material: m@chipped_anvil[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      acacia_wall_sign:
+        material: m@acacia_wall_sign[direction=NORTH;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      purpur_pillar:
+        material: m@purpur_pillar[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      red_stained_glass_pane:
+        material: m@red_stained_glass_pane[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      feather:
+        material: m@feather
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 48
+      trader_llama_spawn_egg:
+        material: m@trader_llama_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      honey_bottle:
+        material: m@honey_bottle
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      acacia_stairs:
+        material: m@acacia_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 12
+      dropper:
+        material: m@dropper[direction=NORTH;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      light_blue_banner:
+        material: m@light_blue_banner[direction=SOUTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      potted_allium:
+        material: m@potted_allium
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      purple_bed:
+        material: m@purple_bed[direction=NORTH;half=FOOT]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 144
+      light_blue_wool:
+        material: m@light_blue_wool
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 48
+      polished_blackstone_stairs:
+        material: m@polished_blackstone_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      light_blue_stained_glass:
+        material: m@light_blue_stained_glass
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      wither_skeleton_wall_skull:
+        material: m@wither_skeleton_wall_skull[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      acacia_sapling:
+        material: m@acacia_sapling[age=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      firework_rocket:
+        material: m@firework_rocket
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      orange_glazed_terracotta:
+        material: m@orange_glazed_terracotta[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      blackstone_stairs:
+        material: m@blackstone_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      chiseled_polished_blackstone:
+        material: m@chiseled_polished_blackstone
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      black_glazed_terracotta:
+        material: m@black_glazed_terracotta[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      purple_concrete:
+        material: m@purple_concrete
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cookie:
+        material: m@cookie
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      bookshelf:
+        material: m@bookshelf
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 336
+      orange_stained_glass_pane:
+        material: m@orange_stained_glass_pane[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      pink_carpet:
+        material: m@pink_carpet
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      bell:
+        material: m@bell[direction=NORTH;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      warped_hyphae:
+        material: m@warped_hyphae[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      infested_mossy_stone_bricks:
+        material: m@infested_mossy_stone_bricks
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      mossy_stone_brick_stairs:
+        material: m@mossy_stone_brick_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      warped_fungus:
+        material: m@warped_fungus
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      stripped_jungle_log:
+        material: m@stripped_jungle_log[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      oak_boat:
+        material: m@oak_boat
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      nautilus_shell:
+        material: m@nautilus_shell
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dead_bush:
+        material: m@dead_bush
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      potted_oak_sapling:
+        material: m@potted_oak_sapling
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      detector_rail:
+        material: m@detector_rail[direction=NORTH_SOUTH;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 256
+      carrot_on_a_stick:
+        material: m@carrot_on_a_stick
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      shield:
+        material: m@shield
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      damaged_anvil:
+        material: m@damaged_anvil[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      anvil:
+        material: m@anvil[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      totem_of_undying:
+        material: m@totem_of_undying
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      red_dye:
+        material: m@red_dye
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      magenta_stained_glass:
+        material: m@magenta_stained_glass
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      potted_poppy:
+        material: m@potted_poppy
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      lapis_lazuli:
+        material: m@lapis_lazuli
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 864
+      music_disc_wait:
+        material: m@music_disc_wait
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      netherite_pickaxe:
+        material: m@netherite_pickaxe
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      mooshroom_spawn_egg:
+        material: m@mooshroom_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      map:
+        material: m@map
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dark_oak_sign:
+        material: m@dark_oak_sign[direction=SOUTH;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      netherite_boots:
+        material: m@netherite_boots
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      bread:
+        material: m@bread
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category: 
+          - food
+          - bakery
+        rarity: 48
+      polished_blackstone_button:
+        material: m@polished_blackstone_button[direction=NORTH;switched=false;switch_face=WALL]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 2
+      torch:
+        material: m@torch
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      lantern:
+        material: m@lantern
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      oak_button:
+        material: m@oak_button[direction=NORTH;switched=false;switch_face=WALL]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 2
+      iron_shovel:
+        material: m@iron_shovel
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 512
+      stray_spawn_egg:
+        material: m@stray_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      spawner:
+        material: m@spawner
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      black_banner:
+        material: m@black_banner[direction=SOUTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      brown_wool:
+        material: m@brown_wool
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 48
+      warped_wart_block:
+        material: m@warped_wart_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cooked_salmon:
+        material: m@cooked_salmon
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      green_carpet:
+        material: m@green_carpet
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      mossy_stone_bricks:
+        material: m@mossy_stone_bricks
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      birch_door:
+        material: m@birch_door[direction=NORTH;half=BOTTOM;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      stripped_acacia_wood:
+        material: m@stripped_acacia_wood[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      cow_spawn_egg:
+        material: m@cow_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      music_disc_13:
+        material: m@music_disc_13
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      diorite_wall:
+        material: m@diorite_wall[waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      music_disc_11:
+        material: m@music_disc_11
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      blue_concrete:
+        material: m@blue_concrete
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      wooden_axe:
+        material: m@wooden_axe
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      vex_spawn_egg:
+        material: m@vex_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      brain_coral:
+        material: m@brain_coral[waterlogged=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      shears:
+        material: m@shears
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      spruce_planks:
+        material: m@spruce_planks
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      warped_fence:
+        material: m@warped_fence[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 12
+      splash_potion:
+        material: m@splash_potion
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      light_blue_glazed_terracotta:
+        material: m@light_blue_glazed_terracotta[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      written_book:
+        material: m@written_book
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cyan_stained_glass_pane:
+        material: m@cyan_stained_glass_pane[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      ghast_tear:
+        material: m@ghast_tear
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4096
+      glass_pane:
+        material: m@glass_pane[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      sea_pickle:
+        material: m@sea_pickle[count=1;waterlogged=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      nether_quartz_ore:
+        material: m@nether_quartz_ore
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      enchanted_book:
+        material: m@enchanted_book
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      potted_crimson_roots:
+        material: m@potted_crimson_roots
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      carved_pumpkin:
+        material: m@carved_pumpkin[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      granite_wall:
+        material: m@granite_wall[waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      redstone_torch:
+        material: m@redstone_torch[lit=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 68
+      sandstone_wall:
+        material: m@sandstone_wall[waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      polished_granite_stairs:
+        material: m@polished_granite_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      dead_horn_coral:
+        material: m@dead_horn_coral[waterlogged=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dirt:
+        material: m@dirt
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      orange_concrete_powder:
+        material: m@orange_concrete_powder
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dark_oak_wood:
+        material: m@dark_oak_wood[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      lever:
+        material: m@lever[direction=NORTH;switched=false;switch_face=WALL]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 5
+      blue_bed:
+        material: m@blue_bed[direction=NORTH;half=FOOT]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 144
+      acacia_boat:
+        material: m@acacia_boat
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      acacia_pressure_plate:
+        material: m@acacia_pressure_plate[switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      andesite_stairs:
+        material: m@andesite_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      skeleton_horse_spawn_egg:
+        material: m@skeleton_horse_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dark_oak_fence_gate:
+        material: m@dark_oak_fence_gate[direction=NORTH;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      compass:
+        material: m@compass
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1088
+      polished_andesite_stairs:
+        material: m@polished_andesite_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      coal:
+        material: m@coal
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 128
+      jungle_pressure_plate:
+        material: m@jungle_pressure_plate[switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      smooth_quartz_slab:
+        material: m@smooth_quartz_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      cyan_bed:
+        material: m@cyan_bed[direction=NORTH;half=FOOT]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 144
+      stripped_acacia_log:
+        material: m@stripped_acacia_log[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      golden_pickaxe:
+        material: m@golden_pickaxe
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 10240
+      sweet_berries:
+        material: m@sweet_berries
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      bow:
+        material: m@bow
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      potted_orange_tulip:
+        material: m@potted_orange_tulip
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      crimson_roots:
+        material: m@crimson_roots
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      smooth_sandstone:
+        material: m@smooth_sandstone
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      cobblestone:
+        material: m@cobblestone
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      redstone_block:
+        material: m@redstone_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 2880
+      player_wall_head:
+        material: m@player_wall_head[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cooked_cod:
+        material: m@cooked_cod
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      bone_meal:
+        material: m@bone_meal
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 48
+      honeycomb_block:
+        material: m@honeycomb_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      brick:
+        material: m@brick
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 256
+      yellow_dye:
+        material: m@yellow_dye
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      cyan_stained_glass:
+        material: m@cyan_stained_glass
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      potted_bamboo:
+        material: m@potted_bamboo
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      bricks:
+        material: m@bricks
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 256
+      netherite_chestplate:
+        material: m@netherite_chestplate
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      orange_bed:
+        material: m@orange_bed[direction=NORTH;half=FOOT]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 144
+      petrified_oak_slab:
+        material: m@petrified_oak_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      salmon_spawn_egg:
+        material: m@salmon_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      leather_horse_armor:
+        material: m@leather_horse_armor
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      orange_banner:
+        material: m@orange_banner[direction=SOUTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      tube_coral:
+        material: m@tube_coral[waterlogged=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      pig_spawn_egg:
+        material: m@pig_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      stone_brick_slab:
+        material: m@stone_brick_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      dark_prismarine:
+        material: m@dark_prismarine
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      purple_wall_banner:
+        material: m@purple_wall_banner[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      painting:
+        material: m@painting
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 80
+      pumpkin:
+        material: m@pumpkin
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 144
+      trapped_chest:
+        material: m@trapped_chest[direction=NORTH;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      brown_shulker_box:
+        material: m@brown_shulker_box[direction=UP]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      orange_concrete:
+        material: m@orange_concrete
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      potted_pink_tulip:
+        material: m@potted_pink_tulip
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      pumpkin_seeds:
+        material: m@pumpkin_seeds
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 16
+      oak_sapling:
+        material: m@oak_sapling[age=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      brown_stained_glass_pane:
+        material: m@brown_stained_glass_pane[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      nether_brick_fence:
+        material: m@nether_brick_fence[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 12
+      white_bed:
+        material: m@white_bed[direction=NORTH;half=FOOT]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 144
+      birch_slab:
+        material: m@birch_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      lily_pad:
+        material: m@lily_pad
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 16
+      observer:
+        material: m@observer[direction=SOUTH;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      podzol:
+        material: m@podzol[snowy=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cyan_wool:
+        material: m@cyan_wool
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 48
+      fire:
+        material: m@fire[age=0;faces=li@]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      stick:
+        material: m@stick
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      andesite:
+        material: m@andesite
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      diamond_boots:
+        material: m@diamond_boots
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32768
+      fire_coral_block:
+        material: m@fire_coral_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      repeating_command_block:
+        material: m@repeating_command_block[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      packed_ice:
+        material: m@packed_ice
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      gray_carpet:
+        material: m@gray_carpet
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      enchanting_table:
+        material: m@enchanting_table
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 16736
+      cod_spawn_egg:
+        material: m@cod_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      gray_stained_glass_pane:
+        material: m@gray_stained_glass_pane[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      lime_dye:
+        material: m@lime_dye
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      orange_wall_banner:
+        material: m@orange_wall_banner[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      acacia_sign:
+        material: m@acacia_sign[direction=SOUTH;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      polished_blackstone_brick_wall:
+        material: m@polished_blackstone_brick_wall[waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      rabbit_stew:
+        material: m@rabbit_stew
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      peony:
+        material: m@peony[half=BOTTOM]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      stone_axe:
+        material: m@stone_axe
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity:
+          - '2'
+      dark_oak_log:
+        material: m@dark_oak_log[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      poppy:
+        material: m@poppy
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category: flower
+        rarity: 50
+      netherite_scrap:
+        material: m@netherite_scrap
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      red_nether_brick_wall:
+        material: m@red_nether_brick_wall[waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      ender_eye:
+        material: m@ender_eye
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1792
+      stone_sword:
+        material: m@stone_sword
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category: weapon
+        rarity: 50
+      cut_sandstone:
+        material: m@cut_sandstone
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      chest_minecart:
+        material: m@chest_minecart
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1344
+      stone_brick_stairs:
+        material: m@stone_brick_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      jungle_slab:
+        material: m@jungle_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      cactus:
+        material: m@cactus[age=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      spruce_trapdoor:
+        material: m@spruce_trapdoor[direction=NORTH;half=BOTTOM;switched=false;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 24
+      carrots:
+        material: m@carrots[age=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      name_tag:
+        material: m@name_tag
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      spruce_log:
+        material: m@spruce_log[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      black_terracotta:
+        material: m@black_terracotta
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      gray_glazed_terracotta:
+        material: m@gray_glazed_terracotta[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      birch_button:
+        material: m@birch_button[direction=NORTH;switched=false;switch_face=WALL]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 2
+      red_sandstone_slab:
+        material: m@red_sandstone_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      orange_terracotta:
+        material: m@orange_terracotta
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      brown_dye:
+        material: m@brown_dye
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      light_gray_bed:
+        material: m@light_gray_bed[direction=NORTH;half=FOOT]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 144
+      soul_campfire:
+        material: m@soul_campfire[signal_fire=false;direction=NORTH;lit=true;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      salmon_bucket:
+        material: m@salmon_bucket
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      brick_slab:
+        material: m@brick_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 256
+      spruce_leaves:
+        material: m@spruce_leaves[persistent=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      command_block_minecart:
+        material: m@command_block_minecart
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      light_gray_terracotta:
+        material: m@light_gray_terracotta
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      spruce_slab:
+        material: m@spruce_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      red_nether_brick_stairs:
+        material: m@red_nether_brick_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      gray_terracotta:
+        material: m@gray_terracotta
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      sea_lantern:
+        material: m@sea_lantern
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      ice:
+        material: m@ice
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      green_shulker_box:
+        material: m@green_shulker_box[direction=UP]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      oak_door:
+        material: m@oak_door[direction=NORTH;half=BOTTOM;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dark_oak_stairs:
+        material: m@dark_oak_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 12
+      blue_shulker_box:
+        material: m@blue_shulker_box[direction=UP]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      iron_axe:
+        material: m@iron_axe
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1280
+      smoker:
+        material: m@smoker[direction=NORTH;lit=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      loom:
+        material: m@loom[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      polished_blackstone:
+        material: m@polished_blackstone
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      creeper_wall_head:
+        material: m@creeper_wall_head[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      nether_wart:
+        material: m@nether_wart[age=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 24
+      oak_leaves:
+        material: m@oak_leaves[persistent=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      composter:
+        material: m@composter[level=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      mutton:
+        material: m@mutton
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      knowledge_book:
+        material: m@knowledge_book
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      white_wall_banner:
+        material: m@white_wall_banner[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      obsidian:
+        material: m@obsidian
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 64
+      cyan_carpet:
+        material: m@cyan_carpet
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      skull_banner_pattern:
+        material: m@skull_banner_pattern
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dead_horn_coral_wall_fan:
+        material: m@dead_horn_coral_wall_fan[direction=NORTH;waterlogged=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      firework_star:
+        material: m@firework_star
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      music_disc_mellohi:
+        material: m@music_disc_mellohi
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      potted_cornflower:
+        material: m@potted_cornflower
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 16
+      purple_carpet:
+        material: m@purple_carpet
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      golden_hoe:
+        material: m@golden_hoe
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8192
+      cooked_chicken:
+        material: m@cooked_chicken
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dolphin_spawn_egg:
+        material: m@dolphin_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      coarse_dirt:
+        material: m@coarse_dirt
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dark_prismarine_stairs:
+        material: m@dark_prismarine_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      jungle_button:
+        material: m@jungle_button[direction=NORTH;switched=false;switch_face=WALL]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 2
+      dead_tube_coral_block:
+        material: m@dead_tube_coral_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      potatoes:
+        material: m@potatoes[age=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dark_oak_boat:
+        material: m@dark_oak_boat
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cooked_mutton:
+        material: m@cooked_mutton
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      jungle_fence:
+        material: m@jungle_fence[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 12
+      jukebox:
+        material: m@jukebox
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8256
+      green_wall_banner:
+        material: m@green_wall_banner[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      purple_stained_glass_pane:
+        material: m@purple_stained_glass_pane[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      birch_trapdoor:
+        material: m@birch_trapdoor[direction=NORTH;half=BOTTOM;switched=false;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 24
+      apple:
+        material: m@apple
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category: 
+          - food
+          - fruit
+        rarity: 32
+      elder_guardian_spawn_egg:
+        material: m@elder_guardian_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      spider_eye:
+        material: m@spider_eye
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 128
+      zoglin_spawn_egg:
+        material: m@zoglin_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      piglin_banner_pattern:
+        material: m@piglin_banner_pattern
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      golden_boots:
+        material: m@golden_boots
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 12288
+      potted_dead_bush:
+        material: m@potted_dead_bush
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      lily_of_the_valley:
+        material: m@lily_of_the_valley
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      blue_orchid:
+        material: m@blue_orchid
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      pumpkin_pie:
+        material: m@pumpkin_pie
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      red_sandstone_stairs:
+        material: m@red_sandstone_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      squid_spawn_egg:
+        material: m@squid_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      crafting_table:
+        material: m@crafting_table
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      cave_spider_spawn_egg:
+        material: m@cave_spider_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cobblestone_stairs:
+        material: m@cobblestone_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      brown_mushroom_block:
+        material: m@brown_mushroom_block[faces=li@el@NORTH|el@EAST|el@SOUTH|el@WEST|el@UP|el@DOWN|]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      melon_stem:
+        material: m@melon_stem[age=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      potted_fern:
+        material: m@potted_fern
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      diamond_block:
+        material: m@diamond_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 737828
+      end_stone_bricks:
+        material: m@end_stone_bricks
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      golden_carrot:
+        material: m@golden_carrot
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      stone:
+        material: m@stone
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      nether_brick_wall:
+        material: m@nether_brick_wall[waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      crimson_sign:
+        material: m@crimson_sign[direction=SOUTH;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dark_oak_trapdoor:
+        material: m@dark_oak_trapdoor[direction=NORTH;half=BOTTOM;switched=false;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 24
+      potted_cactus:
+        material: m@potted_cactus
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      prismarine_wall:
+        material: m@prismarine_wall[waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      enchanted_golden_apple:
+        material: m@enchanted_golden_apple
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 100
+      magma_cream:
+        material: m@magma_cream
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 792
+      ghast_spawn_egg:
+        material: m@ghast_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      pink_banner:
+        material: m@pink_banner[direction=SOUTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      melon_seeds:
+        material: m@melon_seeds
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 16
+      music_disc_cat:
+        material: m@music_disc_cat
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      red_sandstone:
+        material: m@red_sandstone
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      purple_dye:
+        material: m@purple_dye
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      fire_charge:
+        material: m@fire_charge
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      chiseled_red_sandstone:
+        material: m@chiseled_red_sandstone
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      tube_coral_block:
+        material: m@tube_coral_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      sandstone_stairs:
+        material: m@sandstone_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      white_shulker_box:
+        material: m@white_shulker_box[direction=UP]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      fern:
+        material: m@fern
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      skeleton_spawn_egg:
+        material: m@skeleton_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      pufferfish_spawn_egg:
+        material: m@pufferfish_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 64
+      light_blue_carpet:
+        material: m@light_blue_carpet
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      diorite_slab:
+        material: m@diorite_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      lime_banner:
+        material: m@lime_banner[direction=SOUTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      soul_soil:
+        material: m@soul_soil
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      golden_leggings:
+        material: m@golden_leggings
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 14336
+      dark_oak_sapling:
+        material: m@dark_oak_sapling[age=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      polished_diorite_stairs:
+        material: m@polished_diorite_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      endermite_spawn_egg:
+        material: m@endermite_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      tube_coral_fan:
+        material: m@tube_coral_fan[waterlogged=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      lime_glazed_terracotta:
+        material: m@lime_glazed_terracotta[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      magenta_dye:
+        material: m@magenta_dye
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      crimson_fungus:
+        material: m@crimson_fungus
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      leather:
+        material: m@leather
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 64
+      cracked_nether_bricks:
+        material: m@cracked_nether_bricks
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      potted_dark_oak_sapling:
+        material: m@potted_dark_oak_sapling
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      birch_boat:
+        material: m@birch_boat
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      nether_brick_stairs:
+        material: m@nether_brick_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 4
+      command_block:
+        material: m@command_block[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dead_fire_coral_wall_fan:
+        material: m@dead_fire_coral_wall_fan[direction=NORTH;waterlogged=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      wandering_trader_spawn_egg:
+        material: m@wandering_trader_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      villager_spawn_egg:
+        material: m@villager_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      snowball:
+        material: m@snowball
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      bubble_coral_wall_fan:
+        material: m@bubble_coral_wall_fan[direction=NORTH;waterlogged=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      gray_concrete:
+        material: m@gray_concrete
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      light_blue_shulker_box:
+        material: m@light_blue_shulker_box[direction=UP]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      smooth_quartz_stairs:
+        material: m@smooth_quartz_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      stone_brick_wall:
+        material: m@stone_brick_wall[waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      glass_bottle:
+        material: m@glass_bottle
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      respawn_anchor:
+        material: m@respawn_anchor
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      red_banner:
+        material: m@red_banner[direction=SOUTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      blue_wall_banner:
+        material: m@blue_wall_banner[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      crimson_nylium:
+        material: m@crimson_nylium
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      acacia_wood:
+        material: m@acacia_wood[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      bee_spawn_egg:
+        material: m@bee_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      lime_stained_glass:
+        material: m@lime_stained_glass
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      magenta_shulker_box:
+        material: m@magenta_shulker_box[direction=UP]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      globe_banner_pattern:
+        material: m@globe_banner_pattern
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      tipped_arrow:
+        material: m@tipped_arrow
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      yellow_stained_glass:
+        material: m@yellow_stained_glass
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      potted_warped_roots:
+        material: m@potted_warped_roots
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      ender_pearl:
+        material: m@ender_pearl
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1024
+      golden_apple:
+        material: m@golden_apple
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1944
+      prismarine_slab:
+        material: m@prismarine_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      dried_kelp:
+        material: m@dried_kelp
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      evoker_spawn_egg:
+        material: m@evoker_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      prismarine_shard:
+        material: m@prismarine_shard
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      lead:
+        material: m@lead
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      lapis_block:
+        material: m@lapis_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 7776
+      magenta_wool:
+        material: m@magenta_wool
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 48
+      stone_hoe:
+        material: m@stone_hoe
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      beetroot_seeds:
+        material: m@beetroot_seeds
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 16
+      panda_spawn_egg:
+        material: m@panda_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cornflower:
+        material: m@cornflower
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 16
+      shulker_shell:
+        material: m@shulker_shell
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      oak_fence_gate:
+        material: m@oak_fence_gate[direction=NORTH;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      stripped_jungle_wood:
+        material: m@stripped_jungle_wood[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      orange_shulker_box:
+        material: m@orange_shulker_box[direction=UP]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      iron_door:
+        material: m@iron_door[direction=NORTH;half=BOTTOM;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1536
+      spruce_boat:
+        material: m@spruce_boat
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      smooth_quartz:
+        material: m@smooth_quartz
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      barrier:
+        material: m@barrier
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      beetroots:
+        material: m@beetroots[age=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      rabbit_hide:
+        material: m@rabbit_hide
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      pink_wool:
+        material: m@pink_wool
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 48
+      pillager_spawn_egg:
+        material: m@pillager_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      campfire:
+        material: m@campfire[signal_fire=false;direction=NORTH;lit=true;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      wither_rose:
+        material: m@wither_rose
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      light_gray_glazed_terracotta:
+        material: m@light_gray_glazed_terracotta[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      jungle_boat:
+        material: m@jungle_boat
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      salmon:
+        material: m@salmon
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      fox_spawn_egg:
+        material: m@fox_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      diamond_hoe:
+        material: m@diamond_hoe
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 16392
+      potted_jungle_sapling:
+        material: m@potted_jungle_sapling
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      polished_blackstone_brick_slab:
+        material: m@polished_blackstone_brick_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      twisting_vines:
+        material: m@twisting_vines[age=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      turtle_egg:
+        material: m@turtle_egg[age=0;count=1]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      red_glazed_terracotta:
+        material: m@red_glazed_terracotta[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      item_frame:
+        material: m@item_frame
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      red_tulip:
+        material: m@red_tulip
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      coal_ore:
+        material: m@coal_ore
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 128
+      birch_sapling:
+        material: m@birch_sapling[age=0]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      polished_andesite:
+        material: m@polished_andesite
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      brick_stairs:
+        material: m@brick_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 348
+      diorite_stairs:
+        material: m@diorite_stairs[direction=NORTH;half=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      shroomlight:
+        material: m@shroomlight
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      spider_spawn_egg:
+        material: m@spider_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      tripwire_hook:
+        material: m@tripwire_hook[direction=NORTH;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      stripped_spruce_wood:
+        material: m@stripped_spruce_wood[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      crimson_wall_sign:
+        material: m@crimson_wall_sign[direction=NORTH;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      potted_azure_bluet:
+        material: m@potted_azure_bluet
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      spruce_button:
+        material: m@spruce_button[direction=NORTH;switched=false;switch_face=WALL]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 2
+      zombie_wall_head:
+        material: m@zombie_wall_head[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      paper:
+        material: m@paper
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      magma_cube_spawn_egg:
+        material: m@magma_cube_spawn_egg
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      jungle_log:
+        material: m@jungle_log[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      iron_pickaxe:
+        material: m@iron_pickaxe
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1280
+      dark_oak_slab:
+        material: m@dark_oak_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      netherrack:
+        material: m@netherrack
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      light_blue_wall_banner:
+        material: m@light_blue_wall_banner[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      birch_log:
+        material: m@birch_log[direction=Y]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      light_weighted_pressure_plate:
+        material: m@light_weighted_pressure_plate
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 16
+      warped_sign:
+        material: m@warped_sign[direction=SOUTH;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      activator_rail:
+        material: m@activator_rail[direction=NORTH_SOUTH;switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      pufferfish:
+        material: m@pufferfish
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 64
+      oak_planks:
+        material: m@oak_planks
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      gold_ore:
+        material: m@gold_ore
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 2048
+      shulker_box:
+        material: m@shulker_box[direction=UP]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      crimson_pressure_plate:
+        material: m@crimson_pressure_plate[switched=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 16
+      fermented_spider_eye:
+        material: m@fermented_spider_eye
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 192
+      magenta_wall_banner:
+        material: m@magenta_wall_banner[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      chiseled_quartz_block:
+        material: m@chiseled_quartz_block
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      hopper_minecart:
+        material: m@hopper_minecart
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      yellow_glazed_terracotta:
+        material: m@yellow_glazed_terracotta[direction=NORTH]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      cyan_dye:
+        material: m@cyan_dye
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 8
+      quartz_slab:
+        material: m@quartz_slab[slab_type=BOTTOM;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 1
+      blue_stained_glass_pane:
+        material: m@blue_stained_glass_pane[faces=li@;waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      fire_coral_wall_fan:
+        material: m@fire_coral_wall_fan[direction=NORTH;waterlogged=true]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      mossy_stone_brick_wall:
+        material: m@mossy_stone_brick_wall[waterlogged=false]
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 145
+      granite:
+        material: m@granite
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      red_mushroom:
+        material: m@red_mushroom
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 32
+      infested_cobblestone:
+        material: m@infested_cobblestone
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      pink_concrete:
+        material: m@pink_concrete
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 50
+      carrot:
+        material: m@carrot
+        drop-type:
+          - mob
+          - dungeon_chest
+          - overworld_chest
+        category:
+        rarity: 3

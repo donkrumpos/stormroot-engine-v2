@@ -1,0 +1,84 @@
+greers_assignment:
+    type: assignment
+    speed: 1t
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:5
+        - health <npc> <npc.constant[health]||20> heal
+        # - adjust <npc> health:<npc.constant[health]||20>
+        # - announce "<npc.constant[health]||20>"
+        - if <npc.constant[invincible].exists>:
+            - flag <npc> invincible
+        on enter proximity:
+        - zap default greers_interact 
+
+    interact scripts:
+    - greers_interact
+    default constants:
+        appearance1: "<npc.name>' has fine kept beard and seems cheery to meet you."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+        health: 2048
+        invincible: true
+        spawn: greers_spawn
+
+greers_world:
+    type: world
+    debug: false
+    events:
+        on npc_flagged:invincible damaged:
+        - health <npc> <npc.constant[health]||20> heal
+
+greers_interact:
+    type: interact
+    steps:
+        default:
+            proximity trigger:
+                entry:
+                    script:
+                    - if <player.has_flag[regions_visited.rothigport_crypts].not>:
+                        - inject description_inject_task
+                        - random:
+                            - narrate  "Who goes there?!"
+                            - narrate  "Halt!"
+                            - narrate  "Wait here one darn minute!"
+                        - if <player.location.biome.downfall_type> == "rain":
+                            - if <util.random.int[1].to[10]> == 10:
+                                - random:
+                                    - narrate  "Go escape the rain back in town at a tavern or bunkhouse milord."
+                                    - narrate  "This weather makes me salty."
+                        - random:
+                            - narrate  "The Tombs of the Elites must not be disturbed."
+                            - narrate  "Go away and do not defile this hallowed place."
+                            - narrate  "Only the family of the interred may enter."
+                            - narrate  "I cannot let you pass stranger."
+                            - narrate  "I must prevent you from going down there.
+                            - narrate "We do not abide graverobbers in this town."
+                            - narrate  "Please stay away and respect the dead."
+                            - narrate  "Here lie the deceased Guild Family members. RIP."
+                            - narrate  "I cannot let you pass <player.name>."
+                            - narrate  "You must be a member of one the Gilded Familes to pay respects."
+                        - if <npc.has_flag[engaged].not>:
+                            - wait <util.random.int[1].to[3]>s
+                            - attack <npc> <player>
+                            - flag <npc> engaged:<player> expire:<util.random.int[6].to[13]>s
+                    - else:
+                        - if <player.has_flag[greers_exit_once].not>:
+                            - inject description_inject_task
+                            - random:
+                                - narrate  "I don't get paid enough to care."
+                                - narrate  "Have fun?"
+                                - narrate  "This place gives me the creeps"
+                                - flag <player> greers_exit_once
+
+                exit:
+                    script:
+                    - if <npc.has_flag[engaged]> && <npc.flag[engaged]> == <player>:
+                        - attack <npc> cancel
+                    - wait 1s
+                    - if <npc.location.find_players_within[6].size> < 1:
+                        - teleport <npc> <npc.constant[spawn]>

@@ -1,0 +1,250 @@
+
+builders_tool:
+  type: item
+  debug: true
+  material: iron_axe
+  display name: Builders Tool
+  slot-type: hand
+  rarity: 1000
+  mechanisms:
+    custom_model_data: 2001003002
+
+
+rare_items_data:
+  type: data
+  item:
+    bracelet_of_health:
+      rarity: 50
+    ring_of_the_vile:
+      rarity: 60
+    lanos_harp:
+      rarity: 70
+
+bracelet_of_health:
+  type: item
+  debug: true
+  material: diamond_hoe
+  display name: "Bracelet of Health"
+  slot-type: bracelet
+  stats:
+    hit-point-regeneration: 10
+    hit-point-increase: 5
+  rarity: 22
+  mechanisms:
+    custom_model_data: 18
+
+
+  
+lanos_harp:
+  type: item
+  debug: true
+  material: diamond_hoe
+  display name: "Lano's Harp"
+  slot-type: hand
+  bindable: true
+  rarity: 5
+  item_type: instrument
+  stats:
+    dexterity-bonus: 8
+    stamina-regeneration: 6
+    hit-chance-increase: 15
+    resist:
+    - fire: 0
+    - frost: 0
+    - poison: 0
+    - earth: 0
+    - void: 0
+    - air: 0
+    - energy: 0
+    - nature: 0
+    - death: 0
+    - stone: 0
+    - sun: 0
+    - moon: 0
+  mechanisms:
+    custom_model_data: 15
+  script: lanosharp_script
+
+
+key:
+  type: item
+  debug: true
+  material: carrot_on_a_stick
+  display name: "A key"
+  slot_type: hand
+  bindable: false
+  rarity: 5
+  item_type: key
+  mechanisms:
+    custom_model_data: 16745
+
+
+
+
+hammerpick:
+  type: item
+  debug: true
+  definitions: 1|2
+  material: IRON_HOE
+  display name: <&a><&l><&n>Hammer Pick
+  lore:
+  - <&b><&l>A light-weighted mace
+  - <&b><&l>that drives into armor
+  - Weapon Damage: <script.yaml_key[weapon-damage].first.parsed||150> - <player.item_in_hand.script.yaml_key[weapon-damage].last.parsed||150>
+  - Weapon Speed: <script.yaml_key[weapon-speed]||3.5>s
+  - Strength Requirement: <script.yaml_key[required_strength]||15>
+  - Required Level: <script.yaml_key[required-level]||15>
+  - Swing Speed Increase: <script.yaml_key[attack-speed-increase]||0>%
+  - <tern[<script.yaml_key[two-handed]>].pass[Two-Handed Weapon].fail[One-Handed Weapon]>
+  - Skill Required: <script.yaml_key[required-skill]||none>
+  slot-type: hand
+  stats:
+    hit-chance-increase: 15
+    weapon-damage: 13.0-17.0
+    attack-speed-increase: 15
+    elemental:
+    - fire: 10
+    - frost: 10
+    - poison: 10
+    - earth: 10
+    - void: 10
+    - air: 10
+    - energy: 10
+    - nature: 10
+    - death: 10
+    - stone: 10
+    - sun: 10
+    - moon: 10
+  price: 35
+  rarity: 1
+  required-level: 13.0
+  tier: RARE
+  required_strength: 45
+  item_type: mace
+  required-class:
+  - Warrior
+  - Cleric
+  
+  weapon-speed: 3.25
+  required-skill: mace
+  
+  two-handed: false
+  
+  
+
+
+platemail_tunic:
+  type: item
+  debug: false
+  material: iron_chestplate
+  display name: Platemail Tunic
+  material_qty: 25
+  lore:
+  - Provide sturdy protection
+  - against slashing attacks.
+  price: 35
+  required-level: 13.0
+  rarity: 19
+  required_strength: 95
+  item_type: plate_armor
+  slot-type: chest
+  craftable: true
+  mechanisms:
+    custom_model_data: 18105
+    nbt:
+    - defense_chance_increase/0
+    - luck/0
+    - physical_resist/5
+    - fire_resist/3
+    - cold_resist/2
+    - poison_resist/3
+    - energy_resist/2
+
+    
+
+# dull_copper_chestplate:
+#   type: item
+#   debug: true
+#   material: LEATHER_CHESTPLATE
+#   display name: Dull Copper Chestplate
+#   color: <color[85,83,62]>
+#   recipes:
+#     1:
+#       type: shaped
+#       input:
+#       - dull_copper_ingot|air|dull_copper_ingot
+#       - dull_copper_ingot|dull_copper_ingot|dull_copper_ingot
+#       - dull_copper_ingot|dull_copper_ingot|dull_copper_ingot
+#   mechanisms:
+#     hides: all
+
+
+
+
+
+# helm_of_abyssal_malevolence:
+#   type: item
+#   debug: false
+#   definitions: 1|2
+#   material: LEATHER_HELMET
+#   display name: <&a><&l><&n>Helm of Abyssal Malevolence
+#   lore:
+#   - <&b><&l>Enemies trying to attack you
+#   - <&b><&l>will be violently inflicted a wither.
+#   - Armor: <script.yaml_key[armor]||0>
+#   - Elemental Protection: <script.yaml_key[armor-material].get[1].parsed||0>%
+#   slot-type: head
+#   stats:
+#     hit-point-increase: 0
+#     hit-point-regeneration: 0
+#     mana-regeneration: 1
+#     defense-chance-increase: 15
+#     stamina-loss-reduction: 1
+#     defense-modifier:
+#       - Defence
+#       - Guarding
+#       - Hardening
+#       - Fortification
+#       - Invulnerability
+#     medable: true
+#     lower-mana-cost: 0
+#   price: 35
+#   required-level: 13.0
+#   tier: RARE
+#   required_strength: 35
+#   item_type: sword
+#   required-class:
+#   - Warrior
+#   - Paladin
+#   max-mana: 10.0
+#   color: <color[100,100,255]>
+#   armor: 6.0
+#   magic-damage: 15.0
+#   rarity: 60
+#   ability:
+#     on-hit:
+#       type: WITHER
+#       mode: WHEN_HIT
+#       cooldown: 9.0
+#       amplifier: 2.0
+#   item-particles:
+#     type: GALAXY
+#     particle: SPELL_WITCH
+#   set: ARCANE
+#   armor-material:
+#   - fire: 0
+#   - frost: 10
+#   - poison: 0
+#   - earth: 10
+#   - void: 10
+#   - air: 10
+#   - energy: 10
+#   - nature: 10
+#   - death: 10
+#   - stone: 10
+#   - sun: 10
+#   - moon: 10
+  
+#   mechanisms:
+#         # flags: HIDE/_ALL
+#   #       potion_effects: UNCRAFTABLE,false,false,White

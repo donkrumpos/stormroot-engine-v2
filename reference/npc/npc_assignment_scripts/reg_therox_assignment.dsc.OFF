@@ -1,0 +1,29 @@
+reg_therox_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:9
+    interact scripts:
+    - reg_therox_interact
+
+    default constants:
+        appearance1: "<npc.name>'lives in the wild but seems mysterious."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+        has_familiarity: true
+
+reg_therox_interact:
+  type: interact
+  steps:
+    default:
+        proximity trigger:
+                entry:
+                    script:
+                    - execute as_server "npc skin --url https://minesk.in/b73b36e095fd4882a09b389647fdcbc9 --id <npc.id>"
+        

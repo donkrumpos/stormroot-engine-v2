@@ -1,0 +1,17 @@
+quill:
+  type: item
+  material: dried_kelp
+  display name: Quill 
+  flags:
+    custom_model_data: 81017501
+    price: 80
+  mechanisms:
+    custom_model_data: 81017501
+  recipes:
+    1:
+      type: shaped
+      input:
+      - ink_sac|air|air
+      - ink_sac|amphithere_feather|air
+      - ink_sac|air|air 
+  

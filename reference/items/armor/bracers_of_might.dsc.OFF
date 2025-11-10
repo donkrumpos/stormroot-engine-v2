@@ -1,0 +1,68 @@
+bracers_of_might:
+  type: item
+  debug: false
+  material: dried_kelp
+  display name: Bracers of Might
+  # lore:
+  # - <&b><&l>power
+  # - <&b><&l>wear.
+  flags:
+    defense: 10
+    stat:
+      bonus:
+        hit_point_increase: 0
+        hit_point_regeneration: 0
+        mana_regeneration: .15
+        defense_chance_increase: .15
+        stamina_loss_reduction: 1
+        stamina_increase: 10
+        dexterity_increase: 1
+        strength_increase: 1
+        intelligence_increase: 1
+        stamina_regeneration: 1
+        lower_mana_cost: 0
+        medable: true
+        fire_resist: 0
+        cold_resist: 100
+        poison_resist: 0
+        energy_resist: 0
+    defense_modifier: Defense
+    current_durability: 355
+    maximum_durability: 355
+    
+    required_strength: 35
+    item_type: armor
+    set: might
+    weight: 3
+    
+    slot_type: gloves
+  mechanisms:
+    custom_model_data: 8102501
+
+# javelin:
+#   type: item
+#   debug: false
+#   material: trident
+#   display name: Javelin
+#   lore:
+#   - An elegent weapon
+#   - for a more sophisticated time.
+  
+#   mechanisms:
+#     custom_model_data: 720501
+#     nbt:
+#     - durability/80
+#     - swing_speed_increase/0
+#     - hit_chance_increase/0
+#     - weapon_speed/70
+#     - weapon_damage_min/4
+#     - weapon_damage_max/30
+#     - luck/0
+#     - two_handed/false
+#     - fire_damage/0
+#     - cold_damage/0
+#     - poison_damage/0
+#     - energy_damage/0
+#     - required_strength/10
+#     - item_type/sword
+#     - material_qty/8

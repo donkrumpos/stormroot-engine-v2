@@ -1,0 +1,46 @@
+featherfall_world:
+    type: world
+    debug: false
+    events:
+        on player damaged by fire|fire_tick:
+        - define fire 
+#         - define chance <util.random.int[1].to[2]>
+#         - if <[chance]> <= 1:
+#             - run raise_resist_spells_task def:<player>|fire
+        
+#         - if <proc[natural_skill_check_proc].context[<player>|fire_resistance|0]>:
+#             - determine <context.damage.div[2]>
+#         # on entity damaged:
+#         # - narrate <context.damage>
+#         on player damaged by FALL:
+       
+#         - if <player.has_flag[skill.featherfall]>:
+#             - if <player.flag[skill.featherfall.level]> > 0:
+#                 - define difficulty <context.damage>
+#                 - define level <player.flag[skill.featherfall.level]>
+
+#                 # set difficulty as a percentage. The lower the number, the harder to succeed
+#                 - define difficulty_chance <element[1].div[<[difficulty]>]>
+#                 - define success_chance <util.random.int[0].to[100].div[100]>
+
+#                 - define player_dex_mod <player.flag[current_dexterity]>
+#                 - if <player.has_flag[jumping]>:
+#                         - define player_dex_mod <[player_dex_mod].mul[2]>
+#                         - define difficulty_chance <[difficulty_chance].div[2]>
+#                         # - narrate "difficult chance is <[difficulty_chance]> because you were jumping"
+#                         - if <util.random.int[0].to[100]> < 74:
+#                             - determine cancelled
+#                 - if <[difficulty_chance]> < <[success_chance].add[<[player_dex_mod].div[20]>]>:
+#                     - define dmg <context.damage.sub[<[level]>]>
+#                     - hurt <[dmg]> <player>
+#                     # - narrate "You reduced damage to <[dmg]> instead of <context.damage>"
+#                     - flag <player> stat.stamina_level:-:<[difficulty].sub[<[level]>]>
+#                     - determine cancelled
+#                 - else:
+#                     # - narrate "you take full damage <context.damage>."
+#                     - flag <player> stat.stamina_level:-:<[difficulty]>
+#         - else:
+#              - flag <player> stat.stamina_level:-:<context.damage.mul[1.5]>
+            
+#         on player jumps:
+#             - flag <player> jumping duration:3s

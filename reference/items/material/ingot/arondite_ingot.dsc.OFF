@@ -1,0 +1,13 @@
+arondite_ingot:
+  type: item
+  debug: true
+  material: iron_ingot
+  rarity: 1
+  display name: Arondite Ingot
+  mechanisms:
+    custom_model_data: 2710406
+  recipes:
+    1:
+      type: furnace
+      input: arondite_ore
+      cook_time: 7t

@@ -1,0 +1,11 @@
+sheepskin:
+    type: item
+    material: leather
+    display name: Sheepskin
+    
+sheep_world:
+    type: world
+    events:
+        on sheep dies:
+        - drop sheepskin <context.entity.location>
+    

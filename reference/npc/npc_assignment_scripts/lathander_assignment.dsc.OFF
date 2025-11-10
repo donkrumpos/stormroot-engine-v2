@@ -1,0 +1,350 @@
+lathander_brightwatch_assignment:
+    type: assignment
+    speed: 1t
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:4
+        on enter proximity:
+        - run lathander_brightwatch_brightwatch_tail def:<npc>  
+        # on exit proximity:
+        # - disengage
+   
+
+
+    interact scripts:
+    - lathander_brightwatch_interact
+    default constants:
+        skin: https://minesk.in/948ba26bd5f74782a496454b51562790
+        appearance1: "<npc.name>' has fine kept beard and seems cheery to meet you."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+        has_familiarity: true
+        dialog: lathander_brightwatch_dialog
+        personality: lathander_brightwatch_personality
+
+
+
+lathander_brightwatch_data:
+    type: data
+    knowledge:
+        specific:
+            display: "Some specific things from lathander_brightwatch"
+            narration:
+            - "Ah yes this is very specific to me.."
+        level: intermediate
+        lore:
+        - place.songtide.rothigport
+        - skill.magic
+        - race.woodland_clan.fox_clan
+
+lathander_brightwatch_tail:
+    type: task
+    definitions: npc
+    script:
+    - if <[npc].location.find_entities[armor_stand].within[16].filter[has_flag[lathander_brightwatch_tail]].any>:
+        - attach <[npc].location.find_entities[armor_stand].within[16].filter[has_flag[lathander_brightwatch_tail]].first> to:<[npc]>
+    - else:
+        - spawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|fox_tail_item]>]" <[npc].location> save:lathander_brightwatch_tail
+        - flag <entry[lathander_brightwatch_tail].spawned_entity> lathander_brightwatch_tail
+        - attach <entry[lathander_brightwatch_tail].spawned_entity> to:<[npc]>
+
+lathander_brightwatch_interact:
+    type: interact
+    steps:
+        default:
+            proximity trigger:
+                entry:
+                    script:
+                    - execute as_server "npc skin --url <npc.constant[skin]> --id <npc.id>"
+                    - flag <player> npc.<npc.name>.prox_count:++
+            
+            click trigger:
+                script:
+                - run npc_first_conversation
+                - stop
+                # - if <npc.engaged[<player>].not>:
+                #     - engage
+                - inject description_inject_task
+                - if <player.flag[npc.<npc>.familiarity.level]||0> <= 1:
+                    - random:
+                        - narrate "Ah! Welcome to Rothigport!"
+                        - narrate "All first time visitors get some equipment."
+                        - narrate "Here take this."
+                    - run give_lathander_brightwatch_equipment_task
+                    - narrate  "We all know it can be rough out there."
+                # - if <player.flag[npc.<npc>.familiarity.level]> < 1:
+                #     - narrate "I'm glad you wanted to talk to me again <player.name>"
+                
+                - if <player.flag[npc.<npc>.familiarity.level]> > 1:
+                    - if <player.has_flag[lathander_brightwatch_daily_equipment].not>:
+                        - narrate "Here take this."
+                        - give apple quantity:12
+                        - give bread quantity:6
+                        - flag <player> lathander_brightwatch_daily_equipment expire:<util.random.int[20].to[24]>h
+                    - if <player.location.biome.downfall_type> == "rain":
+                        - narrate "Lovely weather we're having.
+                    - if <player.location.world.time.period> == "night":
+                        - narrate "Why yes I still stand out here during a night. The duties of a professional town greeter never stop.
+                    - narrate "Do you want to know more about.
+                    - clickable lathander_brightwatch_help_1_task save:lathander_brightwatch_help_1_task_clickable 
+                    - clickable lathander_brightwatch_help_2_task save:lathander_brightwatch_help_2_task_clickable 
+                    - clickable lathander_brightwatch_help_3_task save:lathander_brightwatch_help_3_task_clickable 
+                    - clickable lathander_brightwatch_help_4_task save:lathander_brightwatch_help_4_task_clickable 
+                    - wait 1s
+                    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>This City of Rothigport.<&8><&rb><&end_hover>].on_click[<entry[lathander_brightwatch_help_1_task_clickable].command>]>"
+                    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>This region of Songtide.<&8><&rb><&end_hover>].on_click[<entry[lathander_brightwatch_help_2_task_clickable].command>]>"
+                    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>3. <&B>Getting back out to the Outlands.<&8><&rb><&end_hover>].on_click[<entry[lathander_brightwatch_help_3_task_clickable].command>]>"
+                    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>4. <&B>Getting back to the Central Kingdoms.<&8><&rb><&end_hover>].on_click[<entry[lathander_brightwatch_help_4_task_clickable].command>]>"
+
+                    - zap rothigport_main duration:30s
+        rothigport_main:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, This City of Rothigport.
+                    script:
+                    - run lathander_brightwatch_help_1_task
+                2:
+                    trigger: <&7>/2/, This region of Songtide.
+                    script:
+                    - run lathander_brightwatch_help_2_task
+                3:
+                    trigger: <&7>/3/, Getting back out to the Outlands.
+                    script:
+                    - run lathander_brightwatch_help_3_task
+                4:
+                    trigger: <&7>/4/, Getting back to the Central Kingdoms.
+                    script:
+                    - run lathander_brightwatch_help_4_task
+        rothigport_2:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, Magic in Rothigport.
+                    script:
+                    - run lathander_brightwatch_help_1_2_task
+                2:
+                    trigger: <&7>/2/, Commerce in Rothigport.
+                    script:
+                    - run lathander_brightwatch_help_1_3_task
+                3:
+                    trigger: <&7>/3/, Nah I heard enough.
+                    script:
+                    - run lathander_brightwatch_help_1_4_task
+        
+
+
+lathander_brightwatch_help_1_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate  "Ah, Rothigport, the town which I love."
+    - wait 2s
+    - narrate "We are a major town and center of commerce out here between the Central Kingdoms and the Outlands,"
+    - wait 3s
+    - narrate "and are one of the last holdouts of the withdrawing arcane arts, sadly."
+    - flag <player> lore.songtide.rothigport.general:++
+    - wait 2s
+    - narrate "Do you wish to know more?"
+    - clickable lathander_brightwatch_help_1_2_task save:lathander_brightwatch_help_1_2_task_clickable 
+    - clickable lathander_brightwatch_help_1_3_task save:lathander_brightwatch_help_1_3_task_clickable 
+    - clickable lathander_brightwatch_help_1_4_task save:lathander_brightwatch_help_1_4_task_clickable 
+    - wait 1s
+    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>about the arcane arts here in Rothigport.<&8><&rb><&end_hover>].on_click[<entry[lathander_brightwatch_help_1_2_task_clickable].command>]>"
+    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>about commerce here in Rothigport.<&8><&rb><&end_hover>].on_click[<entry[lathander_brightwatch_help_1_3_task_clickable].command>]>"
+    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>3. <&B>Nah, I heard enough.<&8><&rb><&end_hover>].on_click[<entry[lathander_brightwatch_help_1_4_task_clickable].command>]>"
+
+    - zap rothigport_2 lathander_brightwatch_interact
+    
+  
+
+    
+
+lathander_brightwatch_help_2_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate  "Songtide is the name of the group of islands in this realm of Deluvia."
+    - narrate "and is especially known for being a refuge for magic and religion."
+    - narrate "Again, I am only a professional greeter and can direct you to some other Rothiportians,"
+    - narrate "but,"
+    - narrate "I have heard that magic was spawned first here in Songtide."
+    - narrate "and that the gods protect us here."
+    - narrate "Though be warned, dangers abound out there."
+    - wait 2s
+    - narrate "Not that I have been outside the docks of this harbor."
+    - flag <player> lore.songtide.general:++
+    
+    - disengage
+    - zap default lathander_brightwatch_interact
+    
+
+lathander_brightwatch_help_3_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate  "To The Outlands I have not been, but I have met many coming or going."
+    - wait 5t
+    - narrate  "Those that are coming back are usually here briefly to provision themselves and head right back out for adventure."
+    - wait 5t
+    - narrate  "They that head out for the first time are usually trying to get away from the Central Kingdoms."
+    - wait 5t
+    - narrate "The Outlands are a vast area out of the reach of the law,"
+    - wait 5t
+    - narrate "where anyone can build their own farm or town, or anything they wish."
+    - wait 1s
+    - narrate "Captain Ori's boat right there will take you there if you have <script[captain_information_data].data_key[captains.Ori<&sp>Moonsails.locations.padula_anchorite.price]> copper."
+    - wait 2s
+    - narrate "You still have those supplies I gave you, right?"
+    - flag <player> lore.outlands.general:++
+    - disengage
+    - zap default lathander_brightwatch_interact
+    
+
+lathander_brightwatch_help_4_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate  "The Central Kingdoms are NOT thought highly of out here."
+    - narrate  "They despise us and want to assimilate us into their ways."
+    - narrate  "Most citizens of the Centrail Kingdoms come out here to practice magic or worship the gods,"
+    - narrate  "and start their new life."
+    - narrate  "I am sure there are more Rothigportians that can tell you more, some that are even expatriots of those oppressive cities."
+    - flag <player> lore.central_kingdoms.general:++
+    - disengage
+    - zap default lathander_brightwatch_interact
+    
+
+
+lathander_brightwatch_help_1_2_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "Alas, magic in Rothigport. . ."
+    - narrate "Though Rothigport itself does not exhibit profuse displays of magic and wizardry,"
+    - narrate "The outlying areas of Songtide are a haven for the arcane inclined."
+    - narrate "Even the mages have dispersed from Rothigport, because of the eyes and ears coming from the Central Kingdoms"
+    - narrate "to extinguish their ancient ways,"
+    - narrate "but you will find many practitioners around. We just keep it quiet."
+    - flag <player> lore.songtide.rothigport.magic:++
+    - disengage
+    - zap default lathander_brightwatch_interact
+
+lathander_brightwatch_help_1_3_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "Commerce here has boomed recently, because of the exodus from The Central Kingdoms."
+    - narrate "It seems all those starting their plot out in the wild of The Outlands stop by here"
+    - narrate "to learn new skills and buy and sell goods."
+    - narrate "If you want to find out more about our industries, I would talk to one of the shipwrights, lumberjacks, or fishermen."
+    - narrate "They are usually the richest."
+    - wait 2s
+    - narrate "By the way, I stay out of politics, so you'll have to ask someone else about that."
+    - flag <player> lore.songtide.rothigport.commerce:++
+    - disengage
+    - zap default lathander_brightwatch_interact
+
+lathander_brightwatch_help_1_4_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "Understandably. I shall be here if you need me for anything."
+    - if <util.random.int[1].to[5]> == 5:
+        - narrate ". . . and remember not to fall off the docks."
+    - disengage
+    - zap default lathander_brightwatch_interact
+
+
+give_lathander_brightwatch_equipment_task:
+    type: task
+    script:
+    - foreach <script[lathander_brightwatch_equipment].data_key[item]> as:item:
+        - give <[key]> quantity:<[item]>
+
+lathander_brightwatch_equipment:
+    type: data
+    item:
+        wooden_sword: 1
+        wooden_axe: 1
+        wooden_pickaxe: 1
+        wooden_shove: 1
+        wooden_hoe: 1
+        oak_boat: 1
+        bread: 12
+        apple: 12
+        gold_coin: 1
+        journal: 1
+
+
+
+lathander_brightwatch_personality:
+    type: data
+    character_data:
+        temperament: "cheery yet eccentric"
+        mannerisms:
+            odd_stare: "He has an odd stare that seems to look past you."
+            mumbles_gibberish: "He occasionally mumbles gibberish."
+            cheery_greeting: "Always greets newcomers with a smile."
+            thoughtful_glance: "His eyes occasionally show a depth of thought."
+        hometown: Unknown Island
+        educational_background: "Unknown, but hints at a well-educated past."
+        intelligence: "Moderate; seems to have a keen understanding despite his eccentricity."
+        self-esteem: "Low; affected by isolation."
+        hobbies: "Collecting shells, talking to himself, reminiscing about the past."
+        skills_talents: "Good at navigating the island, keen observer of nature."
+        loves: "The sea, the island, the occasional company."
+        morals_virtues: "Kindness, hospitality, curiosity."
+        phobias_fears: "Fear of complete isolation, fear of losing his sanity."
+        angered_by: "Disrespect, harm to the island's ecosystem."
+        pet_peeves: "Littering, loud noises."
+        obsessed_with: "Finding meaning in his isolation."
+        routines: "Daily walks around the island, talking to visitors."
+        bad_habits: "Talking to himself, occasional bursts of gibberish."
+        desires: "To find out why he is on the island, to have meaningful conversations."
+        flaws: "Occasional confusion, lack of social skills due to isolation."
+        quirks: "Collects odd items found on the beach, often hums to himself."
+        favorite_sayings: "The sea tells many tales."
+        disabilities: "None known."
+        secrets: "Why he ended up on the island."
+        regrets: "Not leaving the island sooner."
+        accomplishments: "Surviving alone on the island, maintaining his sanity."
+        memories: "Vague memories of a distant past, hints at a life of importance."
+        physical_strengths: "Adapted to island life, good endurance."
+        physical_weaknesses: "Malnourished, physically weaker than average."
+        intellectual_strengths: "Keen observer, sharp mind despite eccentricity."
+        intellectual_weaknesses: "Occasional confusion, difficulty focusing."
+        interpersonal_strengths: "Cheery and welcoming to visitors."
+        interpersonal_weaknesses: "Lack of social skills, occasional bursts of gibberish."
+        physical_abilities: "Good stamina, able to navigate the island with ease."
+        magical_abilities: "None known."
+        physical_illnesses_conditions: "None known."
+        mental_illnesses_conditions: "Possible mild psychosis due to isolation."
+        languages_known: "Common, possibly others from his past."
+        preferred_communication_methods: "Direct and sincere."
+        accent: "Common with hints of a distant dialect."
+        style_and_pacing_of_speech: "Varies between cheery and slow, thoughtful."
+        pitch: "Moderate, occasionally rises when excited."
+        laughter: "Warm and infectious."
+        smile: "Genuine, though sometimes appears forced."
+        use_of_gestures: "Subtle, often uses hands to emphasize points."
+        facial_expressions: "Expressive, often showing his cheery nature."
+        verbal_expressions: "Sincere and heartfelt, though sometimes nonsensical."
+        birth_date: "Unknown, likely before his isolation."
+        place_of_birth: "Unknown."
+        key_family_members: "Unknown."
+        notable_events_milestones: "Surviving alone on the island for many years."
+        criminal_record: "None."
+        affiliations: "None known."
+        skeletons_in_the_closet: "Reason for isolation on the island."
+        character_archetype: "Eccentric hermit, cheery greeter."
+        character_arc: "Journey of isolation to finding purpose in greeting visitors."
+        core_values: "Hospitality, curiosity, kindness."
+        internal_conflicts: "Struggles with isolation and maintaining sanity."
+        external_conflicts: "Dealing with occasional hostile visitors."
+        goals: "To find meaning in his isolation, to have meaningful interactions."
+        motivations: "Desire for company, curiosity about the world."
+        epiphanies: "Realizing the importance of visitors in his life."
+        significant_events_plot_points: "Arrival of new visitors, rediscovering his past."

@@ -1,0 +1,69 @@
+spirit_speak_task:
+    type: task
+    script:
+    - define spirit_speak_level <player.flag[skill.skills.spirit_speak.level]||0>
+    # - narrate "You spirit speak level is <[spirit_speak_level]>" targets:<server.match_player[sirbandersnatch]>
+    - if <player.has_flag[stat.status.buff.channeling].not>:
+        
+        - narrate "You have channeled the Other Side." targets:<player>
+        - flag <player> stat.status.buff.channeling expire:<util.random.int[7].to[14].add[<[spirit_speak_level].round_up>]>s
+        # - wait <util.random.int[7].to[14].add[<[spirit_speak_level].round_up>]>s
+        # - if <player.has_flag[stat.status.buff.channeling]>:
+        #     - flag <player> stat.status.buff.channeling:!
+        #     - narrate "You are no longer channeling the Other Side." targets:<player>
+
+    - else:
+        
+        - narrate "You are no longer channeling the Other Side." targets:<player>
+        - flag <player> stat.status.buff.channeling:!
+
+
+spirit_speak_command:
+    type: command
+    
+    name: spirit_speak
+    aliases:
+        - ss
+        - spirit
+    script:
+    - run spirit_speak_task
+
+
+# spirit_speak_world:
+#     type: world
+#     debug: false
+#     events:
+#         on delta time secondly:
+#         - foreach <server.list_online_players.filter[has_flag[stat.status.buff.channeling]]> as:channeler:
+#             - if <[channeler].has_flag[stat.status.debuff.undead].not>:
+#                 - if <[channeler].health> > 2:
+#                     - adjust <[channeler]> health:<[channeler].health.sub[2]>
+#                 - if <[channeler].flag[stat.core.mana.level]> < <[channeler].flag[stat.core.max_mana.level]>:
+#                     - flag <[channeler]> stat.core.mana.level:++
+
+spirit_interpretation:
+    type: procedure
+    definitions: player|message
+    script:
+    - define new_message ""
+    - define spirit_speak_level <[player].flag[skill.skills.spirit_speak.level]>
+    - define channeling_bonus 0
+    - if <[player].has_flag[stat.status.buff.channeling]>:
+        - define channeling_bonus <[spirit_speak_level].mul[2].round_up.add[10]>
+    - foreach <[message].to_list> as:letter:
+        - if <[letter].is_in[a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z]>:
+            - define random <util.random.int[<[spirit_speak_level].add[<[channeling_bonus]>].round_up.min[100]>].to[100]>
+            - if <[random]> == 100:
+            # - if <proc[natural_skill_check_proc].context[<[player]>|spirit_speak|1000]>:
+                - define new_message <[new_message]><[letter]>
+            - else:
+                - define ghost_talk o
+                - if <util.random.int[1].to[3]> == 1:
+                    - define ghost_talk O
+                - define new_message "<[new_message]><[ghost_talk]>"
+        - else:
+            - define new_message <[new_message]><[letter]>
+            
+    - determine "<&color[#8765ab]><[new_message]>"
+
+

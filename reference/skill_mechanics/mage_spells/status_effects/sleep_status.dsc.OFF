@@ -1,0 +1,13 @@
+sleep_task:
+    type: task
+    definitions: target|amount
+    script:
+    - repeat 15:
+        - wait 5t
+        - playeffect effect:ENCHANTMENT_TABLE at:<[target].location> quantity:100
+    - run blind_task def:<[target]>|<[amount]>
+    - look <[target]> <[target].location.down[1]> duration:<[amount]>s
+    - adjust <[target]> walk_speed:0
+    - showfake barrier <[target].location.up[3]> duration:1s
+    - wait <[amount]>s
+    - adjust <[target]> walk_speed:<[target].flag[player_speed]||0.2>

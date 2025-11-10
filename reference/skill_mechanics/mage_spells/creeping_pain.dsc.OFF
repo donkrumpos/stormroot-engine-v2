@@ -1,0 +1,24 @@
+creeping_pain_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    - if <[attacker].has_flag[skill.spells.creeping_pain.level].not>:
+        - flag <[attacker]> skill.spells.creeping_pain.level:1
+    - define level <player.flag[skill.spells.creeping_pain.level]>
+    # - if <[defender].has_flag[creeping_pain]>:
+    #     - stop
+    # - else:
+    - if <[defender].is_living.not>:
+        - narrate format:game_message "You cannot see your target" targets:<[attacker]>
+    - repeat <util.random.int[<[level].sub[3].max[1]>].to[<[level].add[3]>]>:
+        - wait <util.random.int[2].to[<[level].add[2]>]>s
+        - run spell_damage_task def:creeping_pain|<[defender]>|<[attacker]>|<[value]>
+        - playeffect effect:crit_magic at:<[defender].location> quantity:10
+        - playeffect effect:composter at:<[defender].location> quantity:10
+        - narrate "You feel pain creep throughout your body" targets:<[defender]>
+        - define resist_success <proc[natural_skill_check_proc].context[<[defender]>|poison_resist]>
+        - if <[resist_success]>:
+            - run raise_resist_spells_task def:<[defender]>|poison
+            - repeat stop
+        
+        # - flag <[defender]> creeping_pain:!

@@ -1,0 +1,7 @@
+torag_weed:
+  type: item
+  material: bowl
+  display name: Torag Weed
+  mechanisms:
+    custom_model_data: 2110025
+    

@@ -1,0 +1,47 @@
+reagents_data:
+    type: data
+    reagent:
+        garlic:
+            display_name: Garlic
+            property:
+                primary: abjuration
+                secondary: healing
+            level: 1
+        mandrake_root:
+            display_name:  "Mandrake Root"
+            property:
+                primary: strength
+                secondary: healing
+            level: 1
+        ginseng:
+            display_name: Ginseng
+            property:
+                primary: strength
+                secondary: healing
+            level: 1
+        black_pearl:
+            display_name: "Black Pearl"
+            property:
+                primary: energy
+                secondary: illusion
+            level: 1
+        sulferous_ash:
+            display_name:  "Sulfurous Ash"
+            property:
+                primary: fire
+                secondary: 
+        blood_moss:
+            display_name: "Blood Moss"
+            property:
+                primary: regeneration
+                secondary: healing
+        spider_silk:
+            display_name: "Spider Silk"
+            property:
+                primary: trapping
+                secondary: protection
+        nightshade:
+            display_name:  Nightshade
+            property:
+                primary: harm
+                secondary: poison

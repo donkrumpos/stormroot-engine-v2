@@ -1,0 +1,8 @@
+horns_curled_black:
+  type: item
+  material: leather_horse_armor
+  display name: ""
+  mechanisms:
+    custom_model_data: 33022001
+
+    

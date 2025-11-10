@@ -1,0 +1,6 @@
+arc_test:
+    type: task
+    script:
+    - repeat 100:
+        - foreach <player.location.up[1].points_between[<player.target.location.up[1]>]> as:point:
+            - playeffect effect:flame at:<[point]> quantity:1 offset:0.05,0.08,0.05

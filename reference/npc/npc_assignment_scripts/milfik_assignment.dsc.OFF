@@ -1,0 +1,27 @@
+milfik_assignment:
+    type: assignment
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:9
+
+    interact scripts:
+    - milfik_interact:
+
+    default constants:
+        appearance1: "<npc.name>' is a slender female with pale skin that does not know much but than to sell her goods."
+        appearance2: "You sense that <npc.name> is not from around here.."
+        appearance3: "There is not much that <npc.name> can help you with in this world but selling you some food"
+        appearance4: "You can see he has much information that can help newcomers out, but not much more than that."
+
+milfik_interact:
+  type: interact
+  steps:
+    1:
+       
+        click trigger:
+            script:
+            - engage
+            - narrate "this is it."
+            - disengage

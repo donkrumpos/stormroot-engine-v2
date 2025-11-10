@@ -1,0 +1,104 @@
+# arcane_tunic:
+#   type: item
+#   debug: false
+#   definitions: 1|2
+#   material: LEATHER_CHESTPLATE
+#   display name: <&a><&l><&n>Arcane Tunic
+#   lore:
+#   - <&b><&l>Enemies trying to attack you
+#   - <&b><&l>will be violently inflicted a wither.
+#   - Armor: <script.yaml_key[armor]||0>
+#   - Elemental Protection: <script.yaml_key[armor-material].get[1].parsed||0>%
+#   slot-type: chest
+#   stats:
+#     hit-point-increase: 10
+#     hit-point-regeneration: 0
+#     mana-regeneration: 1
+#     defense-chance-increase: 15
+#     stamina-loss-reduction: 1
+#     defense-modifier:
+#         - Defence
+#         - Guarding
+#         - Hardening
+#         - Fortification
+#         - Invulnerability
+#     on-hit:
+#       type: WITHER
+#       mode: WHEN_HIT
+#       cooldown: 9.0
+#       amplifier: 2.0
+#     armor-material:
+#     - fire: 0
+#     - frost: 10
+#     - poison: 0
+#     - earth: 10
+#     - void: 10
+#     - air: 10
+#     - energy: 10
+#     - nature: 10
+#     - death: 10
+#     - stone: 10
+#     - sun: 10
+#     - moon: 10
+#     armor: 6.0
+#   medable: true
+#   lower-mana-cost: 0
+#   price: 35
+#   required-level: 13.0
+#   tier: RARE
+#   strength-requirement: 35
+#   item_type: sword
+#   required-class:
+#   - Warrior
+#   - Paladin
+#   max-mana: 10.0
+#   color: <color[100,100,255]>
+#   rarity: 10
+  
+
+
+    
+#   item-particles:
+#     type: GALAXY
+#     particle: SPELL_WITCH
+#   set: ARCANE
+  
+arcane_tunic:
+  type: item
+  material: LEATHER_CHESTPLATE
+  display name: <&a><&l><&n>Arcane Tunic
+  lore:
+  - <&b><&l>Enemies trying to attack you
+  - <&b><&l>will be violently inflicted a wither.
+  flags:
+      defense: 5
+      stat:
+        bonus:
+          hit_point_increase: 0
+          hit_point_regeneration: 0
+          mana_regeneration: .15
+          defense_chance_increase: .15
+          stamina_loss_reduction: 1
+          stamina_increase: 10
+          dexterity_increase: 1
+          strength_increase: 1
+          intelligence_increase: 1
+          stamina_regeneration: 1
+          lower_mana_cost: 0
+          medable: true
+          fire_resist: 0
+          cold_resist: 0
+          poison_resist: 100
+          energy_resist: 0
+          luck: 10
+      defense_modifier: Defense
+      weight: 3
+      current_durability: 255
+      maximum_durability: 255
+      required_strength: 35
+      item_type: armor
+      set: arcane
+      slot_type: chest
+  color: <color[100,100,255]>
+    # mechanisms:
+    #   custom_model_data: 8102602

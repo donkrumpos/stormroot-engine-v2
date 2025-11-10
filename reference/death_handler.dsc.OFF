@@ -1,0 +1,343 @@
+death_world:
+    type: world
+    debug: false
+    events:
+        # on player steers entity:
+        # - narrate steers
+        on delta time minutely:
+        - repeat 6:
+            - run find_death_loot_task 
+            - wait 10s
+        on player picks up item:
+        - if <player.has_flag[is_dead]>:
+            - determine cancelled
+        on player chats:
+        - if <player.has_flag[is_dead]>:
+            - foreach <context.recipients> as:recipient:
+                - define new_message <proc[spirit_interpretation].context[<[recipient]>|<context.message>]>
+                # - announce "message: <blue><[new_message]> for <[recipient]>"
+                - narrate "A ghost says: <[new_message]>" targets:<[recipient]>
+            - determine passively cancelled
+        # on player respawns at bed:
+        # - if <player.has_flag[stronghold.home]>:
+        #     - determine <player.flag[stronghold.home]>
+        # - else:
+        #     - teleport <player> spawn_bardtown
+        # on player enters bed:
+        # - determine cancelled
+
+        # on player dies:
+        # - if <player.flag[is_dead]>:
+        #     - determine cancelled
+        # - define causes <list[lava|fall|fire|drowning]>
+        # # - define respawn_point <player.flag[respawn_point]>
+        # - define player_fame_loss <proc[get_entity_fame_proc].context[<player>].div[10].mul[-1]||-10>
+        # - run set_fame_task def:<player>|<[player_fame_loss]>
+        # - define possible_spawn_points <list>
+        # # - define respawn_point <[respawn_point].find_spawnable_blocks_within[100].first>
+        # - determine passively cancelled
+        # # - ratelimit <player> 4t
+        # # - if <player.has_flag[is_dead]>:
+        # #     - if <[causes].contains[<context.cause>]>:
+        # #         - teleport <player> <player.flag[respawn_point]>
+        #     # you can't die while you are dead
+        #     # - stop
+        # - flag <player> death_timer expire:5s
+        # # - flag <player> respawn_point:<player.location>
+        # - title "title:<red>You Died"
+        # # - if <player.has_flag[stronghold.home]>:
+        # #     - teleport <player> <player.flag[stronghold.home]>
+        # # - else:
+        # - narrate "<red><player.name> has died" targets:<player>|<server.match_player[sirbandersnatch]>
+  
+        # - flag <player> deaths.number:++
+        # - run kill_player_task
+        # on entity damages entity:
+        # - if <context.entity.has_flag[is_dead]>:
+        #     - determine cancelled
+
+        on player kills entity_flagged:wandering_healer:
+        - announce EVIL!
+        on villager changes profession:
+        - if <context.entity.has_flag[wandering_healer]>:
+            - narrate "wandering healer upgrades because <context.reason>" targets:<server.match_player[sirbandersnatch]>
+        # - determine cancelled
+        
+        on player right clicks entity_flagged:wandering_healer:
+        - ratelimit <player> 1s
+        - if <player.has_flag[is_dead]>:
+            - define header "Do you want to be resurrected?"
+            - clickable resurrect_task def:<player> save:resurrect_task_clickable until:10s for:<player> usages:1
+            - if <player.flag[reputation.karma.level]||0> < -1000:
+                - narrate "You have done such dastardly things I cannot begin to think of helping you."
+                - stop
+                
+            - else:
+                - narrate "Can I resurrect you traveler?"
+            - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>A Wandering Healer<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+
+            - narrate  "<element[<&hover[Click to get resurrected from the dead by this wandering healer.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B> Yes, Please resurrect me.<&8><&rb><&end_hover>].on_click[<entry[resurrect_task_clickable].command>]>" targets:<player>
+   
+        - determine passively cancelled
+        
+       
+        on player right clicks player_head location_flagged:player_corpse.player:
+        # - narrate <context.location.flag[player_corpse.player].name>
+        - if <context.location.flag[player_corpse.player]> == <player>:
+            - if <inventory[death_inventory_<player.cursor_on>].exists>:
+                - inventory open d:<inventory[death_inventory_<player.cursor_on>]>
+            - else:
+        # - if <context.location.flag[player_corpse.player]> != <player>:
+        #     - narrate <blue>click
+            # - flag player death_chest_open:<context.location.note_name>
+                - define inv <inventory[player_death_chest]>
+                
+                - flag <[inv]> death_inventory
+                - inventory open d:<[inv]>[size=27;title=DeathLoot]
+                
+                # - if <player.has_flag[<context.location.note_name>]>:
+                
+                - foreach <context.location.flag[death_loot]> as:loot_item:
+                    # - narrate "loot item: <[loot_item]>"
+                    
+                    - give <[loot_item]> to:<[inv]> slot:<[loop_index]>
+                - note <[inv]> as:death_inventory_<context.location>
+            # - flag player death_loot:!
+            # - note remove as:<context.location>
+            # - flag <context.location> player_corpse.player:!
+            # - flag server death_locations:<-:<context.location>
+        - else:
+            - narrate "You cannot loot this corpse yet."
+
+resurrect_command:
+    name: resurrect
+    debug: true
+    description: Resurrects your target from the dead
+    tab completions:
+        1: <server.online_players_flagged[is_dead].parse[name]>
+    aliases:
+    - rez
+    - res
+    type: command
+    script:
+    - define target <server.match_player[<context.args.get[1]>]||null>
+   
+    
+    - run resurrect_task def:<[target]>|<player>
+
+resurrect_task:
+    type: task
+    definitions: target|player
+    script:
+    - if <[target].has_flag[is_dead].not>:
+        - narrate format:game_message "<[target].name> is not dead" targets:<player>
+        - stop
+    - if <[target]> == <player> && <<player.has_flag[newbie].not> && <player.has_flag[is_dead]> && <player.is_op.not>:
+        - narrate format:game_message "You can only resurrect yourself when you are new to this world." targets:<player>
+        - stop
+
+    - if <player.location.distance[<[target].location>]> > 3:
+        - if <player.is_op.not>:
+            - narrate format:game_message "You must be closer to your target" targets:<player>
+            - stop
+    - if <[target].flag[reputation.karma.level]||0> < -100 && <[target]> != <player>:
+        - define target_title <proc[get_reputation_title_proc].context[<[target]>]>
+        - clickable resurrect_task def:<[target]>|<player> save:resurrect_task_clickable until:10s for:<player> usages:1
+        - narrate format:game_message "You will lose karma for resurrecting this <[target_title]> being. Are you sure you want to?"
+        - narrate  "<element[<&hover[Click to get resurrected from the dead by this wandering healer.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B> Yes resurrect this being despite me losing karma.<&8><&rb><&end_hover>].on_click[<entry[resurrect_task_clickable].command>]>" targets:<player>
+        - stop
+
+    - adjust <[target]> vision
+    - flag <[target]> is_dead:!
+    - define find_block <player.location.find.surface_blocks.within[8].get[1].up[1]>
+    - narrate "You have been resurrected from the grips of death." targets:<[target]>
+    - adjust <[target]> walk_speed:<[target].flag[walk_speed]>
+    - foreach <[target].flag[blessed_content]> as:content_item:
+        - give  <[content_item]> player:<[target]>
+    - flag <[target]> blessed_content:!
+    - invisible <[target]> false
+    - adjust <[target]> gamemode:survival
+
+    - adjust <[target]> spectate:<[target]>
+  
+        
+
+resurrect_gui_book:
+    type: book
+    title: rez
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - ""
+
+suicide_command:
+    type: command
+    name: suicide
+    script:
+    - run suicide_task
+
+
+suicide_task:
+    type: task
+    script:
+    # - if <player.has_flag[committing_suicide].not>:
+        # - flag <player> committing_suicide
+        # # - adjust <player> gamemode:spectator
+        
+    - define current_location <player.location>
+        # - wait 1s
+        # - cast blindness duration:13s
+        # - repeat 100:
+            
+        #     - wait 2t
+        #     - teleport <player> <[current_location].up[300]>
+        # - cast confusion duration:3s
+    - title "title:<red>You Died"
+    - teleport <player> <[current_location].chunk.surface_blocks.random.highest.above>
+    # - wait 5t
+    - run kill_player_task def:<player>
+        # - wait 5s
+        # - cast remove <player>
+    # - flag <player> committing_suicide:!
+    # - adjust <player> gamemode:adventure
+
+
+kill_player_task:
+    type: task
+    definitions: player
+    script:
+    - wait 2s
+    - if <player.has_flag[is_dead]>:
+        - stop
+    - adjust <player> vision:enderman
+    - wait 1t
+    # - adjust <player> gamemode:spectator
+    # - spawn "armor_stand[is_small=false;invulnerable=false;visible=true;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|air]" <player.location> save:death_proxy
+    # - create player ghost <player.location> save:death_proxy
+    # - adjust <player> spectate:<entry[death_proxy].created_npc>
+    
+    - flag <player> is_dead
+    - wait 1t
+
+    - define pre_death_speed <player.walk_speed>
+    - flag <player> walk_speed:<[pre_death_speed]>
+    - adjust <player> walk_speed:0.01
+#     
+#     - invisible <player>
+#     - invisible <player> false for:<server.online_players_flagged[is_dead].exclude[<player>]>
+    - wait 1t
+#     #   - while <player.has_flag[is_dead]>:
+    
+#     - wait <util.random.int[4].to[9]>t
+    - if <player.location.find.entities[villager].within[32].filter[has_flag[wandering_healer]].is_empty>:
+        - run spawn_healer def:<player.location>
+    - else:
+        - narrate "there are healers around " targets:<server.match_player[sirbandersnatch]>
+    - if <player.inventory.is_empty>:
+        - stop
+    - define death_location <player.location>
+    - define player_skull player_head[skull_skin=<player.uuid>]
+    - define chest_name player_death_loot_<player>
+
+
+    - define death_chest_contents <list>
+    - define content_to_keep <list>
+    # #   for now removing bound spells but will find a way to rebind them upon resurrection
+    - flag <player> bound_spell:!
+    - foreach <player.inventory.list_contents> as:contents:
+        - if <[contents].has_flag[blessed]>:
+            - define content_to_keep:->:<[contents]>
+        - else:
+            - define death_chest_contents:->:<[contents]>
+        - take <[contents]>
+    - note <[death_location]> as:<[chest_name]>
+
+    - modifyblock <[death_location]> player_head 
+    - adjust <[death_location]> skull_skin:<player.uuid>
+    #   - adjust <player> gamemode:spectator
+
+
+    - flag <player> blessed_content:<[content_to_keep]>
+    - flag server death_locations:->:<player.location>
+    - flag <[death_location]> death_loot:<[death_chest_contents]>
+    - flag <[death_location]> player_corpse.player:<player>
+    - flag <[death_location]> player_corpse.time:<util.current_time_millis>
+
+spawn_healer:
+    type: task
+    definition: location
+    script:
+    - define eligible_block <player.location.find.surface_blocks.within[16].exclude[<player.location.find.surface_blocks.within[10]>].random.up[1]>
+    - define villager_x <[eligible_block].x.round>
+    - define villager_y <[eligible_block].y.round>
+    - define villager_z <[eligible_block].z.round>
+    - narrate "new villager spawned at <[eligible_block]>" targets:<server.match_player[sirbandersnatch]>
+    - spawn villager[profession=cleric] <[eligible_block]> save:healer
+    - flag <entry[healer].spawned_entity> wandering_healer
+    - adjust <entry[healer].spawned_entity> max_health:1000
+    - adjust <entry[healer].spawned_entity> health:1000
+    - flag <entry[healer].spawned_entity> reputation.karma.level:500
+    # - annouce "spawning healer"
+
+player_death_chest:
+  type: inventory
+  inventory: Chest
+  title: Death Chest
+  size: 54
+  slots:
+  - "[] [] [] [] [] [] [] [] []"
+  - "[] [] [] [] [] [] [] [] []"
+  - "[] [] [] [] [] [] [] [] []"
+  - "[] [] [] [] [] [] [] [] []"
+  - "[] [] [] [] [] [] [] [] []"
+  - "[] [] [] [] [] [] [] [] []"
+
+
+find_death_loot_task:
+    type: task
+    debug: false
+    script:
+    # - foreach <location[meruk].find_blocks_flagged[death_loot].within[3000]> as:death_flag:
+        # - narrate <[death_flag]>  targets:<server.match_player[sirbandersnatch]>
+        # - flag <[death_flag]> death_loot:!
+        # - flag <[death_flag]> player_corpse:!
+        # - foreach <location[meruk].find_blocks_flagged[death_loot].within[3000]> as:death_flag:
+    #     #     - narrate <[death_flag]>
+    - if <server.has_flag[death_locations].not>:
+        - stop
+    - foreach <server.flag[death_locations]> as:death_chest:
+    #     # - narrate <server.current_time_millis.sub[<[death_chest].flag[player_corpse.time]>]> targets:<server.match_player[sirbandersnatch]>
+        - if <util.current_time_millis.sub[<[death_chest].flag[player_corpse.time]>]> > 1400:
+            - narrate "<red>we should remove <[death_chest]>" targets:<server.match_player[sirbandersnatch]>
+    #         - narrate "============" targets:<server.match_player[sirbandersnatch]>
+            - modifyblock <[death_chest].find_blocks[player_head].within[1].first> air
+            - note remove as:<[death_chest].note_name>
+            - flag server death_locations:<-:<[death_chest]>
+            - flag <[death_chest]> player_corpse:!
+
+remove_death_loots:
+    type: task
+    script:
+    - foreach <location[meruk].find_blocks_flagged[death_loot].within[3000]> as:death_flag:
+        - flag <[death_flag]> death_loot:!
+        - flag <[death_flag]> player_corpse:!
+
+
+
+find_healers:
+    type: task
+    script:
+    - foreach <player.location.find.entities[villager].within[100].filter[has_flag[wandering_healer]]> as:healer:
+        - narrate "<[healer]> found at <[healer].location.simple>"
+
+
+
+resurrect_gui_book:
+    type: book
+    title: rez
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - ""

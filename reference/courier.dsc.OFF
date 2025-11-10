@@ -1,0 +1,80 @@
+courier_world:
+    type: world
+    events:
+    
+        on player clicks in post_box_inventory:
+        - if <context.action>  == PLACE_ALL && <player.flag[post_box_receiving].size> < 1 && <context.cursor_item> != air:
+            - flag <player> post_box_item_sending:<context.cursor_item>
+            - wait 1s
+            - inventory close d:post_box_inventory
+            - narrate "<yellow>Whom do you want to send to?"
+            - flag <player> signing_post expire:1m
+        - else if <player.has_flag[post_box_receiving]> && <player.flag[post_box_receiving].size> > 0 && <context.action> == PICKUP_ALL:
+            - flag <player> post_box_receiving:<-:<context.item>
+            - inventory close d:post_box_inventory
+            - narrate "You have picked up your item."
+        
+        on player chats:
+        - if <player.has_flag[signing_post]>:
+            - narrate <green><context.message.replace[<&sp>]>
+            - define recipient <server.match_offline_player[<context.message.replace[<&sp>]>]>
+            - if <[recipient]> != null:
+                - if <[recipient].has_flag[has_post_box].not>:
+                    - narrate "This recipient does not have a Post Box. They will have to retreive it at a public one in a town."
+                - flag <player> post_box_sending_to:<[recipient]>
+                - flag <[recipient]> post_box_receiving:->:<player.flag[post_box_item_sending]>
+                - flag <player> signing_post:!
+                - narrate "This <player.flag[post_box_item_sending]> will be sent to <player.flag[post_box_sending_to].as_player.name> "
+            - else:
+                - narrate "We don't have <[recipient]> in our system. Please try again."
+                - give <player.flag[post_box_item_sending]>
+            - determine passively cancelled
+
+        on player places post_box:
+        - if <player.has_flag[has_post_box]>:
+            - narrate "You can only place one Post Box."
+            - determine cancelled
+        - else if <player.flag[stronghold.chunks].contains_any[<player.cursor_on.chunk>].not>:
+            - narrate "You must place a Post Box in your Stronghold."
+            - determine cancelled
+        - else:
+            - flag <player> has_post_box
+            - flag <context.location> post_box:<player>
+                
+        on player breaks block:
+        - if <context.location.has_flag[post_box]> && <context.location.flag[post_box]> == <player>:
+            - flag <context.location> post_box:!
+            - flag <player> has_post_box:!
+
+        on player right clicks block location_flagged:post_box:
+        # - narrate <context.location.has_flag[post_box]>
+        - if <player.item_in_hand> != air:
+            - determine passively cancelled
+        - if <context.location.has_flag[post_box]> && <context.location.flag[post_box]> == <player> || <context.location.flag[post_box]> == server :
+            - inventory open d:post_box_inventory
+            - if <player.has_flag[post_box_receiving]>:
+                - foreach <player.flag[post_box_receiving]> as:received_item:
+                    - give <[received_item]> to:<player.open_inventory> slot:<[loop_index].add[9]>
+                    - narrate "You have a package!"
+        - else:
+            - narrate "This is not your Post Box so you cannot open it."
+    
+
+post_box_inventory:
+  type: inventory
+  inventory: Chest
+  title: "Post Box"
+  size: 18
+  slots:
+  - "[] [] [] [] [] [] [] [] []"
+  - "[] [] [] [] [] [] [] [] []"
+
+
+courier_send_to:
+    type: book
+    title: Post
+    author: <player.name>
+    signed: false
+    debug: false
+    # text:
+    # - ""

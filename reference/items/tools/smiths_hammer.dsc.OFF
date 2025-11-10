@@ -1,0 +1,15 @@
+smiths_hammer:
+  type: item
+  material: golden_hoe
+  display name: Smith's Hammer 
+  flags:
+    custom_model_data: 82224448
+    current_durability: 100
+    maximum_durability: 100
+    price: 80
+    item_type: mace
+    weapon_damage_min: 7
+    weapon-damage_max: 9
+  mechanisms:
+    custom_model_data: 82224448
+  

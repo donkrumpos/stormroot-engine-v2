@@ -1,0 +1,588 @@
+game_loop_world:
+    type: world
+    debug: false
+    events:
+        on delta time secondly:
+        # we run the game loop 5 times every second
+        - define per_second 5
+        - define wait_time <element[1].div[<[per_second]>]>
+        - foreach <server.online_players> as:player:
+            - flag <[player]> score.time_on_server:++
+            - repeat <[per_second]>:
+                # this displays the stats at the top of the page
+                # - run bossbar_loop_task def:<[player]>
+                #this runs the other tasks below
+                - if <[player].is_online>:
+                    - run game_loop_task def:<[player]>
+                - wait <[wait_time]>
+
+        on player logs in for the first time:
+        # when the player joins, set up their default skills. Run it in a task so that we can easily give it in game
+
+        - run give_starting_skills def:<[player]>
+        
+reset_player_skills:
+    type: task
+    script:
+    - flag <player> stat:!
+    - flag <player> skill:!
+    - flag <player> reputation:!
+    - wait 1t
+    - run give_starting_skills
+
+give_starting_skills:
+    type: task
+    definitions: player
+    script:
+    - run set_intial_stats_task def:<[player]>
+    - run set_initial_natural_skills_task def:<[player]>
+    - run set_initial_attributes_task def:<[player]>
+    - run set_initial_reputation_task def:<[player]>
+    # - run set_initial_resistances_task
+    - if <[player].has_flag[class.type].not>:
+        - flag <[player]> class.type:Classless
+     
+set_initial_reputation_task:
+    type: task
+    script:
+    - if <player.has_flag[reputation.karma.level].not>:
+        - flag <player> reputation.karma.level:1
+    - if <player.has_flag[reputation.fame.level].not>:
+        - flag <player> reputation.fame.level:1
+
+set_intial_stats_task:
+    type: task
+    script:
+    - foreach <script[initial_stats_data].data_key[stat]> as:stat:
+        - define sub_stat <[key]>
+        - foreach <[stat]> as:stat_:
+            - if <player.has_flag[stat.<[sub_stat]>.<[key]>.level].not>:
+                - flag <player> stat.<[sub_stat]>.<[key]>.level:<[stat_]>
+
+set_initial_attributes_task:
+    type: task
+    script:
+    - adjust <player> health_scale:20
+    - foreach <script[attribute_skills_data].data_key[attribute]> as:attribute:
+        - if <player.has_flag[skill.attribute.<[key]>.level].not>:
+            - flag <player> skill.attribute.<[key]>.level:10
+
+# initializes players natural skills.
+set_initial_natural_skills_task:
+    type: task
+    definitions: player
+    script:
+    - define player_skills <script[skills_skills_data].data_key[skills]>
+    - foreach <[player_skills]> as:skills: 
+        - if <[player].has_flag[skill.skills.<[skills]>.level].not>:
+            - flag <[player]> skill.skills.<[key]>.level:0
+
+
+# initializes players resistances skills.
+set_initial_resistances_task:
+    type: task
+    script:
+    - foreach <script[elemental_resist_data].data_key[resistance]> as:resistance:
+        - if <player.has_flag[skill.skills.<[resistance]>_resistance.level].not>:
+            - flag <player> skill.skills.<[resistance]>_resistance.level:0
+
+# events to handle sprinting  and sneaking
+sprint_sneak_jump_world:
+    type: world
+    debug: false
+    events:
+        # on player jumps:
+        # - if <player.location.areas.filter[has_flag[no_fatigue]].is_empty>:
+        #     - adjust <player> food_level:<player.food_level.sub[<proc[armor_weight_proc].context[<player>].add[2]>]>
+            # - flag <player> stat.core.stamina.level:-:<proc[armor_weight_proc].context[<player>].max[1].add[2]||1>
+        # - if <player.flag[stat.core.stamina.level]> < 1:
+        #     - if <util.random.int[1].to[<player.flag[skill.skills.focus.level].div[10].round_down>]> == 1:
+        #         - narrate "<red>You're too exhausted to jump." targets:<player>
+        #         - determine cancelled
+           
+        # - if <player.flag[stat.core.stamina.level]> > 1:
+        #     - flag <player> stat.core.stamina.level:-:3
+        # - if <player.flag[stat.stamina_level]> <= 1:
+        #     - teleport <player> <context.location>
+        # - else:
+        #     - adjust <player> exhaustion:<player.exhaustion.add[3]>
+        # - if <proc[armor_weight_test_proc].context[<player>]>:
+        #     - flag <player> stat.core.stamina.level:-:6
+         
+        #     # - ratelimit <player> 3s
+        #     # - narrate "The weight of your armor inhibits your jumping."
+        on player starts sprinting:
+            # flag the player so other mechanics can use that flag
+            - ratelimit <player> 1s
+            - flag player sprinting
+          
+        on player stops sprinting:
+            # remove sprinting flag
+            - flag player sprinting:!
+       
+
+        on player stops sneaking:
+        # stops the player from hiding
+        - if <player.has_flag[hidden]>:
+            - adjust <player> show_to_players
+            - flag <player> hidden:!
+            - narrate "<red>You are no longer hidden."
+
+hitpoint_task:
+    type: task
+    debug: false
+    definitions: player
+    script:
+    # == note we use the built in health of minecraft to hp regeneration and to raise health
+    # HEALTH POINTS
+    # keep player hp and strength in sync with str attr and any appropriate bonuses
+    - adjust <[player]> health_scale:20
+    - if <[player].has_flag[skill.attribute.strength.level]>:
+        - if <[player].flag[skill.attribute.strength.level]> >= 10:
+            - define current_strength <proc[attribute_skill_check_proc].context[<[player]>|strength]>
+            - define hitpoint_increase <[player].flag[stat.bonus.hitpoint_increase.level]||0>
+            - adjust <[player]> max_health:<[current_strength].add[<[hitpoint_increase]>]||1>
+            - define hitpoint_regeneration <[player].flag[stat.bonus.hitpoint_regeneration.level]||0>
+            - define current_health <[player].health>
+            - adjust <[player]> health:<[current_health].add[<[hitpoint_regeneration]>]>
+
+        - else:
+            # sets up initials as a fallback
+            - flag <[player]> skill.attribute.strength.level:<script[initial_stats_data].data_key[stat.core.health]||10>
+            - adjust <[player]> max_health:<script[initial_stats_data].data_key[stat.core.health]||10>
+
+mana_task:
+    type: task
+    debug: false
+    definitions: player
+    script:
+    # ****************************
+    # all looping mana mechanics
+    # ****************************
+    - define current_intelligence <proc[attribute_skill_check_proc].context[<[player]>|intelligence]||0>
+    # SET UP MANA
+        # set mana at the current intelligence
+    - define max_mana <[current_intelligence].add[<[player].flag[stat.bonus.mana_increase.level]||0>]>
+    - define mana <[player].flag[stat.core.mana.level]||0>
+    - define focus_bonus <[player].flag[skill.skills.focus.level]||1>
+    - define focus_mana_regeneration_rate <script[initial_stats_data].data_key[stat.core.mana_regeneration_rate]>
+    - define focus_mana_regeneration_rate <[focus_bonus].mul[<[focus_mana_regeneration_rate]>]||0>
+    - define base_mana_regen <[player].flag[stat.core.mana_regeneration_rate.level]||1>
+    - define mana_regeneration <[base_mana_regen].add[<[focus_mana_regeneration_rate]>]>
+    - define mana_regeneration <[mana_regeneration].add[<[player].flag[stat.bonus.mana_regeneration.level]||0>]>
+    # MANA LOOP
+    - if !<[player].has_flag[skill.skills.meditation]>:
+        - flag <[player]> skill.skills.meditation.level:1
+    # when mana is down, starting regenerating it
+    - if <[mana]> > <[max_mana]>:
+        - flag <[player]> stat.core.mana.level:0
+    - if <[mana]> < <[max_mana]>:
+        # MEDITATION LOOP
+        # if the player is meditating set up a meditation regeneration rate
+        - if <[player].has_flag[stat.status.buff.meditating]>:
+            - define active_meditation <[player].flag[skill.skills.meditation.level].div[100]>
+            - define mana_regeneration <[mana_regeneration].add[<[active_meditation]>]>
+        - else:
+            # if they are not meditating still run a passive regeneration rate but much slower
+            - define passive_meditation <[player].flag[skill.skills.meditation.level].div[500]>
+            - define mana_regeneration <[mana_regeneration].add[<[passive_meditation]>]>
+        
+        # raise mana at the regeneration rate set above
+        - flag <[player]> stat.core.mana.level:+:<[mana_regeneration]>
+        - adjust <[player]> armor_bonus:<[player].flag[stat.core.mana.level].div[<[max_mana]>].mul[100].div[4].round>
+        # raise meditation skill by mana regenerating
+        - if <util.random.int[1].to[<[player].flag[skill.skills.meditation.level].round[0]>]> == 1:
+            - run raise_natural_skill_task def:<[player]||null>|meditation|0|0
+        # raise focus level by mana regenerating
+        - if <util.random.int[1].to[<[player].flag[skill.skills.focus.level].round[0]>]> == 1:
+            - run raise_natural_skill_task def:<[player]||null>|focus|0|0
+
+    - else if <[mana]> > <[max_mana]>:
+        # so mana can never be above max mana
+         - flag <[player]> stat.core.mana.level:<[max_mana]>
+
+speed_task:
+    type: task
+    definitions: player
+    debug: false
+    script:
+    - define speed 0
+    # - adjust <[player]> walk_speed:<proc[speed_check_proc].context[<[player]>]||.02>
+
+stamina_task:
+    type: task
+    debug: false
+    definitions: player
+    script:
+    - if <[player].item_in_hand.has_flag[stat.bonus.saturation]> && <[player].item_in_hand.flag[stat.bonus.saturation]> > 0 && <[player].saturation> < 1:
+        - adjust <[player]> saturation:<[player].item_in_hand.flag[stat.bonus.saturation]>
+    - define current_dexterity <proc[attribute_skill_check_proc].context[<[player]>|dexterity]>
+    # SET UP STAMINA
+    # get stamina
+    # get focus level
+    - define focus_bonus <[player].flag[skill.skills.focus.level].round_down||0>
+    - define stamina <[current_dexterity].add[<[focus_bonus]>]>
+    # get max stam from dex and add focus
+    - define max_stamina <[current_dexterity].add[<[focus_bonus]>]>
+    - define max_stamina <[max_stamina].add[<[player].flag[stat.bonus.stamina_increase.level]||0>]>
+    
+    # set the new max stamina 
+    - flag <[player]> stat.core.max_stamina.level:<[max_stamina].round_up>
+
+    # setup a base focus and stamina regeneration rate
+    - define focus_stamina_regeneration_rate <script[initial_stats_data].data_key[stat.core.stamina_regeneration_rate]>
+    
+    # set the new stamina regen rate based on focus level
+    - define focus_stamina_regeneration_rate <[focus_bonus].mul[<[focus_stamina_regeneration_rate]>]>
+    - define dexterity_stamina_regeneration_rate_bonus <[current_dexterity].div[10].round_down>
+    - define food_level <[player].food_level.div[5]>
+
+    # set the final stamina regeneration rate based on above (dex and focus) and add bonus if any
+    - define stamina_regeneration_rate <[focus_stamina_regeneration_rate].add[<player.flag[stat.bonus.stamina_regeneration.level]||0>].add[<[dexterity_stamina_regeneration_rate_bonus]>].add[<[food_level]>]>
+    - define stamina_regeneration_bonus <player.flag[stat.bonus.stamina_regeneration.level].div[10]||0>
+    - define stamina_regeneration_rate <[stamina_regeneration_rate].add[<[stamina_regeneration_bonus]>]>
+    # STAMINA LOOP
+       # when the player is sprinting, start to reduce stamina
+    - if <[player].location.areas.is_empty>:
+        - if <[player].has_flag[sprinting]>:
+            - if <[player].food_level> > 0:
+            # - flag <[player]> stat.core.stamina.level:-:<proc[armor_weight_proc].context[<[player]>].sub[<proc[attribute_skill_check_proc].context[<[player]>|strength]>]>
+            # - if <[player].exhaustion> > 0:
+                - adjust <[player]> food_level:<[player].food_level.sub[<proc[armor_weight_proc].context[<[player]>].add[2]>]>
+                # - narrate "food_level <[player].food_level>" targets:<server.match_player[SirBandersnatch]>
+    
+    # when the player's stamina is lowered, start to regenerate it
+    # - if <[player].flag[stat.core.stamina.level]||0> < <[player].flag[stat.core.max_stamina.level]||0>:
+    - if <[player].food_level> < 20:
+        # - flag <[player]> stat.core.stamina.level:+:<[stamina_regeneration_rate]>
+        # - adjust <[player]> saturation:1
+        # - announce <red><proc[calculate_overburden_proc].context[<[player]>]>
+        - if <util.random.int[0].to[<proc[armor_weight_proc].context[<[player]>]> == 0:
+            - adjust <[player]> food_level:<[player].food_level.add[1]>
+            # - narrate "food level <[player].food_level>" targets:<server.match_player[SirBandersnatch]>
+        # also start raise the focus skill
+        - if <[player].flag[stat.core.stamina.level]||0> <= 10:
+            - if <util.random.int[0].to[5]> == 2:
+                - run raise_natural_skill_task def:<[player]>|focus|0|0
+                # - narrate "raising focus" targets:<server.match_player[SirBandersnatch]>
+    - if <[player].flag[stat.core.stamina.level]||0> <= 1:
+        # - announce "<green> <[player].flag[stat.core.speed.level]>"
+        # - if <[player].walk_speed> >= <[player].flag[stat.core.speed.level]>:
+        - if <util.random.int[<[player].flag[skill.specializations.second_wind.level].min[100]||0>].to[100]> < 100:
+            - if <[player].has_flag[exhausting].not>:
+                - flag <[player]> exhausting expire:3s
+                - flag <[player]> stat.bonus.speed_modifier.level:-:.19
+                # - ratelimit <[player]> 1s
+                # - narrate "<red>You are exhausted. You must recover." targets:<[player]>
+                - wait 1s
+                - flag <[player]> stat.bonus.speed_modifier.level:+:.19
+        - else:
+            - if <util.random.int[0].to[1]> == 1 && <[player].flag[skill.specializations.second_wind.level]||0> > 20:
+                - flag <[player]> stat.core.stamina.lavel:<[max_stamina]>
+           
+          
+                
+#TODO get shadow walk task to work well with status effects
+# shadow_walk_task:
+#     type: task
+#     debug: false
+#     definitions: player
+#     script:
+#     - if <[player].flag[skill.shadowwalk.level]||0> >= 1:
+#         - if <[player].has_flag[shadow_walking]>:
+#             - wait 1s
+#             - if <[player].location.light> <= <element[1].add[<[player].flag[skill.shadowwalk.level]>]>:
+#                 - flag <player> stat.stamina_level:-:<element[5].sub[<[player].flag[skill.shadowwalk.level]>].max[1]>
+#                 - if <[player]>
+
+calculate_overburden_proc:
+    type: procedure
+    definitions: player
+    script:
+    - define overburden_modifier <proc[attribute_skill_check_proc].context[<[player]>|strength].sub[<proc[armor_weight_proc].context[<[player]>]>].abs||0>
+    - determine <[overburden_modifier]>
+
+raise_luck_task:
+    type: task
+    debug: false
+    definitions: player
+    script:
+    #player gains in luck and perception by being online 
+  # raise the luck skill a little bit every loop
+    - if <[player].has_flag[skill.skills.luck.level]>:
+        - if <[player].is_online>:
+            # if the player is away from keyboard still raise luck, but even slower
+            - define luck_number <util.random.int[0].to[<[player].flag[skill.skills.luck.level].mul[<[player].flag[skill.skills.luck.level].div[2]>].round>]>
+            - if <[luck_number]> == 0:
+                - if <[player].is_afk>:
+                    # - flag <[player]> skill.skills.luck.level:+:<util.random.int[0].to[1].mul[.00000001]>
+                    - run raise_natural_skill_task def:<[player]>|luck|-10|0
+                - else:
+                    - run raise_natural_skill_task def:<[player]>|luck|0|0
+    - else:
+        - flag <[player]> skill.skills.luck.level:1
+
+
+raise_perception_task:
+    type: task
+    debug: false
+    definitions: player
+    script:
+    #player gains in luck and perception by being online 
+  # raise the luck skill a little bit every loop
+    - if <[player].has_flag[skill.skills.perception.level]>:
+        - if <[player].is_online> && <[player].is_afk.not>:
+            - run raise_natural_skill_task def:<[player]>|perception|0|0
+                # if the player is a way from keyboard still raise perception, but even slower
+            # - define perception_number <util.random.int[0].to[<[player].flag[skill.skills.perception.level].mul[<[player].flag[skill.skills.perception.level].div[4]>].round>]>
+            # - if <[perception_number]> == 0:
+            #     - if <[player].is_afk>:
+            #         - run raise_natural_skill_task def:<[player]>|perception|-10|0
+            #     - else:
+            #         - run raise_natural_skill_task def:<[player]>|perception|0|0
+    - else:
+        - flag <[player]> skill.skills.perception.level:1
+
+game_loop_task:
+    type: task
+    debug: false
+    definitions: player
+    script:
+    - run regeneration_task def:<[player]>
+    # - run cooldown_manager_task def:<[player]>
+
+
+    # - run sneak_task def:<[player]>
+    # - if <[player].has_flag[stat.status.debuff.bleed]>:
+    #     - run bleed_task def:<[player]>
+
+    - ratelimit <[player]> 20s
+    - if <util.random.int[1].to[100]> == 400:
+        - run raise_perception_task def:<[player]>
+    - if <util.random.int[1].to[500]> == 600:
+        - run raise_luck_task def:<[player]>
+
+    
+# - run shadow_walk_task def:<[player]>
+
+sneak_task:
+    type: task
+    definitions: player
+    script:
+    - ratelimit <[player]> 1s
+    - if <[player].has_flag[hidden]> && <[player].is_sneaking>:
+        - if <[player].location> != <[player].flag[hidden_location]>:
+            # - announce "<[player].location.simple> <[player].flag[hidden_location].simple>"
+            - flag <[player]> hidden_location:!
+            - announce "stop hiding"
+            - sneak <[player]> stop
+            - adjust <[player]> show_to_players
+            - narrate "<red>You are no longer hidden." targets:<[player]>
+            - flag <[player]> hidden:!
+       
+
+
+initial_stats_data:
+    type: data
+    stat:
+        core:
+            mana: 10
+            max_mana: 10
+            stamina: 10
+            max_stamina: 10
+            stamina_regeneration_rate: 0.00125
+            mana_regeneration_rate: 0.0125
+            health: 10
+            speed: .2
+        bonus:
+            stamina_increase: 0
+            mana_increase: 0
+            attack_speed_increase: 0
+            hit_chance_increase: 0
+            defense_chance_increase: 0
+            mana_regeneration: 0
+            stamina_regeneration: 0
+            damage_increase: 0
+            spell_damage_increase: 0
+            hitpoint_regeneration: 0
+            hitpoint_increase: 0
+            lower_mana_cost: 0
+            faster_casting: 0
+            faster_cast_recovery: 0
+            intelligence_increase: 0
+            dexterity_increase: 0
+            strength_increase: 0
+            armor_bonus: 0
+            lower_reagent_cost: 0
+            speed_modifier: 0
+        points:
+            skill_points: 5
+            spell_points: 5
+            attribute_points: 20
+        status:
+            buff:
+                mob_attraction: 0
+                rage:
+                    level: 0
+                    icon: a
+                channeling:
+                    icon: d
+            debuff:
+                bleed:
+                    icon: c
+                poison:
+                    icon: b
+            
+
+assign_default_skills:
+    type: task
+    debug: false
+    defintions: player
+    script:
+    #   SET UP DEFAULTS
+    - if !<player.has_flag[mana]>:
+        - flag <player> mana:0
+    - if !<player.has_flag[max_mana]>:
+        - flag <player> max_mana:0
+    - if !<player.has_flag[base_mana_regen]>:
+        - flag <player> base_mana_regen:1
+    - if !<player.has_flag[mana_regen_mod]>:
+        - flag <player> mana_regen_mod:0
+    - if !<player.has_flag[skill.skills.focus.level]>:
+        - flag <player> skill.skills.focus.level:0
+    - if !<player.has_flag[stat.stamina_level]>:
+        - flag <player> stat.stamina_level:0
+    - if !<player.has_flag[max_stamina]>:
+        - flag <player> max_stamina:0
+    - if !<player.has_flag[stat.stam_regen]>:
+        - flag <player> stat.stam_regen:1
+    - if !<player.has_flag[skill.attribute.intelligence.level]>:
+        - flag <player> skill.attribute.intelligence.level:10
+    - if !<player.has_flag[skill.attribute.dexterity.level]>:
+        - flag <player> skill.attribute.dexterity.level:10
+    - if !<player.has_flag[current_dexterity]>:
+        - flag <player> current_dexterity:10
+    - if !<player.has_flag[current_strength]>:
+        - flag <player> current_strength:10
+    - if !<player.has_flag[current_intelligence]>:
+        - flag <player> current_intelligence:10
+    - if !<player.has_flag[skill.attribute.strength.level]>:
+        - flag <player> skill.attribute.strength.level:10
+    - else:
+        - if <player.health_max> < 10:
+            - adjust <player> max_health:10
+        - else:
+            - adjust <player> max_health:<player.flag[skill.attribute.strength.level]||10>
+    - flag <player> max_focus:100
+    - if !<player.has_flag[stat.hit_chance_increase]>:
+        - flag <player> stat.hit_chance_increase:0
+    - if !<player.has_flag[spell_damage_increase]>:
+        - flag <player> spell_damage_increase:0
+    - if !<player.has_flag[firstlogin]>:
+        - flag <player> stat.points.skill_points.level:6
+        - flag <player> stat.points.attribute_points.level:30
+        - foreach <script[elemental_resists_data].data_key[resist]> as:resist:
+            - if !<player.has_flag[skill.skills.<[resist]>_resistance.level]>:
+                - flag <player> skill.skills.<[resist]>_resistance.level:1
+    - if !<player.has_flag[player_speed]>:
+        - flag <player> player_speed:0.2
+    - adjust <player> health_scale:20
+
+top_hud_command:
+    type: command
+    debug: false
+    name: top-hud
+    usage: /top-hud
+    description: Toggles your hud on or off.
+    script:
+    - if <player.has_flag[top_hud_disabled]>:
+        - flag player top_hud_disabled:!
+        - narrate "<&b>Top HUD enabled."
+        - if <server.current_bossbars.contains[hud_<player.uuid>].not>:
+            - bossbar hud_<player.uuid> players:<player>
+
+        
+    - else:
+        - flag player top_hud_disabled
+        - narrate "<&b>Top HUD disabled."
+        - if <server.current_bossbars.contains[hud_<player.uuid>]>:
+            - bossbar remove hud_<player.uuid>
+
+# bossbar_loop_task:
+#     debug: false
+#     type: task
+#     debug: true
+#     definitions: player
+#     script:
+    # - if <[player].is_online>:
+    #     # Direction Calculation
+    #     - define yaw <[player].location.yaw>
+    #     - define direction "Unknown"
+    #     - if <[yaw].between[-22.5].and[22.5]>:
+    #         - define direction "North"
+    #     - else if <[yaw].between[22.5].and[67.5]>:
+    #         - define direction "Northeast"
+    #     - else if <[yaw].between[67.5].and[112.5]>:
+    #         - define direction "East"
+    #     - else if <[yaw].between[112.5].and[157.5]>:
+    #         - define direction "Southeast"
+    #     - else if <[yaw].between[157.5].or.less[-157.5]>:
+    #         - define direction "South"
+    #     - else if <[yaw].between[-157.5].and[-112.5]>:
+    #         - define direction "Southwest"
+    #     - else if <[yaw].between[-112.5].and[-67.5]>:
+    #         - define direction "West"
+    #     - else if <[yaw].between[-67.5].and[-22.5]>:
+    #         - define direction "Northwest"
+        
+        # - define hud_output "<[strength]><&chr[F828]><[stamina]><&chr[F828]><[mana]><&chr[F828]>Direction: <yellow><[direction]>"
+        # - narrate <[direction]> targets:<[player]>
+        # - bossbar update hud_<[player].uuid> players:<[player]> "title:<[hud_output]>" color:white progress:0
+
+
+
+speed_check_proc:
+    type: procedure
+    definitions: player
+    debug: false
+    script:
+    - define core_speed <[player].flag[stat.core.speed.level]||0.02>
+    - define speed_modifier <[player].flag[stat.bonus.speed_modifier.level]||0>
+    - if <[speed_modifier]> > 0 || <[speed_modifier].exists>:
+        - define return_value <[core_speed].add[<[speed_modifier]>]>
+    - else:
+        - define return_value <[core_speed].sub[<[speed_modifier]>]>
+    # - announce <[return_value]>
+    - determine <[return_value]>
+
+attribute_skill_check_proc:
+    type: procedure
+    debug: false
+    definitions: player|attribute
+    script:
+    - define attr_value <[player].flag[skill.attribute.<[attribute]>.level]||1>
+    # - narrate <blue><[attr_value]> targets:<[player]>
+    - define attr_bonus <[player].flag[stat.bonus.<[attribute]>_increase.level]||0>
+    # - announce "attrbonus: <[attr_bonus]>"
+    # - announce ==========
+    - if <[attr_bonus]> > 0 || <[attr_bonus].exists>:
+        - define return_value <[attr_value].add[<[attr_bonus]>]>
+    - else:
+        - define return_value <[attr_value].sub[<[attr_bonus]>]>
+    - determine <[return_value]>
+
+
+
+
+regeneration_task:
+    type: task
+    definitions: player
+    debug: false
+    script:
+    - run hitpoint_task def:<[player]>
+    - run mana_task def:<[player]>
+    # - run stamina_task def:<[player]>
+    # - run speed_task def:<[player]>
+
+
+

@@ -1,0 +1,45 @@
+perception_command:
+  type: command
+  name: perception
+  aliases:
+    - p
+    - per
+  script:
+  - ratelimit <player> 5s
+  - define perception_success <proc[natural_skill_check_proc].context[<player>|perception]>
+  - define perception_level <player.flag[skill.skills.perception.level]>
+  - if <[perception_success].not>:
+    - narrate format:gamemessage "You cannot determine anything about your surroundings."
+    - stop
+  # - define perception__advanced_success <proc[natural_skill_check_proc].context[<player>|perception|-10]>
+  # - narrate <blue>ADVANCED:::<[perception__advanced_success]>
+  - if <player.location.areas.any.not> || <script[region_data].data_key[region].contains_any[<player.location.areas.parse[note_name]>].not>:
+    - narrate "No regions to perceive"
+    - stop
+  - if <player.flag[skill.skills.focus.level]> < 10:
+    - narrate format:game_message "You don't have an ability to focus."
+    - stop
+  - flag <player> skill.skills.focus.level:-:<util.random.decimal[0].to[1].round_to[2]>
+  - define region_description_list <list>
+  - foreach <script[region_data].data_key[region].keys.shared_contents[<player.location.areas.parse[note_name]>]> as:region:
+    - if <script[region_data].data_key[region.<[region]>].contains[description]>:
+      - define region_description_list <[region_description_list].insert[<script[region_data].data_key[region.<[region]>.description.basic]>].at[<[region_description_list].size>]>
+    # - narrate <red><[region]>
+  - define prompt <[region_description_list].random>
+  - define regions <script[region_data].data_key[region].find[<player.location.areas.parse[note_name]>]>
+  # - narrate <blue><script[region_data].data_key[region].keys>
+  
+  # - narrate <blue><script[region_data].data_key[region.<script[region_data].data_key[region].deep_keys.filter[contains[description]].random>]>
+  # - define regions <script[region_data].data_key[region].keys.shared_contents[<player.location.areas.parse[note_name]>]>
+  # - narrate <yellow><[regions]>
+  # - define prompt <script[region_data].data_key[region.<script[region_data].data_key[region].deep_keys.filter[contains[description]]>]>
+  # - narrate <green><player.location.areas.parse[note_name]>
+  # - narrate "<light_purple><player.location.areas.parse[note_name]>  <script[region_data].data_key[region].deep_keys.filter[contains[description]]>"
+  # - define region <script[region_data].data_key[region].keys.random>
+  # - narrate "<green><[region]> <red><script[region_data].data_key[region.<[region]>].contains[description]>"
+  # - if <script[region_data].data_key[region.<[region]>].contains[description]>:
+  # - define prompt <script[region_data].data_key[region.<[region]>.description]>
+  # - narrate "<dark_aqua>region: <[region]>"
+  # - narrate "<yellow>prompt <[prompt]>"
+  - inject openai_bot def:<[prompt]>
+  - narrate "<gray><[response2].before[.]>."

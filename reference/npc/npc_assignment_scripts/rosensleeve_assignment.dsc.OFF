@@ -1,0 +1,226 @@
+rosensleeve_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:4
+        on enter proximity:
+        - look <npc> <player.eye_location>
+        - run rosensleeve_first_contact
+        - flag <player> npc.<npc>.prox_count:++
+        - narrate "hiyo"
+        
+      
+    interact scripts:
+    - rosensleeve_interact
+
+    default constants:
+        appearance1: "<npc.name> is of the Raven Clan, but has a different headdress on than the rest of his clan."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more import ant than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+        has_familiarity: true
+        dialog: rosensleeve_dialog
+
+rosensleeve_dialog:
+    type: data
+    dialog:
+        greeting: 
+            narration: "Hail traveler"
+            type: click
+        another_value: 10
+        more_stuff:
+            morestuff_01: false
+
+rosensleeve_first_contact:
+    type: task
+    script:
+    - if <player.has_flag[npc.<npc>.prox_count].not> || <player.flag[npc.<npc>.prox_count]> == 0:
+        - if <player.has_flag[gilderstilt_rosensleeve_01]>:
+            # - run npc_chat_display_task def:<npc>|<player>|<script[rosensleeve_dialog].data_key[dialog.greeting]>
+            - define text "You found you're way here. Gilderstilt said you might be joining us."
+            - run npc_chat_display_task def:<npc>|<player>|<[text]>
+            - if <player.flag[journal.npcs.<npc>].contains[<[text]>].not>:
+                - flag <player> journal.npcs.<npc>:->:<[text]>
+            - if <player.flag[npc.<npc>.meet_date].not>:
+                - flag <player> npc.<npc>.meet_date:<util.time_now.epoch_millis>
+
+        - else:
+            - define text "No one but Hall of Glossolalia should be here."
+            - run npc_chat_display_task def:<npc>|<player>|<[text]>
+            - wait <[text].length>t
+            - define text "Let me help you find your way out"
+            - run npc_chat_display_task def:<npc>|<player>|<[text]>
+            - wait 1s
+            # - teleport <player> glossolalia_street
+            - narrate format:game_message "Rosensleeve has escorted you out of the Hall." targets:<player>
+    - else:
+        - if <util.random.int[0].to[4]> == 4:
+            - random:
+                - define text "Hail <player.name>!" 
+                - define text "The Gods smile upon us today." 
+                - define text "How now <player.name>?" 
+                - define text "A good day to be inscribing our Tomes, wouldn't you say <player.name>?"
+            - run npc_chat_display_task def:<npc>|<player>|<[text]>
+    - if <player.has_flag[hall_of_glossolalia_01]>:
+        - define text "So you would like to be a Bard in the Hall of Glossolalia?"
+        - run npc_chat_display_task def:<npc>|<player>|<[text]>
+        - flag <player> journal.npcs.<npc>:->:<[text]>
+        - wait <[text].length>t
+        - define text "Let's get started right away. I need to show you the ropes."
+        - if <player.has_flag[npc.<npc>.glossolalia_02].not>:
+            - flag <player> journal.npcs.<npc>:->:"<&dq><[text]><&dq>"
+        - flag <player> npc.<npc>.glossolalia_02
+        - run npc_chat_display_task def:<npc>|<player>|<[text]>
+        - wait <[text].length>t
+        - if <player.inventory.contains[<item[parchment]>]>:
+            - define text "Ah good, you have some parchment."
+            - run npc_chat_display_task def:<npc>|<player>|<[text]>
+            - wait <[text].length>t
+
+        
+#     - else:
+#         - narrate "Alas, you need some parchment. Something we will fix in time."
+        # - run rosensleeve_intro
+
+    
+    # # - run npc_chat_display_task def:<npc>|<player>|<script[rosensleeve_dialog].data_key[dialog.greeting]>
+
+rosensleeve_interact:
+    type: interact
+    steps:
+        1:
+            proximity trigger:
+                entry:
+                    script:
+                    - execute as_server "npc skin --url https://minesk.in/53bda38558f542ea87f22e20429df618 --id <npc.id>"
+                    # - run npc_chat_display_task def:<npc>|<player>|<script[rosensleeve_dialog].data_key[dialog.greeting]>
+                    # - if <player.has_flag[npc.<npc.name>.prox_count].not> || <player.flag[npc.<npc.name>.prox_count]> == 0:
+                    #     - inject description_inject_task
+                    #     - if <player.has_flag[gilderstilt_rosensleeve_01]>:
+                    #         - narrate "You found you're way here. Gilderstilt said you might be joining us." targets:<player>
+                    #     - else:
+                    #         - narrate "No one but Hall of Glossolalia should be here." targets:<player>
+                    #         - wait 1s
+                    #         - narrate "Let me help you find your way out" targets:<player>
+                    #         - wait 1s
+                    #         - teleport <player> glossolalia_street
+                    #         - narrate format:game_message "Rosensleeve has escorted you out of the Hall." targets:<player>
+                    # - else:
+                    #     - if <util.random.int[0].to[4]> == 4:
+                    #         - inject description_inject_task
+                    #         - random:
+                    #             - narrate "Hail <player.name>!" targets:<player>
+                    #             - narrate "The Gods smile upon us today." targets:<player>
+                    #             - narrate "How now <player.name>?" targets:<player>
+                    #             - narrate "A good day to be inscribing our Tomes, wouldn't you say <player.name>?" targets:<player>
+                    # - if <player.has_flag[hall_of_glossolalia_01]>:
+                    #     - narrate "So you would like to be a Bard in the Hall of Glossolalia?"
+                    #     - run rosensleeve_intro
+
+                    # - flag <player> npc.<npc.name>.prox_count:++
+
+                    
+#                 # exit:
+#                 #     script:
+#                 #     - run reset_rosensleeve_gaze
+#             click trigger:
+#                 script:
+#                 - run rosensleeve_intro
+                
+#         2:
+#             chat trigger:
+#                 1:
+#                     trigger: <&7>/1/. What are the other Halls for Bards.
+#                     script:
+#                     - inject rosensleeve_task_01
+#                     - zap 1
+                    
+#                 2:
+#                     trigger: <&7>/2/. Tell me more about the Hall of Glossolalia.
+#                     script:
+#                     - inject <npc.name>_task_02
+#                     - zap 1
+
+#                 3:
+#                     trigger: <&7>/3/. I am more interested in adventure and combat.?
+#                     script:
+#                     - inject <npc.name>_task_03
+#                     - zap 1
+
+# rosensleeve_intro:
+#     type: task
+#     script:
+#     - inject description_inject_task
+#     - narrate "Let's get started right away. I need to show you the ropes."
+#     - if <player.inventory.contains[<item[parchment]>]>:
+#         - narrate "Ah good, you have some parchment."
+        
+#     - else:
+#         - narrate "Alas, you need some parchment. Something we will fix in time."
+#     - wait 3s
+#     - narrate "Glossators, or scribes as I like to call them, need a lot of parchment to create our tomes, scrolls, codexes, books of history and law, and, yes, most commonly, spellbooks."  targets:<player>
+#     - wait 4s
+#     - narrate "<&color[#f5e700]>Inscription<&r> is our main skill we use to create these items, and by inscribing these items, your skill will rise." targets:<player>
+#     - wait 4s
+#     - narrate "and <&color[#f5e700]>Intelligence<&r> is the primary attribute that you should focus on raising if you want to be successful." targets:<player>
+#     - wait 3s
+#     - narrate "and we need many <&color[#f5e700]>component<&r> materials to create spell scrolls, so this is a long path, but a powerful path." targets:<player>
+#     - wait 3s
+#     - narrate "Are you sure you want to continue? ."  targets:<player>
+#     - clickable <npc.name>_task_01 save:<npc.name>_clickable_01 until:30s usages:1 for:<player>
+#     - clickable <npc.name>_task_02 save:<npc.name>_clickable_02 until:30s usages:1 for:<player>
+#     - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes, this power appeals to me.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_01].command>]>" target:<player>
+#     - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>No, I want to find something more fast paced.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" target:<player>
+#     - zap 2
+       
+# rosensleeve_task_01:
+#     type: task
+#     script:
+#     - if <player.has_flag[suspend_clickable].not>:
+#         - flag <player> suspend_clickable
+#         - inject description_inject_task
+#         - narrate "Excellent." targets:<player>
+#         - wait 1s
+#         - narrate <&nl>
+#         - flag <player> class.subtype:glossator
+#         - narrate "Our Hall grows in numbers and we will, one day, harness the power of the Ancient Deluvic Tongue once again." targets:<player>
+#         - wait 2s
+#         - narrate "And it is a nice side benefit, that our trade can demand a lot of crown. I think I forgot to mention that."  targets:<player>
+#         - wait 3s
+#         - narrate "To make this all work, we need a plethora of parchment and a cornucopia of components."
+#         - wait 2s
+#         - run rosensleeve_question_set_01
+#         - flag <player> suspend_clickable:!
+    
+
+# rosensleeve_question_set_01:
+#     type: task
+#     script:
+#     - clickable <npc.name>_task_03 save:<npc.name>_clickable_03 until:30s usages:1 for:<player>
+#     - clickable <npc.name>_task_04 save:<npc.name>_clickable_04 until:30s usages:1 for:<player>
+#     - clickable <npc.name>_task_05 save:<npc.name>_clickable_05 until:30s usages:1 for:<player>
+#     - clickable <npc.name>_task_06 save:<npc.name>_clickable_06 until:30s usages:1 for:<player>
+#     - clickable <npc.name>_task_07 save:<npc.name>_clickable_07 until:30s usages:1 for:<player>
+#     - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>How does Intelligence work?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_03].command>]>" target:<player>
+#     - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>What is the inscription skill?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_04].command>]>" target:<player>
+    
+#     - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>What is parchment for?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_05].command>]>" target:<player>
+#     - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>What are components?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_06].command>]>" target:<player>
+#     - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>Let's just get inscribing my Tome!<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_06].command>]>" target:<player>
+    
+#     - zap 2
+    
+
+# rosensleeve_task_02:
+#     type: task
+#     script:
+#     - inject description_inject_task
+#     - narrate "No harm, no foul. We may see you in future times."
+#     - wait 1s
+#     - teleport <player> glossolalia_street
+#     - narrate format:game_message "Rosensleeve has escorted you out of the Hall." targets:<player>
+

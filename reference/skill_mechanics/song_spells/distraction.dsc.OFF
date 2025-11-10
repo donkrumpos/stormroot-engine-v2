@@ -1,0 +1,39 @@
+fugue_of_distraction_task:
+    type: task
+    script:
+    - if <player.has_flag[skill.fugueofdistraction.level]>:
+        - if !<player.item_in_hand.script.data_key[item_type].contains[instrument]>:
+            - narrate "You need an instrument in your hand to cast this spell"
+            - stop
+    - define level <player.flag[skill.fugueofdistraction.level]||1>
+    - if <player.has_flag[skill.natural.musicianship_level]>:
+        - define music_level <player.flag[skill.natural.musicianship_level]>
+    - else:
+        - flag <player> skill.natural.musicianship_level:1
+
+    - if <proc[natural_skill_check_proc].context[<player>|musicianship|<[level]>]>:
+        - narrate "Successfully played the Fugue of Distraction."
+        - define level <player.flag[skill.fugueofdistraction.level]>
+        - create player <player.name> <player.location.left[2]> trait:sentinel save:npc
+        - define npc <entry[npc].created_npc>
+        - adjust <[npc]> skin:<player.name>
+        - execute as_server "sentinel addtarget monsters --id <[npc].id>" silent
+        - execute as_server "sentinel guard <player.name> --id <[npc].id>" silent
+
+        - create player <player.name> <player.location.right[2]> trait:sentinel save:npc2
+        - define npc2 <entry[npc2].created_npc>
+        - adjust <[npc2]> skin:<player.name>
+        - execute as_server "sentinel addtarget monsters --id <[npc2].id>" silent
+        - execute as_server "sentinel guard <player.name> --id <[npc].id>" silent
+        - repeat 15:
+            - wait 5t
+            - playeffect at:<player.location.forward[2].above[1]> effect:note offset:0 special_data:2|<color[255,0,0]> data:1
+        - wait <[level]>
+        - remove <[npc]>
+        - remove <[npc2]>
+    - else:
+        - narrate "Fail lullaby attempt"
+    - run raise_natural_skill_task def:<player>|musicianship
+    - run raise_natural_skill_task def:<player>|magery
+    - run raise_natural_skill_task def:<player>|persuasion
+    - run raise_natural_skill_task def:<[target]>|willpower

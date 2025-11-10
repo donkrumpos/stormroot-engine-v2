@@ -1,0 +1,154 @@
+boone_assignment:
+    type: assignment
+    speed: 1t
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:1
+        on click:
+        - look  <npc>  <player.eye_location> 
+        - wait 5s
+        - look <npc> <npc[150].eye_location>
+        # on enter proximity:
+        # - narrate "ho hum" 
+        # on exit proximity:
+        # - disengage
+   
+
+
+    interact scripts:
+    - boone_interact
+    default constants:
+        appearance1: "<npc.name>' has fine kept beard and seems cheery to meet you."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+
+boone_interact:
+    type: interact
+    steps:
+        default:
+            proximity trigger:
+                entry:
+                    script:
+                    - look <npc> <npc[150].eye_location.forward[1]>
+                    - look  <npc[150]> <npc.eye_location>
+                    - flag <player> boone_graychen_convo:++
+                    - if <player.flag[boone_graychen_convo]> < 2:
+                        - inject description_inject_task 
+                        - narrate "No one knows the backs broken and the lives lost during the digging of the Druvvenrog canals <npc[150].name>"
+                    
+                    # - inject description_inject_task
+                    # - narrate "Hey Anksor, have you heard about"
+                    # - narrate "and then"
+                    # - narrate <npc[150].name>
+                        - wait 2s
+                        - run description_inject_task def:<npc[150]>
+                        - narrate "Aye <npc.name>. we are the forgotten souls of that era."
+                        - narrate "Let's drink to our mates whose bones are buried at the bottom of the canals."
+                        - wait 2s
+                        - inject description_inject_task 
+                        - narrate "Cheers to our mates! and may the Gods bless us."
+                        - wait 2s
+                        - run description_inject_task def:<npc[150]>
+                        - narrate "Cheers to that <npc.name>. We will never forget them or the Gods that Druvvenrog vanquished.."
+                        - wait 5s
+                        - narrate "Thars a storm acomin."
+                        - wait 4s
+                        - inject description_inject_task 
+                        - narrate "Aye and we must all be ready when she does."
+
+                    
+                    - else if <player.flag[boone_graychen_convo]> > 2 && <player.flag[boone_graychen_convo]> < 5:
+                        - random:
+                            - repeat 1:
+                                - inject description_inject_task 
+                                - narrate "I'm glad we found this refuge in Rothigport <npc[150].name>."
+                                - wait 2s
+                                - narrate "Druvvenrog was not the place for those of us still wanting to commune with the Old Gods."
+                                - wait 3s
+                                - run description_inject_task def:<npc[150]>
+                                - narrate "Aye <npc.name>. let us pray to those Old Gods that the forces of Druvvenrog never make it out this far."
+                                - wait 2s
+                                - inject description_inject_task 
+                                - narrate "I'll drink to that!"
+                            - repeat 1:
+                                - inject description_inject_task 
+                                - narrate "Us stone masons have little to do here in the city of wood."
+                                - wait 2s
+                                - narrate "Any mention of building in stone and the citizens chastize us."
+                             
+                                - wait 3s
+                                - run description_inject_task def:<npc[150]>
+                                - narrate "Alas <npc.name> my friend. We will eventually take our skills out to the other towns on these islands."
+                                - wait 2s
+                                - inject description_inject_task 
+                                - narrate "I'll drink to that chum!!"
+                            - repeat 1:
+                                - inject description_inject_task 
+                                - narrate "I have not seen so many mages as I have out here on these islands."
+                                - wait 3s
+                                - run description_inject_task def:<npc[150]>
+                                - narrate "Aye Let us pray the Inquistioners never make it outhere."
+                                - wait 2s
+                                - inject description_inject_task 
+                                - narrate "A bloody day that will be."
+                            - repeat 1:
+                                - run description_inject_task def:<npc>|sings
+                                - repeat 3:
+                                    - playeffect effect:note at:<npc.eye_location>
+                                    - animate <npc> animation:arm_swing
+                                    - narrate "heave, ho lads"
+                                    - wait 1s
+                                    - playeffect effect:note at:<npc.eye_location>
+                                    - narrate "It's a miners life for me."
+                                    - wait 1s
+                                - playeffect effect:note at:<npc.eye_location>
+                            - repeat 1:
+                                - run description_inject_task def:<npc[150]>
+                                - narrate "<npc.name>, Have you noticed all the newcomers coming to these parts."
+                                - wait 3s
+                                - inject description_inject_task 
+                                - narrate "Aye, I wonder if they are coming from the East as well after all hell broke lose."
+                            - repeat 1:
+                                - define nothing
+                            - repeat 1:
+                                - run description_inject_task def:<npc[150]>
+                                - narrate "<npc.name>. What's your favorite drink here?"
+                                - wait 3s
+                                - inject description_inject_task 
+                                - narrate "The ale of course!"
+                                - narrate "We didn't have this kind back home."
+                            - repeat 1:
+                                - run description_inject_task def:<npc[150]>
+                                - narrate "It's much quieter out here than back in the Central Kingdoms."
+                                - wait 3s
+                                - inject description_inject_task 
+                                - narrate "Thank the Aether"
+                                - narrate "I never got any sleep back there."
+                    - else if <player.flag[boone_graychen_convo]> > 5 && <player.flag[boone_graychen_convo]> < 8:
+                        - if <util.random.int[0].to[10]> == 10:
+                            - run description_inject_task def:<npc>|sings
+                            - repeat 3:
+                                - playeffect effect:note at:<npc.eye_location>
+                                - animate <npc> animation:arm_swing
+                                - narrate "What do you do with a drunken miner?"
+                                - wait 2s
+                                - playeffect effect:note at:<npc.eye_location>
+                                - narrate "early in the morning."
+                                - wait 1s
+                            - playeffect effect:note at:<npc.eye_location>
+                    - else:
+                        - define something "do you see that traveler keep looking at us?"
+
+                                
+
+                              
+                
+                # exit:
+                #     script:
+                #     - inject description_inject_task def:
+                #     - narrate buhbye

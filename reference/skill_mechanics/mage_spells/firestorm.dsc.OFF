@@ -1,0 +1,21 @@
+firestorm_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    - define attacker <player>
+    - define target_location <[attacker].cursor_on>
+    - if <[attacker].has_flag[skill.spells.firestorm.level].not>:
+        - flag <[attacker]> skill.spells.firestorm.level:1
+    - define level <[attacker].flag[skill.spells.firestorm.level]>
+ 
+    # - foreach <[attacker].location.up[5].find_blocks[air].within[5].random> as:air_block:
+    #     - wait 1t
+    #     - showfake fire duration:1s
+    - repeat <[level].add[20]>:
+        - playeffect effect:flame at:<[attacker].location.up[5].add[<location[0,1,0].rotate_around_x[<[loop_index].mul[2]>]>]> offset:3,3,3 quantity:<[level].mul[4]>
+        - if <[attacker].location.up[5].add[<location[0,1,0].rotate_around_x[<[loop_index].mul[2]>]>].find.living_entities.within[5].exclude[<[attacker]>].any>:
+            - run spell_damage_task def:firestorm|<[attacker].location.up[5].add[<location[0,1,0].rotate_around_x[<[loop_index].mul[2]>]>].find.living_entities.within[5].exclude[<[attacker]>].first>|<[attacker]>
+        - wait 1t
+    
+    
+  

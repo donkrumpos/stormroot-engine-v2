@@ -1,0 +1,75 @@
+mizden_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:2
+    interact scripts:
+    - mizden_interact
+
+    default constants:
+        appearance1: "<npc.name> was a hunter of the days before the current Age, but has resolved himself to sell weapons in his favorite town."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+        has_familiarity: true
+
+
+mizden_interact:
+    type: interact
+    steps:
+        1:
+            proximity trigger:
+                entry:
+                    script:
+                    - if <player.flag[bardtown_inner_visited]> < 2 && <player.has_flag[npc.<npc.name>.prox_count].not>:
+                        - inject description_inject_task
+                        - narrate "Welcome to Bardtown!" targets:<player>
+                    - flag <player> npc.<npc.name>.prox_count:++
+
+                # exit:
+                #     script:
+                #     - run reset_mizden_gaze
+            click trigger:
+                script:
+                - inject description_inject_task
+                - if <player.flag[npc.<npc>.familiarity.level]||0> <= 1:
+                    - random:
+                        - narrate "All first time visitors get some equipment." targets:<player>
+                        - narrate "Here take this." targets:<player>
+                    - run give_mizden_equipment_task
+                    - wait 3s
+                    - narrate  "You will need it outside these walls." targets:<player>
+                # - if <player.flag[npc.<npc>.familiarity.level]> < 1:
+                #     - narrate "I'm glad you wanted to talk to me again <player.name>"
+                
+                - if <player.flag[npc.<npc>.familiarity.level]> > 1:
+                    - if <player.has_flag[mizden_daily_equipment].not>:
+                        - narrate "Here take this." targets:<player>
+                        - give apple quantity:12
+                        - give bread quantity:6
+                        - flag <player> mizden_daily_equipment expire:<util.random.int[20].to[24]>h
+                    - else:
+                        - narrate "How can I help you?" targets:<player>
+                # - narrate "What can I help you with?" targets:<player>
+                - narrate "Waddup?"
+   
+       
+give_mizden_equipment_task:
+    type: task
+    script:
+    - foreach <script[mizden_equipment].data_key[item]> as:item:
+        - give <[key]> quantity:<[item]>
+
+mizden_equipment:
+    type: data
+    item:
+        golden_sword: 1
+        oak_boat: 1
+        bread: 12
+        apple: 12
+        gold_coin: 1
+

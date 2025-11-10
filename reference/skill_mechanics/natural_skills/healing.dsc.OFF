@@ -1,0 +1,96 @@
+
+bandage_heal_task:
+    type: task
+    definitions: target
+    script:
+    - ratelimit <player> 4t
+    
+    - define target_poisoned  <[target].flag[stat.status.debuff.poison]||false>
+    - define target_bleeding  <[target].flag[stat.status.debuff.bleed]||false>
+    - define targets_health <[target].health>
+    - define targets_max_health <[target].health_max>
+    - if <[targets_health]> < <[targets_max_health]>:
+        - if <player.inventory.contains[bandage].not>:
+            - narrate format:game_message "You need to have bandages to heal." targets:<player>
+            - stop
+        - if <[target].is_player>:
+            - define delay_base 4
+            - define distance_between <player.location.points_between[<[target].location>]>
+            - if <[distance_between]> > 2:
+                - narrate format:game_message "You need to be closer to your patient to apply bandages."
+                - stop
+            - if <[target]> == <player>:
+                - define delay_base 8
+            - flag <player> spell_focus
+            - narrate format:game_message "You begin to apply bandages."
+            - define anatomy <player.flag[skill.skills.anatomy.level]>
+            - define dexterity <player.flag[skill.attribute.dexterity.level]>
+            - define delay <[dexterity].sub[80].div[20].max[0]>
+            - take bandage
+            - define delay <element[<[delay_base]>].sub[<[delay]>]>
+            - wait <[delay]>s
+            - define health_difference <[targets_max_health].sub[<[targets_health]>]>
+            - if <player.has_flag[spell_focus]>:
+                - define healing_skill <player.flag[skill.skills.healing.level]>
+                - define random_success <util.random.int[1].to[110]>
+                - define healing_success <proc[natural_skill_check_proc].context[<player>|healing|<[anatomy]>]>
+                - if <[healing_success]>:
+                    - if <[distance_between]> > 2:
+                        - narrate format:game_message "Your patient has moved too far away to heal with a bandage."
+                        - stop
+                    - if <[healing_skill]> >= 80:
+                        - if <[target_poisoned]>:
+                            - flag <context.entity> stat.status.debuff.poison:!
+                            - narrate format:game_message "Your patient has been cured of poison."
+                    - if <[healing_skill]> >= 40:
+                        - if <[target_bleeding]>:
+                            - flag <context.entity> stat.status.debuff.bleed:!
+                            - narrate format:game_message "Your patient has stopped bleeding."
+                    - define max_heal <[anatomy].div[6]>
+                    - define max_heal <[max_heal].add[<[healing_skill].div[3]>].add[10]>
+                    - define min_heal <[anatomy].div[6]>
+                    - define min_heal <[min_heal].add[<[healing_skill].div[6]>].add[3]>
+                    - heal <[target]> <util.random.int[<[min_heal]>].to[<[max_heal]>].min[<[health_difference]>]>
+                    - if <[target]> == <player>:
+                        - narrate format:game_message "You have been healed."
+                    - else:
+                        - narrate format:game_message "You have been healed." targets:<[target]>
+                        - narrate format:game_message "You have successfully healed your patient." targets:<player>
+                - else:
+                    - if <[target]> == <player>:
+                        - narrate format:game_message "You fail to heal yourself."
+                    - else:
+                        - narrate format:game_message "You fail to heal this patient."
+            - else:
+                - narrate format:game_message "Your healing has been interrupted."
+                
+            
+        - else:
+                - narrate format:game_message "You are unable to heal this being."
+    - else:
+        - narrate format:game_message "You notice that this being is already at full health"
+    - define random_max
+    - if <[target]> == <player>: 
+        - define random_max 7
+    - if <util.random.int[0].to[<[random_max]>]> == <[random_max]>:
+        
+        - run raise_natural_skill_task def:<player>|healing|0|0
+    - if <util.random.int[0].to[12]> == 12:
+        - run raise_natural_skill_task def:<player>|anatomy|0|0
+    - flag <player> spell_focus:!
+
+
+
+bandage_command:
+    type: command
+    name: bandage
+    script:
+    - run bandage_heal_task def:<player>
+
+bandage_world:
+    type: world
+    events:
+        on player right clicks entity with:bandage:
+        - run bandage_heal_task def:<context.entity>
+        on player right clicks air with:bandage:
+        - run bandage_heal_task def:<player>

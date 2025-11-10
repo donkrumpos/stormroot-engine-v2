@@ -1,0 +1,7 @@
+boar_tusk:
+  type: item
+  material: bowl
+  display name: Boar Tusk
+  mechanisms:
+    custom_model_data: 2110029
+    

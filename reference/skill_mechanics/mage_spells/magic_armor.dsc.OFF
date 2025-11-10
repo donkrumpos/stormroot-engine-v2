@@ -1,0 +1,31 @@
+magic_armor_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    - if <[attacker].has_flag[skill.spells.magic_armor.level].not>:
+        - flag <[attacker]> skill.spells.magic_armor.level:1
+    - if <[attacker].has_flag[has_magic_armor]>:
+        - narrate "You already have magic armor applied."
+        - stop
+    - else:
+        - flag <[attacker]> has_magic_armor
+        - define level <[attacker].flag[skill.spells.magic_armor.level].round_up>
+        - define random <util.random.int[<[level].sub[4].max[1]>].to[<[level].add[4]>]>
+        - narrate format:game_message "Magic Armor is in effect." targets:<[attacker]>
+        - flag <[attacker]> stat.bonus.armor_bonus.level:+:<[random]>
+        # - define resists ""
+        # - define level <attacker.flag[skill.spells.magic_armor.level]>
+        # - define random <util.random.int[<[level].sub[6].max[1]>].to[<[level].add[4]>]>
+        # - define resists <script[skills_skills_data].data_key[skills].keys.filter[contains_text[_resistance]].random[<[level]||1>]>
+        # - foreach <[resists]> as:resist:
+        #     - narrate <[resist]>
+        #     - flag <[attacker]> skill.skills.<[resist]>.level:+:<[random].sub[<[loop_index]>]>
+        
+        - repeat <[level].add[<proc[attribute_skill_check_proc].context[<[attacker]>|intelligence]||0>]>:
+            - wait 1s
+
+        # - foreach <[resists]> as:resist:
+        #     - flag <[attacker]> skill.natural.<[resist]>_resistance:-:<[random].sub[<[loop_index]>]>
+        - flag <[attacker]> stat.bonus.armor_bonus.level:-:<[random]>
+        - flag <[attacker]> has_magic_armor:!
+        - narrate format:game_message "Magic Armor effects have worn off." targets:<[attacker]>

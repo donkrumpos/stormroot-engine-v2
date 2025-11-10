@@ -1,0 +1,77 @@
+javelin:
+  type: item
+  debug: false
+  material: arrow
+  display name: Javelin
+  lore:
+  - An elegent weapon
+  - for a more sophisticated time.
+  flags:
+    required_strength: 10
+    weapon_type: fencing
+    craftable: true
+    swing_speed_increase: 0
+    hit_chance_increase: 0
+    weapon_speed: 70
+    weapon_damage_min: 4
+    weapon-damage_max: 30
+    luck: 0
+    two_handed: false
+    fire_damage: 0
+    cold_damage: 0
+    poison_damage: 0
+    energy_damage: 0
+    material_qty: 8
+  
+  mechanisms:
+    custom_model_data: 7202501
+    nbt:
+    - durability/80
+    - swing_speed_increase/0
+    - hit_chance_increase/0
+    - weapon_speed/70
+    - weapon_damage_min/4
+    - weapon_damage_max/30
+    - luck/0
+    - two_handed/false
+    - fire_damage/0
+    - cold_damage/0
+    - poison_damage/0
+    - energy_damage/0
+    - required_strength/10
+    - item_type/sword
+    - material_qty/8
+
+
+
+javelin_throw:
+  type: world
+  events:
+    on player clicks air with:javelin:
+    - define strength <player.flag[skill.attribute.strength.level]>
+    - define dexterity <player.flag[skill.attribute.dexterity.level]>
+    - define duration_mod <[dexterity].add[<[strength]>].div[30].round_up.max[1]>
+    - define speed_mod <[dexterity].add[<[strength]>].div[100].round_up.max[1]>
+    - push arrow[custom_model_data=7202501] destination:<player.target> speed:<[speed_mod]> no_rotate script:javelin_hit def:<player.target>|<player.cursor_on> duration:<[duration_mod]>t save:javelin
+    # - narrate <entry[javelin].pushed_entities>
+    - adjust <entry[javelin].pushed_entities> custom_model_data:7202501
+
+javelin_hit:
+  type: task
+  definitions: target|cursor_on
+  script:
+
+  - define throwing_skill <player.flag[skill.skills.throwing.level]||0>
+  
+  # - narrate "hit <[target]> or <[cursor_on]>"
+  - define success <proc[natural_skill_check_proc].context[<player>|throwing|<player.flag[skill.attribute.dexterity.level]>]>
+  - run raise_natural_skill_task def:<player>|throwing|0|0
+  
+  - if <[success]>:
+    - if <[target].is_living>:
+      - define distance <player.location.points_between[<[target].location>].size>
+      - define distance_modifier <util.random.int[0].to[<[distance]>]>
+      - if <[distance_modifier]> < <[throwing_skill]>:
+        - define strength_damage <player.flag[skill.attribute.strength.level].div[10]>
+        - narrate "hurt <[strength_damage]> <[target]>"
+        - hurt <[strength_damage]> <[target]>

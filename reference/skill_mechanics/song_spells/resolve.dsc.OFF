@@ -1,0 +1,48 @@
+poem_of_resolve_task:
+    type: task
+    script:
+    - if <player.has_flag[skill.poemofresolve.level]>:
+        - if !<player.item_in_hand.script.data_key[item_type].contains[instrument]>:
+            - narrate "You need an instrument in your hand to cast this spell"
+            - stop
+    - else:
+        - narrate "You need a Poem of Resolve spell level of at least 1."
+    - define level <player.flag[skill.poemofresolve.level]||1>
+    - define targets <player.location.find.living_entities.within[<[level].add[3]||1>].filter[flag[party].is[==].to[<player.flag[party]>]]>
+    - if <[targets].is_empty>:
+        - narrate "No targets found to give resolve to."
+    - if <player.has_flag[skill.natural.musicianship_level]>:
+        - define music_level <player.flag[skill.natural.musicianship_level]>
+    - else:
+        - flag <player> skill.natural.musicianship_level:1
+  
+    - if <proc[natural_skill_check_proc].context[<player>|musicianship|<[level]>]>:
+        - define raise_amount <util.random.int[1].to[<[level]>]>
+        - foreach <[targets]> as:this_target:
+            - narrate "You have successfully gave resolve to <[this_target].as_player.name>."
+            - flag <[this_target]> skill.natural.willpower_level:+:<[raise_amount]>
+            - flag <[this_target]> skill.natural.perception_level:+:<[raise_amount]>
+            - flag <[this_target]> skill.natural.morale_level:+:<[raise_amount]>
+        - wait <[level].add[1]>s
+        - foreach <[targets]> as:this_target:
+            - flag <[this_target]> skill.natural.willpower_level:-:<[raise_amount]>
+            - flag <[this_target]> skill.natural.perception_level:-:<[raise_amount]>
+            - flag <[this_target]> skill.natural.morale_level:-:<[raise_amount]>
+        - narrate "The effects of Poem of Resolve have worn off."
+    - else if <proc[natural_skill_check_proc].context[<player>|musicianship|<[level]>]> == "critical_success":
+        - flag <player> skill.natural.willpower_level:+:1
+        - flag <player> skill.natural.perception_level:+:1
+        - flag <player> skill.natural.morale_level:+:1
+        - flag <player> skill.natural.persuasion_level:+:2
+        - narrate "<green>Critical Roll! You have gained some willpower, perception, persuasion and morale."
+        
+    - else if <proc[natural_skill_check_proc].context[<player>|musicianship|<[level]>]> == "critical_fail":
+        - flag <player> skill.natural.willpower_level:-:1
+        - flag <player> skill.natural.perception_level:-:1
+        - flag <player> skill.natural.morale_level:-:1
+        - narrate "<red>Critical Fail! You have lost some willpower, perception and morale."
+
+    - else:
+        - narrate "You failed to cast Poem of Resolve." targets:<player>
+    - run raise_natural_skill_task def:<player>|musicianship
+    - run raise_natural_skill_task def:<player>|magery

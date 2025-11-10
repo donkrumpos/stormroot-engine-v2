@@ -1,0 +1,213 @@
+astria_assignment:
+    type: assignment
+    speed: 1t
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:4
+
+
+
+
+    interact scripts:
+    - astria_interact
+    default constants:
+        appearance1: "<npc.name>' has dark brown hair and loves the rain."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+astria_interact:
+    type: interact
+    steps:
+        default:
+            
+            click trigger:
+                script:
+                - inject description_inject_task
+                
+                - if <player.flag[npc.<npc.name>.familiarity.level]||0> <= 1:
+                    - narrate format:npcchat "Hey there you. I am Astria"
+                    - narrate format:npcchat "Welcome, welcome!"
+                    - narrate format:npcchat "Keep going to the other side of the harbor to find the market district,"
+                    - narrate format:npcchat "but you can also find someone wanting to buy or sell something in most any nook and cranny."
+          
+                
+                - if <player.flag[npc.<npc.name>.familiarity.level]> > 1:
+                    - narrate "Hey there <player.name>"
+                - narrate format:npcchat "Can I help you?"
+                - clickable astria_help_1_task save:astria_help_1_task_clickable until:20s
+                - clickable astria_help_2_task save:astria_help_2_task_clickable until:20s
+                - clickable astria_help_3_task save:astria_help_3_task_clickable until:20s
+                - clickable astria_help_4_task save:astria_help_4_task_clickable until:20s
+                - wait 1s
+                - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>What kinds of things are bought and sold in Rothigport?<&8><&rb><&end_hover>].on_click[<entry[astria_help_1_task_clickable].command>]>"
+                - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>How do I have my own market?<&8><&rb><&end_hover>].on_click[<entry[astria_help_2_task_clickable].command>]>"
+                - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>3. <&B>How do I get out of here?<&8><&rb><&end_hover>].on_click[<entry[astria_help_3_task_clickable].command>]>"
+                - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>4. <&B>Whose fancy house is this?<&8><&rb><&end_hover>].on_click[<entry[astria_help_4_task_clickable].command>]>"
+
+                - zap buy_sell_main duration:30s
+        
+            buy_sell_main:
+                chat trigger:
+                    1:
+                        trigger: <&7>/1/, What kinds of things are bought and sold in Rothigport?
+                        script:
+                        - run astria_help_1_task
+                    2:
+                        trigger: <&7>/2/, How do I have my own market?
+                        script:
+                        - run astria_help_2_task
+                    3:
+                        trigger: <&7>/3/, How do I get out of here?
+                        script:
+                        - run astria_help_3_task
+                    4:
+                        trigger: <&7>/4/, Whose fancy house is this?
+                        script:
+                        - run astria_help_4_task 
+            prigtoon_step:
+                chat trigger:
+                    1: 
+                        trigger: <&7>/1/ Why are the buildings in Rothigport so plain?
+                        script:
+                        - run astria_help_4_2_task
+                    2: 
+                        trigger: <&7>/2/ What kind of business is Prigtoon in?
+                        script:
+                        - run astria_help_4_3_task
+                    3: 
+                        trigger: <&7>/3/ Tell me more about his political ambitions.
+                        script:
+                        - run astria_help_4_4_task
+
+
+astria_help_1_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "The economy changes so you have to pay attention to that but usually"
+    - wait 1s
+    - narrate format:npcchat "Rothigport buys wood for building, and sells fish, but that is only the beginning."
+    - wait 1s
+    - narrate format:npcchat "Each region and city has its own supply and demands."
+    - wait 1s
+    - narrate format:npcchat "So if you notice the supply and demand issues, you can make a pretty coin."
+    - wait 1s
+    - narrate format:npcchat "Rothigport has a few markets, so check out each one."
+    
+   
+    - zap default
+  
+
+    
+
+astria_help_2_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "Soon travelers and citizens will be able to open their own vendor stall."
+    - wait 1s
+    - narrate format:npcchat "Look for the signs that allow you an area to rent"
+    - zap default
+    
+
+astria_help_3_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "To The Outlands get on Ori's boat with the yellow and blue sail out there in the harbor."
+    - wait 1s
+    - narrate format:npcchat "It will cost a little bit to gain passage across The Long Sea."
+    - zap default
+    
+
+
+astria_help_4_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "This is Merki Prigtoon's home."
+    - wait 1s
+    - narrate format:npcchat "As you have probably noticed, the architecture in Rothigport is fairly plain"
+    - wait 1s
+    - narrate format:npcchat "To honor the gods and the sea we don't like to get too ostentatious."
+    - wait 1s
+    - narrate format:npcchat "But Prigtoon, being the wealthiest merchant in Rothigport, had to build this building that was just a little bit nicer than the others."
+    - wait 1s
+    - narrate format:npcchat "And now he has political ambitions and is trying to change Rothigport."
+    - wait 1s
+    - narrate format:npcchat "Do you want to know more?"
+    - clickable astria_help_4_2_task save:astria_help_4_2_task_clickable
+    - clickable astria_help_4_3_task save:astria_help_4_3_task_clickable
+    - clickable astria_help_4_4_task save:astria_help_4_4_task_clickable
+    - clickable astria_help_4_5_task save:astria_help_4_5_task_clickable
+
+    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Why are the buildings in Rothigport so plain?<&8><&rb><&end_hover>].on_click[<entry[astria_help_4_2_task_clickable].command>]>"
+    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>What kind of business is Prigtoon in?<&8><&rb><&end_hover>].on_click[<entry[astria_help_4_3_task_clickable].command>]>"
+    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>3. <&B>Tell me more about his political ambitions.<&8><&rb><&end_hover>].on_click[<entry[astria_help_4_4_task_clickable].command>]>"
+    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>4. <&B>This is boring, I need to move on.<&8><&rb><&end_hover>].on_click[<entry[astria_help_4_5_task_clickable].command>]>"
+    - zap prigtoon_step
+
+astria_help_4_2_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "We owe a debt to the lumber trade that helped grow and build this town."
+    - wait 1s
+    - narrate format:npcchat "So there is an ordinance that everything must be made of wood."
+    - wait 1s
+    - narrate format:npcchat "And by remaining humble, as our beginnings, the gods kept us safe from The Long Sea."
+    - wait 1s
+    - narrate format:npcchat "Or so we learned in school. ha ha ha."
+    - zap default
+
+astria_help_4_3_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "He is among one of the new Shipbuilders."
+    - wait 1s
+    - narrate format:npcchat "whereas fishing and lumber have been our bread and butter in ages past,"
+    - wait 1s
+    - narrate format:npcchat "A couple of entrepreneurs thrive in shipbuilding and shipping goods."
+    - wait 1s
+    - narrate format:npcchat "We always need more lumber though, because the high mages have forbade felling trees anymore, to keep this region pristine."
+    - wait 1s
+    - narrate format:npcchat "I would tell you more, but I don't want him overhearing."
+    - wait 1s
+    - narrate format:game_message "[<npc.name> whispers]"
+    - narrate format:npcchat "Let me just say that most of his money and power comes from the family he married into."
+    - zap default
+
+astria_help_4_4_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "Us proloteriat, especially us young and organized ones,"
+    - wait 1s
+    - narrate format:npcchat "Are not on his good side, let me just say that.
+    - wait 1s
+    - narrate format:npcchat "He says he wants the town to prosper, but he also wants too much control"
+    - wait 1s
+    - narrate format:npcchat "and to quash any unrest over unfair conditions."
+    - wait 1s
+    - narrate format:npcchat "So we watch out for him as he and the other rich folks make laws that just work for them.
+    - wait 1s
+    - narrate format:npcchat "He even has spies looking out for us to slip up and then his appointed Sheriff, Bufurmont, can jail us. Nice! Huh?""
+    - zap default
+
+astria_help_4_5_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "I hope you're not like the rest of them."
+    - wait 1s
+    - narrate format:npcchat "Remember the commmon mortal when you get famous traveler!"
+    - if <player.flag[npc.n@17.familiarity.level]> > 2:
+        - wait 2s
+        - narrate format:npcchat "Also, say hi to <npc[17].name> for me."
+        - if <player.has_flag[astra_tartanis].not>:
+            - flag <player> npc.astra_tartanis

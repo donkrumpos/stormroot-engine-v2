@@ -1,0 +1,76 @@
+blossom_command:
+    type: command
+    name: blossom
+    script:
+    - if <player.has_flag[stat.status.buff]> && <player.flag[stat.status.buff].contains[blossom]>:
+        - flag <player> stat.status.buff:<-:blossom
+        - flag <player> blossom_on:false
+        - narrate "Blossom off"
+    - else:
+        - flag <player> stat.status.buff:->:blossom
+        - flag <player> blossom_on:true
+        - narrate "Blossom on"
+
+blossom_world:
+    type: world
+    debug: false
+    events:
+        on player steps on grass_block:
+        - if <player.has_flag[skill.spells.blossom.level].not>:
+            - flag <player> skill.spells.blossom.level:1
+            - stop
+        - define level <player.flag[skill.spells.blossom.level]>
+     
+        - ratelimit <player> 1s
+        - flag <player> stat.core.mana.level:-:1
+        - define random_flower <server.vanilla_tagged_materials[flowers].random>
+        - if <[random_flower].contains_text[wither_rose]>:
+            - stop
+        - if <player.flag[stat.status.buff].contains[blossom]>:
+            - flag <player> stat.core.mana.level:-:4
+            - foreach <player.location.backward_flat[2].find_entities.within[2].filter[has_flag[undead]]> as:undead:
+                - run spell_damage_task def:blossom|<[undead]>|<[attacker]>
+                - flag <player> stat.core.mana.level:-:1
+            - if <[level]> > 33:
+                - define random_flower <server.vanilla_tagged_materials[flowers].random>
+                # - define random_flower2 <server.vanilla_tagged_materials[flowers].random>
+                - if <player.location.backward_flat[1].material.name.equals[air]>:
+                    - modifyblock <player.location.backward_flat[1]> <[random_flower]>
+                    - ratelimit <player> <element[100].sub[<[level]>]>s
+                    - if <util.random.int[30].to[133]> < <[level]>
+                        - adjust <player.location.backward_flat[1].up[1]> generate_tree:<server.tree_types.random>
+                        - flag <player> stat.core.mana.level:0
+                    - ratelimit <player> 10s
+                    - foreach <player.location.find_entities.within[<[level]>].filter[has_flag[undead]]> as:undead:
+                        - run spell_damage_task def:blossom|<[undead]>|<[attacker]>|10
+                        - flag <player> stat.core.mana.level:-:10
+            - else if <[level]> > 22:
+                - define random_flower <server.vanilla_tagged_materials[flowers].random>
+                - if <[random_flower].contains_text[wither_rose]>:
+                    - stop
+               
+                - if <player.location.backward_flat[1].material.name.equals[air]>:
+                    - if <player.location.backward_flat[1].down[1].material.is_solid>:
+                        - modifyblock <player.location.backward_flat[1]> <[random_flower]>
+                    # - modifyblock <player.location.backward_flat[2]> <[random_flower2]>
+            - else if <[level]> > 11:
+                - define random_flower <server.vanilla_tagged_materials[flowers].random>
+                - if <[random_flower].contains_text[wither_rose]>:
+                    - stop
+                - if <player.location.backward_flat[1].material.name.equals[air]>:
+                    - define chance <element[21].add[<[level]>].min[100]>
+                    - modifyblock <player.location.backward_flat[1]> <[random_flower]>  <[chance]>
+            - else if <[level]> > 5:
+                - define random_flower <server.vanilla_tagged_materials[flowers].random>
+                - if <[random_flower].contains_text[wither_rose]>:
+                    - stop
+                - if <player.location.backward_flat[1].material.name.equals[air]>:
+                    - define chance <element[10].add[<[level]>]>
+                    - modifyblock <player.location.backward_flat[1]> <[random_flower]>  <[chance]>
+            - else:
+                
+                - showfake <[random_flower].name> <player.location.backward_flat[1]> duration:<[level]>s
+            - if <util.random.int[1].to[100]> == 100:
+                - run raise_spell_level_task def:blossom|<player>
+            
+            

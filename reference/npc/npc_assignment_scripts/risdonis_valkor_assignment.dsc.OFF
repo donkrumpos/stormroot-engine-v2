@@ -1,0 +1,535 @@
+risdonis_valkor_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:2
+    interact scripts:
+    - risdonis_valkor_interact
+
+    default constants:
+        appearance1: "<npc.name> was a hunter of the days before the current Age, but has resolved himself to sell weapons in his favorite town."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+        has_familiarity: true
+        skin: https://minesk.in/a4e1dcf2651d45e5a177ebbf3760c73f
+        sell: <list[mace|golden_sword|longsword]>
+        buy: <list[iron_sword|wooden_sword|stone_sword]>
+
+risdonis_valkor_interact:
+    type: interact
+    steps:
+        1:
+            proximity trigger:
+                entry:
+                    script:
+                    - if <player.has_flag[npc.<npc.name>.prox_count].not> || <player.flag[npc.<npc.name>.prox_count]> == 0:
+                        - inject description_inject_task
+                        - random:
+                            - narrate "Ye be needing a weapon if going outside these cities walls." targets:<player>
+                            - narrate "Only the best Cantosurian steel for you milord." targets:<player>
+                            - narrate "It's dangerous to go alone." targets:<player>
+                    - else:
+                        - if <util.random.int[0].to[10]> == 10:
+                            - random:
+                                - narrate "Grrr. All talk and no play." targets:<player>
+                                - narrate "Killed any zombcats lately?" targets:<player>
+                                - narrate "A monster hunter tis thee!" targets:<player>
+                                - narrate "Beware the Woond!" targets:<player>
+
+                    - flag <player> npc.<npc.name>.prox_count:++
+
+                # exit:
+                #     script:
+                #     - run reset_risdonis_valkor_gaze
+            click trigger:
+                script:
+                - inject description_inject_task
+                - if <player.item_in_hand.contains[boar_tusk]>:
+                    - narrate  "Well, Well, Well."
+                    - wait 2s
+                    - narrate "I can give you 4 gold for this."
+                    - clickable <npc.name>_task_20 save:<npc.name>_clickable_20 until:30s usages:1 for:<player>
+                    - clickable <npc.name>_task_21 save:<npc.name>_clickable_21 until:30s usages:1 for:<player>
+                    - wait 1s
+                    - narrate <&nl>
+                    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes, I will sell.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_20].command>]>" targets:<player>
+                    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>No, I'll keep it for myself.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_21].command>]>" targets:<player>
+                - else:
+                    - narrate "What can I help you with?" targets:<player>
+                    - zap 2 vendor_interact player:<player>
+                    # - wait 1s
+                    - run risdonis_valkor_first_question_set
+        2:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. I would like to talk to you Risdonis.
+                    script:
+                    - inject risdonis_valkor_task_01
+                    - zap 1
+        3:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. What is this place?
+                    script:
+                    - inject risdonis_valkor_task_02
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. What do you do?
+                    script:
+                    - inject risdonis_valkor_task_03
+                    - zap 1
+        4:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. What can a poet or musician do?
+                    script:
+                    - inject risdonis_valkor_task_04
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. What can a warrior do?
+                    script:
+                    - inject risdonis_valkor_task_05
+                    - zap 1
+                3:
+                    trigger: <&7>/3/. Where can I get armor?
+                    script:
+                    - inject risdonis_valkor_task_06
+                    - zap 1
+                4:
+                    trigger: <&7>/4/. Is there anything I can help you out with?
+                    script:
+                    - inject risdonis_valkor_task_07
+                    - zap 1
+        5:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. What is a battle general?
+                    script:
+                    - inject risdonis_valkor_task_08
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. What does a merchant do?
+                    script:
+                    - inject risdonis_valkor_task_09
+                    - zap 1
+        6:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. I am sure I want to be a fighter. Show me!
+                    script:
+                    - inject risdonis_valkor_task_10
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. No this is not for me.
+                    script:
+                    - inject risdonis_valkor_task_11
+                    - zap 1
+        7:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. How does armor work?
+                    script:
+                    - inject risdonis_valkor_task_12
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. Who is your friend Wulvern?
+                    script:
+                    - inject risdonis_valkor_task_13
+                    - zap 1
+        8:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. Yes, I would love to do so!
+                    script:
+                    - inject risdonis_valkor_task_14
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. No, sounds like too much work.
+                    script:
+                    - inject risdonis_valkor_task_15
+                    - zap 1
+        9:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. Yes, for you I will.
+                    script:
+                    - inject risdonis_valkor_task_16
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. No, I don't have time.
+                    script:
+                    - inject risdonis_valkor_task_17
+                    - zap 1
+        10:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. Where do I find merchants to buy from and sell to?
+                    script:
+                    - inject risdonis_valkor_task_18
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. How do I can become a merchant?
+                    script:
+                    - inject risdonis_valkor_task_19
+                    - zap 1
+       
+risdonis_valkor_first_question_set:
+    type: task
+    script:
+    - clickable <npc.name>_task_01 save:<npc.name>_clickable_01 until:30s usages:1 for:<player>
+   
+    # - narrate <&nl> targets:<player>
+  
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>I would like to talk to you risdonis_valkor.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_01].command>]>" targets:<player>
+    - zap 2 risdonis_valkor_interact player:<player> duration:14s
+
+risdonis_valkor_task_01:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 risdonis_valkor_interact player:<player> duration:14s
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - random:
+            - narrate "Sorry my shop is so small. I'm just starting out as a merchant." targets:<player>
+            - narrate "Thanks for stopping in my humble shop." targets:<player>
+            - narrate "We only outfit those heading to the Outlands." targets:<player>
+        - flag <player> suspend_clickable:!
+        - clickable <npc.name>_task_02 save:<npc.name>_clickable_02 until:30s usages:1 for:<player>
+        - clickable <npc.name>_task_03 save:<npc.name>_clickable_03 until:30s usages:1 for:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>What is this place?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>What do you do?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_03].command>]>" targets:<player>
+        - flag <player> suspend_clickable:!
+        - zap 3 risdonis_valkor_interact player:<player> duration:14s
+
+risdonis_valkor_task_02:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 risdonis_valkor_interact player:<player> duration:14s
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "This is the City of Bardtown, but this is my little weapons shop." targets:<player>
+        - wait 2s
+        - narrate "Though this town is geared toward the poet or musician, I like to help out budding warriors." targets:<player>
+        - wait 3s
+        - narrate <&nl>
+        - clickable <npc.name>_task_04 save:<npc.name>_clickable_04 until:30s usages:1 for:<player>
+        - clickable <npc.name>_task_05 save:<npc.name>_clickable_05 until:30s usages:1 for:<player>
+        - clickable <npc.name>_task_06 save:<npc.name>_clickable_06 until:30s usages:1 for:<player>
+        - clickable <npc.name>_task_07 save:<npc.name>_clickable_07 until:30s usages:1 for:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>What can a poet or musician do?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_04].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>What can a warrior do?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_05].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>3. <&color[#6fd6cb]>Where can I get armor?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_06].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>4. <&color[#6fd6cb]>Is there anything I can help you out with?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_07].command>]>" targets:<player>
+        - zap 4 risdonis_valkor_interact player:<player> duration:14s
+        - flag <player> suspend_clickable:!
+
+
+risdonis_valkor_task_03:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 risdonis_valkor_interact player:<player> duration:14s
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "I am an old retired battle general, now resigned to selling these old weapons I have." targets:<player>
+        - wait 3s
+        - narrate "But that is all I know about that."  targets:<player>
+        - wait 3s
+        - narrate "You won't have a problem finding out more in this city, that's for sure."  targets:<player>
+        - wait 2s
+        - narrate <&nl>
+        - clickable <npc.name>_task_08 save:<npc.name>_clickable_08 until:30s usages:1 for:<player>
+        - clickable <npc.name>_task_09 save:<npc.name>_clickable_09 until:30s usages:1 for:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>What is a battle general?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_08].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>What does a merchant do?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_09].command>]>" targets:<player>
+        - zap 5 risdonis_valkor_interact player:<player> duration:14s
+        - flag <player> suspend_clickable:!
+
+risdonis_valkor_task_04:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "Ah yes, The Bard. I go and listen to their arts every Saturn's Day. I guess their songs carry special magic." targets:<player>
+    - wait 3s
+    - narrate "But that is all I know about that."  targets:<player>
+    - wait 3s
+    - narrate "You won't have a problem finding out more in this city, that's for sure."  targets:<player>
+    - zap 1
+
+risdonis_valkor_task_05:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 risdonis_valkor_interact player:<player> duration:14s
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - if <player.has_flag[class.type]> && <player.flag[class.type]> == fighter:
+            - narrate "Since you are already a figher, perhaps I may teach you a new fighting skill." targets:<player>
+            - if <player.as_flag[skill.specializations.slash]> && <player.flag[skill.specializations.slash.level]> > 0:
+                - narrate "But it seems that you already know the slash skill." targets:<player>
+            - else: 
+                - narrate "I can teach you the Slash specialization skill."  targets:<player>
+                - wait 1s
+                - flag <player> skill.specializations.slash.level:++
+                - wait 1s
+                - narrate "There I have taught you something I know."
+                - wait 1s
+                - narrate format:game_message "You have learned the Slash skill. Upgrade it with skill points in the /spec command."
+                - wait 1s
+                - narrate format:game_message "You have gained a Skill Point"
+                - flag <player> stat.points.skill_points.level:++
+                - narrate "It will slash through your main target and hit multiple targets." targets:<player>
+
+        - else:
+            - narrate "A warrior, or fighter, is a common class out here in Song Tide. With training, they end up being the masters of martial combat." targets:<player>
+            - wait 3s
+            - narrate "I could start you down the path if you want."  targets:<player>
+            - wait 3s
+            - narrate "You have to be sure though, as this cannot easily be reversed."  targets:<player>
+            - wait 2s
+            - narrate <&nl>
+            - clickable <npc.name>_task_10 save:<npc.name>_clickable_10 until:30s usages:1 for:<player>
+            - clickable <npc.name>_task_11 save:<npc.name>_clickable_11 until:30s usages:1 for:<player>
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>I am sure I want to be a fighter. Show me!<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_10].command>]>" targets:<player>
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>No this is not for me.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_11].command>]>" targets:<player>
+            - zap 6 risdonis_valkor_interact player:<player> duration:14s
+        - flag <player> suspend_clickable:!
+
+risdonis_valkor_task_06:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 risdonis_valkor_interact player:<player> duration:14s
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "The best armor in this city is up the hill at Thorn and Piper's Leatherworks. Take the western stairs and it is almost to the top." targets:<player>
+        - wait 4s
+        - narrate "Armor is essential if going out to hunt monsters if you are new to the world." targets:<player>
+        - wait 2s
+        - narrate "Talking to Thorn and Piper, or my old monster hunter friend, <&color[#82b1f2]>Wulvern<&r> is good to learn more."
+        - wait 2s
+        - narrate <&nl>
+        - clickable <npc.name>_task_12 save:<npc.name>_clickable_12 until:30s usages:1 for:<player>
+        - clickable <npc.name>_task_13 save:<npc.name>_clickable_13 until:30s usages:1 for:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>How does armor work?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_12].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>Who is your friend Wulvern?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_13].command>]>" targets:<player>
+        - zap 7 risdonis_valkor_interact player:<player> duration:14s
+        - flag <player> suspend_clickable:!
+
+risdonis_valkor_task_07:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 risdonis_valkor_interact player:<player> duration:14s
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "Help me out?"  targets:<player>
+        - wait 2s
+        - narrate "Well that is nice of you to offer." targets:<player>
+        - wait 2s
+        - if <player.has_flag[risdonis_valkor_help]>:
+            - narrate "But not right now. I am sure, in time, you will be able to help me a great deal."
+        - else:
+            - random:
+                - repeat 1:
+                    - narrate "My shop is waiting for some orders from Runesbrook, but they are late." targets:<player>
+                    - wait 3s
+                    - narrate "Will you go check on it for me?" targets:<player>
+                    - clickable <npc.name>_task_14 save:<npc.name>_clickable_14 until:30s usages:1 for:<player>
+                    - clickable <npc.name>_task_15 save:<npc.name>_clickable_15 until:30s usages:1 for:<player>
+                    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes, I would love to do so!<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_14].command>]>" targets:<player>
+                    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>No, sounds like too much work.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_15].command>]>" targets:<player>
+                    - zap 8 risdonis_valkor_interact player:<player> duration:14s
+                - repeat 1:
+                    - narrate "If you could bring this flask to my friend Zoltari, just up the stairs here." targets:<player>
+                    - wait 3s
+                    - narrate "He would be most grateful. Can you?" targets:<player>
+                    - clickable <npc.name>_task_16 save:<npc.name>_clickable_16 until:30s usages:1 for:<player>
+                    - clickable <npc.name>_task_17 save:<npc.name>_clickable_17 until:30s usages:1 for:<player>
+                    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes, for you I will.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_16].command>]>" targets:<player>
+                    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>No, I don't have time.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_17].command>]>" targets:<player>
+                    - zap 9 risdonis_valkor_interact player:<player> duration:14s
+            - flag <player> risdonis_valkor_help
+        - flag <player> suspend_clickable:!
+
+risdonis_valkor_task_08:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 risdonis_valkor_interact player:<player> duration:14s
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "Oh yes, a battle general. Well, before the Deluge there was the Great War." targets:<player>
+        - wait 3s
+        - narrate "The war between the Gods and us the Mortals. And fighers, mages and even clerics alike all were called up to aid in this war to end all wars." targets:<player>
+        - wait 4s
+        - narrate "As was I called to lead the 8th Battalion agaist the divine armies of the North." targets:<player>
+        - wait 3s
+        - narrate "And after decades of bloody loss, after bloody loss, us mortals finally won the war when the Gods retreated back to their domains." targets:<player>
+        - wait 5s
+        - narrate "You may see the epic scars out on The Long Sea of where the aggressor Gods battled those deities that aided us." targets:<player>
+        - wait 4s
+        - narrate "And I will be the first to admit, it was magic, and the resurgence of its power, which allowed us mortals to win." targets:<player>
+        - wait 4s
+        - narrate "That and the new technologies of the Empires in the East, which we fought alongside for a greater cause." targets:<player>
+        - wait 3s
+        - narrate "Alas, now they mount up navies to sail upon us someday. I have warned the others, but they are too oblivious to these dangers." targets:<player>
+        - wait 4s
+        - narrate "Indeed I talk too much. So much so that I risk being labeled as a crazy fool." targets:<player>
+        - flag <player> suspend_clickable:!
+
+risdonis_valkor_task_09:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 risdonis_valkor_interact player:<player> duration:14s
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "I don't mind being a merchant in my older years." targets:<player>
+        - wait 2s
+        - narrate "It is not as glamorous as my fighter career, but it pays the bills for now." targets:<player>
+        - wait 3s
+        - narrate "You will see many across Deluvia, and you can even become one yourself." targets:<player>
+        - wait 2s
+        - narrate <&nl>
+        - clickable <npc.name>_task_18 save:<npc.name>_clickable_18 until:30s usages:1 for:<player>
+        - clickable <npc.name>_task_19 save:<npc.name>_clickable_19 until:30s usages:1 for:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Where do I find merchants to buy from and sell to?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_18].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>How do I can become a merchant?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_19].command>]>" targets:<player>
+        - zap 10 risdonis_valkor_interact player:<player> duration:14s
+        - flag <player> suspend_clickable:!
+
+
+risdonis_valkor_task_10:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "Very well. Let's do this!" targets:<player>
+    - flag <player> class.type:fighter
+    - narrate format:game_message "You are now a Fighter" targets:<player>
+    - wait 2s
+    - narrate "There are many of us across The Long Sea and some of us can help you out."
+
+risdonis_valkor_task_11:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "Hey there are many options out there, so no worries traveler." targets:<player>
+    - zap 1
+
+risdonis_valkor_task_12:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "Wearing it helps reduce damage from others out there who hurt you." targets:<player>
+    - wait 2s
+    - narrate "So having some upon you is very good if heading out of the city." targets:<player>
+    - wait 1s
+    - narrate format:game_message "Type <element[/equip].bold> to put equipment on and off." targets:<player>
+    - wait 2s
+    - narrate "The heavier it is, the more stamina it will deplete when you run or jump. Leather is a lot lighter than iron, for instance." targets:<player>
+    - wait 4s
+    - narrate "And I sometimes see armor that is imbued with magical properties that can protect you even more. Look for those." targets:<player>
+    - wait 3s
+    - narrate "Your Arms Lore skill can help you with knowing more about your armor." targets:<player>
+    - wait 1s
+    - if <player.flag[skill.skills.arms_lore.level]||0> <= 10:
+        - flag <player> skill.skills.arms_lore.level:++
+        - narrate format:game_message "Your Arms Lore has increased. Type <element[/skills].bold> to see your natural skills. " targets:<player>
+
+risdonis_valkor_task_13:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "Wulvern is a friend from the Old War. He was the scout of our Battalion, and a great tracker." targets:<player>
+    - wait 3s
+    - narrate "You should go see him if have time, as he can be a great help to new travelers." targets:<player>
+    - wait 3s
+    - narrate "You must take a boat northwest, and on the far side of a large island of Chantwood, is the city of Runesbrook, where you can find a path that leads up to his cabin." targets:<player>
+    - flag <player> knows_of_wulvern
+
+risdonis_valkor_task_14:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "I would be most grateful." targets:<player>
+    - wait 2s
+    - narrate "You must find Runesbrook by your own boat, or use Liza Prowwind's boat in Rothigport. The ship in Bardtown's port, just across the bridge and on the opposite of the island, can take you to Rothigport." targets:<player>
+    - wait 4s
+    - narrate "Once in Runesbrook, find Velen, in the Guild Hall. She might have some answers." targets:<player>
+    - flag <player> risdonis_valkor_velen
+
+risdonis_valkor_task_15:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "Indeed. Runesbrook is a bit far. Well worth a visit another time though." targets:<player>
+
+risdonis_valkor_task_16:
+    type: task
+    script:
+    - inject description_inject_task
+    - give <item[whiskey].with_flag[whiskey_from_risdonis_valkor]>
+    - narrate "Great, thank you. I am busy with my inventory, but need to catch up with him soon." targets:<player>
+
+risdonis_valkor_task_17:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "No problem. There's a lot to do."
+
+risdonis_valkor_task_18:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "In these old cities, there tends to be a lot of merchants. Each buys and sells different things." targets:<player>
+    - wait 3s
+    - narrate "And you can stumble across some wandering traders outside of the cities."
+    - wait 2s
+    - narrate "But I've heard that new travelers are starting new cities with new merchants in the Outlands. It could be quite promising."
+
+risdonis_valkor_task_19:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "You can always peddle your wares as a wandering trader, or rent a stall in a location you think gets a lot of traffic." targets:<player>
+    - wait 3s
+    - narrate "or you could start your own town in the Outlands and create a reason for others to come be part of your Stronghold."
+    - wait 2s
+    - narrate format:game_message "Type <element[/claim].bold> in the wilderness to start your own Stronghold." targets:<player>
+
+
+risdonis_valkor_task_20:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - inject description_inject_task 
+        - if <player.item_in_hand.contains[boar_tusk]>:
+            - take <player.item_in_hand>
+        - else:
+            - narrate "Oh, I guess I was mistaken."
+            - stop
+        - zap 1 velen_interact player:<player> duration:14s
+        
+        - random:
+            - narrate "These will be quite useful."  targets:<player>
+            - narrate "Now let's see what weapons I can make from these."  targets:<player>
+            - narrate "You must be getting to be quite a good fighter."  targets:<player>
+        - give gold_coin quantity:4
+        - if <player.has_flag[risdonis_valkor_tusk].not>:
+            - flag <player> risdonis_valkor_tusk
+    - flag <player> suspend_clickable:!
+
+risdonis_valkor_task_21:
+    type: task
+    script:
+    - inject description_inject_task 
+    - narrate "I should always be in need of those in case you want to sell." targets:<player>

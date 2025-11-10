@@ -1,0 +1,28 @@
+bleed_attack_task:
+    type: task
+    definitions: damager|defender|final_damage|final_armor
+    script:
+    - if <[damager].item_in_hand.flag[weapon_type]> == sword:
+        - define bleed_attack_level <[damager].flag[skill.specializations.bleed_attack.level].min[20]||0>
+        - define armor_ignore_bonus 0
+        - define anatomy_bonus 0
+        - define anatomy_bonus <[damager].flag[skill.skills.anatomy.level]||0>
+       
+        - if <[damager].flag[skill.specializations.armor_ignore.level]||0> > 0:
+            - if <util.random.int[0].to[100]> < <[damager].flag[skill.skills.arms_lore.level]>:
+                - define armor_ignore_bonus_max <proc[armor_protection_proc].context[<[defender]>]>
+                - define armor_ignore_bonus <[damager].flag[skill.specializations.armor_ignore.level].min[<[armor_ignore_bonus_max]>]>
+        - else:
+            - if <util.random.int[1].to[2]> == 2:
+                - stop
+        - if <[damager].flag[skill.skills.anatomy.level]||0> >= 70:
+            - define anatomy_bonus <[damager].flag[skill.skills.anatomy.level].div[10].max[1]||0>
+        - else:
+            - if <util.random.int[0].to[<[damager].flag[skill.skills.anatomy.level]||0>].max[1]> == 0:
+                - stop
+        - flag <[defender]> stat.status.debuff.bleed
+        - run bleed_task def:<[damager]>|<[defender]>|<[bleed_attack_level]>|<[anatomy_bonus].add[<[armor_ignore_bonus]>]>
+        - if <util.random.int[0].to[3]> == 3:
+            - run raise_natural_skill_task def:<[damager]>|anatomy|0|0
+        - narrate format:game_message "You caused your target to bleed" targets:<[damager]>
+    

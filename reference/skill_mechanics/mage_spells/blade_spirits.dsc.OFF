@@ -1,0 +1,36 @@
+blade_spirits_task:
+    type: task
+    definitions: attacker|target
+    script:
+    - if <[attacker].has_flag[skill.spells.blade_spirits.level].not>:
+        - flag <[attacker]> skill.spells.blade_spirits.level:1
+    - define level <[attacker].flag[skill.spells.blade_spirits.level]>
+    - define target <[attacker].cursor_on>
+    # - define first_loc <[attacker].cursor_on>
+    - define level 100
+    - wait 1s
+    - repeat 20:
+        - playeffect effect:sweep_attack at:<[target]> quantity:1 visibility:100 offset:0.5
+        - wait 2t
+    - repeat <[level].add[11]>:
+        - wait 1t
+        - if <[target].find.living_entities.within[6].exclude[<player>].any>:
+            - define entity <[target].find.living_entities.within[6].exclude[<player>].first>
+            - foreach <[target].points_between[<[entity].location>]> as:point:
+                - playeffect effect:sweep_attack at:<[point].up[1]> quantity:1 visibility:100 
+                - define target <[point]>
+                - playeffect effect:sweep_attack at:<[point].up[1]> quantity:1 visibility:100 
+                - define resist_success <proc[natural_skill_check_proc].context[<[entity]>|stone_resist]>
+                - if <[resist_success].not>:
+                    - run spell_damage_task def:blade_spirits|<[entity]>
+                    - playeffect effect:sweep_attack at:<[target].location> quantity:1 visibility:100 
+                    - effectlib type:bleed origin:<[target].location> duration:1t
+                    - adjust <[entity]> velocity:<util.random.int[0].to[2]>,0,<util.random.int[0].to[2]>
+                - wait <util.random.int[5].to[9]>t
+        - else:
+
+        
+            - playeffect effect:sweep_attack at:<[target].up[1]> quantity:1 visibility:100 
+            - wait 1t
+     
+            

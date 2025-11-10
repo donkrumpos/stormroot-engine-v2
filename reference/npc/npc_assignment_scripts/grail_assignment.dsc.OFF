@@ -1,0 +1,303 @@
+grail_assignment:
+    type: assignment
+    speed: 1t
+    actions:
+        on click:
+        - zap default grail_interact 
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:4
+        # on enter proximity:
+        # - zap default grail_interact 
+        # # - narrate "engaging <npc.name>"
+        # - engage
+        # on exit proximity:
+        # - disengage
+
+    interact scripts:
+    - grail_interact
+    default constants:
+        appearance1: "<npc.name>' has a grizzly look, but is glad to see visitors."
+        appearance2: "You sense that <npc.name> is the de facto leader of this town."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+grail_interact:
+    type: interact
+    steps:
+        default:
+            
+            click trigger:
+                script:
+                # - if <npc.engaged[<player>].not>:
+                #     - engage
+                - inject description_inject_task
+                - if <player.flag[npc.<npc.name>.familiarity.level]||0> <= 1:
+                    - narrate "So you've come to this rock to to find your fortune have you?"
+                    - wait 10t
+                    - narrate "well I can help you out by giving you this. . ."
+
+                    - run give_stone_equipment_task
+                    - narrate format:game_message "<npc.name> gives you some provisions."
+                    - narrate  "so we all can get ready for when the darkness comes."
+             
+                
+                - if <player.flag[npc.<npc.name>.familiarity.level]> > 1:
+
+                    - narrate "Do you want to know more about.
+                    - clickable grail_help_1_task save:grail_help_1_task_clickable 
+                    - clickable grail_help_2_task save:grail_help_2_task_clickable 
+                    - clickable grail_help_3_task save:grail_help_3_task_clickable 
+                    - clickable grail_help_4_task save:grail_help_4_task_clickable 
+                    - wait 1s
+                    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>This Town of Padula Anchorite.<&8><&rb><&end_hover>].on_click[<entry[grail_help_1_task_clickable].command>]>"
+                    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>This area you call The Outlands.<&8><&rb><&end_hover>].on_click[<entry[grail_help_2_task_clickable].command>]>"
+                    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>3. <&B>Where do I go from here.<&8><&rb><&end_hover>].on_click[<entry[grail_help_3_task_clickable].command>]>"
+                    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>4. <&B>The Raiders of The Long Sea.<&8><&rb><&end_hover>].on_click[<entry[grail_help_4_task_clickable].command>]>"
+
+                    - zap padula_main duration:30s
+        padula_main:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, This City of Padula Anchorite.
+                    script:
+                    - run grail_help_1_task
+                2:
+                    trigger: <&7>/2/, This area of The Outlands.
+                    script:
+                    - run grail_help_2_task
+                3:
+                    trigger: <&7>/3/, Where do I go from here?
+                    script:
+                    - run grail_help_3_task
+                4:
+                    trigger: <&7>/4/, The Raiders of The Long Sea.
+                    script:
+                    - run grail_help_4_task
+        padula_2:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, Who are the Padula Monks?
+                    script:
+                    - run grail_help_1_2_task
+                2:
+                    trigger: <&7>/3/, Nah I heard enough..
+                    script:
+                    - run grail_help_1_4_task
+        padula_3:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, So what about being a Warrior??
+                    script:
+                    - if <player.has_flag[skill.specializations.armorignore.level].not>:
+                        - run grail_help_4_1_task
+                    - else:
+                        - run grail_help_4_2_task
+                2:
+                    trigger: <&7>/3/, Thanks for your help, but I need to go.
+                    script:
+                    - run grail_help_1_4_task
+        
+
+
+grail_help_1_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "I think Padula Anchorite is one of the oldest surviving establishments out on The Long Sea;"
+    - wait 10t
+    - narrate "there are not many because all of them get overcome by Raiders."
+    - wait 10t
+    - narrate "The Padula Monks came out here to win over the souls of the barbarians, but that was several generations ago."
+    - wait 10t
+    - narrate "I'm simply grateful we still exist."
+    - flag <player> lore.padula.general:++
+    - wait 2s
+    - narrate "Do you wish to know more?"
+    - clickable grail_help_1_2_task save:grail_help_1_2_task_clickable 
+    - clickable grail_help_1_4_task save:grail_help_1_4_task_clickable 
+    - wait 1s
+    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Who are the Padula Monks?<&8><&rb><&end_hover>].on_click[<entry[grail_help_1_2_task_clickable].command>]>"
+    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>3. <&B>I don't need to know anymore.<&8><&rb><&end_hover>].on_click[<entry[grail_help_1_4_task_clickable].command>]>"
+
+    - zap padula_2 grail_interact
+  
+
+    
+
+grail_help_2_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "The Central Kingdoms call them The Outlands to scare everyone and make it seem as though only outlaws and barbarians live here."
+    - wait 1s
+    - narrate ". . . which is partially true."
+    - wait 10t
+    - narrate "but we now seem many visitors coming through to stake their claim out here."
+    - flag <player> lore.outlands.general:++
+    
+    - disengage
+    - zap default grail_interact
+    
+
+grail_help_3_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate  "If I were not so invested in Padula here, I would start a farm out further in the Wild."
+    - wait 10t
+    - narrate  "Take your boat and sail in any direction until you find an area that suits your liking."
+    - wait 10t
+    - narrate  "Some areas will certainly build up faster than others given the amount of pilgrims and refugees coming through."
+    - wait 10t
+    - narrate "The longer you are here out in the world, the more you will be able to claim."
+    - flag <player> lore.outlands.general:++
+    - disengage
+    - zap default grail_interact
+    
+
+grail_help_4_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate  "Being that there is no army or law enforcement this far out,"
+    - wait 10t
+    - narrate  "criminals abound!"
+    - narrate  "Just be careful. Take your sword, learn some magic spells, and pray to the Gods."
+    - wait 10t
+    - wait 1s
+    - narrate "Wait, you're not thinking of becoming Long Seas Raider, are you?"
+    - flag <player> lore.outlands.general:++
+    - if <player.flag[class.type]> == "warrior":
+        - narrate "Also, you seem like the warrior type."
+        - wait 10t
+        - narrate "It takes one to know one. heh!"
+        - wait 10t
+        - narrate "Let me know if you want any more tips."
+        - clickable grail_help_4_1_task save:grail_help_4_1_task_clickable 
+        - clickable grail_help_1_4_task save:grail_help_1_4_task_clickable 
+        - wait 1s
+        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Yes, I need to find out more about this warrior thing.<&8><&rb><&end_hover>].on_click[<entry[grail_help_4_1_task_clickable].command>]>"
+        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>3. <&B>I don't need to know anymore.<&8><&rb><&end_hover>].on_click[<entry[grail_help_1_3_task_clickable].command>]>"
+        - zap padula_3 grail_interact
+        - stop
+    - disengage
+    - zap default grail_interact
+    
+
+
+grail_help_1_2_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "They are recluse who live in the upper levels of this Rock and came out here to the Outlands to escape the evils of the Central Kingdoms."
+    - wait 10t
+    - narrate "They reluctantly let a market form, this one here, and stationed some guards,"
+    - wait 10t
+    - narrate "and visitors started to come."
+    - wait 10t
+    - narrate "They stay to themselves, so don't try to talk to them."
+    - wait 10t
+    - narrate "But I thank them for their prayers which keep the bandits away."
+    - wait 10t
+    - narrate ". . . well that and the acute guardians stationed around.
+    - wait 2s
+    - narrate "Do you want to know more about the monks and religion on Deluvia?"
+    - flag <player> lore.padula.monks:++
+    - clickable grail_help_1_3_task save:grail_help_1_3_task_clickable 
+    - clickable grail_help_1_4_task save:grail_help_1_4_task_clickable 
+    - wait 1s
+    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Yes, tell me more about the Padula Monks?<&8><&rb><&end_hover>].on_click[<entry[grail_help_1_3_task_clickable].command>]>"
+    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>3. <&B>I don't need to know anymore.<&8><&rb><&end_hover>].on_click[<entry[grail_help_1_3_task_clickable].command>]>"
+
+    
+    
+    - disengage
+    - zap default grail_interact
+
+grail_help_1_3_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "They are our patrons of this little town, and they workship the goddess Talluk."
+    - wait 10t
+    - narrate "and since I don't partake in the worship of the Gods, I don't know much more."
+    - wait 10t
+    - narrate "But, you should find one of the many gods-fearing folk that wander about to find out more."
+    - wait 10t
+    - narrate "It is a pretty big deal anywhere away from the Centrail Kingdoms. It was once there too."
+    - wait 1s
+    - narrate "The Padula Monks are also master tinkers, of locks and clocks and that kind of thing."
+    - wait 10t
+    - narrate "Why they don't sell in this market yet, I don't know."
+    - flag <player> lore.padula.monks:++
+
+
+grail_help_1_4_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "It was good to talk to you too traveler."
+    - if <util.random.int[1].to[5]> == 5:
+        - narrate ". . . and remember, a storm is coming."
+    - disengage
+    - zap default grail_interact
+
+
+grail_help_4_1_task:
+    type: task
+    script: 
+    - inject description_inject_task
+    - narrate "Aha! Now you are talking my language."
+    - wait 10t
+    - narrate "Let me teach you a good skill I know."
+    - flag <player> skill.specializations.armorignore.level:0
+    - if <player.has_flag[skill.skills.arms_lore.level].not> || <player.flag[skill.skills.arms_lore.level]> < 10:
+        - flag <player> skill.skills.arms_lore.level:+:1
+        - narrate format:game_message "You increase in Arms Lore skill."
+    - narrate format:game_message "<npc.name> teaches you about the skill Armor Ignore."
+    - wait 10t
+    - narrate "Now, the more you learn about arms and armor, the better chance you have to bypass the enemies armor."
+    - wait 5t
+    - narrate "Getting better at both this skill and naturally learning about armor will help in this."
+    - wait 5t
+    - narrate "Pretty neat, eh?"
+    - wait 10t
+    - narrate "There are many creatures across Deluvia that can teach you things."
+    - disengage
+    - zap default grail_interact
+
+grail_help_4_2_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "Well I can see you are already learning a lot, so let me just help you out."
+    - flag <player> stat.points.skill_points:+:1
+    - narrate format:game_message "<npc.name> gave you a skill point."
+    - wait 10t
+    - narrate "Always want to help a fellow warrior out."
+    - narrate "Come and visit me again <player.name> and tell me about the adventures you have."
+    - disengage
+    - zap default grail_interact
+
+
+give_stone_equipment_task:
+    type: task
+    script:
+    - foreach <script[stone_set_equipment].data_key[item]> as:item:
+        - give <[key]> quantity:<[item]>
+
+stone_set_equipment:
+    type: data
+    item:
+        stone_sword: 1
+        stone_axe: 1
+        stone_pickaxe: 1
+        stone_shove: 1
+        stone_hoe: 1
+        spruce_boat: 1
+        bread: 24
+        apple: 12
+        silver_coin: 1

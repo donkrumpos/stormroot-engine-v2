@@ -1,0 +1,43 @@
+discord_task:
+    type: task
+    script:
+    - if <player.has_flag[skill.discord.level]>:
+        - if !<player.item_in_hand.script.data_key[item_type].contains[instrument]>:
+            - narrate "You need an instrument in your hand to cast this spell"
+            - stop
+    - define target <player.target>
+    - if <[target].as_player.has_flag[party]>:
+        - define level <player.flag[skill.discord.level]||1>
+        - if <player.has_flag[skill.natural.musicianship_level]>:
+            - define music_level <player.flag[skill.natural.musicianship_level]>
+        - else:
+            - flag <player> skill.natural.musicianship_level:1
+
+        - if <proc[natural_skill_check_proc].context[<player>|musicianship|<[level]>]>:
+            # - define player_party <player.flag[party]>
+            - define willpower_defense <util.random.int[1].to[<[target].as_player.flag[skill.natural.willpower_level].round>]>
+            - define persuasion_success <util.random.int[1].to[<player.flag[skill.natural.persuasion_level].round>]>
+            - if <[willpower_defense]> < <[persuasion_success]>:
+                # - define party_list <server.players_flagged[party].filter[flag[party].is[==].to[<[target].as_player.flag[party]>]]>
+                # - if <[party_list].contains[<[target]>]>:
+                - narrate "Casting Discord"
+                # - narrate <[target].as_player.flag[party].as_player.flag[party]>
+                - flag <[target].as_player> party:!
+                - narrate "<player.name>'s song has persuaded you to leave your party." targets:<[target].as_player>
+                # - flag <[target]> party:!
+            - else:
+                - narrate "The target has successfully avoided your influence."
+                - if <[target].flag[skill.natural.perception_level]> >= <util.random.int[0].to[50]>:
+                    - narrate "You hear a song that is trying to persuade you to leave your party." targets:<[target]>
+        
+        - else:
+            - narrate "You failed to cast discord."
+            - if <[target].flag[skill.natural.perception_level]> >= <util.random.int[0].to[50]>:
+                - narrate "You hear a song that is trying to persuade you to leave your party." targets:<[target]>
+        - run raise_natural_skill_task def:<player>|musicianship
+        - run raise_natural_skill_task def:<player>|magery
+        - run raise_natural_skill_task def:<player>|persuasion
+        - run raise_natural_skill_task def:<[target]>|willpower
+         
+    - else:
+        - narrate "This player is not able to be discorded."

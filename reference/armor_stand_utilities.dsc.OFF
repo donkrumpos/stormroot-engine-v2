@@ -1,0 +1,16 @@
+remove_armor_stand_command:
+  type: command
+  name: remove_armor_stand
+  aliases:
+  - ras
+  script:
+  - remove <player.location.find.entities[armor_stand].within[1]>
+
+
+decoration_command:
+    type: command
+    name: pas
+    script:
+    - spawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<player.item_in_hand>]>]" <player.location>
+
+

@@ -1,0 +1,7 @@
+weeping_bluebell:
+  type: item
+  material: bowl
+  display name: Weeping Bluebell
+  mechanisms:
+    custom_model_data: 2110021
+    

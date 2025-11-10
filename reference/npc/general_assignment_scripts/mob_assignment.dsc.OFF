@@ -1,0 +1,24 @@
+mob_assignment:
+  type: assignment
+  actions:
+    on assignment:
+    - trigger name:click state:true
+    - trigger name:chat state:true
+    - trigger name:proximity state:true radius:9
+    - trigger name:damage state:true
+    - vulnerable state:true
+  
+  # default constants:
+  interact scripts:
+  - mob_interact
+    
+    
+
+mob_interact:
+  type: interact
+  steps:
+    1:
+      proximity trigger:
+            entry:
+                script:
+                - define attack true

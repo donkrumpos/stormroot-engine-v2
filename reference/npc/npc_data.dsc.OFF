@@ -1,0 +1,547 @@
+lore_data:
+    type: data
+    # chat:
+        # teach:
+        #     special_skill:
+        #         display: "Special Skill"
+        #         narration:
+        #             armor_ignore:
+        #                 display: "Armor Ignore"
+        #                 description: <script[specializations_skills_data].data_key[specializations.armor_ignore.description]>
+        #                 narration: "Here is the Armor Ignore narration"
+        #             bleed_attack:
+        #                 display: "Bleed Attack"
+        #                 description: <script[specializations_skills_data].data_key[specializations.bleed_attack.description]>
+        #                 narration: "Here is the Bleed Attack narration"
+        #             shadow_strike:
+        #                 display: "Shadow Strike"
+        #                 description: <script[specializations_skills_data].data_key[specializations.shadow_strike.description]>
+        #                 narration: "Here is the Shadow Strike narration"
+        #             double_strike:
+        #                 display: "Double Strike"
+        #                 description: <script[specializations_skills_data].data_key[specializations.double_strike.description]>
+        #                 narration: "Here is the Double Strike narration"
+        
+    lore:
+        race:
+            woodland_clan:
+                rat_clan:
+                    display: "Rat Clan"
+                    basic:
+                        narration:
+                        - "The Rat Clan is cool!"
+                beaver_clan:
+                    display: "Beaver Clan"
+                    basic:
+                        narration:
+                        - "Buck teeth"
+                fox_clan:
+                    display: "Fox Clan"
+                    basic:
+                        narration:
+                        - "Sly and bushy tail."
+                raven_clan:
+                    display: "Raven Clan"
+                    basic:
+                        narration:
+                        - "Us Raven Clan have a proclivity toward magic, and we are not all unkind as others might say."
+                    intermediate:
+                        narration:
+                        - "Most of the Parliament are attuned for magic."
+                
+        skill:
+            
+            training_dummy:
+                display: "Training Dummy"
+                basic:
+                    narration:
+                    - "If you hit the dummy to increase in combat skills."
+            natural_skills:
+                display: "Natural Skills"
+                basic:
+                    narration: "You are what you do."
+            reputation:
+                display: "Reputation"
+                basic:
+                    narration:
+                    - "What you do affects how other citizens treat you."
+            specialized_skills:
+                display: "Specialized Skills"
+                basic:
+                    narration:
+                    - "You can invest in skills that enhance a certain natural skill."
+            magic:
+                display: "Magic"
+                basic:
+                    narration:
+                    - "Though Rothigport itself does not exhibit profuse displays of magic and wizardry. . ."
+                intermediate:
+                    narration:
+                    - "The path of magic is not for the weary. It will drain your physical constitution but give you powers unable to be imagined."
+        place:
+            songtide:
+                display: "The Song Tide Archipelago"
+                basic:
+                    narration:
+                    - "A group of islands mostly of the woodland clans that survived The Great Severing"
+                    - "Another bit about The Song Tide"
+                intermediate:
+                    narration:
+                    - "The Song Tide has a good concentration of mages. Most wish solitude in the countryside."
+                rothigport:
+                    display: "Rothigport"
+                    basic:
+                        narration:
+                        - "A cool city"
+
+            frostwynn:
+                display: "Frostwynn"
+                basic:
+                    narration: 
+                    - "A frigid and ancient land"
+            outlands:
+                display: "The Outlands"
+                basic:
+                    narration: "The unexplored frontier"
+            central_kingdoms:
+                display: "The Central Kingdoms"
+                basic:
+                    narration: 
+                    - "The mortal's old regimes."
+        event:
+            
+            the_great_severing:
+                display: "The Great Severing"
+                basic:
+                    narration: 
+                    - "It was a dark event that changed our world forever"
+        npc:
+            
+            lathander:
+                display: "Lathander McFenn"
+                basic:
+                    narrate: 
+                    - "A good ol bloke."
+
+npc_data:
+    type: data
+    debug: false
+    npc:
+        Risdoni:
+            display_name: "Risdoni"
+        Mizden:
+            display_name: "Mizden"
+        Zoltari:
+            display_name: "Zoltari"
+        Rodrik:
+            display_name: "Rodrik Bladeswun"
+        Meruk:
+            display_name: "Meruk"
+            description: "Meruk, a sage of profound wisdom and deep reverence for Deluvia's natural world, embodies the archetype of the guardian of balance. Born amidst the swirling mists of the Omphalos, the mystical center of Deluvia's creation, Meruk's journey began with the discovery of his affinity for nature magic. Guided by his insatiable curiosity and unwavering dedication, he delved into the ancient lore of Deluvia, mastering the arcane arts and weaving spells of awe and wonder. As the cataclysmic events unfolded, Meruk's resolve only strengthened, driven by a burning desire to restore balance to Deluvia and safeguard its natural wonders for future generations. Throughout his journey, Meruk grappled with the weight of Deluvia's fate and confronted dark forces that threatened to disrupt the world's harmony. His path was marked by profound moments of revelation and self-discovery, where he gained insight into the interconnectedness of all things and the true meaning of his role as a guardian of Deluvia's balance. Despite facing internal conflicts and external adversaries, Meruk remained steadfast in his commitment to guiding mortals towards enlightenment and harmony with the natural world, embodying the virtues of wisdom, compassion, and reverence for nature."
+
+        yewestra:
+            display_name: "Yewestra Luminethorn"
+            description: "Yewestra possesses an aura of mystery and quiet strength, her presence commanding attention wherever she roams. With chestnut hair that flows freely like a river's current and eyes that sparkle with hidden depths, she exudes an air of serene confidence. Her movements are fluid and graceful, as if she is always in tune with the rhythm of the world around her. There's a wildness to Yewestra, an untamed spirit that shines through in every aspect of her being. She carries herself with a natural grace, her steps light and sure as she navigates the world with a sense of purpose and determination. In her gaze, there's a spark of curiosity and adventure, as if she's always seeking out the next great mystery to unravel. Amidst her wanderings, Yewestra often retreats to her secluded abode, where she channels her connection to nature into her craft. With deft hands and a keen eye, she transforms sheepskin into parchment, each sheet a testament to her skill and dedication. The fainnt scent of freshly tanned hides lingers in the air as she works, the soft rustle of parchment echoing the whisper of wind through leaves. Surrounded by the sights and sounds of nature, Yewestra seems to come alive, her energy intertwined with the vibrant pulse of the world around her. She moves with a quiet confidence, her presence a testament to the timeless beauty of the wilderness. With each breath, she draws in the essence of the natural world, her spirit as boundless as the open sky and as untamed as the rolling hills. Her hut is located on the western side of Westerisle along the coast, west of Bardtown."
+
+        Penny:
+            display_name: Penny
+        Dargred:
+            display_name: Dargred
+        Meeks:
+            display_name: Meeks
+            skin: kenobi
+            lookclose: true
+            server: songtide
+            home_area_name: "Meeks Chamber"
+            region: humility_shrine
+            location: meeks_fungal
+            scripts:
+                - meeks_assignment
+            availabilty:
+                - day
+                - dusk
+                - dawn
+                - night
+        Quinn:
+            display_name: Quinn
+            skin: kenobi
+            lookclose: true
+            server: songtide
+            home_area_name: "Rothigport"
+            region: rothigport
+            location: quinn_rothigport
+            scripts:
+                - bartender_assignment
+            availabilty:
+                - day
+                - dusk
+                - dawn
+                - night
+        Lathander:
+            display_name: Lathander
+            skin: kenobi
+            lookclose: true
+            server: songtide
+            home_area_name: "Rothigport"
+            region: rothigport
+            location: lathander_rothigport
+            scripts:
+                - lathander_assignment
+            availabilty:
+                - day
+                - dusk
+                - dawn
+                - night
+        Jangoo:
+            display_name: Jangoo
+            skin: medici
+            lookclose: true
+            server: songtide
+            home_area_name: "Rothigport"
+            region: rothigport
+            location: jangoo_rothigport
+            scripts:
+                - banker_assignment
+            availabilty:
+                - day
+                - dusk
+                - dawn
+                - night
+        OriMoonsails:
+            display_name: "Ori Moonsails"
+            skin: cardboardbuddha
+            lookclose: true
+            server: songtide
+            home_area_name: "Rothigport"
+            region: rothigport
+            location: orimoonsails_rothigport
+            scripts:
+                - ship_captain_assignment
+            availabilty:
+                - day
+                - dusk
+                - dawn
+                - night
+        Tartanis:
+            display_name: "Tartanis"
+            skin: LordLego12
+            lookclose: true
+            server: songtide
+            home_area_name: "Rothigport"
+            region: rothigport
+            location: tartan_rothigport
+            scripts:
+                - tartan_assignment
+            availabilty:
+                - day
+                - dusk
+                - dawn
+                - night
+        Pardieu:
+            display_name: "Pardieu"
+            skin: little_jon
+            lookclose: true
+            server: songtide
+            home_area_name: "Rothigport"
+            region: rothigport
+            location: pardieu_rothigport
+            scripts:
+                - pardieu_assignment
+            availabilty:
+                - day
+                - dusk
+                - dawn
+                - night
+        Magprithimo:
+            display_name: "Magprithimo"
+            lookclose: true
+            server: songtide
+            home_area_name: "Rothigport"
+            region: rothigport
+            location: magprithimo_rothigport
+            scripts:
+                - magprithimo_assignment
+            availabilty:
+                - day
+                - dusk
+                - dawn
+                - night
+        Cardiff:
+            display_name: "Cardiff"
+            server: songtide
+            home_area_name: "Rothigport"
+            region: rothigport
+            location: cardiff_rothigport
+        Gracco:
+            display_name: Gracco
+            skin: bailey
+            lookclose: true
+            server: songtide
+            home_area_name: "Rothigport"
+            region: "Rothigport"
+            location: gracco_songtide
+                # bodyYaw: -98.48489
+                # world: world
+                # x: '508.762'
+                # y: '74'
+                # z: '-313.729'
+                # yaw: '-122.6947'
+                # pitch: '-28.4286'
+            availabilty:
+                - day
+                - dusk
+                - dawn
+            scripts: 
+                - vendor_assignment
+            vendor_category: 
+                - medical
+            vendor_always_sell_items:
+                - bandage
+            vendor_always_buy_items:
+                - white_wool
+                - bandage
+            other_vendor_sell_items:
+                # - builders_tool
+                - bandage
+                - iron_pickaxe
+            other_vendor_buy_items:
+                - red_wool
+                - stick
+            wares_rarity: 5
+            bargain_level: 20
+            price_consistency: 50
+        Grail:
+            display_name: Grail
+            server: thelongsea
+            skin: ned
+            lookclose: true
+            server: thelongsea
+            home_area_name: "Padula Anchorite"
+            region: padula_anchorite_inner
+            location: grail_padula_anchorite
+                # bodyYaw: 125.291595
+                # world: world
+                # x: '521.2273'
+                # y: '74.0'
+                # z: '-302.8545'
+                # yaw: '165.2916'
+                # pitch: '0.0'
+            scripts:
+            - grail_assignment
+            availabilty:
+                - day
+                - dusk
+                - dawn
+        Krumbar:
+            display_name: Krumbar
+            server: thelongsea
+            skin: merck
+            lookclose: true
+            home_area_name: "Padula Anchorite"
+            region: padula_anchorite_inner
+            location: krumbar_padula_anchorite
+                # bodyYaw: -98.48489
+                # world: world
+                # x: '508.6546'
+                # y: '70.5'
+                # z: '-297.7044'
+                # yaw: '-122.6947'
+                # pitch: '-28.4286'
+            availabilty:
+                - day
+                - dusk
+                - dawn
+        Laydris:
+            display_name: Laydris
+            server: thelongsea
+            skin: arya
+            lookclose: true
+            home_area_name: "Padula Anchorite"
+            region: padula_anchorite_inner
+            server: thelongsea
+            location: laydris_padula_anchorite
+                # bodyYaw: 172.74982
+                # world: world
+                # x: '500.3683'
+                # y: '74.0'
+                # z: '-302.6994'
+                # yaw: '-147.2502'
+                # pitch: '0.0'
+            scripts:
+            - banker_assignment
+            availabilty:
+                - day
+                - dusk
+                - dawn
+        Mordi:
+            display_name: Mordi
+            skin: spartan
+            lookclose: true
+            server: thelongsea
+            home_area_name: "Padula Anchorite"
+            region: padula_anchorite_inner
+            location: mordi_padula_anchorite
+                # bodyYaw: -99.226425
+                # world: world
+                # x: '510.6661'
+                # y: '70.5'
+                # z: '-296.8063'
+                # yaw: '-109.2264'
+                # pitch: '-7.2459'
+            hand: IRON_SWORD 
+            availabilty:
+                - day
+                - dusk
+                - dawn
+                - night
+            scripts:
+                - town_guard_assignment
+            guard_region: padula_anchorite_inner
+        Milfik:
+            display_name: Milfik
+            skin: bailey
+            lookclose: true
+            server: thelongsea
+            home_area_name: "Padula Anchorite"
+            region: "padula_anchorite_inner"
+            location: milfik_padula_anchorite
+                # bodyYaw: -98.48489
+                # world: world
+                # x: '508.762'
+                # y: '74'
+                # z: '-313.729'
+                # yaw: '-122.6947'
+                # pitch: '-28.4286'
+            availabilty:
+                - day
+                - dusk
+                - dawn
+            scripts: 
+                - vendor_assignment
+            vendor_category: 
+                - food
+                - textile
+            other_vendor_sell_items:
+                # - builders_tool
+                - iron_pickaxe
+            other_vendor_buy_items:
+                - green_wool
+                - iron_sword
+                - iron_ingot
+            wares_rarity: 5
+            bargain_level: 20
+            price_consistency: 50
+        Lindron:
+            display_name: Lindron
+            skin: spartan
+            lookclose: true
+            server: thelongsea
+            home_area_name: "Padula Anchorite"
+            region: padula_anchorite_inner
+            location: lindron_padula_anchorite
+                # bodyYaw: -74.837585
+                # world: world
+                # x: '495.7622'
+                # y: '79.0'
+                # z: '-316.4513'
+                # yaw: '-34.8376'
+                # pitch: '59.3785'
+            hand: BOW 
+            availabilty:
+                - day
+                - dusk
+                - dawn
+                - night
+            guard_region: padula_anchorite_inner
+            scripts:
+                - town_guard_assignment
+        Endis:
+            display_name: Endis
+            skin: spartan
+            lookclose: true
+            server: thelongsea
+            home_area_name: "Padula Anchorite"
+            region: padula_anchorite_inner
+            location: endis_padula_anchorite
+                # bodyYaw: -97.79414
+                # world: world
+                # x: '494'
+                # y: '74.0'
+                # z: '-310'
+                # yaw: '-117.8544'
+                # pitch: '0.0'
+            hand: IRON_SWORD 
+            availabilty:
+                - day
+                - dusk
+                - dawn
+                - night
+            guard_region: padula_anchorite_inner
+            scripts:
+                - town_guard_assignment
+        Nidas:
+            display_name: Nidas
+            skin: spartan
+            lookclose: true
+            server: thelongsea
+            home_area_name: "Padula Anchorite"
+            region: padula_anchorite_inner
+            location: nidas_padula_anchorite
+                # bodyYaw: 66.95801
+                # world: world
+                # x: '523.0273'
+                # y: '74.0'
+                # z: '-307.3807'
+                # yaw: '102.4031'
+                # pitch: '0.0'
+            hand: IRON_SWORD 
+            availabilty:
+                - day
+                - dusk
+                - dawn
+                - night
+            guard_region: padula_anchorite_inner
+            scripts:
+                - town_guard_assignment
+        Fordras:
+            display_name: Fordras
+            skin: spartan
+            lookclose: true
+            server: thelongsea
+            home_area_name: "Padula Anchorite"
+            region: padula_anchorite_inner
+            location: fordras_padula_anchorite
+                # bodyYaw: 66.95801
+                # world: world
+                # x: '523.0273'
+                # y: '74.0'
+                # z: '-307.3807'
+                # yaw: '102.4031'
+                # pitch: '0.0'
+            hand: IRON_SWORD 
+            availabilty:
+                - day
+                - dusk
+                - dawn
+                - night
+            guard_region: padula_anchorite_inner
+            scripts:
+                - town_guard_assignment
+                - fordras_assignment
+            
+fox_tail_item:
+    type: item
+    material: nether_brick
+    display name: Fox Tail
+
+    mechanisms:
+        custom_model_data: 656539
+
+
+rabbit_ears:
+    type: item
+    material: nether_brick
+    display name: Rabbit Ears
+
+    mechanisms:
+        custom_model_data: 1656555

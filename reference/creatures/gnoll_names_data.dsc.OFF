@@ -1,0 +1,344 @@
+gnoll_name_data:
+    type: data
+    debug: false
+    clan: 
+        Mamblesnear:
+            - Omnam Of The Reckless Varmints
+            - Ibath of the Stout Beasts
+            - Urgeit Ashcheek
+            - ulbat of the Lone Boors
+            - ulag of the Bleeding Mutts
+            - arrub of the Meddling Mercenaries
+            - Otul Of The Lost Brawlers
+            - undak of the Vicious Brutes
+            - urthuk of the Fighting Stalkers
+            - emderk of the Thundering Miscreants
+            - ortar of the Crawling Butchers
+            - Sriah Pebblefists
+            - Atag Of The Defiant Brutes
+            - elelk of the Forsaken Boors
+            - Sruth Snotgrin
+            - ugruth of the Ravaging Hogs
+            - ateb of the Hissing Vagrants
+            - Sru Soilcrook
+            - Irtheth Of The Wicked Rascals
+            - ultek of the Snarling Mavericks
+            - isteg of the Abandoned Fiends
+            - Ardoth Of The Angry Sadists
+            - argekh of the Fierce Mongrels
+            - Imnath Of The Pacing Hellions
+            - ibum of the Shady Vagrants
+            - urthat of the Ghastly Bullies
+            - oldakh of the Stark Assassins
+            - Gnora
+            - Gwemben
+            - Lethesh
+            - Vodym Oozebasher
+            - Tho Crackedtalon
+            - ureth of the Feeding Wildlings
+            - endub of the Conquering Vagabonds
+            - Gnigo Loosegall
+            - Amon
+            - irdurk of the Hulking Savagages
+            - Din Dampear
+            - Atzez
+            - amdoth of the Howling Vagabonds
+            - Deadmouth
+            - ethalk of the Lost Fiends
+            - Uberk Of The Quick Miscreations
+            - emnalk of the Infamous Heralds
+            - Ish Bloodgrin
+            - Bora
+            - ergud of the Rambling Monsters
+            - olgag of the Disobedient Monsters
+            - Drir Fizzmouth
+            - Sruglerr Salttoe
+            - Ubrark Of The Gazing Finks
+            - olgar of the Trampling Devils
+            - Guazz Brokenmaw
+            - Gnaax Brinefinger
+            - Ayut Of The Thrifty Varmints
+            - idnat of the Rustling Hellions
+            - istom of the Shifting Wildlings
+            - oltark of the Mad Hunters
+            - Ghekk Groundtine
+            - Enrath Of The Roaming Hoodlums
+            - igrark of the Bickering Hoodlums
+            - odrak of the Wicked Hellions
+            - Ugnork Of The Grumbling Monsters
+            - imnal of the Putrid Outcasts
+            - Boomglob
+            - Gith Fizzfrown
+            - ulduth of the Howling Hellions
+            - irbum of the Ghastly Harbingers
+            - ubut of the Jaded Ramblers
+            - olbam of the Infernal Miscreants
+            - Olgud Of The Grumbling Finks
+            - Khuth Crackboot
+            - Gorgon
+            - orrub of the Shaggy Freaks
+            - indulk of the Twisting Warlords
+            - ithul of the Broken Rats
+            - Ignor Of The Hollow Miscreations
+            - Bloodfist
+            - urgulk of the Cowering Hunters
+            - Maighrith Glopgleam
+            - artark of the Thrifty Ramblers
+            - Ran Rotgrapnel
+            - irrab of the Twisting Monsters
+            - Brekk Soilshrapnel
+            - olguk of the Muttering Slayers
+            - uralk of the Charging Mercenaries
+            - orber of the Grave Exterminators
+            - ibrolk of the Grave Loafers
+            - ibug of the Snarling Wildlings
+            - ultekh of the Lone Outlaws
+            - Agnat Of The Stout Boors
+            - irgar of the Defiant Vagabonds
+            - Kne Grapplefist
+            - ulgath of the Bloody Miscreations
+            - arbal of the Retched Rascals
+            - andar of the Angry Mongrels
+            - idreg of the Outlandish Bootleggers
+            - obal of the Lone Rats
+            - ithuk of the Broken Mongrels
+            - erbuk of the Corrupting Mutilators
+            - olgakh of the Fierce Outcasts
+            - urram of the Menacing Miscreants
+            - Asura
+            - eralk of the Reigning Critters
+            - Ergak Of The Mumbling Bullies
+            - Otark Of The Twisting Beasts
+            - orrokh of the Trampling Harbingers
+            - Obbirr Greasescrap
+            - Vyzzen Ashfingers
+            - Szyc Blighteyes
+            - Vaglu Sleazescrap
+            - ulgam of the Vengeful Boors
+            - Vo Oozepince
+            - ugrat of the Dark Bullies
+            - ugnol of the Shallow Warlords
+            - adub of the Shifting Heralds
+            - Dah Crackedguise
+            - ardoth of the Smirking Vagabonds
+            - idruth of the Grim Rats
+            - Thrinva Loosefinger
+            - aldulk of the Glaring Beasts
+            - oldot of the Bloody Hoodlums
+            - ordeg of the Blood Stalkers
+            - Detna Goldclash
+            - Mrurteish
+            - odreb of the Defiant Miscreations
+            - ignag of the Grimacing Miscreants
+            - Oxikk Foamnail
+            - isnakh of the Cheating Gluttons
+
+        Clawfold:
+            - Thekxak Oozefangs
+            - Kryzur Dustgrapnel
+            - Vi Dustmouth
+            - Mash Groundmug
+            - Ykxaax Mirebrass
+            - Tric Zestblase
+            - Thahro Dreckmaw
+            - Xuox Gunkfeet
+            - Zox Siltscrap
+            - Vualvih Crackbolt
+            - Dalkourr Crackdance
+            - Khaargun Tamegall
+            - Ghyrk Scourgecast
+            - Eikk Brinesmirk
+            - Nyhzoz Gunkfrown
+            - Knuiblohn Ashhead
+            - Snyr Deadbrass
+            - Drukk Grapplepaw
+            - Srot Blightfangs
+            - Thaar Saltdeath
+            - Gnyx Tamescrap
+            - Srer Filthgrappler
+            - Mui Funguscast
+            - Guaxan Bloodskin
+            - Xyc Dusttoe
+            - Eilzeir Fastbash
+            - Tryhzuer Soilmaw
+            - Khezz Grimeeye
+            - Morg Grapplebrass
+            - Ih Snothands
+            - Thawva Gunkskin
+            - Gnyzzoukx Ashblast
+            - Denerk Frothfists
+            - Khohirg Mirefinger
+            - Vyrkukx Stainblast
+            - Pivrys Rentblase
+            - Rrelkarr Zesttalon
+            - Aazneih Scuzmaw
+            - Muanuah Scumwizzle
+            - Dyz Grimefists
+            - Maren Blightbolt
+            - Enit Farface
+            - Kiar Salteyes
+            - Ghetorrg Glopnails
+            - Gnyzuzz Boomtalon
+            - Exen Grimemask
+            - Uxrorr Gunkguard
+            - Ih Slabfuse
+            - Thuoxyr Snoresmile
+            - Dorhuc Mireblast
+            - Kygli Siltblase
+            - Burh Pebblebash
+            - Zil Fastnose
+            - Ghezz Brokenpince
+            - Vurgiz Scumgaze
+            - Zoziz Stainpinch
+            - Vyc Deaddeath
+            - Drurk Dirtpinch
+            - Toc Gunkteeth
+            - Vyrgax Splitfang
+            - Rrerhueth Dirtblase
+            - Knem Failbolt
+            - Ourrgux Bloodknuckle
+            - Malvouth Staincast
+            - Xith Gunkclaw
+            - Mol Groundears
+            - Reik Scourgegall
+            - Korrg Mucuscrook
+            - Myrr Crackgrappler
+            - Sze Fizzledent
+            - Tybbeh Crackboot
+            - Tyzzekk Sweatsnag
+            - Elket Bloodtine
+            - Mum Failbasher
+            - Khin Soilguise
+            - Thrucurrg Lumppinch
+            - Mor Gunkguise
+            - Rrizzun Brokenfist
+            - Gnazz Dirtgrin
+            - Zerkuon Siltgaze
+            - Uon Siltnail
+            - Muc Saltfuse
+            - An Slimeblase
+            - Szihnai Slimetoes
+            - Gnuotyx Ashskin
+            - Thiarrurr Fargall
+            - Rrynga Sootears
+            - Khozork Splitfangs
+            - Sraimvei Tametine
+            - Bia Rotsnag
+            - Gaagrol Deadeyes
+            - Szorlol Mirefist
+            - Iaz Mucusfrown
+            - Rraacih Sleazespear
+            - Yzzuk Fizzlemouth
+            - Briareic Foamfang
+            - Gric Deadfists
+            - Vikx Scourgecheek
+            - Ruzzarrg Brinetine
+            - Uc Dampgrinder
+            - Amver Stainshrapnel
+            - Ynuokk Splitfuse
+            - Diark Fizzlegrappler
+            - Dex Silttooth
+            - Xaarr Soilscrap
+            - Rruh Scourgehammer
+            - Srythmaa Riverclaw
+            - Gnorrg Gunkhead
+            - Drycek Rotpaw
+            - Tunnet Drecknail
+            - Gnonzon Tamehand
+            - Kakk Rotpaw
+            - Grekx Riverfangs
+            - Thruc Siltclaw
+            - Khuot Muckbeam
+            - Doukx Farcast
+            - Rrolly Snotdance
+            - Uazz Rivershrapnel
+            - Bruzax Dregsteeth
+            - Uakk Pebblebarb
+            - Timryh Soregob
+            - Drax Saltdeath
+            - Ot Fizzlehallow
+            - Mar Frothnail
+            - Zukeikx Blightbeam
+            - Thiam Claygrinder
+            - Hui Rentdent
+            - Durrg Farhammer
+            - Trar Lardbasher
+            - Tour Muckbarb
+            - Yt Scuzhead
+            - Iz Rotfists
+            - Rrurrurk Goocast
+            - Sae Rotspear
+            - Drorgoc Siltfangs
+            - Kixu Lardhammer
+            - Sual Bloodtongue
+            - Driarrg Zestguard
+            - Beimraa Dampbeam
+            - Shaz Groundfeet
+            - Brikxuat Lumpblast
+            - Trihrih Sludgesmirk
+            - Xutokx Woebrass
+            - Srughry Pestcheek
+            - Ghykk Looseblast
+            - Throkok Scumhammer
+            - Trehz Loosescrap
+            - Kry Clayboot
+            - Aacuon Splitgrinder
+            - Thruel Rotcrook
+            - Monkih Saltcrook
+            - Rizzuoz Greasehand
+            - Uoc Gooshrapnel
+            - Nyllarth Dampnails
+            - Vezym Soilgrin
+            - Tharrg Scuzcast
+            - Breizz Crackedfist
+            - Drakxih Soreclaw
+            - Gnuggal Fungustusk
+            - Gratourrg Fastpincer
+            - Ik Lardgrin
+            - Vokezz Salthook
+            - Math Mudhammer
+            - Iaxah Sweatbeam
+            - Mirrg Grapplefist
+            - Kherkon Scuznail
+            - Orr Sootgrinder
+            - Trin Claystick
+            - Sihr Scuznail
+            - Vuath Farblase
+            - Dutiar Rentsmirk
+            - Armih Bloodcheek
+            - Dozzek Crackskin
+            - Druohizz Sootpince
+            - Raigarth Fartalon
+            - Trokx Dirtfuse
+            - Thi Lumphand
+            - Thrac Crackeyes
+            - Kygnyt Slabgleam
+            - Dec Scuzhook
+            - Threrg Murkhook
+            - Kruokk Lumpcloak
+            - Zourrg Sludgeear
+            - Kriaz Sorenose
+            - Kry Filthtine
+            - Urr Sludgefinger
+            - Rrhie Slimespear
+            - Khirg Damppince
+            - Ty Blightfangs
+            - Sruggit Siltstick
+            - Zahuax Slabfist
+            - Ghirr Fizzlehammer
+            - Ikxouz Miresmirk
+            - Kneh Sludgeear
+            - Muahuh Brinesmirk
+            - Vikok Pebblepince
+            - Oz Fungigrappler
+            - Xurroz Fungibarb
+            - Thruc Gunkmask
+            - Siarmon Mucustoe
+            - Eh Soilclash
+            - Srem Grapplebash
+            - Vuorrg Bloodbarb
+            - Uth Boompinch
+            - Bilmah Siltknob
+            - Ghyzukx Filthnail
+            - Xiacirr Failpinch
+            

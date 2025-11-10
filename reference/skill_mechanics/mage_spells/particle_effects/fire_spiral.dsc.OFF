@@ -1,0 +1,6 @@
+fire_spiral_task:
+    type: task
+    script:
+    - repeat 150:
+        - playeffect effect:flame at:<player.location.above[<[loop_index].mul[0.02]>].add[<location[0,0,1].rotate_around_y[<[loop_index].mul[2]>]>]> offset:0
+        - wait 1t

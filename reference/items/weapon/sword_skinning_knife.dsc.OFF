@@ -1,0 +1,16 @@
+skinning_knife:
+  type: item
+  debug: false
+  material: shears
+  display name: Skinning Knife
+  
+  lore:
+  - For skinning animals.
+  flags:
+    damage: 1
+      
+    current_durability: 100
+    maximum_durability: 100
+  mechanisms:
+    custom_model_data: 7202599
+   

@@ -1,0 +1,61 @@
+tenbrose_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:2
+    interact scripts:
+    - tenbrose_interact
+
+    default constants:
+        appearance1: "<npc.name> was a hunter of the days before the current Age, but has resolved himself to sell weapons in his favorite town."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+        has_familiarity: true
+     
+
+tenbrose_interact:
+    type: interact
+    steps:
+        1:
+            proximity trigger:
+                entry:
+                    script:
+                    - execute as_server "npc skin --url https://minesk.in/334d32536ea7497c874a55793cf4ac61 --id <npc.id>"
+                       
+
+                # exit:
+                #     script:
+                #     - run reset_tenbrose_gaze
+            click trigger:
+                script:
+                - inject description_inject_task
+                - narrate "Welcome to the cellar." targets<player>
+                - wait 3s
+                - if <player.has_flag[tenbrose_mask].not>:
+                    - narrate "If you are going to the Rothigport Crypts, you're going to need this to talk to the dead." targets<player>
+                    - give death_mask
+                    - wait 1s
+                    - narrate format:game_message "Tenbrose has given you a death mask" targets<player>
+                    - wait 2s
+                    - narrate "You can use it by setting it on a crypt or tombstone and it will allow you to talk to that ghost if there is any." targets<player>
+                    - flag <player> tenbrose_mask
+                - else:
+                    - random:
+                        - narrate "Soon I am going to be selling my wine to the local taverns." targets<player>
+                        - narrate "I hope you find some answers in the crypts." targets<player>
+                        - narrate "The power of the Gods is not as much as it used to be, but here in the Chapel, we still adore them." targets<player>
+        # 2:
+        #     chat trigger:
+        #         1:
+        #             trigger: <&7>/1/. I would like to talk to you tenbrose.
+        #             script:
+        #             - inject tenbrose_task_01
+        #             - zap 1
+      
+       
+

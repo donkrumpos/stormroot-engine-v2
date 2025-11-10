@@ -1,0 +1,14 @@
+lyre:
+  type: item
+  material: golden_hoe
+  display name: Lyre
+  flags:
+    slot-type: hand
+    two_handed: true
+  mechanisms:
+    custom_model_data: 82222101
+  lore:
+    - "You might be able to make wonderous sounds with this."
+
+
+

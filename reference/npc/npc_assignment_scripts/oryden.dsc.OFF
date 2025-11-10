@@ -1,0 +1,108 @@
+oryden_assignment:
+    type: assignment
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:9
+    interact scripts:
+    - oryden_interact
+
+    default constants:
+        appearance1: "<npc.name>'s has a strong frame and piercing blue eyes that look at you with concern."
+        appearance2: "You sense caution coming from <npc.name>. You can tell he is unsure of the immediate future."
+        appearance3: "You feel that if you dropped a fish at his feet, he would scoop it up and reward you."
+        appearance4: "You can see he has much information that can help newcomers out, but not much more than that."
+
+
+oryden_interact:
+  type: interact
+  steps:
+    1:
+        proximity trigger:
+            entry:
+                script:
+                - if <player.flag[npc.<npc.name>.familiarity.level]||0> <= 2:
+                    - wait 4s
+                    - random:
+                        - narrate format:npcchat "Pssst. <player.name>"
+                        - narrate format:npcchat "You finally woke up <player.name>."
+                        - narrate format:npcchat "Whoa we really drifted off course <player.name>."
+                    - wait 1s
+                    - narrate format:npcchat "Come up here."
+                - if <player.flag[npc.<npc.name>.familiarity.level]||0> > 2:
+                    - adjust <player> hide_entity:<npc>
+            exit:
+                script:
+                - if <player.flag[npc.<npc.name>.familiarity.level]||0> <= 1:
+                    - engage
+                    - inject description_inject_task
+                    - inject description_inject_task
+                    - narrate format:npcchat "May the gods be with you <player.name>."
+                    - disengage
+                    
+
+        click trigger:
+            script:
+            - if <player.flag[npc.<npc.name>.familiarity.level]||0> < 1:
+                - engage
+                - inject description_inject_task
+                - narrate format:npcchat "Are you okay? I just woke up too."
+                - wait 2t
+                - narrate format:npcchat "I am Oryden, don't you remember?"
+                - wait 2t
+                - narrate format:npcchat "Our ship crashed here."
+                - wait 2t
+                - narrate format:npcchat "Are you going to <&2>Rothigport <&a>and try to find the rest of our crew?"
+                - wait 2t
+                - narrate format:npcchat "We were sailing south, so you could continue along that same path with your boat."
+                - wait 2t
+                - narrate format:npcchat "Or go off in any other direction and start your own town in these wild lands."
+                - narrate format:game_message "[You have received 10 XP.]"
+                - give xp quantity:10
+                - disengage
+            - if <player.flag[npc.<npc.name>.familiarity.level]||0> == 1:
+                - engage
+                - inject description_inject_task
+                - narrate format:npcchat "Search the wreckage for supplies."
+            - if <player.flag[npc.<npc.name>.familiarity.level]||0> == 2:
+                - engage
+                - inject description_inject_task
+                - narrate format:npcchat "You can still make it to <&2>Rothigport<&a>, we must have been close."
+                - wait 2t
+                - narrate format:npcchat "Just row south."
+                - narrate format:game_message "Use the boat in your inventory to head south to Rothigport"
+                - disengage
+            - else:
+                - engage
+                - inject description_inject_task
+                - narrate format:npcchat "If you make it to dry land, tell them to come back for me."
+                - disengage
+
+           
+
+
+# shipwreck_world:
+#     type: world
+#     events:
+#         on player exits shipwreck:
+#         - if <player.flag[npc.Oryden.familiarity.level]||0> > 0:
+#             - define player_y <player.location.y>
+#             - if <[player_y]> < 70:
+#                 - if <player.location.yaw.simple> == "South":
+#                     - if <player.is_inside_vehicle>:
+#                         - if <player.vehicle.name> == "BOAT":
+#                             - bungee songtide:
+#                                 - flag <player> rothigport_boat:<player.vehicle>
+#                             - remove <player.location.find_entities[BOAT].within[1]>
+#                         - adjust <player> send_to:songtide
+#                         - wait 2s
+#                         - bungee songtide:
+#                             - teleport <player> rothigport_from_north
+#                             - if <player.has_flag[rothigport_boat]>:
+#                                 - mount <player>|boat <player.location>
+#                                 - flag <player> rothigport_boat:!
+#                             # - if <player.flag[rothigport_visited]> < 1:
+#                             #     - if <script[regions].data_key[region.rothigport.display_title]>:
+#                             #         - title "title:<gold><script[regions].data_key[region.<context.area.note_name>.title]>" "subtitle:<green><script[regions].data_key[region.<context.area.note_name>.subtitle]>" targets:<player>
+       

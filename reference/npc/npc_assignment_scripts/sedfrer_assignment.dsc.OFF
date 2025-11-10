@@ -1,0 +1,227 @@
+sedfrer_assignment:
+    type: assignment
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:9
+
+    interact scripts:
+    - sedfrer_interact
+
+    default constants:
+        appearance1: "<npc.name>'s frame is thin from not eating much of anything other than rats. He is missing many teeth from malnutrition. He seems willing to want to help"
+        appearance2: "You feel a warmth from him that comes from his willingness to help newcomers."
+        appearance3: "You feel that if you dropped a fish at his feet, he would scoop it up and reward you."
+        appearance4: "You can see he has much information that can help newcomers out, but not much more than that."
+
+sedfrer_interact:
+  type: interact
+  steps:
+    1:
+        proximity trigger:
+            entry:
+                script:
+                - if <player.flag[npc.<npc.name>.familiarity.level]||0> < 1:
+                    - inject description_inject_task
+                    - random:
+                        - narrate format:npcchat "Hail traveler!"
+                        - narrate format:npcchat "Welcome to Arcem Exod new wanderer."
+                        - narrate format:npcchat "Let me know if I can help in any way."
+                        - narrate format:npcchat "Well we have a new soul among us."
+                - if <player.flag[npc.<npc.name>.familiarity.level]||0> > 7:
+                    - inject description_inject_task
+                    - narrate format:npcchat "Hail <player.name>!"
+            exit:
+                script:
+                - zap 1
+                - if <player.flag[npc.<npc.name>.familiarity.level]||0> < 2:
+                    - inject description_inject_task
+                    - random:
+                        - narrate format:npcchat "May the gods be with you traveler."
+                        - narrate format:npcchat "Safe travels newcomer."
+                        - narrate format:npcchat "Do be careful out there. We are but mortal."
+        click trigger:
+            script:
+            - engage
+            - clickable sedfrer_help_1_task save:sedfrer_help_1_task_clickable until:15s
+            - clickable sedfrer_help_2_task save:sedfrer_help_2_task_clickable until:15s
+            - clickable sedfrer_help_3_task save:sedfrer_help_3_task_clickable until:15s
+            - clickable sedfrer_help_4_task save:sedfrer_help_4_task_clickable until:15s
+            - clickable sedfrer_help_5_task save:sedfrer_help_5_task_clickable until:15s
+            - clickable sedfrer_help_6_task save:sedfrer_help_6_task_clickable until:15s
+            - clickable sedfrer_help_7_task save:sedfrer_help_7_task_clickable until:15s
+            - clickable sedfrer_help_8_task save:sedfrer_help_8_task_clickable until:15s
+            - inject description_inject_task
+            - if <player.flag[npc.<npc.name>.familiarity.level]||0> > 15:
+                - narrate format:npcchat "Greetings again <player.name>. I think you must know all that I know."
+                - wait 5s
+                - narrate format:npcchat ". . . for now."
+                - disengage
+                - stop
+            - if <player.flag[npc.<npc.name>.familiarity.level]||0> == 1:
+                - narrate format:npcchat "Ahoy there, traveler. How did you get way out here? "
+                - wait 1t
+                - narrate format:npcchat "I am Sedfrer, one of the first refugees to these parts."
+                - narrate format:game_message"[You have received 10 XP.]"
+                - give xp quantity:10
+            - if <player.flag[npc.<npc.name>.familiarity.level]||0> >= 2:
+                - narrate format:npcchat "Ahoy again."
+                - wait 1t
+            - narrate format:npcchat "How can I help?"
+            
+            
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>I was trying to flee the Central Kingdoms. My ship must have crashed.<&8><&rb><&end_hover>].on_click[<entry[sedfrer_help_1_task_clickable].command>]>"
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>I left the Central Kingdoms in haste. How can I get back?<&8><&rb><&end_hover>].on_click[<entry[sedfrer_help_2_task_clickable].command>]>"
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>3. <&B>I want to know the best way to navigate the Wild.<&8><&rb><&end_hover>].on_click[<entry[sedfrer_help_3_task_clickable].command>]>"
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>4. <&B>Can you tell me more about the way of the sword?<&8><&rb><&end_hover>].on_click[<entry[sedfrer_help_4_task_clickable].command>]>"
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>5. <&B>Can you tell me more about becoming a trader on the high seas?<&8><&rb><&end_hover>].on_click[<entry[sedfrer_help_5_task_clickable].command>]>"
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>6. <&B>Can you teach me more about being a merchant out here in The Wild?<&8><&rb><&end_hover>].on_click[<entry[sedfrer_help_6_task_clickable].command>]>"
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>7. <&B>I want to learn more about going back to the big cities and being a merchant there?<&8><&rb><&end_hover>].on_click[<entry[sedfrer_help_7_task_clickable].command>]>"
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>8. <&B>I would like to stop talking to you.<&8><&rb><&end_hover>].on_click[<entry[sedfrer_help_8_task_clickable].command>]>"
+            - zap 2
+            
+    2:
+        chat trigger:
+            1:
+                trigger: <&7>/1/, I was trying to flee the Central Kingdoms. My ship must have crashed.
+                script:
+                - run sedfrer_help_1_task
+
+            2:
+                trigger: <&7>/2/, I left the Central Kingdoms in haste. How can I get back?
+                script:
+                - run sedfrer_help_2_task
+                
+            3:
+                trigger: <&7>/3/, I want to know the best way to navigate the Wild.
+                script:
+                - run sedfrer_help_3_task
+                
+            4:
+                trigger: <&7>/4/, Can you tell me more about the way of the sword?
+                script:
+                - run sedfrer_help_4_task
+             
+            5:
+                trigger: <&7>/5/, Can you tell me more about becoming a trader on the high seas?
+                script:
+                - run sedfrer_help_5_task
+               
+            6:
+                trigger: <&7>/6/, Can you teach me more about being a merchant out here in The Wild?"
+                script:
+                - run sedfrer_help_6_task
+                
+            7:
+                trigger: <&7>/7/, I want to learn more about going back to the big cities."
+                script:
+                - run sedfrer_help_7_task
+
+            8:
+                trigger: <&7>/8/, I would like to stop talking to you."
+                script:
+                - run sedfrer_help_8_task
+        click trigger:
+            script:
+            - disengage
+            - zap 1
+            
+                
+                
+
+sedfrer_help_1_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "Indeed it must've."
+    - wait 1t
+    - narrate format:npcchat "I was on a mission to find the wild lands too. My crew was wiped out by a storm and I'm the last one. I've been living here on this island surviving on rats."
+    - wait 1t
+    - if <player.flag[npc.<npc.name>.familiarity.level]||0> == 2:
+        - narrate format:npcchat "There is mucho water out here. "
+        - narrate format:npcchat "Take a boat."
+        - wait 1t
+        - give oak_boat
+        - narrate format:game_message "Sedfrer gives you boat"
+    - narrate format:npcchat "I can't say it is safer out here, why with the barbarians and such, but at least you are free to do as you will."
+    - narrate format:npcchat "I hope you're not thinking of going back!"
+    - disengage
+    - zap 1
+
+sedfrer_help_2_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "That ship down there seems to be bringing mortals back and forth to <&2>Rothigport<&a>. I would go there to start your journey back."
+    - disengage
+    - zap 1
+                
+sedfrer_help_3_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - random:
+        - narrate format:npcchat "Most of us out here are starting over, so get yourself a sword to fight off pesky monsters and carve a life out."
+        - narrate format:npcchat "Well, in my humble opinion, I think one either lives by the sword or dies by the sword. Having trading and merchant skills are good too."
+        - narrate format:npcchat "Find your own island and start building a town. Oh! and don't forget to get yourself a sword and a boat."
+    - disengage
+    - zap 1
+
+sedfrer_help_4_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "Not much since I seem to keep losing mine."
+    - narrate format:npcchat "Magrat is around here somewhere. He used to be a Privateer on some ship and knows more about swordsmanship than I do. Find him and ask him to show you a thing or two. Otherwise, you can go to <&2>Rothigport in the east, the largest city in the Western Regions"
+    - disengage
+    - zap 1
+
+sedfrer_help_5_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - random:
+        - narrate format:npcchat "Many skrappers find old wreckages and bring the treasure to <&2>Druvenrog<&a>. That's what I used to do."
+        - narrate format:npcchat "Some merchants buy low and sell high. Out on The Long Sea, you can find a fighter who needs you to sell their recently acquired artifacts to."
+        - narrate format:npcchat "Be ready for a pirate ambush at any moment. Carry a sword and maybe even some of those fireball scrolls."
+        - narrate format:npcchat "It is open and free out there. Find some friends and keep them close; but keep your enemies closer."
+        - narrate format:npcchat "I buy my wares from Squeers on The Esmerelda. She is out there floating on The Long Sea somewhere. Follow her wake."
+    - disengage
+    - zap 1
+
+sedfrer_help_6_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - random:
+        - narrate format:npcchat "A good way to start being a merchant, is to find out what is in demand. Learning the economy is for the smart entrepreneur, which I am not. You can start your own city out here, or travel to Rothigport, which is far to the East. "
+        - narrate format:npcchat "Claim your own plot out there on an island and start a shop. Sell something other travelers need and want."
+        - narrate format:npcchat "If you start your own town and are looking for citizens, you can go to the bigger towns to recruit and advertise. That is a good way to drum up business."
+        - narrate format:npcchat "If you make it back to one of the bigger towns, you can always rent a spot to hock your wares."
+        - narrate format:npcchat "First start your trading post somewhere out there in the wild. If you build it, they will come."
+    - disengage
+    - zap 1
+
+
+sedfrer_help_7_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - random:
+        - narrate format:npcchat "I don't think I am ever going back there after the devastation from the War and the Cataclysm."
+        - narrate format:npcchat "The crime is rampant there, so watch your back."
+        - narrate format:npcchat "If you want to be under the thumb of some big shot authoritarian ruler, be my guest."
+        - narrate format:npcchat "Sure you can make tons of crown, but it is the free market out here in the wild that is lively."
+        - narrate format:npcchat "That boat will take you to <&2>Rothigport<&a>, a farely safe town. That is a good start towards the East."
+        - narrate format:npcchat "If you're a lover of magic don't go back there. The First Inquisition of the Arcane executed all mages, and they are on a vengence for more."
+    - disengage
+    - zap 1
+
+sedfrer_help_8_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "Fare thee well. Come back again."
+    - disengage
+    - zap 1

@@ -1,0 +1,7 @@
+karil_weed:
+  type: item
+  material: bowl
+  display name: Karil Weed
+  mechanisms:
+    custom_model_data: 2110024
+    

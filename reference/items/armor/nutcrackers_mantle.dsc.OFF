@@ -1,0 +1,39 @@
+nutcrackers_mantle:
+  type: item
+  debug: false
+  material: iron_chestplate
+  display name:  Nutcracker's Mantle
+  lore:
+  - Let us get crackin
+  - <&color[#24daff]>Defense Chance Increase 15%
+  - <&color[#24daff]>Stamina Loss Reduction 10%
+  - <&color[#24daff]>Resist Cold Damage 100%
+  mechanisms:
+    custom_model_data: 74450001
+  flags:
+    defense: 10
+    stat:
+      bonus:
+        hit_point_increase: 0
+        hit_point_regeneration: 0
+        mana_regeneration: 0
+        defense_chance_increase: .15
+        stamina_loss_reduction: 1
+        stamina_increase: 0
+        dexterity_increase: 0
+        strength_increase: 0
+        intelligence_increase: 0
+        stamina_regeneration: 0
+        lower_mana_cost: 0
+        medable: true
+        fire_resist: 0
+        cold_resist: 100
+        poison_resist: 0
+        energy_resist: 0
+    defense_modifier: Defense
+    
+    required_strength: 35
+    item_type: armor
+    set: nutcracker
+    slot_type: chest
+    

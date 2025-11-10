@@ -1,0 +1,29 @@
+lullaby_task:
+    type: task
+    definitions: caster
+    debug: true
+    script:
+    - if !<[caster].item_in_hand.script.data_key[item_type].contains[instrument]>:
+        - narrate "You need an instrument in your hand to cast this spell"
+        - stop
+    - else:
+        - define level <[caster].flag[skill.spells.lullaby.level]>
+        - if <[caster].has_flag[skill.natural.musicianship_level]>:
+            - define music_level <[caster].flag[skill.natural.musicianship_level]>
+        - else:
+            - flag <[caster]> skill.natural.musicianship_level:1
+        - if <[music_level].add[<[caster].flag[skill.lullaby.level]>]> > <util.random.int[0].to[100]>:
+            - define willpower_defense <util.random.int[1].to[<[target].as_player.flag[skill.natural.willpower_level].round>]>
+            - define persuasion_success <util.random.int[1].to[<player.flag[skill.natural.persuasion_level].round>]>
+            - if <[willpower_defense]> < <[persuasion_success]>:
+                - define target <player.cursor_on.find.living_entities.within[1]>
+                - run sleep_task def:<[target]>|<[caster].flag[skill.lullaby.level]>
+                - narrate "You successfully lull your target to sleep."
+                - repeat 15:
+                    - wait 5t
+                    - playeffect at:<player.location.forward[2].above[1]> effect:note offset:0 special_data:2|<color[255,0,0]> data:1
+            - else:
+                - narrate "The target has successfully avoided your influence." 
+        - else:
+            - narrate "Fail lullaby attempt"
+        - run raise_natural_skill_task def:<[caster]>|musicianship 

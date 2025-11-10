@@ -1,0 +1,296 @@
+skills_command:
+    type: command
+    name: "skills"
+    description: Let's you see your natural skills
+    usage: /skills
+    tab completions:
+        1: <server.players.parse[name]>
+        # 3: <list[attribute_points|skill_points|spell_points]>
+    aliases:
+        - skill
+        - sk
+    script:
+    - define this_player <player>
+    - if <context.args.size> > 0:
+        - if <player.has_permission[admin]>:
+            # - narrate "You included <context.raw_args>"
+            # - narrate <red><server.match_offline_player[<context.raw_args>].length>
+            - if <server.match_offline_player[<context.raw_args>].length||0> > 0:
+                - define this_player <context.raw_args>
+                
+          
+            
+              
+        - else:
+            - narrate "You need permission to issue this command."
+            - stop
+    - run skill_menu_generator_task def:skills|<[this_player]>
+
+# spells_command:
+#     type: command
+#     name: "spells"
+#     description: Let's you view and raise your spells
+#     usage: /spells
+#     aliases:
+#         - spell
+#     script:
+#     - run skill_menu_generator_task def:spells
+
+attributes_command:
+    type: command
+    name: "attributes"
+    description: Let's you view and raise your attributes
+    usage: /attributes
+    aliases:
+        - attr
+        - attribute
+    script:
+    - run skill_menu_generator_task def:attr
+
+specializations_command:
+    type: command
+    name: "specializations"
+    description: Let's you view and raise your specializations
+    usage: /specializations
+    aliases:
+        - specializations
+        - special
+        - spec
+    script:
+    - run skill_menu_generator_task def:special
+
+skill_menu_generator_task:
+    type: task
+    definitions: state|player
+    script:
+    - define player <[player].as[player]>
+    # - narrate <red><[player].as[player]>
+    - define skill_set skills
+    - if <[state]||null> == "null":
+        - define state <[player].flag[skill_menu_state]>
+    
+    - clickable skill_menu_generator_task def:skills save:natural_skill_menu_generator_clickable
+    - clickable skill_menu_generator_task def:special save:special_skill_menu_generator_clickable
+    - clickable skill_menu_generator_task def:spells save:spell_menu_generator_clickable
+    - clickable skill_menu_generator_task def:attr save:attr_menu_generator_clickable
+    - define natural_skills ""
+    - define header ""
+    # - define book_texture <&font[steamfront:font]><&chr[3057]>
+    # - define book_textures "<&font[steamfront:font]><white><&chr[F821]><&chr[F829]><&chr[F829]><&chr[F828]><[book_texture]><&chr[F801]><[book_texture]><&chr[F801]><[book_texture]><&nl>"
+    - define book_skills_tab "<white><element[<&font[steamfront:gui_nav]><&chr[3400]>].on_click[<entry[natural_skill_menu_generator_clickable].command>]>"
+    - define book_skills_tab_selected "<&hover[Natural skills that every creature in Deluvia has that increase by using them.]><white><&font[steamfront:gui_nav]><&chr[3401]><&end_hover>"
+    - define book_special_tab "<white><element[<&font[steamfront:gui_nav]><&chr[3402]>].on_click[<entry[special_skill_menu_generator_clickable].command>]>"
+    - define book_special_tab_selected "<&hover[Specialized skills that you dedicate to become proficient in; usually associated with a creature's class.]><white><&font[steamfront:gui_nav]><&chr[3403]><&end_hover>"
+    - define book_spells_tab "<white><element[<&font[steamfront:gui_nav]><&chr[3404]>].on_click[<entry[spell_menu_generator_clickable].command>]>"
+    - define book_spells_tab_selected "<&hover[An incantation, a spell, a charm, an enchantment or a bewitchery, is a magical formula intended to trigger a magical effect on a person or objects.]><white><&font[steamfront:gui_nav]><&chr[3405]><&end_hover>"
+    - define book_attr_tab "<white><element[<&font[steamfront:gui_nav]><&chr[3406]>].on_click[<entry[attr_menu_generator_clickable].command>]>"
+    - define book_attr_tab_selected "<&hover[Provide a quick description of every creature’s physical and mental characteristics, from which are derived your stats: hit points, mana and stamina.]><white><&font[steamfront:gui_nav]><&chr[3407]><&end_hover>"
+    - define book_skills_tabs_skills_selected "<&font[steamfront:font]><&chr[F806]><[book_skills_tab_selected]><&font[steamfront:font]><&chr[F801]><[book_special_tab]><&font[steamfront:font]><&chr[F801]><[book_spells_tab]><&font[steamfront:font]><&chr[F801]><[book_attr_tab]>"
+    - define book_skills_tabs_special_selected "<&font[steamfront:font]><&chr[F806]><[book_skills_tab]><&font[steamfront:font]><&chr[F801]><[book_special_tab_selected]><&font[steamfront:font]><&chr[F801]><[book_spells_tab]><&font[steamfront:font]><&chr[F801]><[book_attr_tab]>"
+    - define book_skills_tabs_spells_selected "<&font[steamfront:font]><&chr[F806]><[book_skills_tab]><&font[steamfront:font]><&chr[F801]><[book_special_tab]><&font[steamfront:font]><&chr[F801]><[book_spells_tab_selected]><&font[steamfront:font]><&chr[F801]><[book_attr_tab]>"
+    - define book_skills_tabs_attr_selected "<&font[steamfront:font]><&chr[F806]><[book_skills_tab]><&font[steamfront:font]><&chr[F801]><[book_special_tab]><&font[steamfront:font]><&chr[F801]><[book_spells_tab]><&font[steamfront:font]><&chr[F801]><[book_attr_tab_selected]>"
+    
+    - choose <[state]>:
+        - case skills:
+            - flag <[player]> skill_menu_state:skills
+            - define header <[book_skills_tabs_skills_selected]>
+            - define skill_set skills
+            - define learned false
+            - define click_detail false
+            - define line_height "<&nl><&nl>"
+            - define remaining_points ""
+        - case special:
+            - flag <[player]> skill_menu_state:special
+            - define header <[book_skills_tabs_special_selected]>
+            - define skill_set specializations
+            - define learned true
+            - define click_detail true
+            - define line_height "<&nl><&nl>"
+            - define remaining_points "<&sp><&sp><&sp>Skill Points: <[player].flag[stat.points.skill_points.level]||0>"
+        # - case specializations:
+        #     - flag <[player]> skill_menu_state:special
+        #     - define header <[book_skills_tabs_special_selected]>
+        #     - define skill_set specializations
+        #     - define learned true
+        #     - define click_detail true
+        #     - define line_height "<&nl><&nl>"
+        #     - define remaining_points "<&sp><&sp><&sp>Skill Points: <[player].flag[stat.points.skill_points.level]||0>"
+        - case spells:
+            - flag <[player]> skill_menu_state:spells
+            - define header <[book_skills_tabs_spells_selected]>
+            - define skill_set spells
+            - define learned true
+            - define click_detail true
+            - define line_height "<&nl><&nl>"
+            - define remaining_points "<&sp><&sp><&sp>Spell Points: <[player].flag[stat.points.spell_points.level]||0>"
+        - case attr attribute:
+            - flag <[player]> skill_menu_state:attr
+            - define header <[book_skills_tabs_attr_selected]>
+            - define skill_set attribute
+            - define learned false
+            - define click_detail false
+            - define line_height "<&nl><&nl>"
+            - define remaining_points "<&sp><&sp>Attribute Points: <[player].flag[stat.points.attribute_points.level]||0>"
+           
+        - default:
+            - define header <[book_skills_tabs_skills_selected]>
+    - define resists ""
+    - define skills ""
+    # - define header <&font[steamfront:font]><[header]>
+    - foreach <[player].flag[skill.<[skill_set]>].keys> as:skill:
+        - if <script[<[skill_set]>_skills_data].data_key[<[skill_set]>].keys.contains[<[skill]>].not>:
+            # if this skill is not in our data file therefore must be a mistake (it happens)
+                - foreach next
+        - define skill_display_name <&font[steamfront:font]><script[<[skill_set]>_skills_data].data_key[<[skill_set]>.<[skill]>.display_name]>
+        - define skill_detail_display_name <&font[steamfront:font_large]><element[<script[<[skill_set]>_skills_data].data_key[<[skill_set]>.<[skill]>.display_name]>]>
+        
+        - define skill_display_name_short <&font[steamfront:font]><script[<[skill_set]>_skills_data].data_key[<[skill_set]>.<[skill]>.display_name]>
+        - if <[skill_display_name].length> > 43:
+            - define skill_display_name_short <[skill_display_name].before[<[skill_display_name_short].char_at[40]>]>
+        - define skill_color "<script[<[skill_set]>_skills_data].data_key[<[skill_set]>.<[skill]>.skill_color]||FFFFFF>"
+        - define icon "<white><&font[steamfront:font]><&chr[F807]><&font[steamfront:gui_icon]><script[<[skill_set]>_skills_data].data_key[<[skill_set]>.<[skill]>.icon]||0><&r><&sp>"
+        - define icon_large "<&font[steamfront:font]><&chr[F807]><&font[steamfront:gui_icon_large]><script[<[skill_set]>_skills_data].data_key[<[skill_set]>.<[skill]>.icon_large]||0>"
+        - define skill_description "<white><script[<[skill_set]>_skills_data].data_key[<[skill_set]>.<[skill]>.description]||no description available>"
+        - define skill_description  "<[skill_description].split_lines[28]>"
+        - clickable skill_bind_task def:<[skill_set]>|<[skill]> save:<[skill]>_skill_bind_clickable
+        - define hover_text "<[icon_large]><&r><&sp><white><&color[#<[skill_color]>]><&font[adventurer2]><[skill_detail_display_name]><&nl><&nl><&nl><[skill_description]>"
+        - if <[skill_set]> != "skills":
+            - define raise_skill_click "<element[Click to raise level].on_click[<entry[<[skill]>_skill_bind_clickable].command>]>"
+            # - define hover_text "<[hover_text]><&nl><&nl><green><[raise_skill_click]><&nl><&color[#333333]><[remaining_points]>"
+            # - if <[skill_set]> ==  attribute:
+            #     - define skill_text "<[icon]><&color[#ffe5a3]><[skill_display_name_short]>: <green><proc[attribute_skill_check_proc].context[<player>|<[skill]>]>"
+            # - else:
+            - define skill_text "<[icon]><&color[#ffe5a3]><[skill_display_name_short]>"
+            # - define skill_text "<[icon]><&color[#ffe5a3]><[skill_display_name_short]>: <green><player.flag[skill.<[skill_set]>.<[skill]>.level].round_to[1]||0>"
+            - define skill_hover "<&hover[<[hover_text]>]><element[<[skill_text]>].on_click[<entry[<[skill]>_skill_bind_clickable].command>]><&end_hover><[line_height]>"
+            - define skills "<[skills]><[skill_hover]>"
+        #  - if <[skill_set]> == "skills":
+        #     - define skill_text "<[icon]><&color[#ffe5a3]><[skill_display_name_short]>: <green><player.flag[skill.<[skill_set]>.<[skill]>.level].round_to[1]||0>"
+        #     - define skills "<[skills]>
+        - else:
+            # - define raise_skill_click "<element[].on_click[<entry[<[skill]>_skill_bind_clickable].command>]>"
+            - define hover_text "<[hover_text]><&r><&nl><&nl><gray>This skill raises through use."
+            - define last_skill_title <script[skill_levels_data].data_key[level].keys.size>
+            - define skill_level <script[skill_levels_data].data_key[level].keys.get[<[player].flag[skill.skills.<[skill]>.level].div[25].round_up.min[<[last_skill_title]>]>]>
+            
+            - define skill_color <script[skill_levels_data].data_key[level.<[skill_level]>.color]>
+            - define skill_title_hover "You are at <script[skill_levels_data].data_key[level.<[skill_level]>.title]> level for this skill"
+            - define skill_text "<[icon]><&color[#ffe5a3]><[skill_display_name_short]>"
+            # - narrate <script[skill_levels_data].data_key[level].keys.size.div[<[skill_level]>]>
+            - define level_symbol "<&color[#<[skill_color]>]><element[<&chr[25CF]>].repeat[<player.flag[skill.skills.<[skill]>.level].div[200].round_down.add[1]>]>"
+            - define skill_hover "<&hover[<[hover_text]>]><[skill_text]><&end_hover>: <&hover[<[skill_title_hover]>]><[level_symbol]><&end_hover><[line_height]>"
+            # - narrate <player.flag[skill.skills.<[skill]>.level].div[200].round_down.add[1]>
+            - define skills "<[skills]><[skill_hover]>"
+        - if <[player].flag[class.type]||null> == "null":
+            - define skill_hover ""
+        - if <[skills].length> > 0:
+            - if <[loop_index].mod[6]> == 0:
+                # adds another page when there are 12 items
+                - define skills "<[skills]>|<&nl>"
+    - if <[skills].length> == 0:
+        - define skills "You haven't learned any <[skill_set]> yet. Go out and find training.<&nl>"
+        
+    - adjust <player> "show_book:natural_skills_gui_book[book_pages=<&nl><&nl><[skills]><&nl><&color[#462d09]>]"
+
+skill_bind_task:
+    type: task
+    definitions: skill_set|skill
+    script:
+    
+    - if <[skill_set]> == "spells":
+        - define point_set spell
+    - if <[skill_set]> == "specializations":
+        - define point_set skill
+    # - if <[skill_set]> == "attribute":
+    #     - define point_set attribute
+    # - if <player.flag[stat.points.<[point_set]>_points.level]> > 0:
+    #     - flag player stat.points.<[point_set]>_points.level:--
+    #     - flag <player> skill.<[skill_set]>.<[skill]>.level:++
+    # - else:
+    #     - narrate "<&color[<color[239,118,0]>]>You don't have any <&color[<color[126,172,248]>]><[point_set]> Points<&color[<color[239,118,0]>]> left."
+    - run skill_menu_generator_task def:<[skill_set]>
+
+# raise_skill_task:
+#     type: task
+#     definitions: skill_set|skill
+#     script:
+#     - define point_type <[skill_set].substring[1,<[skill_set].last_index_of[s].sub[1]>]>
+#     - if <player.flag[stat.points.<[point_type]>_points.level]> >= 1:
+#         - flag player stat.points.<[point_type]>_points.level:--
+#         - flag player skill.<[skill_set]>.<[skill].to_lowercase>.level:++
+#         - narrate "raising <[skill]>"
+#         - run skill_menu_generator_task def:<[skill_set]>|<[skill]>
+#     - else:
+#         - narrate "<&color[<color[239,118,0]>]>You don't have any <&color[<color[126,172,248]>]><[point_type].to_titlecase> Points<&color[<color[239,118,0]>]> left."
+
+natural_skills_gui_book:
+    type: book
+    title: Natural Skills
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - ""
+
+elemental_resists_data:
+    type: data
+    resist:
+        fire:
+            cause: fire
+        energy:
+            cause: lightning
+        water:
+            cause: freeze
+        death:
+            cause: wither
+        life:
+            cause: thorns
+        stone:
+            cause: fly_into_wall
+        chaos:
+            cause: void
+        poison:
+            cause: poison
+        day:
+            cause: custom
+        night:
+            cause: custom
+        dirt:
+            cause: dryout
+        air:
+            cause: fall
+
+
+
+attributes_gui_book:
+    type: book
+    title: Attributes
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - ""
+
+attribute_skills_data:
+  type: data
+  attribute:
+    strength:
+        display_name: "Strength"
+        description: "Affects brute-physical skills. Hitpoints are derived from strength."
+        icon: 7
+        icon_large: 7
+        color: "ff322d"
+    dexterity:
+        display_name: "Dexterity"
+        description: "Affects coordination, speed and agility skills. Stamina is derived from dexterity."
+        icon: 8
+        icon_large: 8
+        color: "97ec8f"
+    intelligence:
+        display_name: "Intelligence"
+        description: "Affects mental skills. Mana is derived from intelligence"
+        icon: "9"
+        icon_large: "9"
+        color:  "2db2ff"
+
+

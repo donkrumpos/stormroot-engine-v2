@@ -1,0 +1,97 @@
+sturgrum_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:5
+        - fish sturgrum_fish_loc
+    interact scripts:
+    - sturgrum_interact
+
+    default constants:
+        appearance1: "<npc.name>'lives in the wild but seems mysterious."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+        has_familiarity: true
+        sell: <list[smiths_hammer|iron_ingot|wooden_pickaxe]>
+        buy: <list[iron_ingot|<item[dagger].with[custom_model_data=7202600]>]>
+
+sturgrum_interact:
+  type: interact
+  steps:
+    1:
+        proximity trigger:
+            entry:
+                script:
+                - execute as_server "npc skin --url https://minesk.in/41445fb93403411885a75b1ea28ffdba --id <npc.id>"
+                - if <player.has_flag[sturgrum_blacksmith_quest]> && <player.flag[accelerated_skill_gain].contains[blacksmithing].not>:
+                    - flag <player> accelerated_skill_gain:->:blacksmithing
+            exit:
+                script:
+                - if <player.has_flag[accelerated_skill_gain]> && <player.flag[accelerated_skill_gain].contains[blacksmithing]>:
+                    - flag <player> accelerated_skill_gain:<-:blacksmithing
+
+                
+        click trigger:
+            script:
+            - inject description_inject_task
+            - if <player.has_flag[npc.<npc>.familiarity].not>:
+                - narrate "Hail, and welcome to my workshop. I'm <npc.name> and I am the head blacksmith here in Rothigport."
+                - wait 2s
+                - narrate "What can I help you with?"
+            - run vendor_first_task
+            - run blacksmith_first_task
+            - run sturgrum_task_01
+
+
+
+sturgrum_task_01:
+    type: task
+    definitions: item|price
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        # - inject description_inject_task
+        - clickable <npc.name>_task_02 save:<npc.name>_clickable_02 until:30s usages:1 for:<player>
+        - narrate <&nl>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>I would like to get better at blacksmithing.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" target:<player>
+        - flag <player> suspend_clickable:!
+
+sturgrum_task_02:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate "You have come to right place."
+    - wait 2s
+    - narrate "You will need a <&color[#f5e700]>smith's hammer<&r>. You can buy one from me, or make one yourself if you know tinkering."
+    - wait 3s
+    - narrate "And you will need quite a few ingots to reach Grandmaster."
+    - wait 3s
+    - narrate "You can buy some ingots from me, but I suggest you mine your own to save a lot of money."
+    - wait 4s
+    - narrate "And then use your smith's hammer on an anvil or forge."
+    - if <player.has_flag[skill.skills.blacksmithing.level].not> || <player.flag[skill.skills.blacksmithing.level]> <10:
+        - wait 2s
+        - narrate "Here let me get you started."
+        - flag <player> skill.skills.blacksmithing.level:10
+        - narrate format:game_message "<npc.name> has taught you some blacksmithing. Type <element[/skills].bold> to see your skills."
+    - if <player.has_flag[sturgrum_blacksmith_quest_complete].not>:
+        - wait 2s
+        - narrate "You can work here in my shop and since I'll be around to give you advice, you'll learn faster here than anywhere else. Start off making daggers until your blacksmithing skill plateaus, then switch to maces until I tell you to stop.  Once you've done that, come talk to me and I'll give you something for your hard work."
+        - flag <player> sturgrum_blacksmith_quest
+        - if <player.flag[accelerated_skill_gain].contains[blacksmithing].not>:
+            - flag <player> accelerated_skill_gain:->:blacksmithing
+
+reset_sturgrum_quest:
+    type: task
+    script:
+    - flag <player> skill.skills.blacksmithing.level:49
+    - flag <player> sturgrum_blacksmith_quest_complete:!
+    - flag <player> sturgrum_blacksmith_quest
+    - flag <player> blacksmithing_skillgain_timer:!
+    - if <player.flag[accelerated_skill_gain].contains[blacksmithing].not>:
+        - flag <player> accelerated_skill_gain:->:blacksmithing

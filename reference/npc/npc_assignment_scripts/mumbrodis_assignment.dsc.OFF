@@ -1,0 +1,179 @@
+mumbrodis_assignment:
+    type: assignment
+    speed: 1t
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true
+    interact scripts:
+    - mumbrodis_interact
+    default constants:
+        appearance1: "<npc.name>' has a scraggily beard and unkempt hair and has not bathed, in what looks like, weeks despite living next to the water."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+        has_familiarity: true
+
+mumbrodis_interact:
+    type: interact
+    steps:
+        1:
+            click trigger:
+                script:
+                - inject description_inject_task
+                - if <player.flag[npc.<npc>.familiarity.level]||0> < 1:
+                    - narrate format:npcchat "I am the King of the Fishers!"
+                - if <player.flag[npc.<npc>.familiarity.level]> > 1:
+                    
+                    - if !<player.has_flag[mumbrodis_boat_cooldown]>:
+                        - define cooldown_timer <util.random.int[2].[9]>
+                        - flag player mumbrodis_boat_cooldown duration:3m
+                        - ^narrate format:npcchat "Do you need a boat?"
+                        - wait 1t
+                        - narrate format:npcchat "It can sometimes be the best way to get around."
+                        - clickable mumbrodis_boat_yes_task save:mumbrodis_boat_yes_task_clickable until:9s usages:1 for:<player>
+                        - clickable mumbrodis_boat_no_task save:mumbrodis_boat_no_task_clickable until:9s usages:1 for:<player>
+                        - wait 1t
+                        - narrate "<element[<&hover[Click to let <npc.name> give you a boat.]><&8><&lb><&color[#00cb43]>Yes<&8><&rb><&end_hover>].on_click[<entry[mumbrodis_boat_yes_task_clickable].command>]> <&8>or  <element[<&hover[Click to decline Mumbrodis' boat]><&8><&lb><&color[#ff482a]>No<&8><&rb><&end_hover>].on_click[<entry[mumbrodis_boat_no_task_clickable].command>]>"
+                        - zap 2
+                    - else:
+                        - if <player.flag[npc.<npc>.familiarity.level]||0> == 3:
+                        # - ^narrate "<&8>[You can get another boat in <player.flag[mumbrodis_boat_cooldown].expiration.formatted>]"
+                            - random:
+                                - narrate format:npcchat "Keep a stash of boats for getting around this part of Deluvia."
+                                - narrate format:npcchat "You should be able to find plenty of boats for sale in shops around The Long Sea."
+                                - narrate format:npcchat "Many others say us on this island are crazy."
+                                - narrate format:npcchat "Beware of The Central Kingdoms, soon they will attack us too."
+                                - narrate format:npcchat "Grumble, Grumble."
+                                - narrate format:npcchat "Start your own town or join The Resistance. We are all rebels out here. "
+                                - narrate format:npcchat "Spend enough time out here and you too will start to talk to yourself. What did you say? Oh nothing. Shut up!"
+                                - narrate format:npcchat "I am actually a horrible fisherman. I don't know why I keep saying that."
+                                - narrate format:npcchat "If you want to talk to real fishermen, go to Rothigport."
+                                - narrate format:npcchat "Sometimes I can't keep up the demand for these free boats."
+                                - narrate format:npcchat "Oh yes, I've talked to many refugees washed up on these shores. Do I have the stories to tell."
+                                - narrate format:npcchat "We here are all a little scrappy. I bet you are refined with proper manners."
+                                - narrate format:npcchat "All of the warriors went off to hunt trophy monsters. You might find one or two warriors left here that can give you a sword."
+                                - narrate format:npcchat "Oh mining? Yes that is all the rage now that resources seem so scare. Give it a try."
+                                - narrate format:npcchat "I'm sorry I cannot be much more help than giving you that boat."
+                                - narrate format:npcchat "Mad gods, mysterious magic, murderous monsters. . . all that stuff scares me."
+                                - narrate format:npcchat "All of that sorcery and swords stuff shivers me timbers."
+                                - narrate format:npcchat "With all of you coming out here to build your towns, I hope one of you will build one so grand it will protect this realm."
+                                - narrate format:npcchat "Thank you for talking to me. Most of every day I just talk to myself and sometimes to my friend, this fishing pole."
+                                - narrate format:npcchat "It is a bit dangerous out here, but it is far better than the blood wars in the Central Kingdoms I hear. Talk to other Deluvians for advice."
+                                - narrate format:npcchat "I hope The Esmerelda comes back soon. Sometimes they bring some interesting trinkets, but they won't let me touch."
+                                - narrate format:npcchat "I'm glad to talk to another soul out here. I whittle, fish and make these little boats. What, you can eat these fish?"
+                                - narrate format:npcchat "Twinkle, Twinkle, little boat. . . how I wonder how you float. Really little boat how do you do it? . . . Science."
+                                - narrate format:npcchat "Row, row, row your boat, out on The Long Sea, dreadfully, dreadfully, dreadfully, dreadfully, they sank from the kraken's killing spree."
+                - if <player.flag[npc.<npc>.familiarity.level]> == 5:
+                    - random:
+                        - narrate format:npcchat "There is so much water. We need to go out farther into the Outlands to find what is left of big land."
+                        - narrate format:npcchat "I just keep making boats from the scraps of those shipwrecks out there."
+                        # - narrate format:npcchat "Many of us from the exodus found our way to this little island of Arcem Exod."
+                        # - narrate format:npcchat "Talk to Sedfrer about getting some rat soup."
+                        - narrate format:npcchat "No, the soldiers from The Central Kingdoms won't find us out here. . .  not yet."
+                        - narrate format:npcchat "I will join the largest faction that arises out on the Outer Rim of the Outlands."
+                        - narrate format:npcchat "I did hit my head pretty hard when my ship crashed on the shore. Why do you ask?"
+                - if <player.flag[npc.<npc>.familiarity.level]> == 8:
+                    - random:
+                        - narrate format:npcchat "Our little band of refugees is making a good go of it out here. Thanks for joining us."
+                        - narrate format:npcchat "When you build a decent size city, let me know, I may join it. . . if you''ll have me."
+                        - narrate format:npcchat "True, you'd have to be insane to live on this island."
+                        - narrate format:npcchat "I really don't remember how I got out here. In fact I don't remember much before a few days ago."
+                - if <player.flag[npc.<npc>.familiarity.level]> == 13:
+                    - narrate format:game_message "Mumbrodis eyes glaze over and looks past you with his mouth agape."
+                - if <player.flag[npc.<npc>.familiarity.level]> == 21:
+                    - narrate format:npcchat "Ahoy! So you want to hear some stories now?."
+                    - random:
+                        - narrate format:npcchat "One traveler lost their farm on Pallamost. They told me of their grand cathedral and how hundreds of pilgrims came through a day. Made me want to start following . . . er . .. whatever god they said it was."
+                        - narrate format:npcchat "Many travelers came here after being chased by marauding sailing ships. We all feel very lucky to be alive. Oh Fortuna!"
+                        - narrate format:npcchat "So many mages have escaped the grasps of Druvenrog. I shouldn' say but I think most of them went to Song Tide. They should be safe there."
+                        - narrate format:npcchat "I don't remember much about my own path, but I would say all of us were escaping the big flood and the chaos that happened in the Central Kingdoms."
+                        - narrate format:npcchat "Many of the other of my mates that have cobbled together a life on this rock have other things to teach you. Pay attention to them."
+                        - narrate format:npcchat "Most travelers I see some through here go out to the islands out there and start farming and building. Those that claim and build early will be ready for when the storms come."
+                        - narrate format:npcchat "Sure some have talked about the demon hordes. I personally have not seen one and do not think they will come to these gods forsaken parts."
+                        - narrate format:npcchat "I feel like I've woke up after hitting my head on that rock only yesterday, but Sedfrer says I've says I've been here many months."
+                        - narrate format:npcchat "I wish some of the travelers would come back to say hi and tell me what they've up to, but once they get settled, I guess there is no reason to. Some will be famous. <&nl>Will You?"
+                        - narrate format:npcchat "The Riftlands are where some strange cliffs formed after the Cataclysm. They are a godless domain but for some reason travelers want to go there. Use the airship up there to visit. You won't see me using an airship. Far too new and dangerous of contraptions those are."
+                - if <player.flag[npc.<npc>.familiarity.level]> == 34:
+                    - narrate format: game_message "You have received 30 XP to help you along your way."
+                    - give xp quantity:30
+                    - random:
+                        - narrate format:npcchat "Yes, I know I've said I don't remember much, but I am sure one of these days I will remember who I was. Mark my word."
+                        - narrate format:npcchat "This crutch I have is probably from the shipwrek. That old captain is nuts if you ask me. He kept saying he had royal cargo to protect."
+                        - narrate format:npcchat "The ships manifest? I didn't think of that! My head and body is still too cracked up for me to care too much though."
+                - else:
+                    # these statments are said for all the other times the player clicks on Mumbrodis
+                    - if <player.flag[npc.<npc>.familiarity.level]> < 15:
+                        - random:
+                            - narrate format:game_message "<npc.name> has a blank stare that isn't looking into your eyes."
+                            - narrate format:game_message "A bit of drool goes down <npc.name>'s beard."
+                            - narrate format:game_message "<npc.name> sometimes just gazes out to The Long Sea, yearning for something."
+                            - narrate format:npcchat "If I'm not here, I am usually scavenging lumber off those old big ships out there."
+                            - narrate format:game_message "<npc.name> suddenly ducks and quickly looks around as if avoiding a sea gull."
+                            - narrate format:game_message "<npc.name> doesn't seem to be afraid of much, but you are not sure he is the brightest."
+                            - narrate format:npcchat "Yes, we all took a tumble when our ship hit this rock; scrambled our brains and bones a bit."
+                            # - narrate format:npcchat "This fortress was here before me and the others got here. I'm not interested in fixing it up."
+                            - narrate format:npcchat "Many travelers heading out to The Long Sea come past this point. Why have you?"
+                            - narrate format:npcchat "You can go in any direction from this island, but there is a lot of water before the next big land."
+                            - narrate format:npcchat "We call this the Outer Rim and others call it the Outlands. I am sure it will too someday be be full of claim jumpers though."
+                            - narrate format:npcchat "You can't build anything here as we want to keep it just how it is. Sail out a few miles if you want to start building."
+                            - narrate format:npcchat "No fighting with other travelers on this here island."
+                            - narrate format:npcchat "I feel like I am destined for greatness. If I could only get off me bum and do something."
+                            - narrate format:npcchat "I am not much for prophecy, nor warfare, but I do like talk to all your travelers coming by."
+                            - narrate format:npcchat "I love chatting and fishing and really not much else."
+                            - narrate format:npcchat "What is soap?"
+                            - narrate format:npcchat "It is worthwhile to talk to other Outlanders. You never know what subtle knowledge they might have."
+                            - narrate format:npcchat "I don't take the word <italic>crazy<&r> as an insult. You know the ancients once considered the crazies as conduits of the gods?"
+                            - narrate format:npcchat "Even if it sounds like I don't listen to what you're saying... Err...  What was that again?"
+
+                    - else:
+                        - random:
+                            # - narrate format:npcchat "You have probably realized that us refugees here on Arcem Exod are not the most skilled. We can only help you get started."
+                            - narrate format:npcchat "I would head to Rothigport if you want to find more information. That is a fair sized town I've heard."
+                            - narrate format:npcchat "The storms came. They will come again. How do I know? You're right, I don't know much."
+                            - narrate format:npcchat "<npc.name> is only the name that these Outlanders gave me. I don't remember my real name."
+                            - narrate format:npcchat "You don't remember the Cataclym either do you? I'm not much for searching for answers, but maybe you are."
+                            - narrate format:npcchat "I think if I were to head off this island, I might be a fisherman. No, wait! Maybe a kelp gardener."
+                            - narrate format:npcchat "Some follow the old gods. Others, the new. How about you?"
+                            - narrate format:npcchat "You can seek the old gods in most places across Deluvia. The new gods? I know of only a few dangerous places."
+                            - narrate format:npcchat "I am not a religious man. I have distant memories of me walking with a god though. Was it a dream?"
+                            - narrate format:npcchat "If you can find a dream intrepreter, I would be interested in talking with them because boy do I have some doozies."
+                            - narrate format:npcchat "I hear about some towns that are off in The Long Sea. If you find stories there, will you come back and tell me?"
+                            - narrate format:npcchat "I sit here thinking and thinking and hoping I will eventually have a flash of insight."
+                         
+                            
+
+
+                            
+                - wait 6s
+                - zap 1
+
+        2:
+            chat trigger:
+                1:
+                    trigger: /Yes/ I accept the boat
+                    script:
+                    - run mumbrodis_boat_yes_task
+                    - zap 1
+                    
+                    
+                   
+                2:
+                    trigger: /No/ I don't want a boat
+                    script:
+                    - run mumbrodis_boat_no_task
+                    - zap 1
+                   
+
+mumbrodis_boat_no_task:
+    type: task
+    script:
+    - narrate format:npcchat "Darn!"
+
+mumbrodis_boat_yes_task:
+    type: task
+    script:
+    - narrate format:npcchat "Here you go mate. Have fun faring the high seas."
+    - give spruce_boat

@@ -1,0 +1,30 @@
+crushing_blow_task:
+    type: task
+    definitions: damager|damage|target
+    script:
+    - flag <[damager]> stat.core.stamina.level:-:<util.random[10].to[<[damager]flag[skill.specializations.crushing_blow.level].add[10]||10>]>
+    - if <[target].has_flag[equipment]> && <[target].flag[equipment].size> > 1 && <proc[equipment_size_proc].context[<player>].not>:
+        - hurt <util.random.int[1].to[<[damage]||2>]> <[target]>
+        
+        - define armor_to_destroy <[target].flag[equipment].values.random>
+        - if <[armor_to_destroy].has_flag[current_durability]>:
+            - define slot <[target].inventory.find[<[armor_to_destroy]>]>
+            - run durability_task def:<[armor_to_destroy]>|<[slot]>|1
+
+            # - narrate "<red>CRUSHINGBLOW!!! on <[armor_to_destroy]> in slot <[slot]>"
+        
+        # - repeat 10:
+            - flag <[target]> stat.core.stamina.level:-:<util.random.int[2].to[6]>
+            - wait <util.random.int[1].to[10]>t
+        - narrate "You have delivered a blow hard enough to reduce your foe's intelligence." targets:<[damager]>
+        - if <util.random.int[0].to[20]> == 20:
+            - teleport <[target]> <[target].location.down[1]>
+            - wait 7t
+            - teleport <[target]> <[target].location.up[1]>
+        - if <util.random.int[1].to[<element[100].sub[<[damager].flag[skill.specializations.crushing_blow.level].min[99]>]>]> == 1:
+            - teleport <[target]> <[target].location.down[2]>
+            - wait 8t
+            - teleport <[target]> <[target].location.up[1]>
+
+            
+

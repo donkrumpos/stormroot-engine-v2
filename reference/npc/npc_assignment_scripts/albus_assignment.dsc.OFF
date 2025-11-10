@@ -1,0 +1,604 @@
+albus_mangaroon_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:9
+    interact scripts:
+    - albus_interact
+
+    default constants:
+        appearance1: "Albus is tall and lean, indicating a life of agility and strength in the wild. His face bears weathered lines, a testament to his resilience against nature's elements."
+        appearance2: "Albus's eyes shine emerald green, revealing a sharp intellect and unwavering determination. He wears practical, earth-toned clothing that blends seamlessly with nature, reflecting his resourcefulness"
+        appearance3: "Hidden beneath his clothing, Albus bears mysterious scars that hint at past battles and untold adventures, adding an air of mystery to his rugged appearance. When Albus locks eyes with another, there's a depth to his gaze that suggests he carries burdens and secrets known only to himself, hinting at a past filled with triumphs and tragedies."
+        appearance4: "Albus is often accompanied by silent companions: the spirits of the wild who whisper secrets to him in the rustling leaves and babbling brooks, revealing a connection to the mystical forces that govern the natural world."
+        appearance5: "A subtle emblem, barely discernible upon Albus's cloak, its significance known only to those initiated into the ancient rites of the Pact of the Lupine Brotherhood. This emblem serves as a symbol of his allegiance to a sacred duty, one that will lead him on a journey fraught with peril and mystery, as he seeks to uncover the truth behind a long-forgotten prophecy that holds the fate of the realm in its balance."
+
+        has_familiarity: true
+        personality: albus_personality
+        dialog: albus_mangaroon_dialog
+
+albus_mangaroon_dialog:
+    type: data
+    dialog:
+        1:
+            click:
+                1:
+                    statement:
+                        narration:
+                            1:
+                                - "When the winds carry travelers to my domain, what boon do you seek from the wilds?"
+                            2:
+                                - "How may the untamed realms aid your journey?"
+                            3:
+                                - "What brings you to these wilds, seeker of paths unknown?"
+                            4:
+                                - "Speak your purpose, and let the whispers of the forest guide my response."
+                            5:
+                                - "In the dance of shadows and light, what guidance do you seek?"
+                            6:
+                                - "Do your footsteps echo with purpose, or do you wander with no destination in mind?"
+                            7:
+                                - "From the depths of the wilderness, I emerge to answer your call. What do you seek?"
+                            8:
+                                - "With the wisdom of the wild coursing through my veins, I stand ready to aid you. What is your desire?"
+                            9:
+                                - "As the guardian of these untamed lands, I offer my aid to those who tread lightly upon its soil. Speak your needs, traveler."
+                            10:
+                                - "The whispers of the trees bring word of your arrival. Tell me, what brings you to this secluded sanctuary?"
+                            11:
+                                - "In the silence of the forest, your presence is felt. What task has led you to cross paths with the wilderness?"
+                    questions:
+                        1:
+                            narration:
+                                - "Who are you?"
+                            answer:
+                                narration:
+                                    1:
+                                        - "I am Albus, a son of the Canis clan, and a guardian of the wilderness."
+                                    2:
+                                        - "Albus, a traveler of the wilds, at your service."
+                                    3:
+                                        - "They call me Albus, a wanderer of the untamed lands."
+                                    4:
+                                        - "I am Albus, a denizen of the forest, sworn to protect its secrets."
+                                    5:
+                                        - "In these woods, I am known as Albus, a son of the wild."
+                                    6:
+                                        - "Albus, a lone wanderer of the wilderness, that is who I am."
+                                    7:
+                                        - "My name is Albus, a guardian of the primal forces that shape this land."
+                                    8:
+                                        - "Albus, a watcher of the wilds, and a keeper of its mysteries."
+                                    9:
+                                        - "They call me Albus, a wilderness walker of the Canis clan, sworn to protect the ancient forests."
+                                    10:
+                                        - "I am Albus, a silent sentinel of the untamed realms."
+                        2:
+                            narration:
+                                - "What do you do here?"
+                            flag_given:
+                                flag: albus_ranger
+                            answer:
+                                narration:
+                                    1:
+                                        - "I wander these untamed lands, seeking harmony with the primal forces of nature and protecting its sanctity."
+                                    2:
+                                        - "Here, amidst the wilds, I roam in solitude, a guardian of nature's balance."
+                                    3:
+                                        - "In these forests, I tread lightly, safeguarding the delicate harmony of the wilderness."
+                                    4:
+                                        - "My purpose is simple: to commune with the wild and safeguard its secrets from those who would despoil its sanctity."
+                                    5:
+                                        - "I am a sentinel of the wild, tasked with preserving the untamed beauty of these lands."
+                                    6:
+                                        - "Within these woods, I serve as both guardian and steward, protecting the ancient rhythms of nature."
+                                    7:
+                                        - "My duty is to the forest, to ensure its ancient wisdom endures for generations to come."
+                                    8:
+                                        - "Here, amidst the wilderness, I find solace and purpose, serving as a guardian of the natural order."
+                                    9:
+                                        - "In these untamed lands, I walk the path of the ranger, ever vigilant and attuned to the rhythms of the wild."
+                                    10:
+                                        - "My role is clear: to protect and preserve the untamed beauty of the wilderness, no matter the cost."
+                        3:
+                            narration:
+                                - "Have you seen any unusual creatures around here?"
+                            flag_given:
+                                flag: albus_creatures
+                            answer:
+                                narration:
+                                    1:
+                                        - "Many creatures call these forests home, but few are as enigmatic as the Gloaminstag, a legendary beast said to roam these woods."
+                                    2:
+                                        - "The wilderness is home to a myriad of creatures, each with its own tale to tell. Yet, none are as elusive as the legendary Gloaminstag."
+                                    3:
+                                        - "There are whispers in the wind of a creature known as the Gloaminstag, a phantom of the forest said to embody the untamed spirit of the wild."
+                                    4:
+                                        - "In these woods, one may encounter creatures of all shapes and sizes, but none are as mysterious as the legendary Gloaminstag."
+                                    5:
+                                        - "I have heard tales of a creature known as the Gloaminstag, a spectral presence that haunts the depths of these ancient woods."
+                                    6:
+                                        - "While I have not seen it with my own eyes, there are whispers among the trees of a creature called the Gloaminstag, a being of legend and myth."
+                                    7:
+                                        - "The Gloaminstag is a creature of mystery and legend, said to roam these woods in search of... something. Its true nature remains shrouded in mystery."
+                                    8:
+                                        - "The forest holds many secrets, including tales of the Gloaminstag, a creature of myth said to dwell deep within these ancient woods."
+                                    9:
+                                        - "In my wanderings, I have heard tales of the Gloaminstag, a creature said to embody the very essence of the wilderness."
+                                    10:
+                                        - "Legends speak of the Gloaminstag, a creature said to possess untold power and wisdom. Whether it is truth or fiction, only the forest knows for sure."
+                        4:
+                            narration:
+                                - "What can you tell me about the Gloaminstag?"
+                            required_flag:
+                                flag: albus_creatures
+                            answer:
+                                narration:
+                                    1:
+                                        - "The Gloaminstag is a creature of myth and legend, said to embody the primal essence of the wilderness. It is elusive and rarely seen, but those who have encountered it speak of its majestic beauty and fearsome presence."
+                                    2:
+                                        - "Legends speak of the Gloaminstag as a guardian of the forest, a creature of unparalleled grace and power. Its presence is said to bring both awe and dread to those who behold it."
+                                    3:
+                                        - "The Gloaminstag is said to possess mystical powers beyond mortal comprehension. Some believe it to be a harbinger of fortune, while others fear its wrath."
+                                    4:
+                                        - "Those who seek the Gloaminstag are said to be on a quest for enlightenment and understanding. It is said that only those pure of heart and strong of spirit can hope to find it."
+                                    5:
+                                        - "The Gloaminstag is a creature of mystery and wonder, its presence woven into the very fabric of the forest. To encounter it is to witness the untamed beauty of the wilderness."
+                                    6:
+                                        - "Legends say that the Gloaminstag is a creature of the old world, a remnant of a time when the forests were wild and untamed. Its appearance is said to herald great change."
+                                    7:
+                                        - "The Gloaminstag is a creature of legend, whispered about in hushed tones by those who dare to venture into the heart of the wilderness. Some say it is a guardian, others a harbinger of doom."
+                                    8:
+                                        - "To find the Gloaminstag is to glimpse the very soul of the forest. It is said to possess wisdom beyond measure, and those who seek it may find answers to questions they never knew they had."
+                                    9:
+                                        - "The Gloaminstag is a creature of mystery, its origins lost to the mists of time. Some say it is a spirit of the forest, while others believe it to be a manifestation of the land itself."
+                                    10:
+                                        - "Legends tell of the Gloaminstag as a creature of immense power, capable of weaving spells of enchantment and wielding magic beyond mortal ken. Whether it is friend or foe, none can say for certain."
+                        5:
+                            narration:
+                                - "Can you teach me how to track and hunt?"
+                            required_flag:
+                                flag: albus_ranger
+                            
+                            answer:
+                                script_to_run:
+                                    script: albus_tracking
+                                narration:
+                                    1:
+                                        - "Tracking and hunting are skills honed over a lifetime of communion with the wild. I can offer guidance, but true mastery comes from experience and attunement to the rhythms of nature."
+                        6:
+                            narration:
+                                - "Can you teach me archery?"
+                            answer:
+                                narration:
+                                    1:
+                                        - "Indeed, I am well-versed in the art of archery. To wield a bow is to harness the primal forces of the wild. I can impart upon you the basics, but true mastery will require dedication and practice."           
+
+albus_tracking:
+    type: task
+    script:
+    - if <player.has_flag[skill.skills.tracking.level].not>:
+        - flag <player> skill.skills.tracking.level:1
+    - narrate "There ya go"
+
+albus_interact:
+  type: interact
+  steps:
+    default:
+        proximity trigger:
+                entry:
+                    script:
+                    - execute as_server "npc skin --url https://minesk.in/11c39b37ed894256a80bfbb3921e3195 --id <npc.id>"
+#         click trigger:
+#             script:
+#             - inject description_inject_task
+#             - if <player.flag[npc.<npc.name>.familiarity.level]||0> <= 1:
+#                 - engage
+#                 - narrate format:npcchat "Greetings traveler."
+#                 - narrate format:npcchat "Headed out to explore the <&2>Song Tide<&a> archipelago?"
+#                 - clickable albus_help_1_task save:albus_help_1_task_clickable
+#                 - clickable albus_help_2_task save:albus_help_2_task_clickable
+#                 - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Yes I am. Where am I?<&8><&rb><&end_hover>].on_click[<entry[albus_help_1_task_clickable].command>]>"
+#                 - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>What is the Song Tide archipelago?<&8><&rb><&end_hover>].on_click[<entry[albus_help_2_task_clickable].command>]>"
+#                 - narrate  "<&E>3. <&B>No, I am not."
+#                 - narrate  "<&E>4. <&B>Goodbye"
+#                 - disengage
+#                 - zap 2
+#             # - else:
+#             #     - narrate "Oh hello again <player.name>" 
+#     where_1:
+#         chat trigger:
+#             1:
+#                 trigger: <&7>/1/. /Yes/, where am I?
+#                 script:
+#                 - inject albus_help_1_task
+                
+#             2:
+#                 trigger: <&7>/2/. /What/ is the /Song Tide/ /archipelago/?
+#                 script:
+#                 script:
+#                 - inject albus_help_2_task
+#                 # - engage
+#                 # - narrate format:npcchat "I trust you will be well."
+#                 # - disengage
+#                 # - zap step:1
+#     3:
+#         chat trigger:
+#             1:
+#                 trigger: <&7>/1/. Tell me more about this place.
+#                 script:
+#                 - engage
+#                 - inject description_inject_task
+#                 - if <player.flag[npc.<npc.name>.familiarity.level]||0> > 1:
+#                     - give xp quantity:10
+#                     - narrate "<&8>[You have received 20 XP.]"
+#                 - narrate format:npcchat "This is one of the ancient realms,"
+#                 - narrate format:npcchat "a land of bards and mages;"
+#                 - narrate format:npcchat "but dark times have fallen on our world of <&2>Deluvia<&a>."
+                
+                
+#                 - narrate  "<&E>1. <&B>What are the dark times?"
+#                 - narrate  "<&E>2. <&B>Where are the bards and mages?"
+#                 - narrate  "<&E>3. <&B>Why is it ancient?"
+#                 - narrate  "<&E>4. <&B>Goodbye"
+#                 - zap step:4
+#                 - disengage
+#             2:
+#                 trigger: <&7>/2/. /Goodbye/
+#                 script:
+#                 - engage
+#                 - narrate format:npcchat "May adventure find you."
+#                 - if <util.random.int[1].to[15]> == 10:
+#                     - narrate format:npcchat "and remember. . . A storm is coming."
+#                 - disengage
+#                 - zap step:1
+#     4:
+#         chat trigger:
+#             1:
+#                 trigger: <&7>/1/. What are the /dark times/?
+#                 script:
+#                 - engage
+#                 - narrate format:npcchat "Dark times have befallen the whole of <&2>Deluvia<&a>. We are in Fortune's favor here in the <&2>Song Tide<&a>,"
+#                 - narrate format:npcchat "but that might not last."
+#                 - narrate format:npcchat "Our strong magic protects us from far off empires that wish us ill,"
+#                 - narrate format:npcchat "and the plagues and disasters from the gods."
+#                 - narrate format:npcchat "What we need now is a hero to ward off these dangers."
+#                 - flag player albus_darktimes
+#                 - wait 2s
+#                 - narrate  "<&E>1. <&B>How do I find out more?"
+#                 - narrate  "<&E>2. <&B>Goodbye"
+#                 - zap step:5
+#                 - disengage
+#             2:
+#                 trigger: <&7>/2/. Where are the /bards/ and /mages/?
+#                 scropt:
+#                 - engage
+#                 - narrate format:npcchat "You will find many mages and bards throughout Deluvia, but the <&2>Song Tide<&a> is especially rich with these practioners."
+#                 - narrate format:npcchat "The city of <&2>Rothigport<&a>, up the path, has some, and many more reside in the hills and forests on these islands."
+#                 - narrate format:npcchat "If you want to learn from them, search one out, but do not trust everyone."
+#                 - flag player albus_bardsmages
+#                 - wait 2s
+#                 - narrate  "<&E>1. <&B>How do I find out more?"
+#                 - narrate  "<&E>2. <&B>Goodbye"
+#                 - zap step:5
+#                 - disengage
+#             3:
+#                 trigger: <&7>/3/. Why is it ancient?
+#                 script:
+#                 - engage
+#                 - narrate format:npcchat "Seek out a chronicler to know the best facts, but I have heard this is one of the original lands and the mortals were created right here on this island."
+#                 - narrate format:npcchat "The goddess, <gold>Finnwyl<&a>, still resides here somewhere, though her powers have been greatly reduced after the Great War with the Gods.
+#                 - flag player albus_ancient
+#                 - wait 2s
+#                 - narrate  "<&E>1. <&B>How do I find out more?"
+#                 - narrate  "<&E>2. <&B>Goodbye"
+#                 - zap step:5
+#                 - disengage
+#             4:
+#                 trigger: <&7>/4/. /Goodbye/
+#                 script:
+#                 - engage
+#                 - narrate format:npcchat "It was good talking to you."
+#                 - disengage
+#                 - zap step:1
+#     5:
+#         chat trigger:
+#             1:
+#                 trigger: <&7>/1/. How do I find out more?
+#                 script:
+#                 - engage
+#                 - narrate format:npcchat "Find other mortals about this world and talk to them. Some might be willing to talk to you."
+#                 - narrate format:npcchat "Others are shy. Some can't be trusted."
+#                 - narrate format:npcchat "And you can always start by killing some monsters."
+#                 - zap step:1
+#                 - disengage
+#             2:
+#                 trigger: <&7>/2/. Goodbye
+#                 script:
+#                 - engage
+#                 - narrate format:npcchat "May the gods be with you."
+#                 - disengage
+#                 - zap step:1
+#     6:
+#         chat trigger:
+#             1:
+#                 trigger: <&7>/1/. Why, /yes/ I am.
+#                 script:
+#                 - if <player.flag[albus_count]> <= 1:
+#                     - execute as_server "mmocore admin exp give <player.name> main 10"
+#                     - narrate "<&8>[You have received 10 XP.]"
+#                 - engage
+#                 - narrate format:npcchat "Excellent, excellent."
+#                 - narrate format:npcchat "Are you in search of magic, weaponry or commerce?"
+#                 - wait 2s
+#                 - narrate  "<&E>1. <&B>Magic"
+#                 - narrate  "<&E>2. <&B>Weaponry"
+#                 - narrate  "<&E>3. <&B>Commerce."
+#                 - narrate  "<&E>4. <&B>None of these."
+#                 - narrate  "<&E>5. <&B>Goodbye"
+#                 - zap step:7
+#                 - disengage
+#             # 2:
+#             #     trigger: <&7>/2/. /What/ is the /Song Tide/ /archipelago/?
+#             #     script:
+#             #     - if <player.flag[albus_count]> <= 1:
+#             #         - execute as_server "mmocore admin exp give <player.name> main 10"
+#             #         - narrate "<&8>[You have received 10 XP.]"
+#             #     - engage
+#             #     - narrate format:npcchat "You are in a grouping of large islands. This one we are on now is called <&2>Noctisbard<&a>."
+#             #     - narrate format:npcchat "It is an ancient land, once the domain of the gods. but now the god's decendents, us mortals, primarily reside here."
+#             #     - narrate format:npcchat "We are an enclave of wizards, bards, clerics and really anything that the <&2>Central Kingdoms<&a> now despise."
+#             #     - wait 2s
+#             #     - narrate  "<&E>1. <&B>What is the Central Kingdoms?"
+#             #     - narrate  "<&E>2. <&B>Where are the gods?"
+#             #     - narrate  "<&E>3. <&B>Why is it called Song Tide?"
+#             #     - narrate  "<&E>4. <&B>Goodbye"
+#             #     - zap step:8
+#             #     - disengage
+#             3:
+#                 trigger: <&7>/3/. /No/ I am not
+#                 script:
+#                 - if <player.flag[albus_count]> <= 1:
+#                     - execute as_server "mmocore admin exp give <player.name> main 10"
+#                     - narrate "<&8>[You have received 10 XP.]"
+#                 - engage
+#                 - narrate format:npcchat "Well you can head back to <&2>Rothigport<&a>, the city to the north."
+#                 - narrate format:npcchat "or head out into <&2>The Wild<&a> to form your own town and maybe an empire."
+#                 - wait 2s
+#                 - narrate  "<&E>1. <&B>What is in Rothigport?"
+#                 - narrate  "<&E>2. <&B>What is The Wild?"
+#                 - narrate  "<&E>3. <&B>How do I start a town?"
+#                 - narrate  "<&E>4. <&B>Goodbye"
+#                 - zap step:9
+#                 - disengage
+#             4:
+#                 trigger: <&7>/4/. /Goodbye/
+#                 script:
+#                 - engage
+#                 - narrate format:npcchat "See you later."
+#                 - disengage
+#                 - zap step:1
+#         click trigger:
+#             script:
+#             - zap step:1
+#     7:
+#         chat trigger:
+#             1:
+#                 trigger: <&7>/1/. /Magic/
+#                 script:
+#                 - engage
+#                 - narrate format:npcchat "You can start down the path of magic by talking to another mortal like myself, but one that knows magic."
+#                 - narrate format:npcchat "They can teach you some starting spells."
+#                 - zap step:1
+#                 - disengage
+#             2:
+#                 trigger: <&7>/2/. /Weaponry/
+#                 script:
+#                 - engage
+#                 - narrate format:npcchat "You can start down the path of a warrior by talking to another mortal like myself, but one that knows fighting."
+#                 - narrate format:npcchat "They can teach you some starting skills."
+#                 - zap step:1
+#                 - disengage
+#             3:
+#                 trigger: <&7>/3/. /Commerce/
+#                 script:
+#                 - engage
+#                 - narrate format:npcchat "You can start by either starting a town, where other mortals can come to you and buy items,"
+#                 - narrate format:npcchat "or rent a shop in one of the towns where others come by and sell your wares there."
+#                 - narrate format:npcchat "Of course you need to get some things to sell, by killing monsters, mining for ores, and finding items by exploring the land."
+#                 - zap step:1
+#                 - disengage
+#             4:
+#                 trigger: <&7>/4/. /None/ of these.
+#                 script:
+#                 - engage
+#                 - narrate format:npcchat "There are many more professions and preoccupations. Talk to more people around to find more. <&2>Rothigport<&a> is a good place to start."
+#                 - narrate format:npcchat "You can also start by killing some weaker monsters and get their treasure."
+#                 - narrate format:npcchat "Starting your own town is always a good option as well."
+#                 - zap step:1
+#                 - disengage
+#     8:
+#             chat trigger:
+#                 1:
+#                     trigger: <&7>/1/. What is the /Central Kingdoms/?
+#                     script:
+#                     - engage
+#                     - narrate format:npcchat "They are the old capital of Deluvia of <&2>Pallamost<&a>, and the new empire of <&2>Druvenrog<&a> far to the east."
+#                     - narrate format:npcchat "Most all of us are trying to stay out of Druvenrog's path of dominance by staying way out here."
+#                     - narrate format:npcchat "Of course you are always welcome to go there and visit but get more advice from an expert before doing so."
+#                     - zap step:1
+#                     - disengage
+#             2:
+#                     trigger: <&7>/2/. Where are the /gods/?
+#                     script:
+#                     - engage
+#                     - narrate format:npcchat "The gods, were once very powerful, but many out here still worship them."
+#                     - narrate format:npcchat "After the Great War of the Third Age, most of the gods were defeated and they now exist in the <&2>Aether<&a>."
+#                     - narrate format:npcchat "But some that allied with the mortals, still remain."
+#                     - narrate format:npcchat "Find a <gold>cleric<&a> in <&2>Rothigport<&a>, or out in the countryside to learn more about following one of the gods and gaining their power"
+#                     - zap step:1
+#                     - disengage
+#             3:
+#                     trigger: <&7>/3/. Why is it called /Song Tide/?
+#                     script:
+#                     - engage
+#                     - narrate format:npcchat "I believe the first <gold>Goddess of the Four Winds<&a> resides out there on the sea."
+#                     - narrate format:npcchat "and with her power, came the spells for the wind mages,"
+#                     - narrate format:npcchat "and even more so, the songs that the bards sing, which are too, very powerful."
+#                     - narrate format:npcchat "Mostly though, the winds that howl through the straights and channels create a beautiful song."
+#                     - zap step:1
+#                     - disengage
+#             4:
+#                     trigger: <&7>/4/. /Goodbye/
+#                     script:
+#                     - engage
+#                     - narrate format:npcchat "Do save us <player.name>."
+#                     - zap step:1
+#                     - disengage
+#     9:
+#             chat trigger:
+#                 1:
+#                     trigger: <&7>/1/. What is  /Rothigport/?
+#                     script:
+#                     - engage
+#                     - narrate format:npcchat "<&2>Rothigport<&a>, is the largest city in the Song Tide."
+#                     - narrate format:npcchat "Most of the commerce in this area takes place there, among fishermen and boat builders."
+#                     - narrate format:npcchat "but you will also find a villain or two, so be careful."
+#                     - narrate format:npcchat "Simply head north down the path to find it."
+#                     - zap step:1
+#                     - disengage
+#             2:
+#                     trigger: <&7>/2/. What is The /Wild/?
+#                     script:
+#                     - engage
+#                     - narrate format:npcchat "Some call it <&2>The Outer Rim<&a>, some call it <&2>The Wild<&a>, and others, <&2>The Outlands<&a>"
+#                     - narrate format:npcchat "but it is simply the lands outside the reach of <&2>the Central Kingdoms<&a>."
+#                     - narrate format:npcchat "where a mortal can still claim their own land."
+#                     - narrate format:npcchat "You can find passage out there on a ship in <&2>Rothigport<&a>, or other ships on the islands out here."
+#                     - zap step:1
+#                     - disengage
+#             3:
+#                     trigger: <&7>/3/. How do I start a /town/?
+#                     script:
+#                     - engage
+#                     - narrate format:npcchat "Many travelers that escaped the Central Kingdoms are starting towns out in The Outlands."
+#                     - narrate format:npcchat "Simply travel out there and find the best plot of land you can."
+#                     - narrate format:npcchat "Ally with others to build a stronger force. These new cities that you travelers develop will save us from the evils that are coming."
+#                     - narrate format:npcchat "Once you find a good spot out there then do <white>( /claim} )<&r>"
+#                     - zap step:1
+#                     - disengage
+#             4:
+#                     trigger: <&7>/4/. /Goodbye/
+#                     script:
+#                     - engage
+#                     - narrate format:npcchat "Do save us <player.name>."
+#                     - zap step:1
+#                     - disengage
+            
+            
+
+# albus_help_1_task:
+#     type: task
+#     script:
+#     - engage
+#     - inject description_inject_task
+#     - narrate format:npcchat "You are in the <&2>Song Tide <&a>archipelago on the island of <&2>Noctisbard<&a>."
+#     - narrate format:npcchat "and I am <gold>Albus<&a>, an old wanderer who is passing through."
+#     - wait 2s
+#     - narrate  "<&E>1. <&B>Tell me more about this place."
+#     - narrate  "<&E>2. <&B>Goodbye"
+#     - disengage
+#     - zap step:3
+
+
+# albus_help_2_task:
+#     type: task
+#     script:
+#     - if <player.flag[npc.<npc.name>.familiarity.level]||0> <= 1:
+#         - give xp quantity:10
+#         - narrate "<&8>[You have received 10 XP.]"
+#     - engage
+#     - inject description_inject_task
+#     - narrate format:npcchat "You are in a grouping of large islands. This one we are on now is called <&2>Noctisbard<&a>."
+#     - narrate format:npcchat "It is an ancient land, once the domain of the gods. but now the god's decendents, us mortals, primarily reside here."
+#     - narrate format:npcchat "We are an enclave of wizards, bards, clerics and really anything that the <&2>Central Kingdoms<&a> now despise."
+#     - wait 2s
+#     - narrate  "<&E>1. <&B>What is the Central Kingdoms?"
+#     - narrate  "<&E>2. <&B>Where are the gods?"
+#     - narrate  "<&E>3. <&B>Why is it called Song Tide?"
+#     - narrate  "<&E>4. <&B>Goodbye"
+#     - zap step:8
+#     - disengage
+
+
+albus_personality:
+    type: data
+    character_data:
+        name: "Albus Mangaroon"
+        race: "Canis"
+        gender: "Male"
+        age: 35
+        occupation: "skilled and resourceful outdoorsman who excels in wilderness survival, tracking, and combat. They are guardians of the natural world, using their knowledge of the wilderness to protect it from threats such as monsters, poachers, or encroaching civilization. possess wilderness proficiency, tracking and hunting skills, proficiency in archery and combat, a deep connection to nature, and serve as guardians of the wilderness."
+        affiliation: "Emberwild Guard"
+        personality_traits:
+            - Stoic
+            - Resourceful
+            - Determined
+            - Cautious
+            - Loyal
+            - Analytical
+            - Observant
+            - Patient
+            - Introspective
+            - Adaptive
+            - Empathetic
+            - Independent
+            - Disciplined
+        goals:
+            - "To track down the Gloaminstag and ensure the safety of Noctisbard"
+            - "To learn from Risdonis Valkor and enhance his skills as a Wilderness protector and hunter"
+            - "To uphold the traditions and teachings of the Emberwild Guard and protect the wilderness"
+        fears:
+            - "Failure"
+            - "Betrayal"
+            - "Losing control"
+            - "The unknown"
+            - "Being outsmarted"
+            - "The dark"
+            - "Abandonment"
+            - "Disappointing others"
+            - "Isolation"
+            - "The supernatural"
+            - "Heights"
+            - "Fire"
+            - "Large crowds"
+        quirks:
+            - "Carries a lucky charm"
+            - "Whittles in his spare time"
+            - "Has a soft spot for animals"
+            - "Avoids eye contact when thinking deeply"
+            - "Collects feathers as souvenirs"
+            - "Keeps a journal of his adventures"
+            - "Enjoys stargazing on clear nights"
+            - "Never sleeps without his bow nearby"
+            - "Whistles while he works"
+            - "Can identify different bird calls"
+            - "Enjoys cooking over an open fire"
+            - "Prefers silence over small talk"
+            - "Always carries a spare rope"
+            - "Avoids stepping on cracks in the ground"
+        skills:
+            - "Expert tracker"
+            - "Master archer"
+            - "Proficient in wilderness survival"
+            - "Knowledgeable in herbalism and natural remedies"
+            - "Skilled in crafting bows and arrows"
+            - "Adept at stealth and camouflage techniques"
+            - "Trained in hand-to-hand combat"
+            - "Proficient in navigation and map reading"
+            - "Familiar with the behavior of various wildlife"
+        relationships:
+            - "Albus is solitary by nature and has little interaction with other mortal beings in Song Tide. His only connection to civilization is the town of Rothigport, which he admires from afar but has never ventured into. He knows it as a lively hub where rumors abound and supplies are readily available."

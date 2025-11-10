@@ -1,0 +1,8 @@
+haybale_01:
+  type: item
+  material: player_head
+
+  mechanisms:
+    skull_skin: 57a24cbe-a268-4328-a4c9-98611b729bd3|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTZjMDI5YzkxNDRkOTZmYzRhMDZmYWUwNTk5NjMwZDJkYWMwZjcxNTE2NmYxYzRlYzExZTczMWFlZDdiM2Q3ZiJ9fX0==
+
+

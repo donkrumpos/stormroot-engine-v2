@@ -1,0 +1,424 @@
+blacksmithing_repair_task:
+    type: task
+    definitions: item
+    script:
+    # - run 
+    - define blacksmithing_level <player.flag[skill.skills.blacksmithing.level]||0>
+    - if <[item]> == air:
+      - narrate "This type of item cannot be repaired." targets:<player>
+    - else:
+        - if <[item].has_script.not>:
+            - narrate "You need to repair this item with the conventional means."
+        - else:
+            - if <[item].has_flag[maximum_durability]>:
+                - define current_durability <[item].flag[current_durability]>
+                - define maximum_durability <[item].flag[maximum_durability]>
+                - if <[current_durability]> < <[maximum_durability]>:
+                    - wait 2s
+                    - define difference <[maximum_durability].sub[<[current_durability]>]>
+                    # - narrate difference:<[difference]>
+                    - define material <[item].flag[material]>
+                    - define material_modifier 1
+                    - if <script[rare_ingots_data].data_key[ingot.<[material]>.difficulty].exists>:
+                        - define material_modifier <script[rare_ingots_data].data_key[ingot.<[material]>.difficulty]>
+                    - define difficulty_modifier <element[500].sub[<[difference]>].sub[<[material_modifier]>]>
+                    - if <proc[natural_skill_check_proc].context[<player>|blacksmithing|<[difficulty_modifier]>]>:
+                        - narrate "<green>You successfully repaired the item."
+                        - if <player.inventory.contains_item[<[item]>]>:
+                            - define slot <player.inventory.find_item[<[item]>]>
+                            - inventory adjust slot:<[slot]> "lore:Durability: <proc[durability_display_proc].context[<player.item_in_hand>]>"
+                            - inventory flag slot:<[slot]> current_durability:<[maximum_durability]>
+                    - else:
+                        - narrate "<red>You failed in repairing the item."
+                        - if <player.inventory.contains_item[<[item]>]>:
+                            - define slot <player.inventory.find_item[<[item]>]>
+                            #if a repair fails, the maximum durability goes down by one
+                            - inventory flag slot:<[slot]> maximum_durability:<[maximum_durability].sub[1]>
+                        
+                - else:
+                    - wait 2s
+                    - narrate "It looks like this item doesn't need repair" targets:<player>
+ 
+
+forge_gui:
+    type: inventory
+    inventory: Chest
+    title: <&sp><&sp><&sp><&sp><&sp><&sp><&sp><&2>Forge
+    size: 54
+    slots:
+    - "[] [] [] [] [] [] [] [] []"
+    - "[<item[diamond_hoe].with[custom_model_data=1682;display_name=Body Armor]>] [] [] [] [] [] [] [] []"
+    - "[<item[diamond_hoe].with[custom_model_data=1692;display_name=Edged Weapons]>] [] [<item[diamond_hoe].with[custom_model_data=1693;display_name=Piercing Weapons]>] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[gui_forge_upper] [gui_forge_lower] [<item[diamond_hoe].with[custom_model_data=1694;display_name=Repair Item;lore=Drop item here to repair.]>] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+
+forge_gui_generator:
+    type: task
+    script:
+    - define inv <inventory[forge_gui]>
+    # - give "<item[gui_longsword].with[display_name=Edged Weapons;lore=Click to see more.]>" to:<[inv]> slot:10
+    # - inventory set o:gui_longsword "display_name=edged" slot:10 d:<[inv]>
+    - inventory open d:<[inv]>
+    - if <player.has_flag[ingot_slot]>:
+      - inventory set o:selected d:<[inv]> slot:<player.flag[ingot_slot]>
+   
+    #  - narrate <context.inventory>
+    # - give "selected[display_name=<[ingot_display_name]>]" to:<[inv]> slot:<player.flag[ingot_slot]>
+
+
+smithing_world:
+  type: world
+  events:
+    on player right clicks anvil|smithing_table with:smiths_hammer|sturgrums_hammer:
+    - if <player.has_flag[sturgrum_blacksmith_quest]> && <player.flag[skill.skills.blacksmithing.level]> == 50:
+      - flag <player> sturgrum_blacksmith_quest:!
+    - run forge_gui_generator
+   
+    - determine passively cancelled
+    on player clicks in forge_gui:
+    - flag player forge_open:!
+    
+    - define forge_ingot <player.flag[forge_ingot]>
+    # - narrate <gold><[forge_ingot]>
+    - define inv <inventory[forge_gui]>
+    - define slot <context.slot>
+    - define action <context.action>
+    
+    # returns the ItemTag the player has clicked on.
+    - define item <context.cursor_item||null>
+    #  returns the item the Player is clicking with
+    - define cursor_item <context.cursor_item.script||null>
+    - if <[action]> == SWAP_WITH_CURSOR && <[slot]> == 39:
+      - run blacksmithing_repair_task def:<context.cursor_item>
+      # - narrate "<blue> we will repair <[cursor_item].flag[current_durability]>" targets:<server.match_player[sirbandersnatch]>
+    
+    # - narrate "<blue> slot: <[slot]>" targets:<server.match_player[sirbandersnatch]>
+    - define display_name " "
+    - choose <context.slot>:
+      - case 10:
+        # - announce "<red>This is the chest slot"
+        - flag player forge_menu:chest
+        - give gui_platemail_tunic to:<[inv]> slot:15
+        - give gui_chainmail_tunic to:<[inv]> slot:16
+        - give gui_platemail_leggings to:<[inv]> slot:17
+        
+        - give gui_chainmail_leggings to:<[inv]> slot:24
+        - give gui_platemail_tunic to:<[inv]> slot:25
+        - give gui_platemail_tunic to:<[inv]> slot:26
+
+        - give gui_platemail_tunic to:<[inv]> slot:33
+        - give gui_platemail_tunic to:<[inv]> slot:34
+        - give gui_platemail_tunic to:<[inv]> slot:35
+      - case 20:
+        - narrate "This is the axe slot"
+      - case 11:
+        - narrate "This is the helmet slot"
+      - case 5 6 7 8 9 14 15 16 17 18 23 24 25 26 27 32 33 34 35 36 41 42 43 44 45:
+        - define item <context.item>
+        - define material "type of"
+        # - narrate "item: <blue><[item]>"
+        - if <player.has_flag[forge_ingot]>:
+          - define material "<[forge_ingot]>_ingot"
+        - else if <player.inventory.quantity[iron_ingot]> > 0:
+            # this is for non special ores. The only special weapons and armor the can make without special materials is iron
+          - flag <player> forge_ingot:iron
+          - define material iron_ingot
+          
+        - else:
+          - narrate "<red>You need to select a material first."
+          - stop
+
+        - define material_quantity_required <script[<[item].display>].data_key[flags.material_quantity]||1000>
+        - define player_quantity <player.inventory.quantity[<[material]>]>
+        - if <[player_quantity]> >= <[material_quantity_required]>:
+          # - define smith_level <player.flag[skill.skills.blacksmithing.level]||1>
+          # - define random_level <util.random.int[1].to[100]>
+          - define material_difficulty <script[rare_ingots_data].data_key[ingot.<[material]>.difficulty]>
+          - define item_difficulty <script[<[item].display>].data_key[flags.crafting_difficulty]>
+          - define difficulty_modifier <element[100].sub[<[item_difficulty]>].sub[<[material_difficulty]>]>
+          - define tool_modifier 0
+          - if <player.item_in_hand.has_flag[blacksmithing_increase]>:
+            - define tool_modifier <player.item_in_hand.flag[blacksmithing_increase]>
+            - define difficulty_modifier <[difficulty_modifier].add[<[tool_modifier]>]>
+          - if <proc[natural_skill_check_proc].context[<player>|blacksmithing|<[difficulty_modifier]>]>:
+            - take <[material]> quantity:<[material_quantity_required]>
+            - define exceptional false
+            - if <player.flag[skill.skills.blacksmithing.level]> >= 75:
+              - if <util.random.int[1].to[2]> == 2:
+                - if <proc[natural_skill_check_proc].context[<player>|blacksmithing]>:
+                  - if <proc[natural_skill_check_proc].context[<player>|luck]>:
+                    - define exceptional true
+            - run make_smith_item_task def:<player.flag[forge_ingot]>|<[item]>|<player>|<[exceptional]>
+          - else:
+            - narrate "You fail to craft the item."
+            - take <[material]> quantity:<util.random[1].to[<[material_quantity_required].sub[2]>].max[1]>
+          # - run task:raise_passive_skill_task def:<player>|blacksmithing|0|0
+          - run raise_natural_skill_task def:<player>|blacksmithing
+        
+        - else:
+          - define material_difference  <[material_quantity_required].sub[<[player_quantity]>]>
+          - define material_category ingot
+          - if <[material_difference]> > 1:
+            - define material_category ingots
+          - narrate "You need <[material_quantity_required].sub[<[player_quantity]>]> more <[material].replace[_ingot]> <[material_category]>."
+
+      - case 9:
+        - if <player.has_flag[forge_ingot]>:
+          - define material "material_<[forge_ingot]>_ingot"
+          - define material_quantity <script[longsword].yaml_key[material_quantity]>
+          - define player_quantity <player.inventory.quantity[<[material]>]>
+          
+          - if <[player_quantity]> >= <[material_quantity]>:
+            - take <[material]> quantity:<[material_quantity]>
+            - run make_smith_item_task def:<player.flag[forge_ingot]>|longsword|<player>
+          - else:
+            - narrate "You need <[material_quantity].sub[<[player_quantity]>]> more <[forge_ingot]> ingots."
+        - else:
+          - narrate "You need to select a material first."
+      - case 19:
+        - narrate "this is the bladed slot"
+        - flag player forge_menu:bladed
+        - give gui_longsword to:<[inv]> slot:15
+        - give gui_cutlass to:<[inv]> slot:16
+        - give gui_broadsword to:<[inv]> slot:17
+        
+        - give gui_katana to:<[inv]> slot:24
+        - give gui_bardiche to:<[inv]> slot:25
+        - give gui_halberd to:<[inv]> slot:26
+
+        - give gui_scimitar to:<[inv]> slot:33
+        - give gui_viking_sword to:<[inv]> slot:34
+        - give gui_scythe to:<[inv]> slot:35
+        
+        - choose <player.flag[forge_ingot]>:
+          - case dull_copper:
+            - give "selected[display_name=Dull Copper]" to:<[inv]> slot:46
+        
+      - case 21:
+        - narrate "This is the fencing scale slot"
+        - flag player forge_menu:piercing
+        - give <item[diamond_hoe].with[custom_model_data=1693;display_name=Dagger]> to:<[inv]> slot:15
+      - case 28:
+        - narrate "This is the shield slot"
+      - case 30:
+        - narrate "This is the polearm slot"
+      - case 29:
+        - narrate "This is the bashing slot"
+      - case 20:
+        - narrate "This is the throwing slot"
+
+  #     - if <util.list_numbers[from=46;to=54].contains[<context.slot>]>:
+  #       # - inventory set o:stick slot:10
+  # #   - if <player.has_flag[forge_ingot]>:
+  # #     - flag <player> forge_ingot:!
+  # #   - else:
+      
+      - case 46:
+        - if <player.flag[forge_ingot]> == dull_copper:
+          - flag <player> forge_ingot:iron
+        - else:
+          - flag <player> forge_ingot:dull_copper
+      - case 47:
+        - if <player.flag[forge_ingot]> == dark_iron:
+          - flag <player> forge_ingot:iron
+        - else:
+          - flag <player> forge_ingot:dark_iron
+      - case 48:
+        - if <player.flag[forge_ingot]> == pyrzinium:
+          - flag <player> forge_ingot:iron
+        - else:
+          - flag <player> forge_ingot:pyrzinium
+      - case 49:
+        - if <player.flag[forge_ingot]> == mystrilium:
+          - flag <player> forge_ingot:iron
+        - else:
+          - flag <player> forge_ingot:mystrilium
+      - case 50:
+        - if <player.flag[forge_ingot]> == turgite:
+          - flag <player> forge_ingot:iron
+        - else:
+          - flag <player> forge_ingot:turgite
+      - case 51:
+        - if <player.flag[forge_ingot]> == arondite:
+          - flag <player> forge_ingot:iron
+        - else:
+          - flag <player> forge_ingot:arondite
+      - case 52:
+        - if <player.flag[forge_ingot]> == ogralt:
+          - flag <player> forge_ingot:iron
+        - else:
+          - flag <player> forge_ingot:ogralt
+      - case 53:
+        - if <player.flag[forge_ingot]> == glalium:
+          - flag <player> forge_ingot:iron
+        - else:
+          - flag <player> forge_ingot:glalium
+      - case 54:
+        - if <player.flag[forge_ingot]> == arcanithril:
+          - flag <player> forge_ingot:iron
+        - else:
+          - flag <player> forge_ingot:arcanithril
+        
+  #     - default:
+        
+  #       - narrate default
+      
+    - define ingot_display_name <player.flag[forge_ingot].to_titlecase.replace[_].with[<&sp>].to_titlecase>
+    - if <util.list_numbers[from=46;to=54].contains[<context.slot>]>:
+      - flag <player> ingot_slot:<[slot]>
+        # - determine passively cancelled
+
+    - if <player.flag[forge_ingot]> == iron:
+      - give air to:<[inv]> slot:<context.slot>
+      - flag <player> ingot_slot:!
+    - else:
+      - give "selected[display_name=<[ingot_display_name]>]" to:<[inv]> slot:<player.flag[ingot_slot]>
+    
+    # - run forge_gui_generator
+    # - give "selected[display_name=<[ingot_display_name]>]" to:<[inv]> slot:<player.flag[ingot_slot]>
+    - inventory open d:<[inv]>
+      
+    on player closes forge_gui:
+    - flag player forge_open:!
+    # - flag player forge_ingot:!
+    on furnace smelts dull_copper_ore:
+    - determine dull_copper_ingot
+    on furnace smelts dark_iron_ore:
+    - determine dark_iron_ingot
+    on furnace smelts pyrzinium_ore:
+    - determine brone_ingot
+    on furnace smelts mystrilium_ore:
+    - determine mystrilium_ingot
+    on furnace smelts turgite_ore:
+    - determine turgite_ingot
+    on furnace smelts arondite_ore:
+    - determine arondite_ingot
+    on furnace smelts ogralt_ore:
+    - determine ogralt_ingot
+    on furnace smelts glalium_ore:
+    - determine glalium_ingot
+    on furnace smelts arcanithril_ore:
+    - determine arcanthril_ingot
+    
+
+make_smith_item_task:
+  type: task
+  definitions: material|item|player|exceptional
+  script:
+ 
+  - define arms_lore <[player].flag[skill.skills.arms_lore.level]||0>
+  - define item <[item].display>
+  - define strength_requirement <script[<[item]>].data_key[flags.required_strength]>
+  - define item_type <script[<[item]>].data_key[flags.item_type]>
+  - define item_number <item[<[item]>].custom_model_data>
+  - define crafted_bonuses ""
+  - define poison_damage 0
+  - define energy_damage 0
+  - define cold_damage 0
+  - define arms_lore_bonus <[arms_lore].round.div[10].round.max[1]>
+  - narrate "arms lore bonus <[arms_lore_bonus]>"
+  - define damages_bonus <script[<[item]>].data_key[flags.stat.bonus.damage_types].keys.random[<[arms_lore_bonus]>]>
+  
+  - if <[exceptional]>:
+    - narrate <green>EXCEPTIONAL!!!!!
+    - define arms_lore_bonus <[arms_lore].round_down.div[10].round.max[1]>
+    - if <[item_type]> == armor:
+      - define bonus_type defense
+    - else if <[item_type]> == weapon:
+      - define bonus_type damage
+    - define big_bonus <util.random.int[1].to[<element[1000].sub[<player.flag[skill.skills.blacksmithing.level].round_up.max[1]>]>].max[1]>
+    - if <[big_bonus]> == 1:
+      # if the smith skill is high, there is a chance to add all bonus to physical defense
+      - if <item[<[item]>].has_flag[<[bonus_type]>]>:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=<[bonus_type]>:<item[<[item]>].flag[<[bonus_type]>].add[15]>
+      - else:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=<[bonus_type]>:15
+    - else:
+      # else all the bonuses are distributed in smaller amounts, among the elementals defenses
+      - define bonus_types <script[<[item]>].data_key[flags.stat.bonus.<[bonus_type]>_types].random[<[arms_lore_bonus]>]>
+      
+      - foreach <[bonus_types]> as:this_bonus:
+        - define bonus_amount <util.random.int[0].to[3]>:
+        - if <[bonus_amount]> > 0:
+          - if <item[<[item]>].flag[stat.bonus.<[this_bonus]>].exists>:
+            - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.<[this_bonus]>:<item[<[item]>].flag[stat.bonus.defense_types.<[this_bonus]>].add[<[bonus_amount]>]>"
+          - else:
+            - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.<[this_bonus]>:<[bonus_amount]>"
+      # - narrate <dark_purple><[defense_types]>
+    
+
+
+  - choose <[material]>:
+    - case iron:
+      - define custom_model_material 00
+    - case dull_copper:
+      - define custom_model_material 01
+      - if <item[<[item]>].flag[required_strength].exists>:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=required_strength:<item[<[item]>].flag[required_strength].sub[20].max[0]>;"
+      - if <item[<[item]>].flag[defense].exists>:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=defense:<item[<[item]>].flag[defense].add[10]>;"
+      - if <item[<[item]>].flag[maximum_durability].exists>:
+        - narrate <blue><item[<[item]>].flag[maximum_durability].add[100]>
+        - define crafted_bonuses "<[crafted_bonuses]>flag=maximum_durability:<item[<[item]>].flag[maximum_durability].add[100]>;"
+        - define crafted_bonuses "<[crafted_bonuses]>flag=current_durability:<item[<[item]>].flag[current_durability].add[100]>;"
+    - case dark_iron:
+      - define custom_model_material 02
+      - if <item[<[item]>].flag[stat.bonus.damage_types.cold]> < 2:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.damage_types.cold:2;"
+      - if <item[<[item]>].flag[stat.bonus.defense_types.fire_resist].exists>:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.fire_resist:<item[<[item]>].flag[stat.bonus.defense_types.fire_resist].add[2]>;"
+      - if <item[<[item]>].flag[stat.bonus.defense_types.energy_resist].exists>:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.energy_resist:<item[<[item]>].flag[stat.bonus.defense_types.energy_resist].add[7]>;"
+    - case pyrzinium:
+      - define custom_model_material 03
+      - if <item[<[item]>].flag[stat.bonus.cold_resist].exists>:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.cold_resist:<item[<[item]>].flag[stat.bonus.defense_types.cold_resist].add[7]>;"
+      - if <item[<[item]>].flag[stat.bonus.cold_resist].exists>:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.poison_resist:<item[<[item]>].flag[stat.bonus.defense_types.poison_resist].add[2]>;"
+      - if <item[<[item]>].flag[stat.bonus.energy_resist].exists>:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.energy_resist:<item[<[item]>].flag[stat.bonus.defense_types.energy_resist].add[2]>;"
+      - if <item[<[item]>].flag[stat.bonus.damage_types.fire]> < 4:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.damage_types.fire:4;"
+    - case mystrilium:
+      - define custom_model_material 04
+    - default:
+      - define custom_model_material ""
+    - if <script[<[item]>].data_key[flags.material].exists> && <script[<[item].display>].data_key[flags.material]> != <[forge_ingot]>:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=material:<[forge_ingot]>"
+    - define crafted_bonuses "<[crafted_bonuses]>flag=crafted_by:<player>"
+  
+  # - narrate "<green><item[<[item]>].flag[stat.bonus]>"
+  # - foreach <[crafted_bonuses]> as:bonus:
+  #   - narrate "<[bonus]> "
+  # - narrate <green><[item_number]><[custom_model_material]>
+  - give "<item[<[item]>].with[custom_model_data=<[item_number]><[custom_model_material]>;display_name=<[material].replace[_].with[<&sp>].to_titlecase> <[item].to_titlecase>;<[crafted_bonuses]>]>"
+  - if <player.inventory.empty_slots> > 0:
+    - narrate format:game_message "You have crafted the item and it is placed in your pack."
+  - else:
+    - narrate format:game_message "You have crafted the item but has fallen to the ground since your pack is full."
+  - if <util.random.int[0].to[30]> == 30:
+    - run raise_natural_skill_task def:<player>|arms_lore
+  - flag <player> crafted_items.blacksmithing.<[item]>:++
+  
+  - if <player.has_flag[sturgrum_blacksmith_quest]> && <player.has_flag[accelerated_skill_gain]> && <player.flag[accelerated_skill_gain].contains[blacksmithing]> && <player.flag[skill.skills.blacksmithing.level]> >= 50:
+    - flag <player> sturgrum_blacksmith_quest:!
+    - flag <player> accelerated_skill_gain:<-:blacksmithing
+    - flag <player> sturgrum_blacksmith_quest_complete
+    - define sturgrum_npc <player.location.find_npcs_within[100].filter[nickname.is[==].to[sturgrum]].filter[is_spawned].first>
+    - if <player.open_inventory.script.name> == forge_gui:
+      - wait 2s
+      - inventory close d:<player.open_inventory>
+    - wait 2s
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]><[sturgrum_npc].name><&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+
+    - look <player> <[sturgrum_npc].eye_location>
+    - wait 2s
+    - if <player.inventory.empty_slots> > 0:
+      - narrate "Aha, you've gone as far as I can help you. Here is your reward."
+      - give  sturgrums_hammer player:<player>
+      - narrate format:game_message "Sturgrum's Hammer has been placked in your pack."
+    - else:
+      - narrate "Aha, you've gone as far as I can help you. You seem to have too many items, so I will send it to your bank box."
+      - flag <player> bank_inventory:->:sturgrums_hammer
+      - narrate format:game_message "Sturgrum's Hammer has been placked in your bank."

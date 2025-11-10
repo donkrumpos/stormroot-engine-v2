@@ -1,0 +1,37 @@
+deluvic_language_data:
+    type: data
+    morphemes:
+      Fae: "sacred, holy"
+      Nkra: well, source
+      Dra: "wood, tree"
+      Sil: "home, dwelling"
+      Urd: "ruler, king"
+      Asil: "divine essense"
+      Glore: "glow"
+      Lindil: "fragment, shard"
+
+      Kunddrasil:
+        - Parts:
+          - Kund: child, offspring
+          - Drasil: wood, tree
+
+      Faendrasi:
+        - Parts:
+          - Fae: sacred, holy
+          - Ndrasi: way, path
+
+      Mnimimor:
+        - Parts:
+          - Mni: flow, stream
+          - Mor: memory, knowledge
+
+      Meena:
+        - Parts:
+          - Mee: guardian, protector
+          - Na: goddess, divine being
+
+      Drasilissigeaunt:
+        - Parts:
+          - Drasil: wood, tree
+          - Issi: many, numerous
+          - Geaunt: race, tribe

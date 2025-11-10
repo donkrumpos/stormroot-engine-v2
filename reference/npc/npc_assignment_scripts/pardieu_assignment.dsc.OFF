@@ -1,0 +1,219 @@
+pardieu_assignment:
+    type: assignment
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+    interact scripts:
+    - pardieu_interact
+        
+pardieu_interact:
+    type: interact
+    steps:
+        1:
+            click trigger:
+                script:
+                - inject description_inject_task
+                
+                - if <player.flag[class.type]> == "cleric":
+                    - if <player.flag[npc.<npc>.familiarity.level]||0> <= 1:
+                        - narrate format:npcchat "Hail Mother <gold>Anona<&a>."
+                        - wait 1s
+                        - narrate format:npcchat "The old gods protect and nourish Deluvia."
+                        - wait 1s
+                        - narrate format:npcchat "You are one of us."
+                    - else:
+                        - if <player.has_flag[skills.spells.holyaura.level].not>:
+                            - narrate format:npcchat "Let me help you learn a new prayer spell."
+                            - wait 1s
+                            - narrate format:npcchat "Would you like to learn Holy Aura, a spell that give you double damage while it is active?"
+                            - clickable pardieu_spell_1_task save:pardieu_spell_1_task_clickable until:30s
+                            - clickable pardieu_spell_no_task save:pardieu_spell_no_task_clickable until:30s
+                            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Yes, this would help me greatly..<&8><&rb><&end_hover>].on_click[<entry[pardieu_spell_1_task_clickable].command>]>"
+                            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>No, I don't want this spell.<&8><&rb><&end_hover>].on_click[<entry[pardieu_spell_no_task_clickable].command>]>"
+                            - zap
+
+                - else:
+                    - if <player.flag[npc.<npc>.familiarity.level]||0> <= 1:
+                        - narrate format:npcchat "Salutations and welcome to the <green>Chapel to Anona in Rothigport<&a>."
+                        - wait 1s
+                        - narrate format:npcchat "I am <npc.name>, accolyte to Anona."
+                        - wait 1s
+                        - narrate format:npcchat "I'm glad you could join our space dedicated to the gods."
+                        - wait 1s
+                        - narrate format:npcchat "Would you like to learn more about religion in Deluvia?."
+                        
+                    - else if <player.flag[npc.<npc>.familiarity.level]||0> >= 2:
+                        - narrate format:npcchat "Greetings, you are back."
+                        - wait 1s
+                        - narrate format:npcchat "Welcome back."
+                        - wait 1s
+                        - narrate format:npcchat "Do you now want to look into religion?"
+                    - clickable pardieu_help_1_task save:pardieu_help_1_task_clickable until:30s
+                    - clickable pardieu_help_no_task save:pardieu_help_no_task_clickable until:30s
+                    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Yes, this is interesting to me.<&8><&rb><&end_hover>].on_click[<entry[pardieu_help_1_task_clickable].command>]>"
+                    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>No, goodbye.<&8><&rb><&end_hover>].on_click[<entry[pardieu_help_no_task_clickable].command>]>"
+            
+                    - zap 2 duration:30s
+                
+                
+        2:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. /Yes/, this is interesting to me.
+                    script:
+                    - run pardieu_help_1_task
+                    
+                2:
+                    trigger: <&7>/2/. /No/, /Goodbye/.
+                    script:
+                    - run pardieu_help_no_task
+                    
+            click trigger:
+                script:
+                - zap step:1
+       
+        3:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. /Yes/ I choose to start the path of a cleric.
+                    script:
+                    - run pardieu_choose_cleric_task
+                2:
+                    trigger: <&7>/2/. First, tell me more about /religion./
+                    script:
+                    - run pardieu_more_religion_task
+                3:
+                    trigger: <&7>/3/. /No/, goodbye.
+                    script:
+                    - run pardieu_help_no_task
+            4:
+                chat trigger:
+                    1:
+                        trigger: <&7>/1/. /Yes/ I am dedicated to this.
+                        script:
+                        - run pardieu_choose_cleric_confirm_task
+                    2:
+                        trigger: <&7>/2/. /No/, I will think about it more.
+                        script:
+                        - run pardieu_help_no_task
+                   
+         
+
+pardieu_help_1_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "Excellent my friend."
+    - wait 1s
+    - if <player.flag[pardieu_flag]> == 1:
+        - narrate format:game_message "You have received 10 XP to help you along your way."
+        - give xp quantity:10
+    
+    - narrate format:npcchat "The gods have been our benefactors for millenia."
+    - wait 1s
+    - narrate format:npcchat "They provide us with many blessings and miracles."
+    - wait 1s
+    - narrate format:npcchat "These ancient gods, though their power has diminished in recent years still provide us with epic abilities."
+    - wait 1s
+    - narrate format:npcchat "Are you sure you want to choose the path of a cleric?"
+    - clickable pardieu_choose_cleric_task save:pardieu_choose_cleric_task_clickable until:30s
+    - clickable pardieu_more_religion_task save:pardieu_more_religion_task_clickable until:30s
+    - clickable pardieu_help_no_task save:pardieu_help_no_task_clickable until:30s
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Yes, I choose to start the path of a cleric.<&8><&rb><&end_hover>].on_click[<entry[pardieu_choose_cleric_task_clickable].command>]>"
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>First, tell me more about religion.<&8><&rb><&end_hover>].on_click[<entry[pardieu_more_religion_task_clickable].command>]>"
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>3. <&B>No, goodbye.<&8><&rb><&end_hover>].on_click[<entry[pardieu_help_no_task_clickable].command>]>"
+        
+    - zap 3 duration:30s
+
+pardieu_choose_cleric_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "So you know, it is hard to reverse this path once started.
+    - wait 1s
+    - narrate format:npcchat "Are you sure you wish to become a cleric?"
+    - clickable pardieu_choose_cleric_confirm_task save:pardieu_choose_cleric_confirm_task_clickable until:20s
+    - clickable pardieu_help_no_task save:pardieu_help_no_task_clickable until:20s
+
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Yes, I am dedicated to this.<&8><&rb><&end_hover>].on_click[<entry[pardieu_choose_cleric_confirm_task_clickable].command>]>"
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>No, I will think about it more.<&8><&rb><&end_hover>].on_click[<entry[pardieu_help_no_task_clickable].command>]>"
+    - zap 4 duration:20s
+
+pardieu_choose_cleric_confirm_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - if <player.has_flag[class.type].not>:
+        - narrate "Oh you have already professed a class. I guess not."
+    - else:
+        - narrate format:npcchat "Oh you have already professed as another class."
+        - wait 1s
+        - narrate format:npcchat "You will have to undo your class from a master <player.flag[class.type]>"
+        - zap 1
+        - stop
+    - else:
+        - narrate format:npcchat "Let me teach you something I know."
+        - flag <player>  class.type:cleric
+        - narrate format:game_message "You are now a cleric."
+    - zap 1
+
+pardieu_help_no_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - random:
+        - narrate format:npcchat "It is a deep subject. We will always be here."
+        - narrate format:npcchat "It is a rewarding profession, but I understand."
+        - narrate format:npcchat "The gods will keep you safe anyway."
+        - narrate format:npcchat "It takes much faith and it is not for everyone."
+    - zap 1
+
+pardieu_more_religion_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "An interesting subject indeed."
+    - wait 1s
+    - narrate format:npcchat "The Gods have been around before us mortals,"
+    - wait 1s
+    - narrate format:npcchat "and I will tell you sometimes they are jealous of us;"
+    - wait 1s
+    - narrate format:npcchat "but many are on our side."
+    - wait 1s
+    - narrate format:npcchat "Praying to them can open up secrets and power unknown to others."
+    - wait 1s
+    - narrate format:npcchat "There are thousands of gods and demigods so it can be confusing,"
+    - wait 1s
+    - narrate format:npcchat "but will make more sense over time."
+    - wait 1s
+    - narrate format:npcchat "Find more holy mortals throughout Deluvia for answers.
+    - zap 1
+
+
+pardieu_spell_1_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "Frabjous!"
+    - wait 1s
+    - narrate format:npcchat "Let me teach you something that I know."
+    - narrate format:game_message "You now know the Holy Aura prayer spell."
+    - flag <player> skill.spells.holyaura.level:1
+    - wait 1s
+    - narrate format:npcchat "The more you study the better the spell gets."
+    - narrate format:game_message "View your spellbook with /spells and click the spell to level it up if you have enough spell points."
+    - wait 1s
+    - narrate format:npcchat "It also will expend your faith while active, so be careful."
+    - zap 1
+
+
+pardieu_spell_no_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - random:
+        - narrate format:npcchat "There are hundreds of faith spells to learn so do not fret."
+        - narrate format:npcchat "Once you devote your faith to one god or circle, then the spells will become more meaningful."
+        - narrate format:npcchat "Very well. Have a good moon."
+    - zap 1

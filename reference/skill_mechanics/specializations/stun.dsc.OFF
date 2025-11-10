@@ -1,0 +1,29 @@
+stun_task:
+    type: task
+    definitions: damager|defender|final_damage|final_armor
+    script:
+    - define stun_level <[damager].flag[skill.specializations.stun.level]||0>
+    - if <[defender].has_flag[stat.status.debuff.stun].not>:
+        - flag <[defender]> stat.status.debuff.stun
+    - define location <[defender].location>
+    - narrate "You've been stunned!" targets:<[defender]>
+    - if <util.random.int[1].to[2]> == 1:
+        - if <[defender].flag[stat.core.stamina.level]> > 11:
+            - define stamina_stun <[element].add[<[stun_level]>]>
+            - flag <[defender]> stat.core.stamina.level:-:<[stamina_stun].min[<[defender].flag[stat.core.stamina.level]>]>
+    - if <util.random.int[1].to[2]> == 2:
+        - if <[defender].flag[stat.core.mana.level]> > 11:
+            - define mana_stun <[element].add[<[stun_level]>]>
+            - flag <[defender]> stat.core.mana.level:-:<[mana_stun].min[<[defender].flag[stat.core.mana.level]>]>
+    - if <util.random.int[1].to[2]> == 1:
+        - if <[defender].flag[stat.status.buff].size> > 1:
+            - define random_buff <[defender].flag[stat.status.buff].to_list.random>
+            - flag <[defender]> stat.status.buff.<[random_buff]>:false
+    - if <[defender].has_flag[spell_focus]>:
+        - flag <[defender]> spell_focus:!
+    - repeat <[stun_level].max[10]>:
+        - teleport <[defender]> <[location]>
+    - if <[defender].has_flag[spell_focus]>:
+        - flag <[defender]> spell_focus:!
+    - if <[defender].has_flag[stat.status.debuff.stun]>:
+        - flag <[defender]> stat.status.debuff.stun:!

@@ -1,0 +1,736 @@
+player_joins_world:
+    type: world
+    debug: true
+    events:
+        on player logs in for the first time:
+        - teleport <player> meruk_player_start
+        # - define random_spot <util.random.int[0].to[6]>
+        # - if <[random_spot]> < 3:
+        #     - teleport <player> meruk_player_start
+        # - else if <[random_spot]> == 4:
+        #     - teleport <player> bardtown_dock
+        # - else if <[random_spot]> == 5:
+        #     - teleport <player> spawn_point_songtide
+        # - else if <[random_spot]> == 6:
+        #     - teleport <player> rothigport_start
+        on player joins:
+        - flag <player> delay_proximity_join expire:5s
+        # - if <player.has_flag[ten_year_anniversary].not>:
+        #     - wait 2s
+            
+        #     - flag <player> ten_year_anniversary
+        #     - narrate <element[Happy 10 Year Anniversary to us!].color_gradient[from=#FF0000;to=#0000FF;style=hsb]> targets:<player>
+        #     - wait 1s
+        #     - random:
+        #         - narrate <element[Have your cake and eat it too.].color_gradient[from=#FF0000;to=#0000FF;style=hsb]> targets:<player>
+        #         - narrate <element[Let them eat cake.].color_gradient[from=#FF0000;to=#0000FF;style=hsb]> targets:<player>
+        #         - narrate <element[The cake is not a lie.].color_gradient[from=#FF0000;to=#0000FF;style=hsb]> targets:<player>
+        #     - give anniversary_cake
+        - flag <player> top_hud_disabled
+        - if <player.has_permission[denizen.clickable].not>:
+            - execute as_server "lp user <player.name> permission set denizen.clickable true"
+        # - if <player.has_flag[nutcracker_armor].not>:
+        #     - give joyous_jackboots
+        #     - give nutcrackers_mantle
+        #     - give nutcrackers_helmet
+        #     - if <util.random.int[0].to[5]> == 5:
+        #         - give sword_silent_night
+        #     - else:
+        #         - give cutlet_candycane
+        #     - flag <player> nutcracker_armor
+        #     - narrate "<&gradient[from=#76b8f6;to=#003bc2]>Santa has delivered some gifts to your inventory."
+        - if <player.has_flag[first_join].not>:
+            # - run meruk_spawn_cutscene_bardtown
+            - execute as_server "lp user <player.name> parent add member"
+            - flag <player> newbie expire:2d
+            - flag <player> first_join:<util.time_now>
+            - teleport <player> meruk
+        # - if <player.is_op>:
+        #     - adjust <player> gamemode:creative
+
+        # - run join_reward_task def:<player>
+        
+            
+      
+        on player chats:
+        # to keep other players from hearing other players during cutscene
+        - if <player.has_flag[first_spawn_meruk_cutscene]>:
+            # - determine passively cancelled
+            - if <context.message> == "skip":
+                - flag <player> skip_first_spawn_meruk_cutscene
+                - wait 1s
+        - determine recipients:<server.online_players.filter[has_flag[first_spawn_meruk_cutscene].not]>
+
+
+
+
+
+
+first_login_spawnpoint_data:
+    type: data
+    spawn:
+        spawn_rothigport:
+            server: songtide
+        spawn_outside_rothigport:
+            server: songtide
+        # spawn_shipwreck:
+        #     server: thelongsea
+        spawn_padula_anchorite:
+            server: thelongsea
+        spawn_arcem_exod:
+            server: thelongsea
+
+
+
+remove_flags_task:
+    type: task
+    script:
+    - foreach <player.list_flags> as:flag:
+        - flag <player> <[flag]>:!
+
+
+
+albus_spawn_cutscene:
+    type: task
+    script:
+    # - wait 5t
+    - flag <player> first_spawn_albus_cutscene
+    - define start_point <player.location>
+    - spawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|air]" <[start_point].up[2]> save:albus_first_look
+    - flag <entry[albus_first_look].spawned_entity> <player>
+    - define main_npc <player.location.find_npcs_within[16].filter[nickname.is[==].to[Albus]].filter[is_spawned].first>
+    - adjust <player> spectate:<entry[albus_first_look].spawned_entity>
+    - adjust <player> gamemode:spectator
+    
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Albus<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+    - narrate "Hail and well met stranger!" targets:<player>
+    - wait 1s
+    - narrate "What be thy tide?" targets:<player>
+    - look <entry[albus_first_look].spawned_entity> <[main_npc].eye_location>
+    - wait 2s
+    - if <player.has_flag[skip_first_spawn_albus_cutscene]>:
+        - run end_first_spawn_albus_cutscene
+        - stop
+    - narrate "Heading to <&color[#3ca91a]>Rothigport<&r>?" targets:<player>
+    - wait 1s
+    - narrate "Oh me? I am just a wanderer who has lived out in these parts for quite awhile." targets:<player>
+    - wait 1s
+    - narrate "But I needed to start a new life too as it seems the dangers spread and there is not many places a quiet existence can be lived."
+    - look <entry[albus_first_look].spawned_entity> <[main_npc].eye_location>
+    - wait 2s
+    
+    - narrate  "Sit and stay warm by my fire as I tell you more." targets:<player>
+    - narrate format:game_message "chat 'skip' to skip this introduction."
+    # - foreach <location[<[start_point].up[2]>].points_between[<location[player_albus_sit_location].up[1]>]> as:point1:
+    #     - teleport <entry[albus_first_look].spawned_entity> <[point1]>
+    #     - look <entry[albus_first_look].spawned_entity> <[main_npc].eye_location>
+    #     - wait 5t
+    - if <player.has_flag[skip_first_spawn_albus_cutscene]>:
+        - run end_first_spawn_albus_cutscene
+        - stop
+        
+        
+    - wait 2s
+    - narrate "Ah, so you are new? Let me give you some tips for your journey ahead." targets:<player>
+    - wait 1s
+    - if <player.has_flag[skip_first_spawn_albus_cutscene]>:
+        - run end_first_spawn_albus_cutscene
+        - stop
+    - narrate "North, down this path will bring you to <&color[#3ca91a]>Rothigport<&r>, which has grown fast in my time living in the midst of it." targets:<player>
+    - wait 1s
+    - look <entry[albus_first_look].spawned_entity> albus_look_north
+    
+    - cast blindness <player> duration:3s
+    - if <player.has_flag[skip_first_spawn_albus_cutscene]>:
+        - run end_first_spawn_albus_cutscene
+        - stop
+    - teleport <player> rothigport_chunkload
+    - teleport <entry[albus_first_look].spawned_entity> rothigport_chunkload
+    - adjust <player> spectate:<entry[albus_first_look].spawned_entity>
+    - if <player.has_flag[skip_first_spawn_albus_cutscene]>:
+        - run end_first_spawn_albus_cutscene
+        - stop
+    - rotate <entry[albus_first_look].spawned_entity> duration:10s frequency:1t yaw:1
+    - chunkload <location[lathander_location].chunk>
+    
+   
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Albus<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+    - narrate "A quaint town of humble origin, but be wary of some of the new industrialists in town, willing to take advantage of newcomers. And unsavory scalawags and swindlers are starting to find refuge there as well." targets:<player>
+    
+    - if <player.has_flag[skip_first_spawn_albus_cutscene]>:
+        - run end_first_spawn_albus_cutscene
+        - stop
+    
+    - wait 10s
+    - if <player.has_flag[skip_first_spawn_albus_cutscene]>:
+        - run end_first_spawn_albus_cutscene
+        - stop
+    - foreach <location[rothigport_chunkload].points_between[<location[first_spawn_lathander]>]> as:point2:
+        - teleport <entry[albus_first_look].spawned_entity> <[point2]>
+        - look <entry[albus_first_look].spawned_entity> lathander_location
+    - if <player.has_flag[skip_first_spawn_albus_cutscene]>:
+        - run end_first_spawn_albus_cutscene
+        - stop
+    - teleport <player> lathander_location
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Albus<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+    - narrate "If you can get to the inner harbor talk to <&color[#a91a1a]>Lathander<&r>, as he is always excited to meet new folk." targets:<player>
+    - wait 3s
+    
+    # - teleport <entry[albus_first_look].spawned_entity> first_spawn_lathander
+    
+    - foreach <location[first_spawn_lathander].points_between[<location[first_bank]>]> as:point3:
+        # - teleport <entry[albus_first_look].spawned_entity> <[point3]>
+        - look <entry[albus_first_look].spawned_entity> first_banker_location
+        - wait 1t
+    - if <player.has_flag[skip_first_spawn_albus_cutscene]>:
+        - run end_first_spawn_albus_cutscene
+        - stop
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Albus<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+    - narrate "Next to him is the <&color[#a91a1a]>bank<&r> where you can safely store your goods," targets:<player>
+    - wait 3s
+    - narrate "and docked just there is a ship of <&color[#a91a1a]>Ori Moonsails<&r>, who can take you to the Outlands to blaze your own trail in the new lands. be careful out there though as those lands are a bit wild," targets:<player>
+    - foreach <location[first_spawn_lathander].points_between[<location[look_at_moonsails]>]> as:point4:
+        - teleport <entry[albus_first_look].spawned_entity> <[point4]>
+        - look <entry[albus_first_look].spawned_entity> ori_moonsails_location
+        - wait 1t
+    - wait 2s
+    - narrate "but once you can secure your own little town, you will find safety and solace there at least." targets:<player>
+    - cast blindness <player> duration:4s
+    - wait 2s
+    - if <player.has_flag[skip_first_spawn_albus_cutscene]>:
+        - run end_first_spawn_albus_cutscene
+        - stop
+    - teleport <player> player_albus_sit_location
+    - teleport <entry[albus_first_look].spawned_entity> <location[player_albus_sit_location].up[1]>
+    
+    - adjust <player> spectate:<entry[albus_first_look].spawned_entity>
+    - look <entry[albus_first_look].spawned_entity> <[main_npc].eye_location>
+    - wait 2s
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Albus<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+    - narrate "I’m glad you’re here mysterious hero." targets:<player>
+    - wait 2s
+    - if <player.has_flag[skip_first_spawn_albus_cutscene]>:
+        - run end_first_spawn_albus_cutscene
+        - stop
+    - narrate "We certainly need one in these times." targets:<player>
+    - wait 2s
+    - narrate "Whether it be a masterful blacksmith, or a blade-wielding legend, or just a simple farmer," targets:<player>
+    - wait 2s
+    - narrate " the more beings we can have to keep our race from becoming extinguished from those that wish to have it undone, the better." targets:<player>
+    - if <player.has_flag[skip_first_spawn_albus_cutscene]>:
+        - run end_first_spawn_albus_cutscene
+        - stop
+    - wait 2s
+    - narrate "Go, and meet your fellow travelers in <&color[#3ca91a]>Rothigport<&r>, and do come back and visit and tell me of your exploits!" targets:<player>
+    - wait 2s
+    - narrate "Oh you want me to teach you something? I think I have time for that. " targets:<player>
+    - wait 2s
+    - narrate "This stew is not going to be finished for a few moonticks." targets:<player>
+    - wait 2s
+    - narrate "Hmmm, let me ponder. . ." targets:<player>
+    - if <player.has_flag[skip_first_spawn_albus_cutscene]>:
+        - run end_first_spawn_albus_cutscene
+        - stop
+    - wait 2s
+    - narrate "Oh! I shall show you my favorite, a blocking defense. Quite useful when running into the wrong creature out here." targets:<player>
+    - wait 2s
+    - narrate "There now you know something of this. " targets:<player>
+    - flag <player> skill.specializations.block.level:1
+    - playsound <player> sound:ENTITY_PLAYER_LEVELUP volume:0.5 pitch:0.8
+    - narrate format:game_message "You have learned the <&color[#92acb2]>block<&r><&color[#888888]><italic> specialization skill" targets:<player>
+    - wait 2s
+    - narrate "Just time out your swings to stop an attack," targets:<player>
+    - if <player.has_flag[skip_first_spawn_albus_cutscene]>:
+        - run end_first_spawn_albus_cutscene
+        - stop
+    - wait 2s
+    - narrate "or I hear, if practiced enough in the art, can send the missile back at the sender!" targets:<player>
+    - wait 2s
+    - narrate "How about that. Go and try" targets:<player>
+    - wait 2s
+    - narrate "You are already more skiled than most Deluvians it seems" targets:<player>
+    - narrate format:game_message "Type /skills to see your skills" targets:<player>
+    
+    - wait 2s
+    - narrate "I bid thee farewell and the smile of the gods." targets:<player>
+    - adjust <player> gamemode:adventure
+    - adjust <player> spectate:<player>
+
+    - cast blindness <player> duration:4s
+    - teleport <player> the_real_albus_player_location
+    - look <player> albus_looking_at_rothigport_path
+
+    - remove <entry[albus_first_look].spawned_entity>
+    - flag <player> spawn_world:!
+    - flag <player> first_spawn_albus_cutscene:!
+    - adjust <player> show_to_players
+    - invisible <player> state:false
+
+
+end_first_spawn_albus_cutscene:
+    type: task
+    script:
+    
+    - wait 5s
+    - adjust <player> gamemode:creative
+    - adjust <player> spectate:<player>
+    # - remove <location[player_albus_sit_location].find_entities[armor_stand]>
+    - teleport <player> the_real_albus_player_location
+    - flag <player> first_spawn_albus_cutscene:!
+    - flag <player> spawn_world:!
+    - adjust <player> show_to_players
+    - remove <location[player_albus_sit_location].find_entities[armor_stand].within[8].filter[has_flag[<player>]]>
+
+    - invisible <player> state:false
+    - wait 1s
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Albus<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+    - narrate "Only trying to help traveler." targets: <player>
+    - flag <player> skip_first_spawn_albus_cutscene:!
+
+
+
+meruk_spawn_cutscene_bardtown:
+    type: task
+    script:
+    - adjust <player> gamemode:adventure
+    - define speed 1
+    - teleport <player> meruk_player_start
+    - flag <player> first_spawn_meruk_cutscene
+    # - invisible <player> state:true
+    - adjust <player> hide_from_players
+    # - adjust <player> hide_entity:<player>
+    - spawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|air]" <location[meruk_player_start].up[2]> save:meruk_first_look
+    - flag <entry[meruk_first_look].spawned_entity> <player>
+    - define main_npc <player.location.find_npcs_within[8].filter[nickname.is[==].to[meruk]].filter[is_spawned].first>
+    - adjust <player> spectate:<entry[meruk_first_look].spawned_entity>
+    - adjust <player> gamemode:spectator
+    - wait 2s
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Meruk<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+    - narrate "Ah so you’ve arrived." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "<&color[#3ca91a]>Deluvia<&r>, our world, has been springing up new beings and some of them arrive here to me." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "What shall I call you? Hero, Mortal? Traveler?" targets:<player>
+    - narrate format:game_message "chat 'skip' to skip this introduction."
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - wait <[speed].mul[2]>s
+    - narrate "This is a harsh world, and it seems to have gotten harsher in recent times " targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "and it is no wonder that Deluvia has conjured you here to this spot in the world, the cave in which I hide, watching <&color[#3ca91a]>Bardtown<&r>, that town down the path; and I wait for a sign." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "Are you this sign?" targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "All twelve of us original elder sages are recluse, yet, some of us remain close enough to civilization to chronicle what storms are to come upon the beings of Deluvia." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "We hope that you can help us but whatever path you choose is up to you." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "We’re glad you’re here." targets:<player>
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - wait <[speed].mul[2]>s
+    - narrate "Oh how rude of me, let me not get ahead of myself." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "I am <&color[#82b1f2]>Meruk<&r>, the sage of scholars and Keeper of the Deluvic Bardsong, an ancient tome chronicling our land." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "What is a scholar doing living in a cave you ask?" targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "Ha ha ha. Fair enough." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "All of us sages, have used our specialities to their height at one point or another during this Age of Kings," targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "but things are not always safe for us after the <&color[#f5e700]>Great War<&r> between the gods and the mortals," targets:<player>
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - wait <[speed].mul[2]>s
+    - narrate "and we found new occupations in dank locations; but I do still, however, keep my books." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "I have written extensively about <&color[#3ca91a]>Bardtown<&r> and <&color[#3ca91a]>Song Tide<&r> lately." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "<&color[#3ca91a]>Songtide<&r> being this realm, far away from the powerful civilizations, and <&color[#3ca91a]>Bardtown<&r> being one of its major towns." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "I brought my family here after living in <&color[#3ca91a]>Druvvenrog<&r> as one of their top scholars. " targets:<player>
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - wait <[speed].mul[2]>s
+    - narrate "The Druvs and Venrogs though mortals too, made things hostile there for those of us seeking truth and understanding of the <&color[#f5e700]>Great Severing<&r>." targets:<player>
+    - wait <[speed].mul[2]>
+    - narrate "I still sneak back into <&color[#3ca91a]>Druvvenrog<&r>, to visit their libraries and to watch a skiffrunner race once and awhile," targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "but as time goes on, this dark hole in a rock is all I have left." targets:<player>
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - wait <[speed].mul[2]>s
+    # - narrate  "<gray><italic>You say:<&r>  <&B>Tell me more about <&color[#3ca91a]>Songtide<&r>." targets:<player>
+    - wait <[speed].mul[2]>s
+    - teleport <player> bardtown_chunkload
+    - teleport <entry[meruk_first_look].spawned_entity> bardtown_chunkload
+    - wait <[speed]>s
+    - adjust <player> spectate:<entry[meruk_first_look].spawned_entity>
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - rotate <entry[meruk_first_look].spawned_entity> duration:10s frequency:1t yaw:1
+    - narrate "Me and my son met the bards in this town during travels and felt right at home with their preservation of lore and chronicling the ages," targets:<player>
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - wait <[speed].mul[3]>s
+    - narrate "and love of music and magic." targets:<player>
+   
+    - wait <[speed].mul[6]>s
+    - foreach <location[bardtown_chunkload].points_between[<location[bardtown_banker_location]>]> as:point:
+        - teleport <entry[meruk_first_look].spawned_entity> <[point]>
+        - look <entry[meruk_first_look].spawned_entity> bertaire_location
+        - wait 1t
+    - narrate "There you will find the Bank of Deluvia, a good place to start and to store your goods. You will find these in many of the towns across our land." targets:<player>
+    - wait <[speed].mul[4]>
+    - foreach <location[bardtown_banker_location].points_between[bardtown_cutscene_midpoint_01]> as:point2:
+        - teleport <entry[meruk_first_look].spawned_entity> <[point2]>
+        - look <entry[meruk_first_look].spawned_entity> bertaire_location
+        - wait 1t
+    - foreach <location[bardtown_cutscene_midpoint_01].points_between[bardtown_cutscene_midpoint_02]> as:point3:
+        - teleport <entry[meruk_first_look].spawned_entity> <[point3]>
+        - wait 1t
+        - look <entry[meruk_first_look].spawned_entity> gilderstilt_location
+        
+    - foreach <location[bardtown_cutscene_midpoint_02].points_between[bardtown_guildhall_location]> as:point4:
+        - teleport <entry[meruk_first_look].spawned_entity> <[point4]>
+        - wait 1t
+        - look <entry[meruk_first_look].spawned_entity> gilderstilt_location
+        
+    
+    - wait <[speed].mul[2]>s
+    - narrate "And this is one of the many Bardic Guild Halls." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "If you want to become a Bard, talking to <&color[#82b1f2]>Gilderstilt<&r> is a good start." targets:<player>
+    - wait <[speed].mul[3]>s
+    
+   
+    - teleport <player> meruk_player_start
+    - teleport <entry[meruk_first_look].spawned_entity> <location[meruk_player_start].up[2]>
+    
+    - adjust <player> spectate:<entry[meruk_first_look].spawned_entity>
+    - look <entry[meruk_first_look].spawned_entity> <[main_npc].eye_location>
+    - wait <[speed].mul[2]>s
+    - narrate "I'm afraid the threats from the Outer Sea will put an end to this town and of Song Tide Archipelago." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "Druvvenrog wishes to extinguish magic and the religion of the Old Gods from all of Deluvia." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "That is why I have a hope that you new mortals popping up will help us and learn magic, instead of joining the darkness." targets:<player>
+    - wait <[speed].mul[4]>s
+    - narrate "Yes I dabble in magic as well." targets:<player>
+    - animate <[main_npc]> animation:arm_swing
+    - wait 4t
+    - playeffect effect:FIREWORKS_SPARK at:meruk_location target:<player> visibility:100 quantity:375 
+    - repeat 16:
+        - playeffect effect:flame quantity:10 at:<location[meruk_location].up[1.5].right[.25]> offset:0.0,0.1,0 target:<player>
+        # - playeffect effect:flame at:<[main_npc].up[1]> visibility:500 quantity:10 offset:0.0 target:<player>
+        - wait 4t
+    - animate <[main_npc]> animation:arm_swing
+    - wait <[speed].mul[3]>s
+    - narrate "I am by no means as powerful as the Four Arch Mages which watch over Song Tide and keep a veil of protection warding off evil." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "In fact, building is even protected by their spells and pioneers must travel out among <&color[#3ca91a]>The Long Sea<&r> to find their own area to build the next stronghold or empire." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "Seek out my fellow Deluvians down the path in <&color[#3ca91a]>Bardtown<&r> and in the islands outside of it and they can offer you help." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "You will find out who you are in time." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate "Also be wary of certain ones of them, as more nefarious being come and lurk to steal and harm." targets:<player>
+    - wait <[speed].mul[3]>s
+    - narrate "I have bent your ear enough and I will see you again soon, I am sure." targets:<player>
+    - wait <[speed].mul[2]>s
+    - narrate  "<gray><italic>You say:<&r>  <&B>First can you teach me that fancy fire touch spell?" targets:<player>
+    - wait <[speed].mul[2]>
+    - narrate "Yes, indeed, spells can be useful. Talk to more mages out there in the world to learn more." targets:<player>
+    - wait <[speed].mul[2]>
+    - narrate "There now you know something of this. " targets:<player>
+    - flag <player> skill.spells.firetouch.level:1
+    - playsound <player> sound:ENTITY_PLAYER_LEVELUP volume:0.5 pitch:0.8
+    - narrate format:game_message "You have learned the <&color[#92acb2]>fire touch<&r><&color[#888888]><italic> spell" targets:<player>
+    - wait <[speed].mul[2]>s
+    - adjust <player> gamemode:adventure
+    - adjust <player> spectate:<player>
+    - narrate "Now go down the path to Bardtown if you desire. " targets:<player>
+#     - cast blindness <player> duration:4s
+#     - teleport <player> the_real_meruk_player_location
+#     - look <player> meruk_looking_at_rothigport_path
+
+    - remove <entry[meruk_first_look].spawned_entity>
+    - flag <player> first_spawn_meruk_cutscene:!
+    - flag <player> meruk_talk_01
+    - adjust <player> show_to_players
+    - invisible <player> state:false
+
+
+
+
+
+meruk_spawn_cutscene1:
+    type: task
+    script:
+    # - wait 5t
+    - teleport <player> meruk_player_start
+    - flag <player> first_spawn_meruk_cutscene
+    # - invisible <player> state:true
+    - adjust <player> hide_from_players
+    # - adjust <player> hide_entity:<player>
+    - spawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|air]" <location[meruk_player_start]> save:meruk_first_look
+    - flag <entry[meruk_first_look].spawned_entity> <player>
+    - define main_npc <player.location.find_npcs_within[8].filter[nickname.is[==].to[meruk]].filter[is_spawned].first>
+    - adjust <player> spectate:<entry[meruk_first_look].spawned_entity>
+    - adjust <player> gamemode:spectator
+    
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Meruk<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+    - narrate "Ah so you’ve arrived." targets:<player>
+    - wait 2s
+    - narrate "<&color[#3ca91a]>Deluvia<&r>, our world has been springing up new beings and some of them arrive here to me." targets:<player>
+    - wait 2s
+    - narrate "What shall I call you? Hero, Mortal? Traveler?" targets:<player>
+    - narrate format:game_message "chat 'skip' to skip this introduction."
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - wait 2s
+    - narrate "This is a harsh world, and it seems to have gotten harsher in recent times " targets:<player>
+    - wait 2s
+    - narrate "and it is no wonder that Deluvia has conjured you here to this spot in the world, the cave in which I hide, watching <&color[#3ca91a]>Rothigport<&r>, that town down the path; and I wait for a sign." targets:<player>
+    - wait 2s
+    - narrate "Are you this sign?" targets:<player>
+    - wait 2s
+    - narrate "All twelve of us original elder sages are recluse, yet, some of us remain close enough to civilization to chronicle what storms are to come upon the beings of Deluvia." targets:<player>
+    - wait 2s
+    - narrate "We hope that you can help us but whatever path you choose is up to you." targets:<player>
+    - wait 2s
+    - narrate "We’re glad you’re here." targets:<player>
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - wait 2s
+    - narrate "Oh how rude of me, let me not get ahead of myself." targets:<player>
+    - wait 2s
+    - narrate "I am <&color[#a91a1a]>Meruk<&r>, the sage of scholars and Keeper of the Deluvic Bardsong, an ancient tome chronicling our land." targets:<player>
+    - wait 2s
+    - narrate "What is a scholar doing living in a cave you ask?" targets:<player>
+    - wait 2s
+    - narrate "Ha ha ha. Fair enough." targets:<player>
+    - wait 2s
+    - narrate "All of us sages, have used our specialities to their height at one point or another during this Age of Kings," targets:<player>
+    - wait 2s
+    - narrate "but things are not always safe for us after the <&color[#f5e700]>Great War<&r> between the gods and the mortals," targets:<player>
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - wait 2s
+    - narrate "and we found new occupations in dank locations; but I do still, however, keep my books." targets:<player>
+    - wait 2s
+    - narrate "I have written extensively about <&color[#3ca91a]>Rothigport<&r> and <&color[#3ca91a]>Songtide<&r> lately." targets:<player>
+    - wait 2s
+    - narrate "<&color[#3ca91a]>Songtide<&r> being this realm, far away from the powerful civilizations, and <&color[#3ca91a]>Rothigport<&r> being one of its main commercial centers." targets:<player>
+    - wait 2s
+    - narrate "I brought my family here after living in <&color[#3ca91a]>Druvvenrog<&r> as one of their top scholars. " targets:<player>
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - wait 2s
+    - narrate "The Druvs and Venrogs though mortals too, made things hostile there for those of us seeking truth and understanding of the <&color[#f5e700]>Great Severing<&r>." targets:<player>
+    - wait 2s
+    - narrate "I still sneak back into <&color[#3ca91a]>Druvvenrog<&r>, to visit their libraries and to watch a skiffrunner race once and awhile," targets:<player>
+    - wait 2s
+    - narrate "but as time goes on, this dark hole in a rock is all I have left." targets:<player>
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - wait 2s
+    - narrate  "<gray><italic>You say:<&r>  <&B>Tell me more about <&color[#3ca91a]>Songtide<&r>." targets:<player>
+    - wait 2s
+    - teleport <player> rothigport_chunkload
+    - teleport <entry[meruk_first_look].spawned_entity> rothigport_chunkload
+    - adjust <player> spectate:<entry[meruk_first_look].spawned_entity>
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - rotate <entry[meruk_first_look].spawned_entity> duration:10s frequency:1t yaw:1
+    - narrate "Me and my son met the fishermen with a few boats and a few docks in the middle of the harbor. " targets:<player>
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - wait 2s
+    - narrate "They did this to keep away from the land barbarians. " targets:<player>
+    - wait 2s
+    - narrate "We helped build the town, all out of wood, as it was the most humble of materials for a humble race of <&color[#a91a1a]>Anthorans<&r>, of which I am one " targets:<player>
+    - wait 2s
+    - narrate "<&color[#a91a1a]>Modrik<&r>, my son, became an engineer, and, built the causeway that connected the town to the land and more pilgrims came. " targets:<player>
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - wait 2s
+    - narrate "<&color[#a91a1a]>The Blackthorn Brothers<&r>, <&color[#a91a1a]>Merkti Prigtoon<&r> and other industrialists who cared not for magic, but for their own profits. " targets:<player>
+    - wait 2s
+    - narrate "The town grew fast." targets:<player>
+    - teleport <player> meruk_look_spot
+    - teleport <entry[meruk_first_look].spawned_entity> <location[meruk_look_spot].up[1]>
+    
+    - adjust <player> spectate:<entry[meruk_first_look].spawned_entity>
+    - look <entry[meruk_first_look].spawned_entity> <[main_npc].eye_location>
+    - wait 2s
+    - narrate "Today, the younglings of town are now again being attracted back to magic." targets:<player>
+    - wait 2s
+    - narrate "But this time it is different;" targets:<player>
+    - wait 2s
+    - narrate "it is a much darker form which they find alluring." targets:<player>
+    - wait 2s
+    - narrate "The elders think it is just a fad, but pay attention while you're there, and let me know what comes from it." targets:<player>
+    - wait 2s
+    - narrate "Yes I dabble in magic as well." targets:<player>
+    - animate <[main_npc]> animation:arm_swing
+    - wait 4t
+    - playeffect effect:FIREWORKS_SPARK at:meruk_location target:<player> visibility:100 quantity:375 
+    - repeat 16:
+        - playeffect effect:flame quantity:10 at:<location[meruk_location].up[1.5].right[.25]> offset:0.0,0.1,0 target:<player>
+        # - playeffect effect:flame at:<[main_npc].up[1]> visibility:500 quantity:10 offset:0.0 target:<player>
+        - wait 4t
+    - animate <[main_npc]> animation:arm_swing
+    - wait 3s
+    - wait 2s
+    - narrate "I am by no means as powerful as the Four Arch Mages which watch over Song Tide and keep a veil of protection warding off evil." targets:<player>
+    - wait 2s
+    - narrate "In fact, building is even protected by their spells and pioneers must travel out among <&color[#3ca91a]>The Long Sea<&r> to find their own area to build the next stronghold or empire." targets:<player>
+    - wait 2s
+    - narrate "Seek out my fellow Deluvians in <&color[#3ca91a]>Rothigport<&r> and in the islands outside of it and they can offer you help." targets:<player>
+    - wait 2s
+    - narrate "Also be wary of certain ones of them, as more nefarious being come and lurk to steal and harm." targets:<player>
+
+    - wait 3s
+    
+    
+    # - adjust <player> show_entity:<player>
+
+    # - look <entry[meruk_first_look].spawned_entity> <[main_npc].eye_location>
+    # - foreach <location[meruk_look_spot].points_between[meruk_view_location]> as:point:
+    #     - teleport <entry[meruk_first_look].spawned_entity> <[point]>
+    #     - look <entry[meruk_first_look].spawned_entity> <[main_npc].eye_location>
+    #     - wait 2t
+
+    - narrate  "<gray><italic>You say:<&r>  <&B>Why did you leave Druvvenrog?" targets:<player>
+    - teleport <player> druvvenrog_view_spot
+    - teleport <entry[meruk_first_look].spawned_entity> druvvenrog_view_spot
+    - adjust <player> spectate:<entry[meruk_first_look].spawned_entity>
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Meruk<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+    - rotate <entry[meruk_first_look].spawned_entity> duration:10s frequency:1t yaw:1
+    - wait 2s
+    - narrate "<&color[#3ca91a]>Druvvenrog<&r> was getting too dangerous for believers in the Old Gods, and for those of us from the Ancient Ways." targets:<player>
+    - wait 2s
+    - narrate "It is a great place to make a fortune as your back is getting stabbed." targets:<player>
+    - wait 3s
+    - narrate "It is now just layers of iron and brick between smokey grimey layer of brick and iron." targets:<player>
+    - wait 5s
+    - teleport <player> meruk_look_spot
+    - teleport <entry[meruk_first_look].spawned_entity> <location[meruk_look_spot].up[2]>
+    - adjust <player> spectate:<entry[meruk_first_look].spawned_entity>
+    - wait 10s
+    - narrate  "<gray><italic>You say:<&r>  <&B>Who are the 12 Sages?" targets:<player>
+    - teleport <player> sage_view_spot
+    - teleport <entry[meruk_first_look].spawned_entity> sage_view_spot
+    - wait 1s
+    - adjust <player> spectate:<entry[meruk_first_look].spawned_entity>
+    - wait 1s
+    - if <player.has_flag[skip_first_spawn_meruk_cutscene]>:
+        - run end_first_spawn_meruk_cutscene
+        - stop
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Meruk<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+    - rotate <entry[meruk_first_look].spawned_entity> duration:8s frequency:2t yaw:1
+    - wait 10s
+    - teleport <player> meruk_look_spot
+    - teleport <entry[meruk_first_look].spawned_entity> <location[meruk_look_spot].up[2]>
+    - wait 1s
+    - adjust <player> spectate:<entry[meruk_first_look].spawned_entity>
+    - wait 2s
+    - narrate "We are the first mortals to crawl out of the gapping Omphalos," targets:<player>
+    - wait 2s
+    - narrate "created by Deluvia herself we spread in the 12 directions progenerating the 12 races." targets:<player>
+    - wait 2s
+    - narrate "If you are curious about this land, I have no doubt you will get to meet them all eventually." targets:<player>
+
+    - narrate  "<gray><italic>You say:<&r>  <&B>What is this Savior you are awaiting?" targets:<player>
+    - wait 2s
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Meruk<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+    - narrate "The devout from this region and what good gods are left have pled for Deluvia to suppress the Severing she has unleashed," targets:<player>
+    - wait 2s
+    - narrate "including floods, wars, plagues and threats from within our own species." targets:<player>
+    - wait 2s
+    - narrate "We hope that a new set of Leaders can help this land in whichever direction they see fit," targets:<player>
+    - wait 2s
+    - narrate "as our time here is nearing an end." targets:<player>
+    - wait 2s
+    - narrate "I have bent your ear enough and I will see you again soon, I am sure." targets:<player>
+    - wait 2s
+    - narrate "I can teleport you down to Rothigport or another nearby port to start your adventure." targets:<player>
+    - narrate  "<gray><italic>You say:<&r>  <&B>First can you teach me that fancy fire touch spell?" targets:<player>
+    - wait 2s
+    - narrate "Yes, indeed, spells can be useful. Talk to more mages out there in the world to learn more." targets:<player>
+    - wait 2s
+    - narrate "There now you know something of this. " targets:<player>
+    - flag <player> skill.spells.firetouch.level:1
+    - playsound <player> sound:ENTITY_PLAYER_LEVELUP volume:0.5 pitch:0.8
+    - narrate format:game_message "You have learned the <&color[#92acb2]>fire touch<&r><&color[#888888]><italic> spell" targets:<player>
+    - wait 2s
+
+
+
+
+    - adjust <player> gamemode:adventure
+    - adjust <player> spectate:<player>
+
+#     - cast blindness <player> duration:4s
+#     - teleport <player> the_real_meruk_player_location
+#     - look <player> meruk_looking_at_rothigport_path
+
+    - remove <entry[meruk_first_look].spawned_entity>
+    - flag <player> first_spawn_meruk_cutscene:!
+    - adjust <player> show_to_players
+    - invisible <player> state:false
+    - teleport <player> spawn_rothigport
+
+
+
+
+end_first_spawn_meruk_cutscene:
+    type: task
+    script:
+    
+    - wait 5s
+    - adjust <player> gamemode:creative
+    - adjust <player> spectate:<player>
+    # - teleport <player> meruk_player_start
+    - flag <player> first_spawn_meruk_cutscene:!
+    - adjust <player> show_to_players
+    - remove <location[meruk_player_start].find_entities[armor_stand].within[8].filter[has_flag[<player>]]>
+
+    - invisible <player> state:false
+    - wait 1s
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Meruk<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+    - narrate "I'm sure I'll see you again. Ho ho " targets:<player>
+    - flag <player> skip_first_spawn_meruk_cutscene:!
+    - teleport <player> meruk_player_start
+
+
+
+mystical_mushroom_stew:
+    type: item
+    script:
+    material: player_head
+    mechanisms:
+        skull_skin: e67e0ca7-7e86-4211-84e3-3cd0f704d861|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTFlNWQwYzIzZWMxYTFmODEzYzBjNjNmMTEyZTU1YjdiMWM4N2ZlY2QzMjY5YzBmZGJjZTk2ZDAzYjU1OGMwOCJ9fX0=
+    display name: "mystical mushroom stew"
+
+

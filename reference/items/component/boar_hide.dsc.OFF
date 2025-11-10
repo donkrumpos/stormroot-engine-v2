@@ -1,0 +1,7 @@
+boar_hide:
+  type: item
+  material: bowl
+  display name: Boar Hide
+  mechanisms:
+    custom_model_data: 2110030
+    

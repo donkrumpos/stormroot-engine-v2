@@ -1,0 +1,72 @@
+cardiff_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:9
+        - fish cardiff_fish_loc
+    interact scripts:
+    - cardiff_interact
+
+    default constants:
+        appearance1: "<npc.name>'lives in the wild but seems mysterious."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+
+
+cardiff_interact:
+  type: interact
+  steps:
+    default:
+        proximity trigger:
+            entry:
+                script:
+                - equip <npc> hand:air
+                - equip <npc> hand:fishing_rod
+                - fish cardiff_fish_loc  catch:junk chance:50
+                - look <npc> cardiff_fish_loc
+            exit:
+                script:
+                - equip <npc> hand:air
+                - equip <npc> hand:fishing_rod
+                - fish cardiff_fish_loc catch:fish chance:1
+                - look <npc> cardiff_fish_loc 
+        click trigger:
+            script:
+            - fish <player.cursor_on> stop
+            - look <npc> <player.eye_location>
+            - inject description_inject_task
+            - if <player.flag[npc.<npc>.familiarity.level]||0> <= 1:
+                - if <proc[get_player_scores_proc].context[<player>]> < 6:
+                    - narrate format:npcchat "Oh. Howdy there."
+                    - wait 10t
+                    - narrate format:npcchat "You're new around here."
+                - else:
+                    - narrate format:npcchat "Howdy"
+            
+            - equip <npc> hand:air
+            - equip <npc> hand:fishing_rod
+            - if <player.flag[npc.<npc>.familiarity.level]||0> <= 1:
+                - narrate format:npcchat "I wish the fish would bit more often."
+                - wait 1s
+                - narrate format:npcchat "Us fishermen are having a rough time now."
+                - wait 1s
+                - narrate format:npcchat "The only one that seems to have some idea of the source of these troubles is Rosage the mystic."
+                - wait 1s
+                - narrate format:npcchat "Maybe you can help him out. He lives just up in that bridge back there."
+                - wait 10t
+                - look <npc> <npc[148].location>
+                - wait 5s
+                - look <npc> <player.eye_location>
+            - else:
+                - narrate format:npcchat "Hello again"
+                - wait 1s
+                - narrate format:npcchat "Have you spoken to Rosage yet to find out why the fish aren't biting?"
+
+
+            

@@ -1,0 +1,129 @@
+mangrin_assignment:
+    type: assignment
+    speed: 1t
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:2
+        on enter proximity:
+        - run mangrins_tail def:<npc>
+        # on exit proximity:
+
+    interact scripts:
+    - mangrin_interact
+    default constants:
+        skin: https://minesk.in/c0b388cc73374a89805c5b0d4a5505ab
+        appearance1: "<npc.name>' has dark greasy fur and an beady eyes."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+mangrin_data:
+    type: data
+    teach_price: 400
+    knowledge:
+        level: basic
+        teach:
+            special_skill:
+            - armor_ignore
+            - bleed_attack
+            - shadow_strike
+            - double_strike
+        lore:
+        - place.songtide
+        - skill.training_dummy
+        - race.woodland_clan.rat_clan
+                     
+
+mangrin_interact:
+    type: interact
+    steps:
+        default:
+            proximity trigger:
+                entry:
+                    script:
+                    - execute as_server "npc skin --url <npc.constant[skin]> --id <npc.id>"
+                    - if <player.flag[npc.<npc>.familiarity.level]||0> < 1:
+                        - inject description_inject_task
+                        - narrate format:npcchat "Salute! Feel free to try out my dojo."
+                    - else if <player.flag[npc.<npc>.familiarity.level]||0> > 1 && <player.flag[npc.<npc>.familiarity.level]||0> <= 3:
+                        - inject description_inject_task
+                        - narrate format:npcchat "Hail and welcome back."
+                        
+            click trigger:
+                script:
+                - run npc_first_conversation
+             
+                
+
+   
+
+mangrin_combat_1_task:
+    type: task
+    script:
+    - if <player.has_flag[lore.mangrin.combat_1]>:
+        - run mangrin_combat_2_task
+    - else: 
+        - inject description_inject_task
+        - narrate format:npcchat "combat is fairly common here in the Song Tide,"
+        - wait 10t
+        - narrate format:npcchat "So you've come to the right place;"
+        - wait 10t
+    
+        
+        - flag <player> lore.mangrin.combat_1
+        - else:
+            - run mangrin_combat_2_task
+
+
+mangrin_rat_1_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "The Twelve Anthoran Tribes are like one big family for we all came out of the Omphalos"
+    - wait 10t
+    - narrate format:npcchat "or so the tales are told to all the children of the Song Tide Islands".
+    - wait 10t
+    - narrate format:npcchat "There are Twelve and the Rat Clan is one. Perhaps you will meet more out there."
+    - wait 10t
+    - narrate format:npcchat "Us Rat Clan have a proclivity toward combat, and we are not all mischievious as some might think."
+    - flag <player> lore.race.rat.level:++
+    - zap default duration:20s
+
+create_player_journal_index:
+    type: task
+    definitions: entry
+    script:
+    # flag can look like lore.place.songtide.information
+    - define all_known_lore <list>
+    - foreach <player.flag[lore].deep_keys> as:lore_piece:
+        - define level <player.flag[lore.<[lore_piece]>]>
+        - if <[level]> > 0:
+            - define all_known_lore <[all_known_lore].insert[<script[lore_data].data_key[lore.<[lore_piece].replace_text[.level].replace_text[information].with[narration]>].get[1].to[<[level]>].separated_by[<&nl>]>].at[<[all_known_lore].size>]>
+    - define header "Things I've learned"
+    - adjust <player> "show_book:player_journal[book_pages=<[header]><&nl><&nl><[all_known_lore]>]"
+
+create_player_journal_content:
+    type: task
+    definitions: type
+    script:
+    - if <player.has_flag[lore].not>:
+        - narrate "I can't wait to write stuff down in my journal.s"
+    - define npc <[type]>
+    - narrate <red><[npc]>
+    - foreach <player.flag[lore].sort_by_value[<[npc]>]> as:item:
+        - foreach <[item]> as:new_item:
+            - define level <script[<[npc].name>_data].data_key[knowledge.level]>
+            - narrate <[new_item]>
+   
+
+player_journal:
+    type: book
+    title: My Journal
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - ""

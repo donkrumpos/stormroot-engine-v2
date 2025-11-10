@@ -1,0 +1,185 @@
+connect_to_discord:
+    type: world
+    events:
+        after server start:
+        - ~discordconnect id:steamfront_bot token:<secret[my_token]>
+
+player_joins_world_discord:
+    type: world
+    debug: true
+    events:
+        on player chats:
+        - ~discordmessage id:steamfront_bot channel:1107098330628116581 "<player.name> says: <context.message>"
+        on player quits:
+        - if <player.name> == sirbandersnatch:
+            - stop
+        - if <player.location.areas.any>:
+            - ~discordmessage id:steamfront_bot channel:1030561376495738930 "<player.name||A new player> has left the world at <player.location.areas.parse[note_name].formatted>"
+        - else:
+            - ~discordmessage id:steamfront_bot channel:1030561376495738930 "<player.name||A new player> has left the world at <player.location.format[bx, by, bz]>"
+
+            
+        on discord user joins:
+        - ~discordmessage id:steamfront_bot channel:1030561376495738930 "<context.user> has joined the Age of Storms Discord!"
+        on shutdown:
+        - ~discordmessage id:steamfront_bot channel:1030561376495738930 "Server shutting down <util.time_now.format_discord[F]>"
+
+        on player logs in for the first time:
+        - ~discordmessage id:steamfront_bot channel:1030561376495738930 "A new player has joined the server for the first time <util.time_now.format_discord[F]>"
+        on player joins:
+        - if <player.name> == sirbandersnatch:
+            - stop
+        # - if <player> == <server.match_player[SirBandersnatch].not>:
+        - if <player.location.areas.any>:
+            - ~discordmessage id:steamfront_bot channel:1030561376495738930 "<player.name||A new player> has entered the world at <player.location.areas.parse[note_name].formatted>."
+        - else:
+            - ~discordmessage id:steamfront_bot channel:1030561376495738930 "<player.name||A new player> has entered the world at <player.location.format[bx, by, bz]>"
+        # - ~discordmessage id:steamfront_bot channel:1030561376495738930 "Current Online Players: <&nl> <server.online_players.separated_by[<&co>]"
+        
+
+
+
+send_an_embed_to_play-now:
+    type: task
+    script:
+    
+    - define embed "<discord_embed.with_map[title=Join us to begin your adventure!;description=IP: mc.steamfront.net;color=#00FFFF]>"
+    - ~discordmessage id:steamfront_bot channel:1031635319004602469 <[embed]>
+
+send_an_embed_to_ingame:
+    type: task
+    script:
+    - define embed "<discord_embed.with_map[title=Use this channel to announce to players in the game;description=Please only use for emergencies, as this breaks immersion.;color=#00FFFF]>"
+    - ~discordmessage id:steamfront_bot channel:1031665816376184882 <[embed]>
+
+
+chat_bridge:
+    type: world
+    events:
+        # Note that this '12345' should be replaced by the raw channel ID you have copied.
+        # Unfortunately, tags like server.flag don't currently work in event label lines.
+        after discord message received channel:1031665816376184882:
+        # ex: [Discord] <acikek> Hello!
+        - announce "[<blue>Discord<&r>] <&lt><context.new_message.author.name><&gt> <context.new_message.text>"
+    
+
+create_steamfront_bot_talks:
+    type: task
+    script:
+    - definemap options:
+        1:
+            type: string
+            name: message
+            description: Make Steamfront Bot chat
+            required: true
+
+    - ~discordcommand id:steamfront_bot create name:steamfront_bot_chat "description:Make SteamFront Bot talk." "group:<discord[steamfront_bot].group[Age of Storms]>" options:<[options]>
+
+
+
+steamfront_bot_chat:
+    type: world
+    events:
+        on discord slash command name:steamfront_bot_chat:
+        - ~discordinteraction defer interaction:<context.interaction>
+        # Note that empty input to match_offline_player is guaranteed to return null.
+        - define message 
+        - define embed "<discord_embed.with_map[title=<context.options.get[message]>;description=;color=#00FFFF]>"
+
+
+        # - if <[player]> == null:
+        #     - ~discordinteraction reply interaction:<context.interaction> "That name is invalid, or that player has never joined!"
+        #     - stop
+
+        # - if <[player].is_online>:
+        #     - ~discordinteraction reply interaction:<context.interaction> "**<[player].name>** is online!"
+        # - else:
+        #     - define message "**<[player].name>** was last seen: <[player].last_played_time.format_discord>"
+        #     - ~discordinteraction reply interaction:<context.interaction> <[message]>
+        - ~discordinteraction reply interaction:<context.interaction> <[embed]>
+
+
+create_lastlogin:
+    type: task
+    script:
+    - definemap options:
+        1:
+            type: string
+            name: player
+            description: The Minecraft player's name
+            required: true
+
+    - ~discordcommand id:steamfront_bot create name:lastlogin "description:Displays a player's last login time." "group:<discord[steamfront_bot].group[Age of Storms]>" options:<[options]>
+
+
+
+lastlogin:
+    type: world
+    events:
+        on discord slash command name:lastlogin:
+        - ~discordinteraction defer interaction:<context.interaction>
+
+        # Note that empty input to match_offline_player is guaranteed to return null.
+        - define player <server.match_offline_player[<context.options.get[player].if_null[<empty>]>].if_null[null]>
+
+        - if <[player]> == null:
+            - ~discordinteraction reply interaction:<context.interaction> "That name is invalid, or that player has never joined!"
+            - stop
+
+        - if <[player].is_online>:
+            - ~discordinteraction reply interaction:<context.interaction> "**<[player].name>** is online!"
+        - else:
+            - define message "**<[player].name>** was last seen: <[player].last_played_time.format_discord>"
+            - ~discordinteraction reply interaction:<context.interaction> <[message]>
+
+# player_leaves_world_discord:
+#     type: world
+#     debug: true
+#     events:
+#         on player quits:
+#         - ~discordmessage id:steamfront_bot channel:1030561376495738930 "<player.name> has left Songtide at <util.time_now.format_discord[F]>"
+#         # - ~discordmessage id:steamfront_bot channel:1030561376495738930 "Current Online Players: <&nl> <server.online_players.separated_by[<&co>]"
+
+# send_an_embed:
+#     type: task
+#     script:
+#     - define embed "<discord_embed.with_map[title=Example Bot;description=Wow! This bot sure is a bot;timestamp=<util.time_now>;color=#00FFFF]>"
+#     - ~discordmessage id:steamfront_bot channel:1030561376495738930 <[embed]>
+
+send_a_message:
+    type: task
+    script:
+    - ~discordmessage id:steamfront_bot channel:1030561376495738930 "Hello, world 2."
+
+    # permissions integer 3843929668855
+
+# Start_Discord_Bot:
+#     type: world
+#     debug: false
+#     events:
+#         on server start:
+#         - wait 80s
+#         - run Connect_Denizen_Bot
+#         - announce to_console "Denizen Bot has successfully loaded"
+# Discord_Startup_Test:
+#     type: task
+#     debug: false
+#     script:
+#     - wait 5s
+#     - run Connect_Denizen_Bot
+#     - announce to_console "Denizen Bot has successfully loaded via the test script"
+# New_Player_Alert:
+#     type: world
+#     debug: false
+#     events:
+#         on player logs in for the first time:
+#         - ~discordmessage id:sxr channel:343105813293826059 "<&lt><&at>&223441207341219840<&gt>, **<player.name>** has joined the server for the first time! Say hello in <&lt><&ns>191040977652285450<&gt>!"
+#         - announce "<red>The Gods speak<white>: <player.name> is new to the server, please welcome them!"
+# Death_Message_Repeater:
+#     type: world
+#     debug: false
+#     events:
+#         after player dies:
+#         - announce to_console <context.message>
+#         #- ~discordmessage id:sxr channel:191040977652285450 ":skull: <context.message>"
+# #Emoji format: "<&lt>:kappa:327884375410737153<&gt>"

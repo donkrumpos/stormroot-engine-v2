@@ -1,0 +1,4 @@
+dust_task:
+    type: task
+    script:
+    - playeffect at:<player.location> quantity:100 effect:DUST_COLOR_TRANSITION special_data:1|<&color[#6b6658]>|<&color[#cfb464]> offset:2,0.5,2

@@ -1,0 +1,9 @@
+symbolofruintask:
+  type: task
+  script:
+  - create ARMOR_STAND <player.location.with_y[<player.location.y.sub[1]>]> "<red>♈" save:circle1
+  - adjust <entry[circle1].created_npc> gravity:false
+  - invisible <entry[circle1].created_npc> true
+  - wait 10s
+  # - damage_task def:<entry[circle1].created_npc.location.find_entities.within[5]>|<player>|fire|<player.flag[intelligence].mul[3]>
+  - remove <entry[circle1].created_npc>

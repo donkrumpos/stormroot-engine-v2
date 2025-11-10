@@ -1,0 +1,9 @@
+journal:
+    type: book
+    title: <player.name>'s Journey
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - ""
+

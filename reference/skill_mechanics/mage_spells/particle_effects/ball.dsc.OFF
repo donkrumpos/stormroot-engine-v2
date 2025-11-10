@@ -1,0 +1,6 @@
+ball_task:
+    type: task
+    script:
+    - shoot item_projectile[item=barrier] spread:1 height:1 speed:2 save:volleySave no_rotate
+    - while <entry[volleySave].shot_entities.get[1].is_spawned>:
+        - playeffect effect:flame at:<entry[volleySave].shot_entities.parse[location]>

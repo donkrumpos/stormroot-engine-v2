@@ -1,0 +1,430 @@
+npc_world:
+    type: world
+    debug: true
+    events:
+        on npc spawns:
+        - if <npc.constant[proximity].exists> && <ellipsoid[n_<npc.id>_proximity_ellipsoid].exists.not>:
+            - note <npc.location.to_ellipsoid[5,2,5]> as:n_<npc.id>_proximity_ellipsoid
+            - wait 4t
+            - flag <ellipsoid[n_<npc.id>_proximity_ellipsoid]> npc_proximity
+            - adjust server save
+        on player enters area_flagged:npc_proximity:
+        - ratelimit <player> 4t
+        - define npc <context.area.note_name.before[_proximity_ellipsoid].replace[_].with[@]>
+        - flag <player> npc_proximity:<[npc]>
+        - wait 1s
+        - if <player.has_flag[delay_proximity_join].not> && <[npc].constant[delay_proximity_join].exists>:
+            - run npc_chat_handler_task def:<[npc]>|<player>|proximity
+        - wait 5s
+        - flag <player> npc.<[npc].name>.prox_count:++
+        # - narrate "flagging npc.<[npc].name>.prox_count"
+        on player exits area_flagged:npc_proximity:
+        - define npc <context.area.note_name.before[_proximity_ellipsoid].replace[_].with[@]>
+        - flag <player> npc_proximity:!
+        
+        - run npc_chat_handler_task def:<[npc]>|<player>|proximity
+        after player right clicks npc:
+        - ratelimit <player> 4t
+        - if <npc.constant[has_familiarity].exists>:
+            - run raise_npc_familiarity_task def:<context.entity>
+        - if <npc.constant[dialog].exists>:
+            - run npc_chat_handler_task def:<npc>|<player>|click
+
+npc_chat_handler_task:
+    type: task
+    debug: true
+    definitions: npc|player|click_or_proximity|question_or_answer|step
+    script:
+    # - if <[player].has_flag[suspend_clickable]>:
+    #     - stop
+    # - flag <player> suspend_clickable expire:10s
+    - if <[step].exists.not>:
+        - define step 1
+    - ratelimit <[player]> 1s 
+    - define script <script[<[npc].constant[dialog]>].data_key[dialog]>
+    - define narration <[script].get[1]>
+    - define iterator <[script].get[<[step]>].get[<[click_or_proximity]>].get[1].size>
+    # - while <[iterator]> > 0:
+    #     # - narrate <gold><[script].get[<[step]>].get[<[click_or_proximity]>].length>
+    #     - run npc_chat_narrator def:<[script].get[<[step]>].get[<[click_or_proximity]>].get[<[loop_index]>]>
+    #     - define iterator <[iterator].sub[1]>
+    # - stop
+    # - define statement <list>
+    
+    - define statement_type questions
+    - if <[click_or_proximity]> == proximity:
+        - define statement_type statement
+        - stop
+    - inject description_inject_task
+    - define random <util.random.int[1].to[<[script].get[<[step]>].get[<[click_or_proximity]>].get[1].get[statement].get[narration].size>]>
+    # - narrate <[script].get[<[step]>].get[<[click_or_proximity]>].get[1].get[statement].get[narration].get[<[random]>]>
+    - foreach <[script].get[<[step]>].get[<[click_or_proximity]>].get[1].get[statement].get[narration].get[<[random]>]> as:phrase:
+        - if <proc[statement_check].context[<[player]>|<[script].get[<[step]>].get[<[click_or_proximity]>].get[1].get[statement]>]>:
+            - narrate <white><[phrase]>
+    # - narrate <green><[statement_type]>
+    
+    - foreach <[script].get[<[step]>].get[<[click_or_proximity]>].get[1].get[<[statement_type]>]> as:statement:
+        # - narrate <blue><[loop_index]>
+        
+        - if <proc[statement_check].context[<[player]>|<[statement]>].not>:
+            - foreach next
+        - define chat_color <&color[#6fd6cb]>
+        - if <[player].has_flag[npc.<[npc]>.dialog.<[loop_index]>]>:
+            - define chat_color <&color[#859d9e]>
+        - clickable save:<[npc].name>_clickable_<[player].name>_<[loop_index]> until:10s for:<[player]>:
+            - inject description_inject_task
+            - define answer_set <[statement].get[answer].get[narration]>
+            - if <[answer_set].size> > 1:
+                - define answer_set <[statement].get[answer].get[narration].get[<util.random.int[1].to[<[answer_set].size>]>]>
+            - foreach <[answer_set]> as:answer:
+                - foreach <[answer]> as:answer_line:
+                    - if <script[chat_keywords].data_key[word].keys.shared_contents[<[answer_line].replace[,].replace[.].split_args>].size> > 0:
+                    # - narrate <gold><[answer].replace[,].replace[.].split_args>
+                        - foreach <script[chat_keywords].data_key[word].keys.shared_contents[<[answer_line].replace[,].replace[.].split_args>]> as:edited_word:
+                            - define color <script[chat_keywords].data_key[word.<[edited_word]>.color]>
+                            - define hover_text <script[chat_keywords].data_key[word.<[edited_word]>.hover_text]>
+                            - define keyword_display <[edited_word]>
+                            - if <script[chat_keywords].data_key[word.<[edited_word]>].contains[display]>:
+                                - define keyword_display <script[chat_keywords].data_key[word.<[edited_word]>.display]> 
+                            - define answer_line <[answer_line].replace[<[edited_word]>].with[<&hover[<&color[#ababab]><[hover_text]>]><&l><[keyword_display].color[#<[color]>]><&r><&end_hover>]>
+                    # - define wait_time <[answer_line].length.div[3].add[5]>
+                    - narrate format:npcchat <[answer_line]> targets:<[player]>
+                    # - wait <[wait_time]>t
+            - if <[statement].get[answer].contains[sell]>:
+                - if <npc.constant[sell].exists>:
+                    - wait 1s
+                    - run vendor_task def:<[npc]>|sell
+            - if <[statement].get[answer].contains[buy]>:
+                - if <npc.constant[buy].exists>:
+                    - run vendor_task def:<[npc]>|buy
+            - if <[statement].contains[item_given]>:
+                - run item_giver def:<[player]>|<[statement]>|<[npc]>
+            - if <[statement].contains[flag_given]>:
+                - run flag_giver def:<[player]>|<[statement]>
+            - if <[statement].get[answer].contains[item_taken]>:
+                - run item_taker def:<[player]>|<[statement]>|<[npc]>
+            - if <[statement].get[answer].contains[item_given]>:
+                - run item_giver def:<[player]>|<[statement].get[answer]>|<[npc]>
+            - if <[statement].get[answer].contains[script_to_run]>:
+                - run <[statement].get[answer].get[script_to_run].get[script]>
+        - define this_question "<&color[#545454]><&lb><&sp><&sp><&sp><&sp><&color[#fbfb54]>:: <[chat_color]><[statement].get[narration].first><&sp><&sp><&color[#545454]><&rb>" 
+        - define hover_text "<&hover[Click to say this to <[npc].name>.]><[this_question]><&end_hover>"
+        - define phrase2 "<element[<[hover_text]>].on_click[<entry[<[npc].name>_clickable_<[player].name>_<[loop_index]>].command>]>"
+        - narrate <[phrase2]>
+        - flag <[player]> npc.<[npc]>.dialog.<[loop_index]>
+        
+flag_giver:
+    type: task
+    definitions: player|statement|npc
+    script:
+     - if <[statement].contains[flag_given]>:
+        - flag <player> <[statement].get[flag_given].get[flag]>
+
+item_giver:
+    type: task
+    definitions: player|statement|npc
+    script:
+    - if <[statement].contains[item_given]>:
+        - if <item[<[statement].get[item_given].get[item]>].has_script>:
+            - define display <item[<[statement].get[item_given].get[item]>].display>
+        - else:
+            - define display <item[<[statement].get[item_given].get[item]>].material.name.replace[_].with[<&sp>]>
+        - give <[statement].get[item_given].get[item]> quantity:<[statement].get[item_given].get[quantity]> player:<[player]>
+        - narrate format:game_message "<[npc].name> has given you <[statement].get[item_given].get[quantity]> <[display]>."
+
+item_taker:
+    type: task
+    definitions: player|statement|npc
+    script:
+    - take <[player].item_in_hand> quantity:<[statement].get[required_item].get[quantity]> from:<[player]>
+
+statement_check:
+    type: procedure
+    definitions: player|statement
+    script:
+    - define return_statement true
+    - if <[statement].contains[prohibited_flag]>:
+        - if <[player].has_flag[<[statement].get[prohibited_flag].get[flag]>]>:
+            - if <[statement].get[prohibited_flag].contains[flag_value]>:
+                - if <[player].flag[<[statement].get[prohibited_flag].get[flag]>]> >= <[statement].get[prohibited_flag].get[flag_value]>:
+                    # - foreach next
+                    - define return_statement false
+            - else:
+                # - foreach next
+                - define return_statement false
+    - if <[statement].contains[required_flag]>:
+    # I use repeat so that I can still use 'foreach next' to skip the outer loop
+        - if <[player].has_flag[<[statement].get[required_flag].get[flag]>].not>:
+            - define return_statement false
+        # - repeat <[statement].get[required_flag].get[flag].size>:
+        #     - if <[player].has_flag[<[statement].get[required_flag].get[flag].get[<[value]>]>].not>:
+        #         # - foreach next
+        #         - define return_statement false
+        #     - if <[statement].get[required_flag].contains[flag_value]>:
+        #         - if <[player].flag[<[flag]>]> == <[statement].get[required_flag].get[flag_value]> || <[player].flag[<[flag]>]> <= <[statement].get[required_flag].get[flag_value]>:
+        #             # - foreach next
+        #             - define return_statement false
+    - if <[statement].contains[required_item]>:
+        - if <[player].item_in_hand.script.name> == <[statement].get[required_item].get[item]> && <[player].item_in_hand.quantity> >= <[statement].get[required_item].get[quantity]>:
+            - narrate item 
+            
+        - else:
+            # - foreach next
+            - define return_statement false
+    # - if <[statement].contains[item_taken]>:
+    #     - if <[statement].get[required_item].contains[take_item]> && <[statement].get[required_item].get[take_item]> != false:
+    #         - take <[player].item_in_hand> quantity:<[statement].get[required_item].get[quantity]> from:<[player]>
+    #         - narrate "<red>taking <green><[player].item_in_hand> quantity:<[statement].get[required_item].get[quantity]> from:<[player]>"
+    # - narrate <[statement].get[narration]>====<[return_statement]>
+    - determine <[return_statement]>
+    - define random 1
+    - determine <[statement]>
+ 
+
+
+raise_npc_familiarity_task:
+    type: task
+    definitions: npc
+    script:
+    #make sure this is a server npc and not a pet
+    - if <[npc].constant[has_familiarity]>:
+
+        - flag <player> npc.<[npc]>.familiarity.level:++
+        - if <util.random.int[1].to[<player.flag[npc.<[npc]>.familiarity.level].add[3]>]> == 1:
+            #raise the charisma of the player as a reward for talking to NPCs
+            - run raise_natural_skill_task def:<player>|charisma|0|0
+    - narrate "<gray>familiarity with <npc.name> is <player.flag[npc.<[npc]>.familiarity.level]>" targets:<server.match_player[SirBandersnatch]>
+
+npc_behavior_task:
+    type: task
+    definitions: npc
+    script:
+    - foreach <server.worlds> as:world:
+        - define time_period <[world].time.period>
+    - foreach <server.notes[cuboids]> as:notable:
+        # - announce <[notable].note_name>
+        - foreach <script[regions].data_key[region]> as:region:
+            # - announce <[key]>
+            - run spawn_npcs_task def:<[key]>|<[time_period]>
+         
+    # - run spawn_npcs_task def:<player>|<context.area>
+
+despawn_npcs_task:
+    type: task
+    definitions: area
+    script:
+    - foreach <server.flag[<[area]>_npcs]> as:npc:
+        - despawn <[npc]>
+
+
+spawn_npcs_task:
+    type: task
+    definitions: area|time_period
+    script:
+    # find all the npcs for this area, which is contained in the areas server flag
+    #TODO need to make sure pets, that use the npc mechanics, don't get pulled into this, check if npc's owner is server?
+    #TODO so far I do this by checking of the server has the flag for this area and it contains the NPC
+    # - announce "time period in task <[time_period]>"
+    # - narrate <[area]>
+    - foreach <server.flag[<[area]>_npcs]> as:npc:
+        - define npc_available <script[npc_data].data_key[npc.<npc[<[npc].id>].name>.availabilty].contains[<[time_period]>]>
+        # - narrate <[npc]>
+        - if <[npc_available]>:
+            
+            - if <npc[<[npc].id>].is_spawned.not>:
+                # - announce <[npc]>
+                - if <script[npc_data].data_key[npc.<npc[<[npc].id>].name>.region]> == <[area]>:
+                    
+                    - spawn <npc[<[npc].id>]> <script[npc_data].data_key[npc.<npc[<[npc].id>].name>.location]>
+                    - run assign_npc_traits_task def:<[npc]>
+                # - if <script[npc_data].data_key[npc.<npc[<[npc].id>].name>.region]> != <[area]>:
+                #     - narrate "<script[npc_data].data_key[npc.<npc[<[npc].id>].name>.region]> = <[area]>"
+        - else:
+            # - announce "<[npc].name> <[npc].location.world>  <[time_period]>"
+            - if <npc[<[npc].id>].is_spawned>:
+                - run despawn_npcs_task def:<[area]>
+
+
+
+npc_spawnpoint_task:
+    type: procedure
+    definitions: npc
+    script:
+    - define npc_x <script[npc_data].data_key[npc.<npc[<[npc].id>].name>.location.x]>
+    - define npc_y <script[npc_data].data_key[npc.<npc[<[npc].id>].name>.location.y]>
+    - define npc_z <script[npc_data].data_key[npc.<npc[<[npc].id>].name>.location.z]>
+    - define npc_world <script[npc_data].data_key[npc.<npc[<[npc].id>].name>.location.world]>
+    - define location <location[<[npc_x]>,<[npc_y]>,<[npc_z]>,<[npc_world]>]>
+    - determine <[location]>
+
+assign_npc_traits_task:
+    type: task
+    definitions: entity
+    script:
+    # upon spawning npc gives the npc its traits
+    # - announce <[entity].name>
+    - adjust <[entity]> lookclose:<script[npc_data].data_key[npc.<[entity].name>.lookclose]||true>
+    - adjust <[entity]> range:<script[npc_data].data_key[npc.<[entity].name>.range]||16>
+    - assignment clear npc:<[entity].id>
+    - foreach <script[npc_data].data_key[npc.<[entity].name>.scripts]> npc:<[entity].id> as:script:
+        - if <[entity].scripts.contains[<[script]>]>:
+            - foreach next
+        - assignment add script:<[script]> npc:<[entity].id>
+    - if <script[npc_data].data_key[npc.<[entity].name>.guard_region]||null> != "null":
+        - define guard_region  <script[npc_data].data_key[npc.<[entity].name>.guard_region]>
+        # - narrate "guards id number <[entity].id>"
+        # - announce "trait sentinel --id <[entity].id>"
+        # - if <[entity].script.name> == "town_guard_assignment":
+        #     - assignment set script:town_guard_assignment npc:<[entity].id>
+        - if <[entity].has_trait[sentinel].not>:
+            - execute as_server "trait sentinel --id <[entity].id>"
+            
+            # - wait 5t
+            
+            - execute as_server "sentinel wgregion <[guard_region]> --id <[entity].id>"
+            - execute as_server "sentinel addtarget monsters --id <[entity].id>"
+            - execute as_server "sentinel chaserange 60 --id <[entity].id>"
+            - wait 1t
+            - equip <[entity]> hand:<script[npcs].data_key[npc.<[entity].name>.hand]||AIR>
+        
+
+
+create_npcs:
+    type: task
+    script:
+    # This will eventually create all the NPCs in the game if they are not already created
+    - foreach <script[regions].data_key[region]> as:region:
+        - if <server.has_flag[<[key]>_npcs]>:
+            #first remove the server flag with the npcs for this region so we can rewrite it.
+            - flag server <[key]>_npcs:!
+        - foreach <script[regions].data_key[region.<[key]>.npcs]> as:npc:
+            
+            - define npc_x <script[npc_data].data_key[npc.<[npc]>.location.x]>
+            - define npc_y <script[npc_data].data_key[npc.<[npc]>.location.y]>
+            - define npc_z <script[npc_data].data_key[npc.<[npc]>.location.z]>
+            - define npc_world <script[npc_data].data_key[npc.<[npc]>.location.world]>
+            - create player <script[npc_data].data_key[npc.<[npc]>.display_name]> <location[<[npc_x]>,<[npc_y]>,<[npc_z]>,<[npc_world]>]>  save:created_npc
+            - define this_npc <entry[created_npc].created_npc>
+            - adjust <[this_npc]> skin:<script[npcs].data_key[npc.<[npc]>.skin]>
+            - adjust <[this_npc]> lookclose:<script[npcs].data_key[npc.<[npc]>.lookclose]||true>
+            - flag server <[key]>_npcs:->:<npc[<[this_npc].id>]>
+            - if <script[npc_data].data_key[npc.<[npc]>.scripts].any>:
+                - foreach <script[npc_data].data_key[npc.<[npc]>.scripts]> as:script:
+                    
+                    - assignment set script:<[script]> npc:<npc[<[this_npc].id>]>
+
+
+npc_chat_display_entity:
+    type: entity
+    debug: false
+    entity_type: text_display
+    mechanisms:
+        # text: ____
+        view_range: 1
+        pivot: center
+        see_through: true
+        # text_shadowed: true
+        interpolation_start: 0
+        interpolation_duration: 5s
+        scale: 0.5,0.5,0.5
+        background_color: black
+        line_width: 150
+        # width: 1
+        # height: 1
+
+interaction_entity:
+    type: entity
+    entity_type: interaction
+    mechanisms:
+        # view_range: 2
+        pivot: center
+        width: 1
+        height: 0.25
+        interpolation_start: 0
+        interpolation_duration: 5s
+        # scale: 0.5,0.5,0.5
+        line_width: 150
+
+server_npcs:
+    type: task
+    script:
+    - foreach <server.npcs> as:npc:
+        - adjust <[npc]> name_visible:true
+
+preprocess_all_npc_keywords:
+    type: task
+    script:
+    - foreach <server.npcs> as:npc:
+        - define npc_script <npc.constant[dialog]>
+        - run preprocess_npc_keywords def:<[npc_script]>
+
+
+preprocess_npc_keywords:
+    type: task
+    definitions: npc_script
+    script:
+    - define keyword_cache <map>
+    
+    # Loop through every line in the NPC script
+    - foreach <[npc_script].data_key[dialog]> as:dialog_line:
+        - foreach <[dialog_line].split_args> as:word:
+            # Check if the word matches a keyword
+            - if <script[chat_keywords].data_key[word].keys.contains[<[word]>]>:
+                - define keyword_data <script[chat_keywords].data_key[word.<[word]>]>
+                # Cache the keyword data for future use
+                - flag server npc_keyword_cache:<[npc_script]>:<[word]>:<[keyword_data]>
+
+
+chat_keywords:
+    type: data
+    colors:
+        skill_color: b45ce7
+        component: d2993f
+    word:
+        meditation:
+            color:  b45ce7
+            hover_text: "Helps regenerate mana"
+        amphithere_feather:
+            display: "amphithere feather"
+            color: d2993f
+            hover_text: "It sounds like a feather belonging to some creature."
+        scribes_quill:
+            display: "scribe's quill"
+            color: e9d33d
+            hover_text: "An item to craft spellbooks and scrolls."
+        parchment:
+            display: "parchment"
+            color: e9d33d
+            hover_text: "The surface in which scribes write spells and tomes."
+        Hall_of_Mythos:
+            display: "Hall of Mythos"
+            color: f5e700
+            hover_text: "One of the Five Bardic Guild Halls."
+        Hall_of_Hearten:
+            display: "Hall of Hearten"
+            color: f5e700
+            hover_text: "One of the Five Bardic Guild Halls."
+        Hall_of_Harlequin:
+            display: "Hall of Harlequin"
+            color: f5e700
+            hover_text: "One of the Five Bardic Guild Halls."
+        Hall_of_Glossolalia:
+            display: "Hall of Mythos"
+            color: f5e700
+            hover_text: "One of the Five Bardic Guild Halls."
+        Hall_of_Mischance:
+            display: "Hall of Mischance"
+            color: f5e700
+            hover_text: "One of the Five Bardic Guild Halls."
+        Yewestra:
+            display: "Yewestra"
+            color: 356a8e
+            hover_text: "A friend of Gilderstilt that lives West of Bardtown."
+        Rosensleeve:
+            display: "Rosensleeve"
+            color: 356a8e
+            hover_text: "A scribe in the Hall of Mythos."
+        skinning_knife:
+            display: "skinning knife"
+            color: e9d33d
+            hover_text: "A sharp knife used in the processing of leather."

@@ -1,0 +1,6 @@
+key_copper:
+  type: item
+  material: dried_kelp
+  display name: Copper Key
+  mechanisms:
+    custom_model_data: 81019210

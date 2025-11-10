@@ -1,0 +1,41 @@
+sniper_task:
+    type: task
+    script:
+    - title "title:<&chr[F809]><&chr[F808]><&chr[F802]><&chr[3117]>" stay:5s fade_in:1t fade_out:1t targets:<player>
+
+sniper_command:
+    type: command
+    name: sniper
+    script:
+    - define target <player.target||null>
+    - if <[target]> == "null" || <[target].is_living.not>:
+        - narrate "You need to have a valid target"
+        - stop
+    - if <[target].location.distance[<player.location>]> < 5:
+        - narrate "The target needs to be farther away to be able to sniper."
+        - stop
+    - define looking <player.location.face[<[target].location>]>
+    
+    - define entity "armor_stand[is_small=false;invulnerable=false;visible=true;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|air]"
+    - define forward_amount <player.location.points_between[<player.target.location>].size.sub[4]>
+    - spawn <[entity]> <player.location.forward[<[forward_amount]>].up[2]> save:sniper
+    - adjust <player> spectate:<entry[sniper].spawned_entity>
+    # - run sniper_task
+    # - look <player> <[looking]> duration:7s
+    - while <player.has_flag[sniping]>:
+        - wait 10
+        - title "title:<&chr[F809]><&chr[F808]><&chr[F802]><&chr[3117]>" stay:5s fade_in:0t fade_out:0t targets:<player>
+        - flag <player> stat.stamina_level:-:3
+        - narrate <[loop_index]>
+    # - remove <entry[sniper].spawned_entity>
+    - wait 5s
+
+            
+
+sniper2_task:
+    type: task
+    definitions: target
+    script:
+    - wait 10t
+    - adjust <player> spectate:<player>
+

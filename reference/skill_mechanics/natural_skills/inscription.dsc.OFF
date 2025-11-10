@@ -1,0 +1,208 @@
+inscription_world:
+  type: world
+  events:
+    on player right clicks lectern with:quill:
+    - run inscription_gui_generator
+    - determine passively cancelled
+    # on player right clicks lectern with:item_flagged:bound_spell:
+    # - if <player.inventory.contains_item[scroll_blank]>:
+      
+    # on player clicks in inscription_gui:
+    # # - narrate <red><context.slot>
+    # - if <context.clicked_inventory.script.name> == inscription_gui:
+    #   - narrate "<green> WEe good"
+    # - define slot_list <list[21|25|29|32|35|39|43]>
+    # - define slot_no_clicks <list>
+    # - if <[slot_list].contains[<context.slot>].not>:
+    #   - determine cancelled
+    # - else:
+    #   - narrate <blue><context.slot>
+    on player right clicks air with:item_flagged:bound_spell:
+    - define cast_spell <player.item_in_hand.flag[bound_spell]>
+    - run spell_task def:<[cast_spell].replace[<&sp>].with[]>|<player>|<player.target>
+    - take item:<player.item_in_hand> quantity:1
+
+inscription_gui_generator:
+    type: task
+    script:
+    - if <player.item_in_offhand.has_flag[item_type]> && <player.item_in_offhand.flag[item_type]> == spellbook:
+      - define spellbook <player.item_in_offhand>
+      - define current_spells <player.item_in_offhand.flag[spells]>
+      - define scrolls_list <list>
+      
+      - foreach <player.inventory.list_contents.filter[has_flag[bound_spell]]> as:scroll:
+        - if <[current_spells].contains[<[scroll].flag[bound_spell]>]>:
+          - foreach next
+        - clickable move_scroll_spellbook_task def:<[scroll]> save:move_scroll_spellbook_clickable
+    
+        - define scrolls_list "<[scrolls_list].insert[<element[<&hover[Click to add this scroll to your spellbook.]><&color[#545454]><&color[#eeeeee]><[scroll].display><&end_hover>].on_click[<entry[move_scroll_spellbook_clickable].command>]>].at[<[scrolls_list].size>]>"
+      - if <player.inventory.contains_item[scroll_blank]>:
+        - wait 1t
+        # - define scrolls_list "<[scrolls_list].insert[<&nl>].at[<[scrolls_list].size>]>
+        - foreach <player.item_in_offhand.flag[spells]> as:craft_spell:
+          - define display_name <script[spells_skills_data].data_key[spells.<[craft_spell]>.display_name]>
+          - clickable craft_scroll_task def:<[craft_spell]> save:craft_scroll_clickable
+          - define scrolls_list "<[scrolls_list].insert[<element[<&hover[Click to craft a scroll of this spell.]><&color[#ffe5a3]><[display_name]><&end_hover>].on_click[<entry[craft_scroll_clickable].command>]>].at[<[scrolls_list].size.add[1]>]>"
+    - if <[scrolls_list].size> > 10:
+      - define scrolls_list <[scrolls_list].insert_single[|].at[11]>
+   
+    - if <[scrolls_list].is_empty>:
+      - define scrolls_list "You have no scrolls you can move into your spellbook or blank scrolls to craft."
+    - define scroll_list <[scrolls_list].separated_by[<&nl>]>
+    - adjust <player> "show_book:inscription_gui_book[book_pages=<&nl><&nl><[scrolls_list]><&nl>]"
+    # - define inv <inventory[inscription_gui]>
+    # - inventory open d:<[inv]>
+
+move_scroll_spellbook_task:
+  type: task
+  definitions: spell
+  script:
+  - if <player.item_in_offhand.has_flag[spells]> && <player.item_in_offhand.flag[spells].contains[<[spell]>]>:
+    - narrate "Your spellbook already contains this spell."
+    - stop
+  - if <script[spells_skills_data].data_key[spells.<[spell].flag[bound_spell]>].contains[prerequiste]>:
+    - define prerequisite <script[spells_skills_data].data_key[spells.<[spell].flag[bound_spell]>.prerequisite]>
+    - if <player.item_in_offhand.has_flag[spells.<[prerequisite]>].not>:
+      - narrate "You need to have learned <[prerequisite]> before you can learn this spell" targets:<player>
+      - stop
+  - inventory flag slot:offhand spells:->:<[spell].flag[bound_spell]>
+  - take <player.inventory.list_contents.filter[flag[bound_spell].equals[<[spell].flag[bound_spell]>]]>
+  - narrate "<green>Copying <[spell].flag[bound_spell]> into your spellbook."
+
+craft_scroll_task:
+  type: task
+  definitions: spell
+  script:
+  - ratelimit <player> 5s
+  - if <player.has_flag[skill.skills.inscription.level].not>:
+    - flag <player> skill.skills.inscription.level:1
+  
+  - define difficulty <script[spells_skills_data].data_key[spells.<[spell]>.difficulty]||1>
+  - define difficulty_mod <[difficulty].mul[-1]>
+  - define success <proc[natural_skill_check_proc].context[<player>|inscription|<[difficulty_mod]>]>
+  - if <[success]> || 1 == 1:
+    # - define mana <script[spells_skills_data].data_key[spells.<[spell]>.mana.base]||10>
+    - define mana 1
+    - if <player.flag[stat.core.mana.level]> >= <[mana]>:
+      # - if <script[spells_skills_data].data_key[spells.<[spell]>].contains[component]>:
+      #   - define has_components true
+      #   - foreach <script[spells_skills_data].data_key[spells.<[spell]>.component]> as:component:
+      #     - if <player.inventory.contains_item[<[component]>].not>:
+      #       - define has_components false
+      #       - narrate "You are missing <[component]>"
+      #       - stop
+      #   - take <script[spells_skills_data].data_key[spells.<[spell]>.component]>
+      
+      - flag <player> stat.core.mana.level:-:<[mana]>
+      # - narrate "yes I can make <player.item_in_hand.flag[bound_spell]> <red><[mana]>"
+      - take scroll_blank
+      - give "<item[scroll_01].with[display=<[spell].to_titlecase> Scroll].with_flag[bound_spell:<[spell]>]>" quantity:1
+      - narrate "The scroll has been crafted and put into your backpack."
+      - if <util.random.int[0].to[3]> == 3:
+        - run raise_natural_skill_task def:<player>|inscription|0|0
+    - else:
+      - narrate "You don't have enough mana to craft this scroll."
+  - else:
+    - narrate "You failed to craft the spell."
+    - if <util.random.int[0].to[11]> == 1:
+        - run raise_natural_skill_task def:<player>|inscription|0|0
+
+
+drop_scroll:
+  type: task
+  definitions: location|rarity
+  script:
+  - if <[rarity].length> > 0:
+    - define rarity <[rarity]>
+  - else:
+    - define rarity 1
+  - define random_spell <script[spells_skills_data].data_key[spells].keys.random>
+  - define random_spell_difficulty <script[spells_skills_data].data_key[spells.<[random_spell]>.difficulty]>
+  
+  - if <script[spells_skills_data].data_key[spells.<[random_spell]>.circle]> != mage:
+    - stop
+  - if <util.random.int[1].to[<[random_spell_difficulty].sub[<[rarity]>].max[2]>]> == 1:
+    - define display <script[spells_skills_data].data_key[spells.<[random_spell]>.display_name]>  
+    - define item <item[scroll_01].with[display=<[display]>].with_flag[bound_spell:<[random_spell]>]>
+    # - narrate <green><[item]>
+    - drop <[item]> <[location]>
+
+spell_menu_generator_task:
+  type: task
+  script:
+  - define spell_list <list>
+  - define line_height "<&nl><&nl>"
+  - if <player.item_in_offhand.has_flag[item_type].not> || <player.item_in_offhand.flag[item_type]> != spellbook:
+    - narrate "You need to be holding a spellbook in your offhand to see its containsed spells."
+  - if <player.item_in_offhand.has_flag[spells]>:
+    
+    - foreach <player.item_in_offhand.flag[spells]> as:spell:
+      # - narrate <gold><[spell]>
+      - define spell_display_name <&font[steamfront:font]><script[spells_skills_data].data_key[spells.<[spell]>.display_name]>
+      - define spell_detail_display_name <&font[steamfront:font_large]><element[<script[spells_skills_data].data_key[spells.<[spell]>.display_name]>]>
+      
+      - define spell_display_name_short <&font[steamfront:font]><script[spells_skills_data].data_key[spells.<[spell]>.display_name]>
+      - if <[spell_display_name].length> > 43:
+          - define spell_display_name_short <[spell_display_name].before[<[spell_display_name_short].char_at[40]>]>
+      - define spell_color "<script[spells_skills_data].data_key[spells.<[spell]>.skill_color]||FFFFFF>"
+      - define icon "<white><&font[steamfront:font]><&chr[F807]><&font[steamfront:gui_icon]><script[spells_skills_data].data_key[spells.<[spell]>.icon]||0><&r><&sp>"
+      - define icon_large "<&font[steamfront:font]><&chr[F807]><&font[steamfront:gui_icon_large]><script[spells_skills_data].data_key[spells.<[spell]>.icon_large]||0>"
+      - define spell_description "<white><script[spells_skills_data].data_key[spells.<[spell]>.description]||no description available>"
+      - define spell_description  "<[spell_description].split_lines[28]>"
+      - define hover_text "<[icon_large]><&r><&sp><white><&color[#<[spell_color]>]><&font[adventurer2]><[spell_detail_display_name]><&nl><&nl><&nl><[spell_description]>"
+      
+      - define spell_text "<[icon]><&color[#ffe5a3]><[spell_display_name_short]>"
+      - define spell_hover "<&hover[<[hover_text]>]><[spell_text]><&end_hover>: <&hover[<[spell_title_hover]>]><&end_hover><[line_height]>"
+      
+      - define spell_list <[spell_list].insert[<[spell_hover]>].at[<[spell_list].size>]>
+  - if <[spell_list].size> > 6:
+    - define size <[spell_list].size>
+    - define pages <[size].div[6]>
+    - repeat <[pages]>:
+      - narrate "inserting | at <[value].mul[6]> because <[pages]> pages among size <[size]>"
+      - define spell_list <[spell_list].insert_single[|].at[<[value].mul[6]>]>
+  
+  - adjust <player> "show_book:spellbook_gui_book[book_pages=<&nl><&nl><[spell_list].separated_by[]><&nl><&color[#462d09]>]"
+  
+
+spells_command:
+    type: command
+    name: "spells"
+    description: Let's you view your spells
+    usage: /spells
+    aliases:
+        - spell
+    script:
+    - run spell_menu_generator_task def:spells
+    
+
+spellbook_gui_book:
+    type: book
+    title: Spellbook
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - ""
+
+inscription_gui_book:
+    type: book
+    title: Inscription
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - ""
+
+inscription_gui:
+    type: inventory
+    inventory: Chest
+    title: <&sp><&sp><&sp><&sp><&sp><&sp><&sp><&2>Inscription Workbench
+    size: 54
+    slots:
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[gui_magic_upper] [gui_magic_lower] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"

@@ -1,0 +1,45 @@
+lightning_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    - if <[attacker].has_flag[skill.spells.lightning.level].not>:
+        - flag <[attacker]> skill.spells.lightning.level:1
+    - define level <[attacker].flag[skill.spells.lightning.level]>
+    - define frame_rate 5
+    # - foreach <[attacker].location.points_between[<[attacker].location.forward_flat[10]>]> as:loc:
+    #     - if <[loc].find.living_entities.within[1].first.is_mob>:
+    #         - define defender <[loc].find.living_entities.within[1].first>
+    #         - foreach stop
+        # - narrate "found target <[target]>"
+    # - fakespawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=true;marker=true;collidable=true;equipment=air|air|air|<item[carrot_on_a_stick].with[custom_model_data=6190002]>]" <[attacker].eye_location.down[2].forward_flat[1]> duration:20t 
+    - wait 1t
+    # - narrate <[attacker].eye_location.down[2].forward_flat[1].points_between[<[defender].location>]>
+    - define target <[attacker].location.forward_flat[20]>
+    - foreach <[attacker].eye_location.down[2].forward_flat[1].points_between[<[attacker].location.forward_flat[20]>]> as:point:
+        
+            
+        - define index <[loop_index].mod[4]>
+        - wait 1t
+        - fakespawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=true;marker=true;collidable=true;equipment=air|air|air|<item[carrot_on_a_stick].with[custom_model_data=6190002]>]" <[attacker].eye_location.down[3].forward_flat[<[index].add[1]>]>  duration:<[frame_rate]>t 
+        - playeffect effect:flash at:<[point]> quantity:1
+        - if <[point].find.living_entities.within[1].exclude[<[attacker]>].any>:
+            - define target <[point].find.living_entities.within[1].exclude[<[attacker]>].first>
+            - run spell_damage_task def:lightning|<[target]>|<player>
+            - if <util.random.int[<[level]>].to[100].min[100]> == 100:
+                - strike <[target].location>
+            - repeat 3:
+                - playeffect effect:flash at:<player.location> quantity:3
+            - if <[target].is_player>:
+                - repeat 4:
+                    - title "title:<&font[steamfront:font]><&chr[3416]>" targets:<[target]> stay:2t fade_in:0s fade_out:0s
+                    - wait 3t
+            # - push <[target]> destination:<[target].location.up[2]>
+            - stop
+            # - define defender <[attacker].eye_location.down[3].forward_flat[<[loop_index].add[5]>].find.living_entities.within[3].first.location>
+    # - run spell_damage_task def:lightning|<[defender]>|<player>
+    #         # - HURT 1000 <[attacker].eye_location.down[3].forward_flat[<[loop_index].add[5]>].find.living_entities.within[3].first>
+    # - strike <[target]>
+    # - push <[target]> destination:<[defender].location.up[2]>
+        
+    #     - wait 1t
+   

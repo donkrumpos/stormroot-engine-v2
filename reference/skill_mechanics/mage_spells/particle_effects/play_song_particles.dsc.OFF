@@ -1,0 +1,6 @@
+play_song_particles_task:
+    type: task
+    script:
+    - repeat 150:
+        - playeffect at:<player.location.forward[2].above[1]> effect:note offset:<util.random.int[0].to[2]> special_data:2|<color[255,0,0]> data:1 
+        - wait <util.random.int[1].to[3]>t

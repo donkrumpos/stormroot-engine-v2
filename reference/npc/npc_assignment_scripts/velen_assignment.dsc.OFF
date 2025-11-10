@@ -1,0 +1,176 @@
+velen_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:2
+    interact scripts:
+    - velen_interact
+
+    default constants:
+        appearance1: "<npc.name> was a hunter of the days before the current Age, but has resolved himself to sell weapons in his favorite town."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+        has_familiarity: true
+
+velen_interact:
+    type: interact
+    steps:
+        1:
+            proximity trigger:
+                entry:
+                    script:
+                    
+                    - flag <player> npc.<npc.name>.prox_count:++
+
+                # exit:
+                #     script:
+                #     - run reset_velen_gaze
+            click trigger:
+                script:
+                - inject description_inject_task
+                - if <player.flag[runesbrook_inner_visited]> < 2:
+                    - narrate "I don't recognize you."
+                    - wait 2s
+                    - narrate "but welcome to The Runesbrook Town Hall, a home to many activities here in town."
+                - if <player.item_in_hand.contains[boar_tusk]>:
+                    - narrate  "What is this?!"
+                    - wait 2s
+                    - narrate "May I buy this for 3 gold?"
+                    - wait 1s
+                    - narrate <&nl>
+                    - clickable <npc.name>_task_07 save:<npc.name>_clickable_07 until:30s usages:1 for:<player>
+                    - clickable <npc.name>_task_08 save:<npc.name>_clickable_08 until:30s usages:1 for:<player>
+                    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes, for that much I can sell this.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_07].command>]>" targets:<player>
+                    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>No I need to keep this tusk.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_08].command>]>" targets:<player>
+        
+                - else:
+                    - wait 1s
+                    - run velen_first_question_set
+        2:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. I would like to talk to you velen.
+                    script:
+                    - inject velen_task_01
+                    - zap 1
+       
+velen_first_question_set:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 velen_interact player:<player> duration:14s
+        - flag <player> suspend_clickable
+        - narrate "What can I help you with?" targets:<player>
+        - clickable <npc.name>_task_02 save:<npc.name>_clickable_02 until:30s usages:1 for:<player>
+        - if <player.has_flag[knows_of_wulvern]>:
+            - clickable <npc.name>_task_03 save:<npc.name>_clickable_03 until:30s usages:1 for:<player>
+        - if <player.has_flag[risdoni_help]>:
+            - clickable <npc.name>_task_04 save:<npc.name>_clickable_04 until:30s usages:1 for:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>What kind of activities?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" targets:<player>
+        - if <player.has_flag[knows_of_wulvern]>:
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>Do you know how to find Wulvern?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_03].command>]>" targets:<player>
+        - if <player.has_flag[risdoni_help]> && <player.has_flag[velen_risdoni_02].not>:
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>3. <&color[#6fd6cb]>Do you know about Risdoni's shipments?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_04].command>]>" targets:<player>
+    - flag <player> suspend_clickable:!
+
+velen_task_02:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 velen_interact player:<player> duration:14s
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "It serves as the Guild Hall for Farfooteds ranger group, a warehouse of sorts, and the office of town officials."
+        - flag <player> suspend_clickable:!
+
+velen_task_03:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 velen_interact player:<player> duration:14s
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "You know of Wulvern?"
+        - wait 2s
+        - narrate "I guess if you know of him, he won't mind having you as a visitor."
+        - wait 2s
+        - narrate "If you go to the next level and behind me, there is a passageway up the mountain to his cabin."
+        - flag <player> suspend_clickable:!
+
+velen_task_04:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 velen_interact player:<player> duration:14s
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "Alas, I know of Risdoni's desire for a certain kind of good." targets:<player>
+        - wait 2s
+        - narrate "But we have not seen anything like that good for quite some time. It has become quite rare." targets:<player>
+        - wait 2s
+        - narrate "The Hunters of these Woods have been looking for it for last many moon ticks." targets:<player>
+        - clickable <npc.name>_task_05 save:<npc.name>_clickable_05 until:30s usages:1 for:<player>
+        - clickable <npc.name>_task_06 save:<npc.name>_clickable_06 until:30s usages:1 for:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>3. <&color[#6fd6cb]>What good are you talking about?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_05].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>3. <&color[#6fd6cb]>What are the Hunters of of these Woods?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_06].command>]>" targets:<player>
+        - flag <player> suspend_clickable:!
+
+velen_task_05:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 velen_interact player:<player> duration:14s
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "It is the boar's tusk, of course. A hard, dense, and most importantly, sharp, part of the Ouroboar that fighters and arms crafters use to make special weapons." targets:<player>
+        - flag <player> skill.skills.arms_lore.level:++
+        - narrate format:game_message "You have gained in Arms Lore." targets:<player>
+        - flag <player> skill.skills.beast_lore.level:+:2
+        - narrate format:game_message "You have gained in Beast Lore." targets:<player>
+        - wait 3s
+        - narrate "Since my hunters have not been able to procure, even one Ouroboar Tusk, if you know of anyone that can track one down, I can pay you for them." targets:<player>
+        - wait 2s
+        - narrate "and then turn around and sell them to Risdoni for a small profit. Ha Ha." targets:<player>
+        - flag <player> velen_risdoni_02
+        - wait 1s
+        - flag <player> suspend_clickable:!
+
+velen_task_06:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 velen_interact player:<player> duration:14s
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "The woods around Runesbrook, the woods of Chantwood Isle, have a handful of Master Hunters, each with different specialties. We call the The Five Master Hunters, but some of them like to be secretive and live in the wild years at a time." targets:<player>
+
+        - flag <player> suspend_clickable:!
+
+velen_task_07:
+    type: task
+    script:
+    - if <player.item_in_hand.contains[boar_tusk]>:
+        - take <player.item_in_hand>
+    - else:
+        - narrate "Nevermind."
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 velen_interact player:<player> duration:14s
+        - inject description_inject_task 
+        - random:
+            - narrate "Thank the Gods."  targets:<player>
+            - narrate "These beasts have been rare as of late."  targets:<player>
+            - narrate "Your skills as a Hunter are improving."  targets:<player>
+        - wait 2s
+        - narrate "and Thank You!."  targets:<player>
+        - give gold_coin quantity:3
+
+velen_task_08:
+    type: task
+    script:
+    - inject description_inject_task 
+    - narrate "I am here if you need to get rid of those tusks."

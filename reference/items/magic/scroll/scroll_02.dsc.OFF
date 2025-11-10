@@ -1,0 +1,10 @@
+scroll_02:
+  type: item
+  debug: false
+  material: paper
+  display name:  Scroll
+  lore:
+  - A spell scroll
+  mechanisms:
+    custom_model_data: 62000005
+    

@@ -1,0 +1,491 @@
+cast_command:
+    type: command
+    name: cast
+    description: Puts you in casting mode
+    usage: /cast &lt>myArg1<&gt>
+    tab completions:
+        1: <player.flag[skill.spells].keys>
+    script:
+    - define cast_spell <context.raw_args.to_lowercase>
+    
+    - if <player.item_in_offhand.has_flag[spells]> && <player.item_in_offhand.flag[spells].contains[<[cast_spell]>]>:
+        - run spell_task def:<[cast_spell].replace[<&sp>]>|<player>|<player.target>
+    - else:
+        - narrate "You don't have the spell <[cast_spell].replace[_].with[<&sp>]>"
+
+bind_command:
+    type: command
+    name: "bind"
+    description: Let's you bind a spell
+    usage: /bind &lt>myArg1<&gt>
+    tab completions:
+        1: <tern[<player.item_in_offhand.flag[spells].exists>].pass[<player.item_in_offhand.flag[spells]>].fail[]>
+    script:
+    - define cast_spell <context.raw_args.to_lowercase>
+    - if <player.item_in_offhand.has_flag[spells].not> || <player.item_in_offhand.flag[spells].contains[<[cast_spell]>].not>:
+        - narrate "You don't have the spell <[cast_spell]>" targets:<player>
+        - stop
+    - if <player.item_in_hand.has_script>:
+        - if <player.item_in_hand.script.data_key[bindable]||null> == true:
+            # - define weapon_type <script[spells_skills_data].data_key[weapon-type]||<[script].data_key[item_type]>>
+            - if <script[spells_skills_data].data_key[spells.<[cast_spell]>].contains[bindable_to]>:
+                - if <player.item_in_hand.script.data_key[item_type]||> != null:
+                    - define item_type <player.item_in_hand.script.data_key[item_type]>
+                    - if <script[spells_skills_data].data_key[spells.<[cast_spell]>.bindable_to]> == <[item_type]>:
+                        - flag <player> bound_spell.<player.held_item_slot>:<[cast_spell]>
+                        # - flag <player> bound_spell.<player.held_item_slot>:<player.held_item_slot>
+                        - narrate "<[cast_spell].to_titlecase> bound to slot <player.held_item_slot>"
+                    - else:
+                        - narrate "You cannot bind <[cast_spell].to_titlecase> to <[item_type]>."
+                - else:
+                    - narrate "This spell cannot be bound."
+            - else:
+                - narrate "The item in your hand is not able to be bound to."
+    - else if <player.item_in_hand.material.name> == AIR:
+        - if <script[spells_skills_data].data_key[spells.<[cast_spell].replace[<&sp>]>.target_type]> == "aura":
+            - narrate "This spell is an aura that must be toggled on rather than bound to your hands."
+            - stop
+        - flag <player> bound_spell.<player.held_item_slot>:<[cast_spell]>
+        - narrate "<green>  bound_spell.<player.held_item_slot>:<[cast_spell]>" targets:<server.match_player[sirbandersnatch]>
+        # - flag <player> bound_spell.<player.held_item_slot>:<player.held_item_slot>
+        # - flag <player> bound_spell:->:slot.<player.held_item_slot>
+        - narrate "<[cast_spell].to_titlecase.replace[_].with[<&sp>]> bound to slot <player.held_item_slot>"
+        - define icon "<&font[steamfront:gui_icon_large]><script[spells_skills_data].data_key[spells.<[cast_spell].replace[<&sp>]>.icon_large]><&r>"
+        - define bound_item <script[spells_skills_data].data_key[spells.<[cast_spell].replace[<&sp>]>.bound-item]>
+        - define custom_model_data <script[spells_skills_data].data_key[spells.<[cast_spell].replace[<&sp>]>.custom-model-data]>
+        - define spell_icon "<item[<[bound_item]>].with[display_name=<[cast_spell].replace[_].with[<&sp>].to_titlecase>;custom_model_data=<[custom_model_data]>].with_flag[bound].with_flag[spell:<[cast_spell]>]>"
+        - give <[spell_icon]> slot:<player.held_item_slot> 
+        
+    
+            # - narrate <player.item_in_hand.script.after[s@]>
+    - else:
+        - narrate "You need to have a open slot to bind to."
+
+clear_bound_spell_command:
+    type: command
+    name: unbind
+    description: Let's you unbind a spell
+    usage: /unbind
+    script:
+    - define spell <context.args.get[1]>
+    - if <context.args.size> == 0:
+        - define spell empty
+    - run clear_bound_spell_task def:<[spell]>
+
+clear_bound_spell_task:
+    type: task
+    definitions: spell|slot
+    script:
+    - if <[slot].is_empty>:
+        - narrate "no slot"
+    - if <[spell]> == all:
+        - if <player.has_flag[bound_spell]>:
+            - foreach <player.flag[bound_spell]> as:bound_spell:
+                - take slot:<[key]>
+            - narrate "You have unbound all your spells."
+            - flag <player> bound_spell:!
+    # - default:
+    #     - narrate "If providing an argument, your options are <green>all"
+    - else:
+        - if <player.has_flag[bound_spell.<player.held_item_slot>]>:
+            - define bound_spell <player.flag[bound_spell.<player.held_item_slot>]>
+            - flag player bound_spell.<player.held_item_slot>:!
+            # want to make sure we don't take an item that the player bound the spell to, but only the icon
+            - if <script[spells_skills_data].data_key[spells.<player.item_in_hand.display>].contains[bindable_to].not>:
+                - take <player.item_in_hand>
+            - narrate "You have unbound <[bound_spell].replace[_].with[<&sp>].to_titlecase> from slot <player.held_item_slot>"
+            - if <player.flag[bound_spell].is_empty>:
+                - flag <player> bound_spell:!
+        - else:
+            - narrate "You don't have a spell to unbind."
+
+bound_spell_click_world:
+    type: world
+    debug: false
+    events:
+        # on player clicks item_flagged:bound:
+        # - narrate <red>no!
+        on player clicks in inventory:
+        - if <context.cursor_item.has_flag[bound]>:
+            - wait 1t
+            - take slot:<context.slot>
+            - inventory set o:air slot:<context.slot>
+        on player clicks item_flagged:bound in inventory:
+        - define bound_spell <player.flag[bound_spell.<context.slot>]>
+        - flag player bound_spell.<context.slot>:!
+        # want to make sure we don't take an item that the player bound the spell to, but only the icon
+        # - take slot:<context.slot>
+        - inventory set o:air slot:<context.slot>
+        - take <context.item>
+        # - wait 1s
+        # - take <context.cursor_item>
+        # - take item_in_hand
+        # - take slot:hand
+        - narrate "You have unbound <[bound_spell].replace[_].with[<&sp>].to_titlecase> from slot <context.slot>"
+        - if <player.flag[bound_spell].is_empty>:
+            - flag <player> bound_spell:!
+        on player right clicks block with:item_flagged:spell:
+        # - if <player.has_flag[bound_spell>:
+            - define cast_spell <player.item_in_hand.flag[spell]>
+            - run spell_task def:<[cast_spell].replace[<&sp>].with[]>|<player>|<player.cursor_on>
+        on player right clicks entity:
+        - ratelimit <player> 4t 
+        - if <player.has_flag[bound_spell]>:
+            - define cast_spell <player.flag[bound_spell.<player.held_item_slot>]>
+            - run spell_task def:<[cast_spell].replace[<&sp>].with[]>|<player>|<context.entity>
+        
+
+spell_task:
+    type: task
+    definitions: cast_spell|attacker|target
+    debug: true
+    script:
+    - if <[attacker].item_in_hand.material.name> != air:
+    # if the player doesn't have bare hands, or and bound spell or an item with a bound spell, then stop
+        # - if <player.item_in_hand.material.name> != air || <player.item_in_hand.has_flag[bound].not>:
+        - if <[attacker].item_in_hand.has_flag[spell].not> && <[attacker].item_in_hand.flag[spell]> != <[cast_spell]>:
+            - narrate "Your hand must be empty to concentrate on the spell, unless that item has spell attunement."
+            - stop
+    # - else:
+    #     - if <player.flag[bound_spell.<player.held_item_slot>]> != <[cast_spell]> && <player.item_in_hand.has_flag[bound_spell].not>:
+    #         - narrate "You have bound <player.flag[bound_spell.<player.held_item_slot>]> to this slot, not <[cast_spell]>"
+    #         - stop
+    - if <[attacker].has_flag[meditating]>:
+        - define msg "You stop meditating"
+        - run actionbar def:<player>|<[msg]>
+        - flag player meditating:!
+    # - if <[attacker].as_entity.is_player>:
+
+    # - define attacker <[attacker]||<player>>
+    # - define target <[target>
+    - define loc1 <[attacker].location>
+    - define level 0
+    - if <[attacker].has_flag[skill.spells.<[cast_spell]>.level]>:
+        - define level <[attacker].flag[skill.spells.<[cast_spell]>.level]>
+
+    - define target_type <script[spells_skills_data].data_key[spells.<[cast_spell]>.target-type]||single>
+    - define particle <script[spells_skills_data].data_key[spells.<[cast_spell]>.particle]||flame>
+    - define cooldown <script[spells_skills_data].data_key[spells.<[cast_spell]>.cooldown.base]||1>
+    - define cooldown_modifier <script[spells_skills_data].data_key[spells.<[cast_spell]>.cooldown.per_level]||1>
+    - define cooldown_modifier <[cooldown_modifier]>:*:<player.flag[skill.spells.<[cast_spell]>.level]||null>
+    - define cooldown:-:<[cooldown_modifier]||1>
+    
+    # - define cooldown:*:20
+    - define cooldown_min <script[spells_skills_data].data_key[spells.<[cast_spell]>.cooldown.min]||1>
+    - define cooldown_max <script[spells_skills_data].data_key[spells.<[cast_spell]>.cooldown.max]||10>
+    # - define cooldown <[cooldown].min[<[cooldown_max]>].max[<[cooldown_min]>]||1>
+    - define buildup <script[spells_skills_data].data_key[spells.<[cast_spell]>.buildup.base].sub[<script[spells_skills_data].data_key[spells.<[cast_spell]>.buildup.per_level].mul[<player.flag[skill.spells.<[cast_spell]>.level]>]>].mul[20].max[0]||0>
+    - define required_mana <script[spells_skills_data].data_key[spells.<[cast_spell]>.mana.base]||1>
+    # - define required_mana_modifier <script[spells_skills_data].data_key[spells.<[cast_spell]>.mana.per_level]||1>
+    # - define required_mana_modifier:*:<player.flag[skill.spells.<[cast_spell]>.level]>
+    # - define required_mana:-:<[required_mana_modifier]>
+    - define delay <script[spells_skills_data].data_key[spells.<[cast_spell]>.delay.base].mul[20]||0>
+    # - narrate "<[attacker].flag[stat.core.mana.level]>"
+    - if  <[required_mana]||0> <= <[attacker].flag[stat.core.mana.level]||1>:
+        
+        - if <[attacker].has_flag[stat.timer.spell_cooldown]>:
+            - ^narrate "<&8>[You can cast again in <[attacker].flag_expiration[stat.timer.spell_cooldown].from_now.formatted||never>]" targets:<server.match_player[sirbandersnatch]>
+            - ^narrate format:game_message "Cooling down from the last spell." targets:<[attacker]>
+            - stop
+        - else:
+            - flag <[attacker]> spell_focus
+            - if <[buildup]> > 0.01:
+                - adjust <[attacker]> walk_speed:0
+                - showfake barrier <[attacker].location.up[3]> duration:<[buildup].div[20]>s
+                # - wait <[buildup]>t
+                - repeat <[buildup]>:
+                    - wait 1t
+                    # - narrate "building"
+                    - if <[attacker].has_flag[spell_focus].not>:
+                        - narrate format:game_message "Your concentration on your spell has been broken." targets:<[attacker]>
+                        #if the caster has been interrupted cancel this whole script so spell stops
+                        - stop
+                - adjust <[attacker]> walk_speed:<[attacker].flag[player_speed]||0.2>
+            - define magery_mod 0
+            - define spell_level <player.flag[skill.spells.<[cast_spell]>.level]||1>
+            - define spell_difficulty <script[spells_skills_data].data_key[spells.<[cast_spell]>.difficulty]||1>
+            - define spell_difficulty_mod <element[100].sub[<[spell_level]>]||10>
+            
+            - define magery_mod <[magery_mod].add[<[spell_difficulty_mod]>]>
+            - define magery_success <proc[natural_skill_check_proc].context[<[attacker]>|magery|<[magery_mod]>|1]>
+            # - narrate "magery success for <[cast_spell]> is <[magery_success]>" targets:<server.match_player[sirbandersnatch]>
+            - if <player.item_in_hand.has_flag[bound_spell]>:
+                # if a bound item, they succeed
+                - define magery_success true
+            - if <[magery_success]>:
+                # - narrate "<blue>You succeeded in casting <script[spells_skills_data].data_key[spells.<[cast_spell]>.display_name]>!"
+                - if <[attacker].has_flag[stat.core.mana.level]>:
+                    - flag <[attacker]> stat.core.mana.level:-:<[required_mana].max[0]>
+                    #This handles using the armor bonus bar as the mana bar
+                    - define mana_to_armor_scale <[required_mana].mul[5]>
+                    - define armor_bonus_as_mana <[attacker].armor_bonus>
+                    - adjust <[attacker]> armor_bonus:<[armor_bonus_as_mana].sub[<[mana_to_armor_scale]>]>
+                - foreach <player.location.cuboids> as:cuboid:
+                    - if <[cuboid].has_flag[spellcasting]> && <[cuboid].flag[spellcasting]> ==  "warn":
+                        - narrate "please don't cast in <[cuboid].note_name>"
+                - if <[attacker].has_flag[spell_focus]>:
+                    - if <script[spells_skills_data].data_key[spells.<[cast_spell]>].contains[script]>:
+                        # don't run the damage task if there is a script. The script will run the damage task if needed
+                        - define do_damage true
+                        - if <[target].is_player>:
+                            - foreach <player.location.cuboids> as:cuboid:
+                                - if <[cuboid].flag[pvp]> ==  "deny":
+                                    - define do_damage false
+                        - run <script[spells_skills_data].data_key[spells.<[cast_spell]>.script]> def:<[attacker]>|<[target]>|<[do_damage]>
+                        - if <util.random.int[1].to[6]> == 6:
+                            - run raise_spell_level_task def:<[cast_spell]>|<[attacker]>
+                    - else if <script[spells_skills_data].data_key[spells.<[cast_spell]>].contains[damage]>:
+                        - if <[target].is_player>:
+                            - foreach <player.location.cuboids> as:cuboid:
+                                - if <[cuboid].flag[pvp]> ==  "deny":
+                                    #stop the spell damage from occuring in areas that don't allow pvp
+                                    - narrate format:npcchat "Casting magic in this town is looked down upon." target:<[attacker]>
+                                    - stop
+                        
+                        - run spell_damage_task def:<[cast_spell]>|<[target]>|<[attacker]>
+                        
+                        
+                    - flag <[attacker]> spell_focus:!
+                - else:
+                    - narrate format:game_message "Your concentration on your spell has been disrupted." targets:<[attacker]>
+            - else:
+                - narrate format:game_message "You failed at casting the spell." targets:<[attacker]>
+            - run raise_natural_skill_task def:<[attacker]>|magery|0|0
+        - flag <[attacker]> stat.timer.spell_cooldown expire:<[cooldown]>s
+    - else:
+        - if <[attacker].as_entity.is_player>:
+            - narrate "<red>You don't have enough mana to cast this spell."
+            # - narrate "You don't have enough mana <[attacker].flag[stat.core.mana.level]>"
+            - define msg "<red>You don't have enough mana to cast this spell."
+            - run actionbar def:<[attacker]>|<[msg]>
+    - if <[attacker].has_flag[spell_focus]>:
+        - flag <[attacker]> spell_focus:!
+
+spell_damage_task:
+    type: task
+    debug: true
+    speed: instant
+    definitions: cast_spell|target|attacker|extra_damage
+    script:
+    
+    # - if <script[spells_skills_data].data_key[spells.<[cast_spell]>.target-type]||single> == "single":
+    #     - define target <[target]||<[attacker].find.living_entities.within[16].exclude[<[attacker]>].first[1]>>
+    - define range <script[spells_skills_data].data_key[spells.<[cast_spell]>.range.base]||48>
+    - define range_modifier <script[spells_skills_data].data_key[spells.<[cast_spell]>.range.per_level]||0>
+    - define range_modifier:*:<[attacker].flag[skill.spells.<[cast_spell]>.level]>
+    - define range:+:<[range_modifier]||32>
+
+    - define damage_min <script[spells_skills_data].data_key[spells.<[cast_spell]>.damage.base]||0>
+    - define damage_max <script[spells_skills_data].data_key[spells.<[cast_spell]>.damage.max]||10>
+
+    - define damage_modifier <script[spells_skills_data].data_key[spells.<[cast_spell]>.damage.per_level]||0>
+    - define damage_modifier:*:<[attacker].flag[skill.spells.<[cast_spell]>.level]>
+    - define damage_max <[damage_max].add[<[damage_modifier]>]>
+    - define damage_min <[damage_min].add[<[damage_modifier]>]>
+    - define random_damage <util.random.int[<[damage_min].sub[1].max[0].round_down>].to[<[damage_max].max[1].add[1].round_up>]>
+
+    - define intel_dmg_bonus <proc[attribute_skill_check_proc].context[<[attacker]>|intelligence]||0>
+    - define intel_dmg_bonus <[intel_dmg_bonus].div[10].round_down>
+    - define intel_dmg_bonus <util.random.int[1].to[<[intel_dmg_bonus].round_up.add[1]>]>
+    - define damage_modifier:+<[intel_dmg_bonus]>
+
+    - define eval_intel_dmg_bonus <[attacker].flag[skill.skills.evaluate_intelligence.level]||0>
+    - define eval_intel_dmg_bonus <[eval_intel_dmg_bonus].mul[3].div[100].add[1]>
+    - define damage_modifier:+:<[eval_intel_dmg_bonus]>
+
+    - define counter_damage 0
+    
+    - define final_damage_before_elemental <[random_damage].add[<[damage_modifier]>].add[<[extra_damage]||0>]>
+    - define final_damage_after_elemental <[final_damage_before_elemental]||1>
+    # - narrate "<green> dmg <[final_damage_after_elemental]>"
+
+    - define particle <script[spells_skills_data].data_key[spells.<[cast_spell]>.particle.particle-type]||null>
+    - define particle_color <script[spells_skills_data].data_key[spells.<[cast_spell]>.particle.color]||null>
+    - define particle_data <script[spells_skills_data].data_key[spells.<[cast_spell]>.particle.special-data]||null>
+    - define particle_size <script[spells_skills_data].data_key[spells.<[cast_spell]>.particle.size]||null>
+    - define particle_quantity <script[spells_skills_data].data_key[spells.<[cast_spell]>.particle.quantity]||null>
+   
+    # - foreach <[attacker].location.points_between[<[target].location>]> as:point:
+    #     - ^playeffect effect:<[particle]> at:<[point].up[1]> special_data:<[particle_data]>|<[particle_color]> quantity:<[particle_quantity]>  offset:.15,.15,0
+    # find the range limit for the spell and continue if target is within range
+    
+    - if <[target].location.distance[<[attacker].location>]||0> > <[range]> && <script[spells_skills_data].data_key[spells.<[cast_spell]>].contains[range]>:
+        - stop
+        - if <[attacker].as_entity.is_player>:
+            - define msg "<red>Your target is out of the range of this spell."
+            - run actionbar def:<[attacker]>|<[msg]>
+        # Get each elemental damage type to determine damage
+    - define highest_element <script[spells_skills_data].data_key[spells.<[cast_spell]>.damage_types.sort_by_value.keys.last]>
+    - define elemental_proficiency false
+    - if <[attacker].has_flag[elemental]>:
+        - if <[attacker].flag[elemental].sort_by_value.values.highest> > 999:
+            - if <[attacker].flag[elemental].sort_by_value.keys.last.value> == <[highest_element]>:
+                - define elemental_proficiency true
+
+    - foreach <script[spells_skills_data].data_key[spells.<[cast_spell]>.damage_types]||0> as:elemental:
+        # - narrate <[elemental]>
+        - if <[elemental]||0> > 0:
+            - define damage_type <[key]||0>
+            - define cause <script[elemental_resists_data].data_key[resist.<[key]>.cause]>
+            - define damage_type_percent <[elemental].div[100]||0>
+            - define resist_spells_base <[target].flag[skill.skills.<[damage_type]>_resistance.level]||0>
+            - define resist_spells_percent <[resist_spells_base].mul[.01]||0>
+            - define final_damage_modifier <[final_damage_before_elemental].mul[<[damage_type_percent]>]||0>
+            - define damage_reduction <[final_damage_modifier].mul[<[resist_spells_percent]>]||0>
+            - run raise_resist_spells_task def:<[target]>|<[damage_type]>
+            - if <[attacker].flag[elemental_affinity.<[damage_type]>]>:
+                - flag <[attacker]> elemental_affinity.<[damage_type]>:1
+            - else:
+                - if <util.random.int[1].to[<[attacker].flag[elemental_affinity.<[damage_type]>].mul[<[attacker].flag[elemental_affinity.<[damage_type]>]>]>]> == 1 && <util.random.int[0].to[2]> == 2:
+                    - flag <[attacker]> elemental_affinity.<[damage_type]>:++
+
+
+            - define attackers_int <proc[attribute_skill_check_proc].context[<[attacker]>|intelligence]||0>
+            - define attackers_magery <[attacker].flag[skill.skills.magery.level]||10>
+            - define defenders_int <proc[attribute_skill_check_proc].context[<[target]>|intelligence]||0>
+            - define resist_success_chance <[attackers_int].add[<[attackers_magery]>].sub[<[defenders_int]>]>
+            - define resist_modifier <[defenders_int].sub[<[attackers_int]>].min[0]||0>
+            - define equipment_resistance <[target].flag[stat.bonus.<[damage_type]>_resist.level]||0>
+            - define resist_success <proc[natural_skill_check_proc].context[<[target]>|<[damage_type]>_resist|<[resist_success_chance]>]>
+            
+            - if <[resist_success]>:
+                # target has resisted this elemental attack
+                - if <[target].as_entity.is_player>:
+                    - narrate "You feel yourself resisting magical <[damage_type]> damage."  targets:<[target]>
+                - foreach next
+            # - if <[resist_success_chance]> > <util.random.int[1].to[<element[100].sub[<[target].flag[skill.skills.<[damage_type]>_resistance.level].add[<[equipment_resistance]>].max[0]>].round[0]]>]||0>:
+            #     - define damage_reduction <[final_damage_modifier].mul[<[resist_spells_percent]>]||0>
+            #     - if <[target].as_entity.is_player>:
+            #         - narrate "resisting: <[damage_reduction].round_to[1]> <[damage_type]>_resistance"  targets:<[target]>
+            
+            - else:
+                - define damage_reduction 0
+                # - if <[target].as_entity.is_player>:
+                #     - narrate "does not resist anything"  targets:<[target]>
+            - if <[equipment_resistance]> > 0 && <[target].as_entity.is_player>:
+                - narrate "You feel yourself resisting magical <[damage_type]> damage."  targets:<[target]>
+
+            - define final_damage_after_elemental <[final_damage_modifier].sub[<[equipment_resistance]>]||0>
+            - define attacker_sdi <[attacker].flag[stat.bonus.spell_damage_increase.level]||0>
+            - define final_damage_after_sdi <[final_damage_after_elemental].add[<[final_damage_after_elemental].mul[<[attacker_sdi]>]>]>
+            # - if <[extra_damage]> == "double":
+            #     - define final_damage_after_sdi <[final_damage_after_sdi].mul[2]>
+            # - narrate "final damage total: <[damage_type]>: <[final_damage_after_sdi].round_to[2]>"
+            - if <[elemental_proficiency]>:
+                - define proficiency_modifier <util.random.int[1].to[2]>
+                - define final_damage_after_sdi <[final_damage_after_sdi].mul[<[proficiency_modifier]>]>
+            - hurt <[final_damage_after_sdi].round_to[2]> <[target]> 
+            # - narrate "hurting <[target]> for <[final_damage_after_sdi].round_to[2]> " targets:<server.match_player[sirbandersnatch]>
+ 
+        
+
+            
+set_pro_task:
+    type: task
+    script:
+    - define spells_list <list>
+    - flag <player> elemental:!
+    - foreach <script[spells_skills_data].data_key[spells]> as:spell:
+        - if <[spell].contains[damage_types]>:
+            # - define highest <script[spells_skills_data].data_key[spells.<[key]>.damage_types].values.highest>
+            - define this_spell <[key]>
+            # - narrate <[this_spell]>
+            - foreach <script[spells_skills_data].data_key[spells.<[this_spell]>.damage_types].keys> as:damage_type:
+                - define spells_list:->:<[damage_type]>
+                - define damage_value <script[spells_skills_data].data_key[spells.<[this_spell]>.damage_types.<[damage_type]>]>
+                - if <player.flag[skill.spells.<[key]>.level]> > 1:
+                    - define multiplier <player.flag[skill.spells.<[key]>.level]>
+                    - define damage_value <[damage_value].mul[<[multiplier]>]>
+                # - narrate "<[key]> <[damage_type]>"
+                
+                - flag <player> elemental.<[damage_type]>:+:<[damage_value]>
+                # - narrate =======
+    # - narrate <[spells_list]>
+
+get_pro_task:
+    type: procedure
+    script:
+    - if <player.flag[elemental].sort_by_value.values.highest> > 999:
+        
+        - determine <player.flag[elemental].sort_by_value.keys.last.value>
+
+spell_resist_proc:
+    type: procedure
+    debug: true
+    definitions: caster|target|spell
+    script:
+    - foreach <script[skill_spells_data].data_key[skill.spells.<[spell]>.damage_types]||stone> as:elements:
+        - foreach <[elements]> as:element:
+            # Get only the elements with amounts
+            - if <[element].parsed.after[:]> > 0:
+                # get the damage type name
+                - define damage_type <[element].parsed.before[:]>
+                # get the damage type percent
+                - define damage_type_percent <[element].parsed.after[:]>
+                # set a flag on hit entity resist spells skilll for that element
+                - define resist_spells_base <[target].flag[skill.skills.<[damage_type]>_resistance]||0>
+                # set modifier for spell absorb chance based on resist spell skill
+                - define absorb_spells_chance <util.random.int[<[resist_spells_base].sub[40].round_down>].to[<[resist_spells_base].round_down>]>
+                # find chance to resist
+                
+                - run raise_resist_spells_task def:<[target]>|<[damage_type]>
+                - determine <[absorb_spells_chance]>
+
+raise_resist_spells_task:
+    type: task
+    debug: true
+    definitions: target|damage_type
+    script:
+    
+    - if <[target].has_flag[skill.skills.<[damage_type]>_resistance]>:
+        - if <[target].has_flag[resist_<[damage_type]>_spells_skillgain_timer].not>:
+            # - flag <[target]> resist_<[damage_type]>_spells_skillgain_timer:!
+            # - if <[target].is_player>:
+            # don't narrate to monsters
+                # - ratelimit <[target]> 5s
+                # - narrate "<&8>[You can gain in <[damage_type]> resistance again in <[target].flag_expiration[resist_<[damage_type]>_spells_skillgain_timer].from_now.formatted>]" targets:<[target]>
+        # - else:
+            # raise target's resist spells  skill by small amount
+                - flag <[target]> skill.skills.<[damage_type]>_resistance.level:+:<element[5].div[<[target].flag[skill.skills.<[damage_type]>_resistance.level].max[1]>]>
+                # set random time for skill gain timer
+                - define random_gain_time <util.random.int[1].to[8]>
+                # - narrate "You feel <[damage_type]>: <element[5].div[<[target].flag[skill.natural.<[damage_type]>].max[1]>]>" targets:<[target]>
+                # - narrate "skill <[damage_type]> now at <[target].flag[skill.natural.<[damage_type]>]>" targets:<[target]>
+                # reset skill gain timer
+                - flag <[target]> resist_<[damage_type]>_spells_skillgain_timer expire:<element[1].add[<[target].flag[skill.skills.<[damage_type]>_resistance.level].mul[<[random_gain_time]>]||1>]>s
+    - else:
+        - flag <[target]> skill.skills.<[damage_type]>_resistance.level:1
+
+magic_events_world:
+    type: world
+    debug: false
+    events:
+        on player walks:
+        # - if <player.has_flag[skill.natural.perception_level]>:
+        #     - wait 1s
+        #     - flag player skill.natural.perception_level:+:.0001
+        # - else:
+        #     - flag player skill.natural.perception_level:0
+        - if <player.has_flag[meditating]>:
+            - define msg "You stop meditating"
+            - run actionbar def:<player>|<[msg]>
+            - flag player meditating:!
+        on player swaps items:
+        - if <context.offhand.has_flag[bound]>:
+            # - run clear_bound_spell_task def:<[spell]>
+            - determine cancelled
+
+
+raise_spell_level_task:
+    type: task
+    definitions: spell|caster
+    script:
+    
+    - define spell_level 1
+    - if <[caster].has_flag[skill.spells.<[spell]>.level]>:
+        - define spell_level <[caster].flag[skill.spells.<[spell]>.level]>
+    - define roll_ceiling <[spell_level].mul[<[spell_level]>].add[<[spell_level]>]>
+    - define random <util.random.int[0].to[<[roll_ceiling]>]>
+    - if <[random]> <= 1:
+        - flag <[caster]> skill.spells.<[spell]>.level:++
+        - narrate "<green>raising <[caster].name> <[spell]> level by 1 to <[spell_level]>" targets:<server.match_player[sirbandersnatch]>

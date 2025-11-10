@@ -1,0 +1,30 @@
+dodge_right_command:
+    type: command
+    name: dodge_right
+    script:
+    - if <player.flag[skill.dodge.level]||0> >= 1:
+        - if <proc[armor_weight_proc].context[<player>]>:
+            - narrate "Your armor is too heavy for you to dodge."
+            - stop
+        - adjust <player> velocity:<player.location.sub[<player.location.left[2]>]>
+        - wait 10t
+        - adjust <player> velocity:<player.location.sub[<player.location.right[2]>]>
+        - flag <player> stat.stamina_level:-:5
+    - else:
+        - narrate "You don't have the dodge skill"
+
+dodge_left_command:
+    type: command
+    name: dodge_left
+    script:
+    - if <player.flag[skill.dodge.level]||0> >= 1:
+        - if <proc[armor_weight_proc].context[<player>]>:
+            - narrate "Your armor is too heavy for you to dodge."
+            - stop
+        - adjust <player> velocity:<player.location.sub[<player.location.right[2]>]>
+        - wait 10t
+        - adjust <player> velocity:<player.location.sub[<player.location.left[2]>]>
+        - flag <player> stat.stamina_level:-:5
+    - else:
+        - narrate "You don't have the dodge skill"
+    

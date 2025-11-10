@@ -1,0 +1,36 @@
+skitter:
+    type: entity
+    entity_type: spider
+    # mechanisms:
+        
+    flags:
+        custom_beast: true
+        karma: -10
+        fame: 0
+        biome: 
+            - forest
+            - river
+            - plains
+        rarity: 1
+        level: 2
+        strength: 10
+        dexterity: 5
+        intelligence: 10
+        health: 30
+        # script: skitter_script
+        no_combusts: true
+        no_explode: true
+        eligible_block_spawn: grass_block
+        custom_model_data: 1656568
+        drops:
+            # boar_hide:
+            #     quantity: 4
+            #     chance: .9
+            # boar_tusk:
+            #     quantity: 2
+            #     chance: .8
+        coin_drop:
+            copper: 
+                quantity: 2
+                chance: .5
+        xp: 32

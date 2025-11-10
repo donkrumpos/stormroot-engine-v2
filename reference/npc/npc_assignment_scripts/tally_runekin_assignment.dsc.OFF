@@ -1,0 +1,35 @@
+tally_runekin_assignment:
+  type: assignment
+  actions:
+    on assignment:
+    - trigger name:click state:true
+    - trigger name:chat state:true
+  default constants:
+    chat_color: "<script[color_data2].data_key[npc_chat_name]><npc.name> <&color[<color[64,70,77]>]>says: <script[color_data2].data_key[npc_chat]> "
+
+    
+
+  interact scripts:
+  - tally_runekin_interact
+
+tally_runekin_data:
+  type: data
+  willingness:
+    
+color_data2:
+  type: data
+  npc_chat_name: <&color[<color[106,116,128]>]>
+  npc_chat: <&color[<color[173,189,208]>]>
+  money: <&color[<color[229,128,50]>]>
+  location: <&color[<color[2,143,12]>]>
+  character: <&color[<color[173,189,208]>]>
+  
+tally_runekin_interact:
+  type: interact
+  steps:
+      default:
+          proximity trigger:
+              entry:
+                  script:
+                  - execute as_server "npc skin --url https://minesk.in/065d3d6a948143ae8a2283632f9bc192 --id <npc.id>"
+                    

@@ -1,0 +1,174 @@
+
+# journal_world:
+#     type: world
+#     events:
+#         on player right clicks air:
+#         - narrate <player.item_in_hand>
+#             # - announce READING
+journal_command:
+    type: command
+    name: journal
+    script:
+    - if <player.has_flag[journal].not> || <player.flag[journal.npcs].is_empty>:
+        - narrate "You have not started your journal yet." targets:<player>
+        - stop
+    - define book_contents <list>
+    - foreach <player.flag[journal.npcs]> as:item:
+        - narrate <yellow><[key]>
+        - clickable npc_journal_page def:<[key]> save:<[key]>_page_click
+        
+        - define location <element>
+        - define moon_phase <element>
+        - if <script[region_data].data_key[region].keys.shared_contents[<player.location.areas.parse[note_name]>].any>:
+            - define location " in <script[region_data].data_key[region.<script[region_data].data_key[region].keys.shared_contents[<player.location.areas.parse[note_name]>].first>.title]>"
+        - if <player.has_flag[npc.<[key]>.meet_date]>:
+            - define moon_phase ", moon phase <proc[moon_phase_translation].context[<player.flag[npc.<[key]>.meet_date]>]>"
+        - define entry "I met <[key].name><[location]> on 24140 januul<[moon_phase]>."
+        - define click_text <element[<[entry]>].on_click[<entry[<[key]>_page_click].command>]>
+        - define book_contents <[book_contents].insert[<[click_text]>].at[<[book_contents].size>]>
+    # - narrate <[book_contents]>
+    - adjust <player> "show_book:journal[book_pages=<[book_contents]>]" 
+    # - adjust <player> "show_book:natural_skills_gui_book[book_pages=<&nl><&nl><[skills]><&nl>]"
+
+npc_journal_page:
+    type: task
+    definitions: npc
+    script:
+    - define book_contents <list>
+    - narrate "You got a page for <[npc]>"
+    - foreach <player.flag[journal.npcs.<[npc]>]> as:item:
+        - define book_contents <[book_contents].insert[<[item]>].at[<[book_contents].size>]>
+
+
+    - adjust <player> "show_book:journal[book_pages=They told me <[book_contents].separated_by[<&nl>]>]" 
+
+moon_phase_translation:
+    type: procedure
+    definitions: word
+    script:
+    - define new_word ""
+    - repeat <[word].length.div[2]>:
+        # - narrate <[value]>
+        - if <[value].is_odd>:
+            - define new_word <[new_word]><script[moon_phases_cipher_map].data_key[number.<[word].char_at[<[value]>]><[word].char_at[<[value].add[1]>]>]>
+        - else:
+            - foreach next
+        # - narrate <gold><[word].char_at[<[value]>]>
+    - determine <[new_word].to_titlecase>
+
+# moon_phases_cipher_map:
+#     type: data
+#     number:
+#         1: þ
+#         2: æ
+#         3: ȝ
+#         4: ð
+#         5: Ƿ
+#         6: s
+#         7: y
+#         8: ꝥ
+#         9: ȝ
+#         0: s
+
+moon_phases_cipher_map:
+    type: data
+    number:
+        01: AE
+        02: BI
+        03: CO
+        04: DU
+        05: EA
+        06: FI
+        07: GO
+        08: HA
+        09: IJ
+        10: JA
+        11: KE
+        12: LO
+        13: MA
+        14: NO
+        15: OU
+        16: PI
+        17: QU
+        18: RA
+        19: SE
+        20: TA
+        21: UH
+        22: VI
+        23: WA
+        24: XI
+        25: YO
+        26: ZA
+        27: AI
+        28: BE
+        29: FO
+        30: GU
+        31: HO
+        32: JO
+        33: KI
+        34: LE
+        35: MI
+        36: NA
+        37: PO
+        38: QI
+        39: RE
+        40: SU
+        41: TO
+        42: VA
+        43: WE
+        44: XI
+        45: YU
+        46: ZO
+        47: BU
+        48: CO
+        49: DO
+        50: FI
+        51: GO
+        52: HE
+        53: JO
+        54: KU
+        55: LE
+        56: MO
+        57: NO
+        58: PO
+        59: QU
+        60: RO
+        61: SU
+        62: TO
+        63: VE
+        64: WO
+        65: XI
+        66: YI
+        67: ZA
+        68: BU
+        69: CU
+        70: DI
+        71: FO
+        72: GU
+        73: HA
+        74: JO
+        75: KI
+        76: LO
+        77: MU
+        78: NO
+        79: PO
+        80: QU
+        81: RE
+        82: SU
+        83: TO
+        84: VA
+        85: WE
+        86: XI
+        87: YI
+        88: ZO
+        89: BU
+        90: CO
+        91: DI
+        92: FO
+        93: GU
+        94: HE
+        95: JO
+        96: KI
+        97: LO
+        98: MO
+        99: NU

@@ -1,0 +1,35 @@
+circle_part1:
+    type: task
+    script:
+    - repeat 360:
+        - define Points:->:<player.location.add[<location[0,0,5].rotate_around_y[<[Value].to_radians>]>]>
+        - playeffect effect:REDSTONE at:<[Points]> quantity:1 offset:0 visibility:300 special_data:2|Blue
+
+circle_part2:
+    type: task
+    script:
+    - repeat 12:
+        - playeffect effect:REDSTONE at:<util.list_numbers_to[360].parse_tag[<player.location.add[<location[0,0,5].rotate_around_y[<[Parse_Value].to_radians>]>]>]> quantity:1 offset:0 visibility:300 special_data:2|Blue
+        - wait 1s
+
+
+circle_task:
+    type: task
+    script:
+    - playeffect effect:end_rod at:<proc[circle_proc].context[<player.location.add[0,1,0]>|5|1000|10|2]> quantity:1
+
+circle_proc:
+    type: procedure
+    debug: false
+    definitions: location|radius|density|stretch|loops
+    ##EX <player.location> 3 100 0 1
+    ##Returns a list of points around a specified location in a circle
+    script:
+        - define 2pi <util.pi.mul[<element[2].mul[<[loops]||1>]>]>
+        - define particle_locations li@
+        - define radius_location <location[<[radius]>,0,0]>
+        - repeat <[density]>:
+            - define stretchmax <[stretch].div[<[density]>].mul[<[value]>]>
+            - define point_location <[radius_location].rotate_around_y[<[2pi].div[<[density]>].mul[<[value]>]>].with_y[<[stretchmax]>]>
+            - define particle_locations <[particle_locations].include[<[location].add[<[point_location]>]>]>
+        - determine <[particle_locations]>

@@ -1,0 +1,25 @@
+bleed_task:
+    type: task
+    definitions: damager|defender|amount|damage
+    script:
+    - if <[defender].exists.not>:
+        - stop
+
+    - if <[damager].is_player>:
+        - narrate format:game_message "You bleed profusely from your wound" targets:<[defender]>
+    - define amount_modifier <util.random.int[2].to[<[amount].add[5]>]>
+    - repeat <[amount].add[<[amount_modifier]>]>:
+        - if <[defender].is_online>:
+            - if <[defender].has_flag[stat.status.debuff.bleed].not>:
+                - stop
+            - wait <util.random.int[7].to[43]>t
+            - define chance <util.random.int[0].to[2]>
+            - if <[chance]> == 0:
+                - hurt <[value]> <[defender]> cause:entity_attack
+            - if <[chance]> == 1:
+                - hurt 1 <[defender]> cause:entity_attack
+            
+            # - effectlib type:bleed origin:<[defender].location> duration:1t
+        - else:
+            - repeat stop
+    - flag <server.match_player[<[defender]>]> stat.status.debuff.bleed:!

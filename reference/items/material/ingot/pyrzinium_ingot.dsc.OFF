@@ -1,0 +1,13 @@
+pyrzinium_ingot:
+  type: item
+  debug: true
+  material: iron_ingot
+  rarity: 1
+  display name: Pyrzinium Ingot
+  mechanisms:
+    custom_model_data: 2710403
+  recipes:
+    1:
+      type: furnace
+      input: pyrzinium_ore
+      cook_time: 3t

@@ -1,0 +1,27 @@
+incognito_command:
+    type: command
+    name: incognito
+    script:
+    - if <player.has_flag[skill.incognito].not>:
+        - narrate "You don't have the incognito skill."
+        - stop
+
+    - if <player.flag[skill.incognito.level]> < 1:
+        - narrate "You need an incognito level of at least one to use it."
+        - stop
+    
+    - if <player.has_flag[incognito]>:
+        - narrate "You cannot attempt incognito again for <player.flag[incognito].expiration.formatted>"
+        - stop
+    - if <player.flag[current_dexterity].add[<player.flag[skill.incognito.level]>]> >= <util.random.int[1].to[100]>:
+        - narrate "You have gone incognito."
+        - flag <player> incognito duration:<element[120].sub[<player.flag[skill.incognito.level].mul[2]>]>s
+        - flag <player> stat.stamina_level:-:<element[16].sub[<[level]>]>
+        - adjust <player> name:<empty>
+        - adjust <player> display_name:" "
+        - wait <player.flag[skill.incognito.level].add[3]>s
+        - narrate "Incognito has worn off."
+        - adjust <player> name:<player.name>
+        - adjust <player> display_name:<player.name>
+    - else:
+        - narrate "You fail at being incognito"

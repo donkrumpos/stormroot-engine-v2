@@ -1,0 +1,33 @@
+snoop_command:
+    type: command
+    name: snoop
+    usage: snoop
+    script:
+    - if <player.has_flag[skill.specializations.snoop].not>:
+        - narrate "You don't have the snoop skill."
+        - stop
+    - define target <player.target||null>
+   
+    
+    - if <[target]> != null:
+        - if <player.has_flag[snooping]>:
+            - narrate "You must wait until you can snoop again. <player.flag[snooping].expiration.formatted>"
+            - stop
+        - flag <player> snooping duration:<element[100].sub[<player.flag[current_dexterity]>].sub[<[level]>].max[5]>s
+        - define distance_mod <player.location.distance[<[target].location>].mul[<player.location.distance[<[target].location>]>].mul[<util.random.int[1].to[<player.location.distance[<[target].location>].round>]>]>
+        - define level <player.flag[skill.specializations.snoop.level]>
+        - define level_reciprocal <element[1].div[<[level]>]>
+        - define limit <[level].sub[<[level_reciprocal]>]>
+        - define chance <util.random.int[11].to[<[limit].round_up.add[100]>]>
+        - if <proc[level_success_proc].context[<player.flag[skill.specializations.snoop.level].add[<player.flag[current_dexterity].div[12].round_down>]>]>:
+            - inventory open d:<[target].inventory>
+            
+            - if <[target].flag[skill.skills.perception_level].round||0> > 66:
+                - narrate "<red><player.name> is snooping on you." targets:<[target].as_player>
+                - run set_karma_task def:<player>|<[target].flag[skill.skills.perception_level].mul[-1].round||0>
+        - else:
+            - if <util.random.int[1].to[100]> > <player.flag[current_dexterity]>:
+                - narrate "<red><player.name> is trying to snoop on you." targets:<[target].as_player>
+                - run set_karma_task def:<player>|-10
+            - narrate "You fail to snoop."
+            - run set_karma_task def:<player>|-1

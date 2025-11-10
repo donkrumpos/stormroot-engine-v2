@@ -1,0 +1,27 @@
+fire_touch_task:
+    type: task
+    definitions: attacker|target
+    script:
+    - if <[attacker].has_flag[skill.spells.fire_touch.level].not>:
+        - flag <[attacker]> skill.spells.fire_touch.level:1
+    - define level <[attacker].flag[skill.spells.fire_touch.level]>
+    - if <player.target.is_empty>:
+        - stop
+    - if <[target].location.distance[<[attacker].location>]> > 1:
+        - narrate "This spell requires you to be close to your target."
+        - stop
+    - if <[target].is_living>:
+        - playsound <player.location> sound:steamfront:spells.firetouch custom sound_category:players
+    - if <util.random.int[1].to[<element[100].sub[<[level].min[98]>]>]> == 1:
+        - burn <[target]> duration:<player.flag[skill.spells.firetouch.level]>s
+    - run spell_damage_task def:fire_touch|<[attacker].target>|<[attacker]>|<[level].div[10].max[0]>
+    - showfake fire <player.cursor_on.up[1]>
+    # - flag <player> spark_not_fail duration:16s
+    # - narrate "Spark cannot be cast directly. Bind this spell to empty hands."
+    # - if <player.has_flag[spark_on]>:
+    #     - flag <player> aura_status:!
+    #     - flag <player> aura_status.spark:!
+    #     - take item:<item[flint_and_steel].with[custom_model_data=56412;display_name=Spark]>
+    # - else:
+    #     - flag <player> aura_status.spark
+    #     - give <item[flint_and_steel].with[custom_model_data=56412;display_name=Spark]>

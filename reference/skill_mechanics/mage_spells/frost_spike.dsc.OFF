@@ -1,0 +1,16 @@
+frostspike_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    - if <[defender].is_living>:
+        - if <[attacker].has_flag[skill.spells.frost_spike.leve].not>:
+            - flag <[attacker]>  skill.spells.frost_spike.level:1
+        - define level <[attacker].flag[skill.spells.frost_spike.level]>
+        - define location <[defender]location>
+        - showfake blue_ice <[defender].location> duration:2s players:<server.online_players>
+        - showfake ice <[defender].location.up[1]> duration:2s players:<server.online_players>
+        - showfake ice <[defender].location.up[2]> duration:2s players:<server.online_players>
+        - run spell_damage_task def:frost_spike|<[defender]>
+        - repeat <[level]>:
+            - wait 1t
+            - teleport <[defender]> <[location]>

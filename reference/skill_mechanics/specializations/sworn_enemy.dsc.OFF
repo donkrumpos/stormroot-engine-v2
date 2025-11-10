@@ -1,0 +1,42 @@
+sworn_enemy_task:
+    type: task
+    definitions:
+    script:
+    - define beast_lore <player.flag[skill.skills.beast_lore_level]>
+
+
+
+
+sworn_enemy_command:
+    type: command
+    name: sworn_enemy
+    tab completions:
+        1: <script[slayer_types_data].data_key[slayer_type]>
+    script:
+    - define mobs <server.list_scripts.filter[data_key[type].is[==].to[entity]].parse[name].parse[replace[_].with[<&sp>]].parse[to_titlecase].separated_by[<&nl>]>
+    - define slayer_list <list>
+    - foreach <script[slayer_types_data].data_key[slayer_type]> as:slayer:
+        - clickable choose_slayer_task def:<[slayer]> save:<[slayer]>_clickable
+        - define select_slayer "<element[Click to select as Foe].on_click[<entry[<[slayer]>_clickable].command>]>"
+    - adjust <player> "show_book:slayer_gui_book[book_pages=]"
+
+
+slayer_gui_book:
+    type: book
+    title: Attributes
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - ""
+
+slayer_types_data:
+    type: data
+    slayer_type:
+        - humanoid
+        - reptile
+        - undead
+        - fey
+        - elemental
+        - abyss
+        - arachnid

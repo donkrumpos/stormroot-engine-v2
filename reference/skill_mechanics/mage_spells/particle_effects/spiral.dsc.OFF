@@ -1,0 +1,28 @@
+fib_task:
+    type: task
+    debug: false
+    script:
+    - define spiral_list <proc[fib_spiral].context[800|2]>
+    # <player.eye_location.forward[5]>
+    # - playeffect effect:flame at:<[spiral_list]> offset:0 targets:<p layer>
+    - playeffect effect:flame at:<[spiral_list].parse[add[<player.eye_location.forward[6]>]]> offset:0 targets:<player>
+
+
+
+
+fib_spiral:
+    type: procedure
+    definitions: samples|size
+    debug: false
+    script:
+    - define result <list>
+    - define phi 2.39996322972865218630359635653
+    - define inc <[samples].sub[1]>
+    - repeat <[samples]> as:i:
+        - define i:--
+        - define y <element[1].sub[<[i].div[<[inc]>].mul[2]>]>
+        - define radius <element[1].sub[<[y].mul[<[y]>]>].sqrt>
+        - define theta <[phi].mul[<[i]>]>
+        - define loc <location[<[theta].cos.mul[<[radius]>]>,<[y]>,<[theta].sin.mul[<[radius]>]>,world].mul[<[size]>]>
+        - define result <[result].include[<[loc]>]>
+    - determine <[result]>

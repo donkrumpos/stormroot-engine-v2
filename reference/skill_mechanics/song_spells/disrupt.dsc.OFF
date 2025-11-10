@@ -1,0 +1,44 @@
+disrupt_task:
+    type: task
+    script:
+    - if <player.has_flag[skill.spells.disrupt.level]>:
+        - if !<player.item_in_hand.script.data_key[item_type].contains[instrument]>:
+            - narrate "You need an instrument in your hand to cast this spell"
+            - stop
+    - define level <player.flag[skill.spells.disrupt.level]||1>
+    - define level_mod <[level].add[3]>
+    - define targets <player.location.find.living_entities.within[<[level_mod]>].exclude[<player>].filter[has_flag[spell_focus]].exclude[<[entity]>].filter[flag[party].is[==].to[<player.flag[party]>]]>
+    - if <[targets].is_empty>:
+        - narrate "No targets found to disrupt."
+    - if <player.has_flag[skill.natural.musicianship_level]>:
+        - define music_level <player.flag[skill.natural.musicianship_level]>
+    - else:
+        - flag <player> skill.natural.musicianship_level:1
+    - if <proc[natural_skill_check_proc].context[<player>|musicianship|<[level]>]>:
+        - foreach <[targets]> as:this_target:
+            - define party_list <proc[is_in_party_proc].context[<player>]>
+            - if <[party_list].contains[<[this_target]>]>:
+                - foreach next
+            - if <[this_target].as_player.has_flag[skill.natural.willpower_level]>:
+                - define willpower_defense <util.random.int[1].to[<[this_target].as_player.flag[skill.natural.willpower_level].round>]>
+                - define persuasion_success <util.random.int[1].to[<player.flag[skill.natural.persuasion_level].round>]>
+                - if <[willpower_defense]> < <[persuasion_success]>:
+                    
+                    - if <[this_target].as_player.has_flag[spell_focus]>:
+                        - narrate "You have successfully disrupted <[this_target].as_player.name>."
+                        - flag <[this_target].as_player> spell_focus:!
+                - else:
+                    - narrate "<[this_target].as_player.name> has resisted your disruptions."
+                    - if <[this_target].flag[skill.natural.perception_level]> >= <util.random.int[0].to[50]>:
+                        - narrate "You hear a song that is trying to persuade you to stop casting spells." targets:<[this_target]>
+        - else:
+            - narrate "The target has successfully avoided your influence."
+          
+    - else:
+        - narrate "You failed to cast disrupt." targets:<player>
+        # - if <[target].flag[skill.natural.perception_level]> >= <util.random.int[0].to[50]>:
+        #     - narrate "You hear a song that is trying to persuade you to stop casting spells." targets:<[target]>
+    - run raise_natural_skill_task def:<player>|musicianship
+    - run raise_natural_skill_task def:<player>|magery
+    - run raise_natural_skill_task def:<player>|persuasion
+    - run raise_natural_skill_task def:<[target]>|willpower

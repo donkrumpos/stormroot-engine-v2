@@ -1,0 +1,33 @@
+dirt_elemental:
+    type: entity
+    entity_type: husk
+    # mechanisms:
+        
+    flags:
+        custom_beast: true
+        karma: -10
+        fame: 0
+        biome: 
+            - forest
+            - dark_forest
+            - birch_forest
+            - old_growth_birch_forest
+        level: 1
+        rarity: 1
+        strength: 100
+        dexterity: 5
+        intelligence: 10
+        health: 12
+        no_combusts: true
+        no_explode: true
+        eligible_block_spawn: grass_block
+        custom_model_data: 1656557
+        drops:
+            dirt_block:
+                quantity: 10
+                chance: 1
+        coin_drop:
+            copper: 
+                quantity: 10
+                chance: .5
+        xp: 24

@@ -1,0 +1,62 @@
+sodhe:
+    type: entity
+    entity_type: creeper
+    # mechanisms:
+        
+        # script: giddy_task
+    flags:
+        custom_beast: true
+        karma: -10
+        fame: 0
+        biome: 
+            - forest
+            - dark_forest
+            - birch_forest
+        rarity: 10
+        level: 5
+        strength: 5
+        dexterity: 5
+        intelligence: 10
+        health: 2
+        no_combusts: true
+        no_explode: true
+        eligible_block_spawn: grass_block
+        custom_model_data: 1656556
+        drops:
+            ahrim_weed:
+                quantity: 1
+                chance: .1
+            dharok_weed:
+                quantity: 1
+                chance: .1
+            guthan_weed:
+                quantity: 1
+                chance: .1
+            karil_weed:
+                quantity: 1
+                chance: .1
+            torag_weed:
+                quantity: 1
+                chance: .1
+            verac_weed:
+                quantity: 1
+                chance: .1
+        
+sodhe_world:
+    type: world
+    debug: false
+    events:
+        # on sodhe dies:
+        
+        on sodhe explodes:
+        
+        - foreach <context.entity.location.find_players_within[4]> as:target:
+            - hurt <util.random.int[0].to[3]> <[target]>
+            - if <util.random.int[0].to[11]> == 11:
+                - hurt <util.random.int[9].to[13]> <[target]>
+            - repeat <util.random.int[0].to[3]>:
+                - wait 5t
+                - run spawn_mob_task def:sodhe|<[target]>
+        - remove <context.entity.flag[mob.custom_model]>
+        - determine no_drops
+        

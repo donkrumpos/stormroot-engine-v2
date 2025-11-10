@@ -1,0 +1,445 @@
+krizzdo_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:16
+    interact scripts:
+    - krizzdo_interact
+
+    default constants:
+        appearance1: "<npc.name>'lives in the wild but seems mysterious."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+        personality: krizzdo_personality
+
+
+krizzdo_interact:
+    type: interact
+    steps:
+        1:
+            proximity trigger:
+                entry:
+                    script:
+                    - define wheel_fixed <server.flag[krizzdos_wheel_fixed]>
+                    - define wheel_broken <server.flag[krizzdos_wheel_broken]>
+                    - if <player.has_flag[has_krizzdos_bolt].not>:
+                        - run place_krizzdos_bolt
+                    - else:
+                        - inject description_inject_task
+                        - narrate "Yahoo, you find a missing bolt! Can you fix my wheel now?"
+                    - execute as_server "npc skin --url https://minesk.in/22896f4c606c4cbf8e326814f4f9c7a1 --id <npc.id>"
+                    - if <player.has_flag[<npc.name>_prox_count].not> || <player.flag[<npc.name>_prox_count]> == 0:
+                        - inject description_inject_task
+                        - random:
+                            - narrate "hrrrmm, the wind blows in another mortal from far off lands. Can you help dearest traveler. I can make it worth your while." targets:<player>
+                            - narrate "ho hum, I see another one of you has been conjured by Deluvia. hehe. Can you help a fellow mortal in need?" targets:<player>
+                            - narrate "ah um, a fellow ingenuitiveer. I'm over here. I seem to have broken my wagon over this rough beach. Help?" targets:<player>
+                        - wait 2s
+                        - repeat 6:
+                            - if <player.location.distance[<npc.location>]> <= 3:
+                                - narrate "Hey pal. you found me." targets:<player>
+                                - repeat stop
+                            - if <player.location.distance[<npc.location>]> <= 6  && <player.location.facing[<npc.location>]>:
+                                - narrate "  hotter!" targets:<player>
+                            - else if <player.location.distance[<npc.location>]> < 10  && <player.location.distance[<npc.location>]> > 6:
+                                - if <player.location.facing[<npc.location>]>:
+                                    - narrate "  getting warmer. . ." targets:<player>
+                                - else:
+                                    - narrate "  getting cooler. . ." targets:<player>
+                            - else if <player.location.facing[<npc.location>].not>:
+                                - narrate "  colder. . ." targets:<player>
+                            # - narrate <element[10].sub[<[value]>]>
+                            - wait 2s
+                            - if <player.location.distance[<npc.location>]> >= 15 && <player.location.facing[<npc.location>].not>:
+                                - narrate "Freezing! Have a good time in Bardtown pal. Thanks for nuthins." targets:<player>
+                                - repeat stop
+                        - wait 3s
+                        - narrate "Okay the deal is, my wagon wheel is broken here." targets:<player>
+                        - narrate "Can you find a bolt for it lying around here? If you can and repair my wheel, I, <gold>Krizzdo the Magnificent<&r>, at your service, will give you the show of your life, better than anything that can be seen across all The Long Sea" targets:<player>
+                    - flag <player> <npc.name>_prox_count:++
+                            
+                            
+        
+            click trigger:
+                script:
+                - if <player.has_flag[has_krizzdos_bolt].not>:
+                    - run place_krizzdos_bolt
+                - if <player.has_flag[fixed_krizzdos_wheel]>:
+                    - ratelimit <player> 10s
+                    - inject description_inject_task
+                    - random:
+                        - narrate "I'm grateful to you for fixing my wheel." targets:<player>
+                        - narrate "I hope to get my new act together and I will reserve you front row seats." targets:<player>
+                        - narrate "We'll meet again, I'm sure" targets:<player>
+                        - narrate "Maybe I'll see you at some of my other stops around The Long Sea." targets:<player>
+                        - narrate "I'll have more to show you later." targets:<player>
+                        - narrate "How did you like Bardtown? They don't like me." targets:<player>
+                        - narrate "If you need to learn more about tinkering or the arts of explosions, hit me up later." targets:<player>
+                        - narrate "<italic>Pop goes the weasel<&r> is one of my favorite tunes." targets:<player>
+                        - narrate "This is close as I get to Bardtown, so I might hit you up later for some rumors." targets:<player>
+                        - narrate "If I can ever afford an assistant, I'll look you up." targets:<player>
+              
+
+                - else:
+                    - inject description_inject_task
+                    - random:
+                        - narrate "Hey bub, you gonna help me or not?" targets:<player>
+                        - narrate "I still can't find my glasses, er I mean my bolt." targets:<player>
+                        - narrate "dangnab my foggy goggles, I can't find the bolt for this broken wheel." targets:<player>
+                        - narrate "My wagon wheels can't make it over this rouch beach." targets:<player>
+                        - narrate "Any chance that you can find my lost wheel bolt?" targets:<player>
+                    - zap 1
+        #     chat trigger:
+        #         1:
+        #             trigger: <&7>/1/. /Yes/, where am I?
+        #             script:
+        #             - inject krizzdo_help_1_task
+                    
+        #         2:
+        #             trigger: <&7>/2/. /What/ is the /Song Tide/ /archipelago/?
+        #             script:
+        #             script:
+        #             - inject krizzdo_help_2_task
+        #             # 
+        #             # - narrate format:npcchat "I trust you will be well."
+        #             # 
+        #             # - zap 1
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. /Yes/, help me get to Bardtown.
+                    script:
+                    - run <npc.name>_task_01
+                1:
+                    trigger: <&7>/2/. /No/, I don't really trust you.
+                    script:
+                    - run <npc.name>_task_02
+       
+
+fix_krizzdos_wheel:
+    type: task
+    script:
+    - adjust <player> show_entity:<server.flag[krizzdos_wheel_fixed]>
+    - adjust <player> hide_entity:<server.flag[krizzdos_wheel_broken]>
+    - define krizzdo_npc <player.location.find_npcs_within[100].filter[nickname.is[==].to[krizzdo]].filter[is_spawned].first>
+
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]><[krizzdo_npc].name><&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+    - if <player.has_flag[skill.skills.tinkering.level]> || <player.flag[skill.skills.tinkering.level]> < 12
+    - flag <player> skill.skills.tinkering.level:+:1
+    - narrate format:game_message "Your tinkering raises by 1. Type <element[/skills].bold> to see your skills." targets:<player>
+    - narrate "Heyyo! You did it!" targets:<player>
+    - wait 2s
+    - narrate "You are on your way to become a tinkerer afterall." targets:<player>
+    - wait 2s
+    - narrate "Now to help you get to Bardtown in real fashion." targets:<player>
+    - wait 2s
+    - narrate "Do you trust Krizzdo the Magnificent?"
+    - clickable krizzdo_task_01 save:krizzdo_clickable_01 until:15s usages:1 for:<player>
+    - clickable krizzdo_task_02 save:krizzdo_clickable_02 until:15s usages:1 for:<player>
+ 
+
+    - narrate  "<element[<&hover[Click to say this to Krizzo.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Yes, I will trust you to get me to Bardtown.<&8><&rb><&end_hover>].on_click[<entry[krizzdo_clickable_01].command>]>" target:<player>
+    - narrate  "<element[<&hover[Click to say this to Krizzo.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>No Thank you..<&8><&rb><&end_hover>].on_click[<entry[krizzdo_clickable_02].command>]>" target:<player>
+    
+
+reset_krizzdos_wagon_wheels:
+    type: task
+    script:
+    - run place_krizzdos_wagonwheel_01
+    - run place_krizzdos_wagonwheel_02
+    - run place_krizzdos_wagonwheel_03
+    - run place_krizzdos_wagonwheel_04
+    - run place_krizzdos_broken_wagonwheel
+    
+
+
+place_krizzdo_cannon:
+    type: task
+    script:
+    - spawn armor_stand[gravity=false;equipment=air|air|air|<item[iron_ingot].with[custom_model_data=2710311]>;visible=false] save:cannon_armor_stand <player.location>
+    # - attach wagon_wheel to:<entry[wagonwheel_armor_stand].spawned_entity>
+    - flag <server> krizzdos_cannon:<entry[cannon_armor_stand].spawned_entity>
+    # - adjust <entry[wagonwheel_armor_stand].spawned_entity> hide_from_players
+
+
+place_krizzdos_wagonwheel_01:
+    type: task
+    script:
+    - if <server.flag[krizzdos_wheel_normal_01].is_spawned.not>:
+        - spawn armor_stand[arms=true;equipment=air|air|air|wagon_wheel;visible=false] krizzdo_wagonwheel_01 save:wagonwheel_armor_stand_01
+        # - attach wagon_wheel to:<entry[wagonwheel_armor_stand].spawned_entity>
+        - flag <server> krizzdos_wheel_normal_01:<entry[wagonwheel_armor_stand_01].spawned_entity>
+        #   - adjust <entry[wagonwheel_armor_stand].spawned_entity> hide_from_players
+
+
+place_krizzdos_wagonwheel_02:
+    type: task
+    script:
+    - if <server.flag[krizzdos_wheel_normal_02].is_spawned.not>:
+        - spawn armor_stand[arms=true;equipment=air|air|air|wagon_wheel;visible=false] krizzdo_wagonwheel_02 save:wagonwheel_armor_stand_02
+        # - attach wagon_wheel to:<entry[wagonwheel_armor_stand].spawned_entity>
+        - flag <server> krizzdos_wheel_normal_02:<entry[wagonwheel_armor_stand_02].spawned_entity>
+        #   - adjust <entry[wagonwheel_armor_stand].spawned_entity> hide_from_players
+
+
+place_krizzdos_wagonwheel_03:
+    type: task
+    script:
+    - if <server.flag[krizzdos_wheel_normal_03].is_spawned.not>:
+        - spawn armor_stand[arms=true;equipment=air|air|air|wagon_wheel;visible=false] krizzdo_wagonwheel_03 save:wagonwheel_armor_stand_03
+        # - attach wagon_wheel to:<entry[wagonwheel_armor_stand].spawned_entity>
+        - flag <server> krizzdos_wheel_normal_03:<entry[wagonwheel_armor_stand_03].spawned_entity>
+        #   - adjust <entry[wagonwheel_armor_stand].spawned_entity> hide_from_players
+
+place_krizzdos_wagonwheel_04:
+    type: task
+    script:
+    - if <server.flag[krizzdos_wheel_normal_04].is_spawned.not>:
+        - spawn armor_stand[arms=true;equipment=air|air|air|wagon_wheel;visible=false] krizzdo_wagonwheel_04 save:wagonwheel_armor_stand_04
+        # - attach wagon_wheel to:<entry[wagonwheel_armor_stand].spawned_entity>
+        - flag <server> krizzdos_wheel_fixed:<entry[wagonwheel_armor_stand_04].spawned_entity>
+        - adjust <entry[wagonwheel_armor_stand].spawned_entity> hide_from_players
+
+place_krizzdos_broken_wagonwheel:
+  type: task
+  script:
+    - if <server.flag[krizzdos_wheel_broken].is_spawned.not>:
+        - spawn armor_stand[arms=true;equipment=air|air|air|wagon_wheel_h;visible=false] krizzdo_wagonwheel_04 save:wagonwheel_armor_stand_broken
+        # - attach wagon_wheel to:<entry[wagonwheel_armor_stand].spawned_entity>
+        - flag <server> krizzdos_wheel_broken:<entry[wagonwheel_armor_stand_broken].spawned_entity>
+
+place_krizzdos_bolt:
+    type: task
+    script:
+    - if <location[krizzdos_bolt_location].find_entities[dropped_item].within[1].first.item.script.name> != krizzdos_bolt:
+        - drop krizzdos_bolt[flag=krizzdos_bolt] krizzdos_bolt_location
+
+krizzdo_world:
+    type: world
+    events:
+        
+        on player picks up krizzdos_bolt:
+        # - ratelimit/ex <player> 1s
+        - if <player.has_flag[has_krizzdos_bolt].not>:
+            - give krizzdos_bolt
+            # - fakeitem krizzdos_bolt duration:5m slot:<player.inventory.first_empty>
+        - flag <player> has_krizzdos_bolt
+        - adjust <player> hide_entity:<context.entity>
+        - determine cancelled
+        # on player right clicks block with:krizzdos_bolt:
+        # - if <player.has_flag[has_krizzdos_bolt]>:
+        #     - narrate click
+        on player right clicks armor_stand:
+        - if <context.entity> == <server.flag[krizzdos_wheel_broken]>:
+            - if <player.has_flag[has_krizzdos_bolt]> && <player.item_in_hand.script.name> == krizzdos_bolt:
+                - run fix_krizzdos_wheel
+                - flag <player> fixed_krizzdos_wheel
+                - take krizzdos_bolt
+                - determine passively cancelled
+            - determine cancelled
+        
+reset_krizzdo:
+    type: task
+    script:
+    - foreach <server.online_players> as:player:
+        - flag <[player]> has_krizzdos_bolt:!
+        - flag <[player]> krizzdo_prox_count:!
+        - flag <[player]> fixed_krizzdos_wheel:!
+        # - adjust <server.flag[krizzdos_wheel_broken]> show_to_players
+        # - adjust <server.flag[krizzdos_wheel_fixed]> hide_from_players
+        - adjust <[player]> hide_entity:<server.flag[krizzdos_wheel_fixed]>
+        - adjust <[player]> show_entity:<server.flag[krizzdos_wheel_broken]>
+        - teleport <player> krizzdo_approach
+
+Krizzdo_task_01:
+    type: task
+    script:
+    - narrate "Can you jump in my cannon?"
+
+    - wait 2s
+    - cast blindness d:2 amplifier:0 <player>
+
+    - adjust <player> hide_from_players
+    - spawn armor_stand[visible=false;gravity=false] krizzdo_cannon_shoot_spot save:krizzdo_cannon_shoot_armorstand
+    - define cannonball <entry[krizzdo_cannon_shoot_armorstand].spawned_entity> 
+    - adjust <player> spectate:<[cannonball]>
+    - adjust <player> gamemode:spectator
+    - wait 1s
+    - foreach <location[krizzdo_cannon_lookspot_03].points_between[<location[krizzdo_cannon_lookspot_01]>]> as:point:
+        - look <[cannonball]> <[point]>
+        - if <[loop_index].is_odd>:
+            - wait 1t
+    - foreach <location[krizzdo_cannon_lookspot_01].points_between[<location[krizzdo_cannon_lookspot_03]>]> as:point:
+        - look <[cannonball]> <[point]>
+        - if <[loop_index].is_odd>:
+            - wait 1t
+    - narrate "Let me get this sucker lined up . . ." targets:<player>
+    - foreach <location[krizzdo_cannon_lookspot_03].points_between[<location[krizzdo_cannon_lookspot_02]>]> as:point2:
+        - look <[cannonball]> <[point2]>
+        - if <[loop_index].is_odd>:
+            - wait 1t
+    - narrate "One inch off and you're kablooey." targets:<player>
+    - look <[cannonball]> krizzdo_cannon_lookspot_02
+    # - foreach <location[krizzdo_cannon_lookspot_02].points_between[<location[krizzdo_cannon_lookspot_03]>]> as:point3:
+    #     - look <[cannonball]> <[point3]>
+    #     - if <[loop_index].is_odd>:
+    #         - wait 1t
+    - wait 1s
+    - narrate "There. . .  Ready?" targets:<player>
+    - narrate "3!" targets:<player>
+    - wait 1s
+    - narrate "2!" targets:<player>
+    - wait 1s
+    - narrate "1!" targets:<player>
+    - flag <player> krizzdo_launched
+    - wait 2s
+    - playeffect effect:explosion_large at:krizzdo_cannon_explosion visibility:10 quantity:100 targets:<player>
+    - playeffect effect:CAMPFIRE_SIGNAL_SMOKE at:krizzdo_cannon_explosion visibility:10 quantity:100 targets:<player>
+    - playsound <player> sound:ENTITY_GENERIC_EXPLODE
+    # - wait 1s
+    
+    # - define distance <location[krizzdo_cannon_shoot_spot].points_between[<location[krizzdo_cannon_lookspot_03]>].size.div[2]>
+    - foreach <location[krizzdo_cannon_shoot_spot].points_between[<location[krizzdo_cannon_lookspot_02]>]> as:point4:
+        # - if <[loop_index]> == <[distance]>:
+        #     - teleport <player> krizzdo_cannon_land_spot
+        # - if <[loop_index].is_odd>:
+        #     - look <[cannonball]> krizzdo_cannon_land_spot
+        
+        - teleport <player> <[point4]>
+        - teleport <[cannonball]> <[point4]>
+        - look <[cannonball]> krizzdo_cannon_land_spot
+        - if <[loop_index].is_odd>:
+            - wait 1t
+    
+    # - teleport <player> krizzdo_cannon_land_spot
+    # - wait 1s
+    # - adjust <player> spectate:<[cannonball]>
+    # - look <[cannonball]> krizzdo_cannon_land_spot
+    # - foreach <location[krizzdo_cannon_lookspot_halfway].points_between[<location[krizzdo_cannon_lookspot_03]>]> as:point5:
+    #     - look <[cannonball]> krizzdo_cannon_land_spot
+    #     - teleport <player> <[point5]>
+    #     - teleport <[cannonball]> <[point5]>
+    #     - wait 1t
+        
+    # - look <entry[krizzdo_cannon_shoot_armorstand].spawned_entity> krizzdo_cannon_lookspot_02
+    # - look <entry[krizzdo_cannon_shoot_armorstand].spawned_entity> krizzdo_cannon_lookspot_03
+    - adjust <[cannonball]> gravity:true
+    # - wait 5s
+    - wait 1s
+    - foreach <location[krizzdo_cannon_land_spot].points_between[<location[pewter_spot]>]> as:point6:
+        - look <[cannonball]> <[point6]>
+        - wait 2t
+    
+    - adjust <player> spectate:<player>
+    - adjust <player> show_to_players
+    
+    
+    - remove <entry[krizzdo_cannon_shoot_armorstand].spawned_entity>
+    - teleport <player> krizzdo_cannon_land_spot
+    - look <player> pewter_spot
+    - adjust <player> gamemode:adventure
+
+Krizzdo_task_02:
+    type: task
+    script:
+    - define krizzdo_npc <player.location.find_npcs_within[100].filter[nickname.is[==].to[krizzdo]].filter[is_spawned].first>
+
+    - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]><[krizzdo_npc].name><&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+    - narrate "Hey, not everyone wants to be friends with Krizzdo the Amazing Demolitions Wizard." targets:<player>
+    - wait 2s
+    - narrate "You can find Bardtown up that path." targets:<player>
+
+
+krizzdo_personality:
+    type: data
+    character_data:
+        informal_terms_of_address: 
+            - "chum"
+            - "bub"
+            - "pal"
+            - "buddy"
+        temperament: "sarcastic, outgoing, and charismatic, with a hint of streetwise cynicism."
+        mannerisms: "Krizzdo has a habit of absentmindedly whistling tunes as he goes about his day. He also often licks objects as if to gauge their worth, and he pockets small souvenirs from his travels."
+        focused_demeanor: "When it comes to his tinkering projects or performing magic tricks, Krizzdo adopts a focused demeanor, channeling all his attention and energy into the task at hand."
+        careful_speech: "Krizzdo's speech is careful and deliberate, with each word chosen for maximum impact. He speaks with a hint of streetwise charm, peppering his sentences with colorful metaphors and witty banter."
+        occasional_displays_of_determination: "In moments of challenge or adversity, Krizzdo displays a remarkable determination to overcome obstacles and achieve his goals, often surprising those around him with his resilience and tenacity."
+        nostalgic_expressions: "Krizzdo lacks nostalgia, always looking forward to new adventures and opportunities rather than dwelling on the past. His focus is firmly set on the future, driving him to explore new lands, invent new contraptions, and entertain audiences with his magic tricks and storytelling."
+        hometown: "Gozon"
+        educational_background: "Krizzdo's education was primarily informal, gained through his experiences growing up on the streets of Gozon and his self-directed pursuit of knowledge through tinkering and exploration."
+        intelligence: "Krizzdo is highly intelligent, with a natural knack for problem-solving and inventiveness. His street smarts and cunning wit make him adept at navigating a variety of situations."
+        self-esteem: "Despite occasional setbacks, Krizzdo possesses a healthy sense of self-esteem, bolstered by his accomplishments and the admiration of those who appreciate his talents."
+        hobbies: "Tinkering with gadgets and machinery, performing magic tricks, collecting shiny objects, and exploring new places."
+        skills_talents: "Tinkering, magic tricks, persuasion, storytelling, and navigating the Long Sea."
+        loves: "Shiny objects, tinkering with gadgets, performing for an audience, and exploring new lands."
+        morals_virtues: "Krizzdo values creativity, resourcefulness, and kindness towards others. He believes in the power of laughter and magic to bring joy to the world."
+        phobias_fears: "Krizzdo harbors a fear of failure and rejection, stemming from his desire to prove himself as a worthy magician and gain acceptance from the performers of Bardtown."
+        angered_by: "Krizzdo is angered by injustice and dishonesty, especially when it affects those who are less fortunate."
+        pet_peeves: "Krizzdo's pet peeves include arrogance, narrow-mindedness, and anyone who underestimates his abilities."
+        obsessed_with: "Krizzdo is obsessed with tinkering and inventing new contraptions for his Wonderwagon, as well as collecting shiny objects and exploring new lands."
+        routines: "Krizzdo's routines involve tending to his Wonderwagon, practicing his magic tricks, and seeking out new adventures across the Long Sea."
+        bad_habits: "Krizzdo's bad habits include occasionally biting off more than he can chew and being overly optimistic about his abilities."
+        desires: "Krizzdo desires acceptance and recognition from the performers of Bardtown, as well as the opportunity to showcase his talents on their stages."
+        flaws: "Krizzdo's flaws include a tendency towards overconfidence and a penchant for bending the truth to suit his own purposes."
+        quirks: "In addition to his habit of licking objects and pocketing souvenirs, Krizzdo has a fascination with antique clocks and superstitions."
+        favorite_sayings:
+            - "Life's a scrap heap, ain't it? Every twist and turn's a chance to snag somethin' shiny before the rats do."
+            - "A tale without a twist is like a broken lock - useless and ripe for pickin', my gutter rats."
+            - "When the world throws ya a curveball, you snatch it, twist it, and throw it back with a cackle."
+            - "Adventure's the fuel for the fire, my grease monkeys. And let me tell ya, I like me flames extra hot!"
+            - "In a world full o' locked doors, be the one with the skeleton key... and a few tricks up yer sleeve to make 'em squeal, savvy?"
+            - "Dreams are the breadcrumbs of madness, leadin' us down the rabbit hole to our next big haul, arr!"
+            - "Life's a stage, and we're all just players in the twisted carnival. So why not give 'em a freak show they'll never forget, eh?"
+            - "When life gives ya lemons, me hearties, you squeeze 'em dry and sell the juice for a pretty penny."
+            - "Every setback's just a setup for a grand heist, my mates! Keep yer wits about ya and yer knives sharp!"
+            - "Don't be lettin' the doubters get ya down, lads! There's always another mark to be had!"
+        disabilities: "His eyesight is diminishing"
+        secrets:
+        - "Krizzdo's real name isn't Krizzdo at all. He adopted the moniker after fleeing his goblin tribe to start a new life, leaving behind his true identity and any ties to his past."
+        - "Behind his charismatic facade, Krizzdo harbors a deep-seated resentment towards Bardtown's leading bards, blaming them for his banishment from the city's stages. He secretly dreams of sabotaging their performances and reclaiming his rightful place in the spotlight."
+        - "Krizzdo's Wonderwagon isn't just a vehicle for his travels - it's also a mobile arsenal of stolen goods and illicit contraband. Hidden beneath its colorful exterior are hidden compartments filled with treasures pilfered from unsuspecting travelers and rival traders."
+        - "Despite his outward bravado, Krizzdo suffers from crippling self-doubt and imposter syndrome, constantly fearing that one day, the world will see through his charming facade and realize he's nothing but a fraud."
+        - "Krizzdo's knack for storytelling and sleight-of-hand isn't just a talent - it's a carefully honed skill acquired through years of manipulation and deceit. He's not above using his charms to manipulate others for his own gain, spinning elaborate tales to deceive and swindle those around him."
+        regrets: "Krizzdo regrets the incident that led to his banishment from Bardtown's stages, and he secretly longs for the chance to redeem himself in the eyes of its performers."
+        accomplishments: "Krizzdo's accomplishments include building his Wonderwagon from scratch, inventing numerous gadgets and contraptions, and earning a reputation as a skilled magician and storyteller across the Long Sea."
+        memories: "Some of Krizzdo's fondest memories involve performing magic tricks for the children of Deluvia and exploring the hidden corners of the city with his childhood friends."
+        physical_strengths: "Krizzdo possesses nimble fingers and keen eyesight, making him adept at tinkering with intricate machinery and performing sleight-of-hand magic tricks."
+        physical_abilities: "Krizzdo is agile and nimble, with quick reflexes that serve him well in performing magic tricks and navigating the crowded streets of Bardtown."
+        magical_abilities: "Krizzdo possesses a natural talent for sleight-of-hand magic and illusion, as well as a deep understanding of the mystical properties of certain objects and artifacts."
+        languages_known: "Common, Goblin"
+        preferred_communication_methods: "Krizzdo prefers face-to-face communication, where he can charm and entertain others with his storytelling and magic tricks."
+        accent: "Krizzdo speaks with a slight goblin accent, characterized by clipped syllables and a musical cadence reminiscent of the streets of Gozon."
+        style_and_pacing_of_speech: "Krizzdo's speech is lively and animated, with a rhythm that ebbs and flows like the tides of the Long Sea. He peppers his sentences with colorful metaphors and witty banter, keeping his audience engaged and entertained."
+        pitch: "Krizzdo's voice is melodious and expressive, capable of conveying a wide range of emotions from excitement to melancholy."
+        laughter: "Krizzdo's laughter is infectious, filling the air with warmth and joy wherever he goes."
+        smile: "Krizzdo's smile is mischievous and endearing, lighting up his face and drawing others into his orbit with its magnetic charm."
+        use_of_gestures: "Krizzdo's gestures are fluid and expressive, adding emphasis to his words and enhancing the storytelling experience for his audience."
+        facial_expressions: "Krizzdo's facial expressions are equally expressive, conveying a range of emotions from playful mischief to heartfelt sincerity."
+        verbal_expressions: "Krizzdo's verbal expressions are colorful and imaginative, reflecting his love of storytelling and his talent for capturing the imagination of his audience."
+        birth_date: "Unknown"
+        place_of_birth: "Gozon"
+        key_family_members: "Krizzdo's key family members include his goblin tribe, from whom he is estranged, and his fellow travelers and friends across the Long Sea."
+        notable_events_milestones: "Krizzdo's notable events and milestones include the incident that led to his banishment from Bardtown's stages, as well as his journey to build his Wonderwagon and establish himself as a skilled magician and storyteller."
+        criminal_record: "None known, but he is banned from some towns across The ong Sea"
+        affiliations: "Krizzdo is affiliated with various traveling communities and merchant guilds across the Long Sea, as well as the performers and entertainers of Bardtown."
+        skeletons_in_the_closet:
+        - "Krizzdo's Wonderwagon is actually a stolen prototype from a renowned inventor, and he's been on the run ever since. If the authorities were to catch wind of its true origins, it could mean serious trouble for him."
+        - "Before becoming a traveling magician, Krizzdo was involved in a notorious smuggling ring that operated across the Long Sea. He's managed to keep his past hidden, but there are still a few old associates who could expose him if they wanted to."
+        - "Krizzdo's love of shiny objects isn't just a quirk - it's a full-blown obsession that's landed him in hot water more than once. He's been caught stealing valuables on multiple occasions, and if the wrong person were to find out, it could tarnish his reputation irreparably."
+        - "Deep down, Krizzdo blames himself for the fire that destroyed Bardtown's stage all those years ago. He was experimenting with dangerous magic tricks backstage, and his carelessness led to the disaster. He's kept his involvement a secret ever since, fearing the backlash if the truth were to come out."
+        - "Krizzdo's Wonderwagon isn't just a vehicle - it's also a makeshift laboratory where he conducts experiments with forbidden magic. He's dabbled in dark arts that most would find repulsive, and if anyone were to discover the extent of his research, he could be labeled as a dangerous heretic."
+        character_archetype: "Krizzdo is a combination of the charming rogue and the ingenious tinkerer, with a touch of the wandering bard thrown in for good measure."
+        character_arc: "Krizzdo's character arc revolves around his quest for acceptance and recognition, as well as his journey to reconcile his past with his present and embrace his true potential as a magician and storyteller."
+        core_values: "Krizzdo's core values include creativity, resourcefulness, and kindness towards others, as well as a deep-seated belief in the power of laughter and magic to bring joy to the world."
+        internal_conflicts: "Krizzdo's internal conflicts stem from his desire to prove himself as a worthy magician and gain acceptance from the performers of Bardtown, as well as his longing to reunite with his goblin tribe and reconcile his past with his present."
+        external_conflicts: "Krizzdo's external conflicts arise from his encounters with rival performers, dishonest merchants, and other obstacles that threaten to derail his quest for acceptance and recognition."
+        goals: "Krizzdo's goals include amassing a fortune through his performances and ventures across the Long Sea, constantly seeking out rare treasures and valuable artifacts. He also aims to expand his repertoire of magic tricks and storytelling techniques, always on the lookout for new ways to dazzle and entertain his audience."
+        motivations: "Krizzdo's motivations stem from his insatiable thirst for wealth and recognition, driving him to push the boundaries of his craft and seek out new opportunities for success. He longs to prove himself as the greatest magician and storyteller in the land, believing that laughter and magic hold the power to bring joy and wonder to the world."
+        epiphanies: "Krizzdo's epiphanies include the realization that true magic lies not just in sleight-of-hand tricks and illusions, but in the connections we forge with others and the stories we share. Through his experiences, he discovers that the most valuable treasures are often found in the bonds we form and the memories we create together."
+        significant_events_plot_points: "Krizzdo's significant events and plot points include his banishment from Bardtown's stages, which fueled his determination to prove himself elsewhere. His journey to build his Wonderwagon served as a turning point in his life, marking the beginning of his adventures across the Long Sea. Along the way, he encounters rival performers, dishonest merchants, and other obstacles that test his skills and resolve."
+        relationships: "Krizzdo's relationships include a diverse array of fellow travelers and friends across the Long Sea, from fellow performers to merchants and adventurers. He also maintains connections with the entertainers of Bardtown, despite his banishment, often seeking inspiration and collaboration with his peers."
+        knowledge: "Krizzdo's knowledge encompasses a wide range of subjects, including tinkering, magic tricks, storytelling, and navigation. He's constantly learning and experimenting, eager to expand his skills and adapt to new challenges as he travels from one exotic locale to another."
+        places: "Krizzdo has traveled to many places across the Long Sea, from the bustling streets of Bardtown to the remote islands and hidden coves that dot its shores. Each new destination brings fresh opportunities for adventure and discovery, fueling his insatiable wanderlust and thirst for excitement."

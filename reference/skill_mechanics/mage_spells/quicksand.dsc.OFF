@@ -1,0 +1,48 @@
+quicksand_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    - define defender <[attacker].target>
+    - if <[attacker].has_flag[skill.spells.quicksand.level].not>:
+        - flag <player> skill.spells.quicksand.level:1
+        - define level 1
+    
+    - define level <[attacker].flag[skill.spells.quicksand.level]>
+    # - define level 30
+    - cast slow <[defender]> duration:<[level]>s amplifier:<[level]>
+    - playeffect effect:falling_dust at:<[defender].location> special_data:mud visibility:10 quantity:100 offset:2,0,2
+    - foreach <[defender].location.find_blocks.within[4]> as:block:
+        # - narrate <[block]>
+        - if <[block].material.is_solid>:
+            - showfake mud <[block]> duration:<[level]>s players:<server.online_players>
+            - showfake mud <[block].down[1]> duration:<[level]>s players:<server.online_players>
+        # - playeffect effect:falling_dust at:<[block]> special_data:mud visibility:10 quantity:100 offset:2,0,2
+        # - if <[level]> > 29:
+        #     - if <[block].find.living_entities.within[1].any>:
+        #         - define entity <[block].find.living_entities.within[1].first>
+        #         - teleport <[entity]> <[entity].location.down[1]>
+        #         - run spell_damage_task def:quicksand|<[entity]>
+
+    - define location <[defender].location>
+    - repeat <[level]>:
+        # - playeffect effect:falling_dust at:<[defender].location> special_data:mud visibility:10 quantity:100 offset:2,0,2
+        - if <[defender].location.y> >= <[location].y>:
+            - teleport <[defender]> <[defender].location.down[0.25]>
+        - if <util.random.int[1].to[2]> == 2:
+            - run spell_damage_task def:quicksand|<[defender]>
+            - teleport <[defender]> <[defender].location.down[0.25]>
+        - if <[level]> > 29:
+            - if <[defender].location.find.living_entities.within[4].any>:
+                - foreach <[defender].location.find.living_entities.within[4]> as:entity:
+                    - narrate <[defender]>
+                    - cast slowness <[entity]> duration:2s 
+                    - teleport <[entity]> <[entity].location.down[0.25]>
+                    - run spell_damage_task def:quicksand|<[entity]>
+
+        - wait 15t
+        - define resist_success <proc[natural_skill_check_proc].context[<[defender]>|dirt_resist]>
+        - if <[resist_success]>:
+            - repeat stop
+    - if <[defender].is_player.not>:
+        - wait 2t
+        - teleport <[defender]> <[location]>

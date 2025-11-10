@@ -1,0 +1,1002 @@
+tame_command:
+    type: command
+    name: tame
+    script:
+    - narrate use
+    - if <player.has_flag[skill.specializations.taming].not>:
+        - narrate "You do not have the Taming skill."
+        - stop
+    - if <player.flag[skill.specializations.taming.level]||0> < 1:
+        - narrate "You need a Taming level of at least one to use it."
+        - stop
+    - if <player.has_flag[tame]>:
+        - flag <player> tame:!
+        - narrate "Taming toggled off"
+    - else:
+        - flag <player> tame
+        - narrate "Taming toggled on"
+        
+
+flying_mount_world:
+    type: world
+    events:
+   
+        on entity starts gliding:
+        - if <player.has_flag[flying_mount]>:
+            - narrate "start gliding"
+            - adjust <context.entity> gliding:true
+        on entity stops gliding:
+        - if <player.has_flag[flying_mount]>:
+            - narrate "stopping gliding"
+            - adjust <context.entity> gliding:true
+
+flying_mount_task:
+    type: task
+    script:
+    - if <player.has_flag[flying_mount]>:
+        - if <npc.is_spawned>:
+            - adjust <npc> velocity:<player.velocity.with_y[1]>
+            - repeat 4:
+                - adjust <npc> gliding:true
+                - wait 2t
+            - wait 17t
+        - else:
+            - stop
+    - run flying_mount_task
+
+
+pet_mount_task:
+    type: task
+    definitions: pet
+    script:
+    - if <player.location.distance[<npc[<[pet]>].location>]> < 5:
+        - execute as_op "npc select <[pet]>" silent
+        - wait 1t
+        - execute as_op "npc mount" silent
+        - flag <player> mounted:<[pet]>
+    - else:
+        - narrate "You are not close enough to your pet to mount it."
+
+dismount_command:
+    type: command
+    name: dismount
+    script:
+    - flag <player> dismounting 
+    - flag <player> mounted:!
+    - mount cancel <player>
+        
+pet_world:
+    debug: false
+    type: world
+    subpaths:
+            eat:
+            - announce "EAT"
+    events:
+        # on horse spawns:
+        # - announce "horse color: <context.entity.color>"
+        on player drops carrot|sugar:
+        - flag <context.entity> dropped_by:<player>
+        on delta time secondly:
+        - define wait_time 1
+        - wait <[wait_time]>
+        - define horse_food <list[sugar|carrot]>
+        - foreach <server.online_players_flagged[pets]> as:player:
+            - foreach <[player].flag[pets]> as:pet:
+                - if <npc[<[pet]>].has_flag[bonded_to]>:
+                    - foreach next
+                - foreach <npc[<[pet]>].location.find.entities.within[2]> as:entity:
+                    - if <[entity].entity_type> != "DROPPED_ITEM":
+                        - foreach next
+                    - if <script[fauna].data_key[beast.<[pet].as_npc.flag[entity_type]>.food_sources].contains[<[entity].item.material.name>]>:
+                        - if <[entity].has_flag[dropped_by]> && <[entity].flag[dropped_by]> == <[player]>:
+                            - if <npc[<[pet]>].flag[loyalty]> < 20:
+                                - if !<npc[<[pet]>].has_flag[pet_hunger_timer]>:
+                                    - remove <[entity]>
+                                    - flag <npc[<[pet]>]> loyalty:++
+                                    - narrate "<npc[<[pet]>].name>'s loyalty toward you has gone up." targets:<[player]>
+                                    - flag <npc[<[pet]>]> pet_hunger_timer duration:<npc[<[pet]>].flag[loyalty].mul[4]>s
+                                - else:
+                                    - narrate "they won't eat it now until <npc[<[pet]>].flag[pet_hunger_timer].expiration.formatted>" targets:<npc[<[pet]>].flag[pet_of]>
+                                    
+                    - if <npc[<[pet]>].flag[loyalty]> > 0:
+                        - define pet_loyalty_raise_timer <element[500].sub[<npc[<[pet]>].flag[loyalty].mul[4]>]>
+                        - if <npc[<[pet]>].has_flag[pet_loyalty_raise_timer]<:>
+                        - ratelimit <npc[<[pet]>]> <element[500].sub[<npc[<[pet]>].flag[loyalty].mul[4]>]>s
+                        - flag <npc[<[pet]>]> loyalty:--
+                    - if <npc[<[pet]>].flag[loyalty]> == 0:
+                        - wait 133s
+                        - if <npc[<[pet]>].flag[loyalty]> == 0:
+                            - run pet_return_wild_task def:<[pet]>
+        - foreach <server.spawned_npcs_flagged[pet_of]> as:pet:
+            - if <[pet].has_flag[bonded_to].not>:
+                # - narrate "bonded to <[pet].has_flag[bonded_to]>" targets:<[pet].flag[pet_of]>
+                - define bonding_difficulty 1
+                - if <script[fauna].data_key[beast.<[pet].as_npc.flag[entity_type]>].contains[bonding_difficulty]>:
+                    #TODO make sure bonding difficult scales correctly
+                    - define bonding_difficulty <script[fauna].data_key[beast.<[pet].as_npc.flag[entity_type]>.bonding_difficulty]>
+                - define average_loyalty <npc[<[pet]>].flag[average_loyalty].sum.div[<npc[<[pet]>].flag[average_loyalty].size>]>
+                - define time_lived <util.time_now.duration_since[<npc[<[pet]>].flag[pet_created_time]>].in_days.round>
+                - define loyalty_number <[average_loyalty].mul[<[time_lived].max[1]>]>
+                - define number_to_beat <element[70].sub[<[pet].flag[pet_of].flag[skill.natural.beast_lore_level]>].max[10]>
+                # - narrate "loyalty_number <[loyalty_number]> AND number to beat <[number_to_beat]>" targets:<[pet].flag[pet_of]>
+                # - narrate "<[loyalty_number]> >= <[number_to_beat]>" targets:<[pet].flag[pet_of]>
+                - if <[loyalty_number]> >= <[number_to_beat]>:
+                    - flag <[pet]> bonded_to:<[pet].flag[pet_of]>
+                    - narrate " has bonded to you."
+                    - run pet_stats_init_task def:<[pet].id>
+            
+
+                # - if <npc[<[pet]>].flag[average_loyalty].mul[<util.time_now.duration_since[<npc[<[pet]>].flag[pet_created_time]>].in_days.round>]> >= <element[70].sub[<[pet].flag[pet_of]flag[skill.natural.beast_lore_level]>].max[10]>:
+                #     # - flag <[pet]> bonded_to:<[pet].flag[pet_of]> 
+                #     - narrate "Your pet bonds to you." targets:<[pet].flag[pet_of]>
+            # - announce "<[pet].name> is pet of <[pet].flag[pet_of].name>"
+                - if <npc[<[pet]>].flag[average_loyalty].size> > 100:
+                    - flag <npc[<[pet]>]> average_loyalty:<-:<npc[<[pet]>].flag[average_loyalty].get[1]>
+                - flag <npc[<[pet]>]> average_loyalty:->:<npc[<[pet]>].flag[loyalty]>
+                # - announce "pets average loyalty is <npc[<[pet]>].flag[average_loyalty].sum.div[<npc[<[pet]>].flag[average_loyalty].size>]>"
+                - if <npc[<[pet]>].flag[loyalty]> > 0:
+                    # - announce "<[pet]>'s rate limit is  <element[2800].sub[<npc[<[pet]>].flag[loyalty].mul[5]>]>s"
+                    - ratelimit <npc[<[pet]>].name> <element[2800].sub[<npc[<[pet]>].flag[loyalty].mul[5]>]>s
+             
+                # - flag <npc[<[pet]>]> loyalty:--
+
+
+                # - run locally path:subpaths.eat
+                - if <npc[<[pet]>].flag[loyalty]> > 1:
+                    
+                    - if <[pet].flag[pet_of].location.distance[<npc[<[pet]>].location>]> < 5:
+                        - flag <npc[<[pet]>]> loyalty:--
+        
+        on player quit:
+        - if <player.has_flag[mounted]>:
+            - despawn <npc[<player.flag[mounted]>]>
+        after player joins:
+        - if <player.has_flag[mounted]>:
+            - spawn <npc[<player.flag[mounted]>]> <player.location>
+            - wait 1t
+            - execute as_op "npc select <player.flag[mounted]>
+            - wait 1t
+            - execute as_op "npc mount"
+     
+        on npc_flagged:bonded_to damaged:
+            # - announce "<context.entity> damaged"
+            - run update_pet_stats_task def:<context.entity>
+        on npc_flagged:bonded_to heals:
+            # - announce "<context.entity> heals"
+            - run update_pet_stats_task def:<context.entity>
+        on entity dies:
+        - if <context.entity.has_flag[pet_identifier]>:
+            - remove <context.entity.flag[pet_identifier].before[/]>
+        on npc dies:
+        - if <context.entity.has_flag[pet_of]>:
+            - if <context.entity.has_flag[bonded_to]>:
+                - announce "Your pet has died, but because it is bonded to you, you can resurrect it."
+                - flag <context.entity.flag[pet_of].as_player> pet_dead:->:<context.entity.id>
+            - else:
+                - flag <context.entity.flag[pet_of].as_player> pets:<-:<context.entity.id>
+
+        # on player enters vehicle:
+        # - if <player.flag[pets].contains[<context.vehicle.as_npc.id>]>:
+        #     - flag <player> mounted:<context.vehicle.as_npc.id>
+
+        on player exits vehicle:
+        # - narrate <context.vehicle.as_npc.id>
+        
+        - if <player.flag[pets].contains[<context.vehicle.as_npc.id>]>:
+            - execute as_op "npc select <context.vehicle.as_npc.id>" silent
+            - adjust <context.vehicle> velocity:<player.velocity.with_y[-1]>
+            - if <player.has_flag[dismounting].not>:
+                - flag <player> dismounting:!
+                - determine passively cancelled
+        - wait 1s
+        - if <player.is_online>:
+            - flag <player> mounted:!
+        # on player damages npc:
+        # - if <player.flag[pets].contains[<context.entity.id>]>:
+        #     - if <script[fauna].data_key[beast].contains[<context.entity.entity_type>]>:
+        #         - if <script[fauna].data_key[beast.<context.entity.entity_type>].contains[mountable]>:
+        #             - execute as_op "npc select <context.entity.id>" silent
+        #             - execute as_op "npc mount"
+        #         - else:
+        #             - narrate "This pet is not mountable."
+        #     - else:
+        #         - if <script[<context.entity.flag[entity_type]>].data_key[custom.mountable].contains[beastmaster]>:
+        #             - if <player.flag[class.type].contains[beastmaster]>:
+        #                 - execute as_op "npc select <context.entity.id>" silent
+        #                 - execute as_op "npc mount"
+        #                 - flag <player> flying_mount
+                        
+        #             - else:
+        #                 - narrate "This pet requires you to be a Beast Master in order to ride it."
+        #         - else:
+        #             - narrate "This pet is not mountable."
+        #     # - mount <player>|<context.entity>
+        #     - determine cancelled
+        after player right clicks entity:
+        - ratelimit <player> 2t
+        
+        - if <context.entity.is_npc>:
+            - stop
+        #this handles taming
+        - define taming_difficulty 1000
+        - if <player.has_flag[tame]>:
+            - define pet_limit <player.flag[skill.natural.beast_lore_level].div[20].round_up.max[3]>
+            - if <[pet_limit]> <= <player.flag[pets].size>:
+                - narrate "<red>You can only have <[pet_limit]> pets you can keep under your control. Release one of them."
+                - stop 
+            - if <player.flag[pets].size> > 0:
+                - if <player.flag[pets].contains[<context.entity.id>]||false>:
+                    - narrate "You already have this beast tamed. You cannot tame it again."
+                    - stop
+            - if <player.has_flag[taming]>:
+                - narrate "You are already attempting to tame. Wait until this attempt is successful or fails."
+                - stop
+            - else:
+                - flag <player> taming duration:12s
+            - define invisible false
+            - define pet_entity <context.entity.entity_type>
+            - define custom_model ""
+            - define level <player.flag[skill.taming.level]||1>
+            - narrate "Attempting to tame a <context.entity.name.to_lowercase>"
+            - wait <element[2].sub[<[level]>].max[1]>s
+            - if <script[fauna].data_key[beast].contains[<context.entity.entity_type>].not>:
+                - if <context.entity.script.data_key[custom.tameable]||false>:
+                    - define invisible true
+                    - define custom_model <context.entity.flag[custom_model]>
+                    - define pet_entity  <context.entity.script.data_key[custom.tamed_entity]>
+                - else:
+                    - narrate "This beast is untameable."
+                    - if <player.has_flag[taming]>:
+                        - flag <player> taming:!
+                    - stop
+            - else:
+                - define taming_difficulty <script[fauna].data_key[beast.<context.entity.entity_type>.taming_difficulty]>
+                - narrate "taming difficulty: <[taming_difficulty]>"
+            - if <proc[natural_skill_check_proc].context[<player>|beast_lore|0]>:
+                # - if <context.entity.tameable>:
+                #     - adjust <context.entity> tame:
+                - define color <context.entity.color||black>
+                - define entity_name <context.entity.name>
+                - define entity_type <context.entity.name.replace[<&sp>].with[_].to_lowercase>
+                - narrate "You have tamed this <context.entity.name.to_lowercase>"
+                - inject spawn_pet_task
+                - remove <context.entity>
+                # - define pet_identifier "<&chr[3118]>"
+                # - define entity "armor_stand[custom_name=<[pet_identifier]>;custom_name_visible=true;is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|air]"
+                # - spawn <[entity]> <[pet].location.up[2]>  save:pet_identifier
+                # - adjust <entry[pet_identifier].spawned_entity> hide_from_players
+                # - adjust <player>  show_entity:<entry[pet_identifier].spawned_entity>
+                # - attach <entry[pet_identifier].spawned_entity> to:<[pet]> offset:0,2,0
+                # - execute as_op "npc gravity --id <[pet].id>" silent
+                # - adjust <npc[<[pet].id>]> speed:3.2
+                # - execute as_op "npc equip elytra --id <[pet].id>" silent
+
+                # - flag <entry[pet].created_npc> pet_identifier:<entry[pet_identifier].spawned_entity.before[/]>
+                
+            - else:
+                - narrate "You have failed to tame the beast."
+            - flag <player> taming:!
+            - run raise_natural_skill_task def:<player>|beast_lore
+            - if <util.random.int[0].to[3]> == 1:
+                - run raise_natural_skill_task def:<player>|persuasion
+
+
+spawn_pet_task:
+    type: task
+    script:
+    
+    - define pet_name "<player.name>'s_pet_<[entity_name].to_lowercase>_<player.flag[pets].size.add[1].add[<player.flag[stabled_pets].size||1>]>"
+    - create <[pet_entity]> <[pet_name]> <player.location> trait:sentinel|controllable save:pet
+    
+    - define pet <entry[pet].created_npc>
+    - adjust <[pet]> owner:<player>
+    # - assignment set script:pet_assignment npc:<[pet].id>
+    - execute as_server "sentinel guard <player.name> --id <[pet].id>"
+    - execute as_server "sentinel respawntime 0 --id <[pet].id>"
+    - follow followers:<[pet]> target:<player> lead:3
+    - adjust <[pet]> color:<[color]>
+    - adjust <npc[<[pet].id>]> name_visible:false
+    # - team name:sb_pets add:<npc[<[pet].id>]> color:aqua
+    # - adjust <npc[<[pet].id>]> glowing:true player:<player>
+    - flag <player> pets:->:<[pet].id>
+    - flag <npc[<[pet].id>]> pet_of:<player>
+    - flag <npc[<[pet].id>]> name:<[pet_name]>
+    - flag <npc[<[pet].id>]> pet_created_time:<util.time_now>
+    - flag <npc[<[pet].id>]> loyalty:5
+    - wait 1t
+    - if <[invisible]>:
+        - adjust <[custom_model]> attach_to:<[pet]>|0,5,0
+        - execute as_op "npc invisible --id <[pet].id>" 
+        # - invisible <npc[<[pet].id>]> state:true
+        # - adjust <[pet]> hide_from_players
+    - flag <npc[<[pet].id>]> custom_model:<[custom_model]>
+    - flag <npc[<[pet].id>]> entity_type:<[entity_type]>
+
+
+pet_return_wild_task:
+    type: task
+    definitions: pet
+    script:
+    - narrate "<npc[<[pet]>].name> will go wild" targets:<npc[<[pet]>].flag[pet_of].as_player>
+    
+    - spawn <npc[<[pet]>].flag[entity_type]> <npc[<[pet]>].location> save:pet
+    - adjust <[pet]> color:<npc[<[pet]>].color>
+    - define pet_owner <[pet].flag[pet_of]>
+    - flag <[pet_owner].as_player> pets:<-:<[pet]>
+    - wait 1t
+    - remove <npc[<[pet]>]>
+
+pets_command:
+    type: command
+    name: pets
+    aliases:
+        - pet
+    tab completions:
+        1: <player.flag[pets].filter[flag[name]]>|all
+        2: attack|release|rename|guard|stable|mount
+        # 3: <player.location.find.players.within[24]>
+    tab complete:
+    - define pet_list <list>
+    - foreach <player.flag[pets]> as:pet:
+        - define pet_list:->:<npc[<[pet]>].name>
+    - determine <[pet_list]>
+ 
+    script:
+    - if !<player.has_flag[pets]> || <player.flag[pets].size> < 1:
+        - narrate "You do not have any pets to view."
+        - if <player.has_flag[stabled_pets]> && <player.flag[stabled_pets].size> > 0:
+            - if <player.flag[stabled_pets].size> == 1:
+                - define plural ""
+            - else:
+                - define plural "s"
+            - narrate "You have <player.flag[stabled_pets].size> pet<[plural]> stabled, which you can claim when you are next at a stable."
+        
+        - stop
+    - if <context.args.size> > 0:
+        - define chosen_pet_command <context.args.get[2]>
+        - define chosen_pet <context.args.first>
+        - if <[chosen_pet]> == "all":
+            - narrate "you will apply this command to all your pets."
+        - else:
+            
+            - define this_pet <server.spawned_npcs_flagged[name].filter[flag[name].is[==].to[<[chosen_pet]>]].filter[flag[pet_of].is[==].to[<player>]].get[1]>
+            - if <[this_pet].owner> != <player>:
+                - narrate "This beast is not under your control."
+                - stop
+            # - foreach <player.flag[pets]> as:pet:
+            #     - if <npc[<[pet]>].name.contains_any_text[<[chosen_pet]>]>:
+                    
+            #         # - narrate "You don't have a pet called <[chosen_pet]>"
+            #         # - stop
+            #     - else:
+            - if <list[attack|release|rename|guard|stable|mount|stop|come|follow].contains[<[chosen_pet_command]>]>:
+                - choose <context.args.get[2]||null>:
+                    - case come:
+                        - walk <[pet]> <player.location>
+                    - case follow:
+                        - follow followers:<[pet]> target:<player> lead:3
+                    - case stop:
+                        - run pet_stop_task def:<[this_pet]>
+                    - case stable:
+
+                        - run pet_stable_task def:<[this_pet]>
+                    - case guard:
+                        - narrate "guarding"
+                        # /sentinel addtarget event:guarded_fight
+                    - case attack:
+                        - define target <player.target||null>
+                        - if <[target]> != "null":
+                            - if !<player.worldguard.test_flag[pvp]>:
+                                - narrate "Your pet cannot attack here."
+                                - stop
+                            - if !<player.worldguard.test_flag[pvp].at[<player.target.location>]>:
+                                - narrate "Your pet cannot attack here."
+                                - stop
+                            - if !<player.worldguard.test_flag[pvp].at[<[this_pet].location>]>:
+                                - narrate "Your pet cannot attack here."
+                                - stop
+                            - if <player.target.is_npc>:
+                                - if <player.target.has_flag[pet_of].not>:
+                                    - narrate "You cannot make your pet attack this citizen."
+                                    - stop
+                            - if <[this_pet]> == <player.target>:
+                                - narrate "You cannot make a pet attack itself."
+                                - stop
+                            - if <player.has_flag[party]> && <player.target.has_flag[party]> && <player.target.flag[party]> == <player.flag[party]>:
+                                - narrate "You cannot have your pet attack a party member."
+                                - stop
+                    
+                            - if <player.target> == <player>:
+                                - narrate "You cannot make your pet attack you. Release it first."
+                            # - narrate "<[this_pet]> will attack <player.target>"
+                            - flag <[this_pet]> attacking
+                            - run pet_attack_task def:<[this_pet]>|<[target]>
+                        - else:
+                            - narrate "Cannot find that target. Try again."
+                    - case release:
+                        - run pet_release_task def:<[this_pet]>
+                    - case mount:
+                        - run pet_mount_task def:<[this_pet]>
+                    - case rename:
+                        - define new_name <context.raw_args.after[<[chosen_pet_command]>].trim.replace[<&sp>].with[_]>
+                        - if <[new_name]to_list.size> <= 1:
+                            - narrate "The pet's name must be longer than 1 character"
+                        - run pet_rename_task def:<[new_name]>|<[this_pet]>
+                        # - narrate "renaming <[pet]> to <[new_name]>"
+            - else:
+                - narrate "That command does not exist."
+                - narrate "Try attack, release, rename"
+        # - else:
+        #     - narrate "You don't have this pet."
+
+    - else:
+        - run pets_list_task
+
+pets_show_stats_task:
+    type: task
+    definitions: pet
+    script:
+    - narrate <[pet]>
+    - if <npc[<[pet]>].flag[stat_bar].custom_name_visible>:
+        - adjust <npc[<[pet]>].flag[stat_bar]> custom_name_visible:false
+    - else:
+        - adjust <npc[<[pet]>].flag[stat_bar]> custom_name_visible:true
+
+update_pet_stats_task:
+    type: task
+    definitions: pet
+    script:
+    - define pet_hp <npc[<[pet]>].health_data>
+    - define pet_dex 0
+    - define pet_int 0
+    - define pet_stats "<red><[pet_hp]>"
+    # - announce <npc[<[pet]>].flag[stat_bar].custom_name>
+    - adjust <npc[<[pet].id>].flag[stat_bar]> custom_name:<[pet_stats]>
+    - if <npc[<[pet].id>].flag[stat_bar].location.distance[<npc[<[pet].id>].location>]> > 4:
+        - announce "Uh oh the armor stand is away from its attached pet"
+        - flag <npc[<[pet].id>]> stat_bar:!
+        - run pet_stats_init_task def:<[pet].id> 
+
+pet_stats_init_task:
+    type: task
+    definitions: pet
+    script:
+    - define pet_hp <npc[<[pet]>].health_data>
+    - define pet_dex 0
+    - define pet_int 0
+    - define pet_stats "<red><[pet_hp]>"
+    - define stat_entity "armor_stand[custom_name=<[pet_stats]>;custom_name_visible=true;is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|air]"
+    - spawn <[stat_entity]> <npc[<[pet].location.up[2]>]> save:pet_stats
+    - adjust <entry[pet_stats].spawned_entity> hide_from_players
+    - adjust <player> show_entity:<entry[pet_stats].spawned_entity>
+    - attach <entry[pet_stats].spawned_entity> to:<npc[<[pet]>]> offset:0,2,0
+    - flag <npc[<[pet]>]> stat_bar:<entry[pet_stats].spawned_entity>
+
+pets_list_task:
+    type: task
+    script:
+    - define list_color "<&color[#ffe5a3]>"
+    - define header "<bold><&color[<color[61,42,8]>]><&font[adventurer]><element[<&sp>].repeat[10]>Pets<&r><&nl>"
+    - define pets ""
+    - foreach <player.flag[pets]> as:pet:
+        - clickable pet_release_task def:<[pet]>  save:pet_release_<[pet]>_clickable
+        - define release_pet "<element[<&hover[Click to release <npc[<[pet]>].name>]><&color[#a20000]>✖<&sp><&r><&end_hover>].on_click[<entry[pet_release_<[pet]>_clickable].command>]>"
+
+        - if !<npc[<[pet]>].is_living>:
+            - if !<npc[<[pet]>].has_flag[bonded_to]>:
+                - flag <player> pets:<-:<[pet]>
+                - foreach next
+            - else:
+                - clickable pet_resurrect_task def:<[pet]>  save:pet_resurrect_<[pet]>_clickable
+                - define name "<gray><npc[<[pet]>].name><&r>"
+                - define pets "<element[<[pets]><[release_pet]><&hover[This pet is dead. Click to resurrect it.]><[name]><&end_hover>].on_click[<entry[pet_resurrect_<[pet]>_clickable].command>]><&nl>"
+                # - define pets "<element[<[pets]><[release_pet]><&hover[This pet is dead. Click to resurrect it.]> <[name]><&end_hover><&nl>].on_click[<entry[pet_resurrect_<[pet]>_clickable].command>]>"
+
+        - else:
+            - define name "<[list_color]><npc[<[pet]>].name><&r>"
+            - clickable pet_detail_task def:<[pet]>  save:pet_detail_<[pet]>_clickable
+            - define pets "<element[<[pets]><[release_pet]><&hover[Click to see more details about <[name]>.]> <[name]><&end_hover><&nl>].on_click[<entry[pet_detail_<[pet]>_clickable].command>]>"
+
+    - define book_texture <&chr[3057]>
+    - define book_textures "<white><&chr[F821]><&chr[F829]><&chr[F829]><&chr[F828]><[book_texture]><&chr[F801]><[book_texture]><&chr[F801]><[book_texture]><&nl>"
+    - define pets "<[book_textures]><&r><[header]><[pets]>"
+    - adjust <player> "show_book:pets_gui_book[book_pages=<[pets]><black>]"
+    
+
+veterinary_command:
+    type: command
+    name: vet
+    aliases:
+    - veterinary
+    - respet
+    - healpet
+    script:
+    - define target <player.target||null>
+    - define owner <[target]>
+    - if <[target]> == "null":
+        - if <player.has_flag[pet_dead]>:
+            - define owner <player>
+        - else:
+            - narrate "You must have a valid target to use veterinary."
+            - stop
+    - if <[target].is_player> && <[target].has_flag[pet_dead]>:
+        - define owner <[target]>
+        # - run pet_resurrect_task def:<[target].flag[pet_dead]>
+    - else if <[target].is_npc> && <[target].has_flag[pet_of]>:
+        - run pet_heal_task def:<[target]>
+        - stop
+
+    - define list_color "<&color[#ffe5a3]>"
+    - define pets ""
+    - define pet_to_res <[owner].flag[pet_dead]>
+    - foreach <[pet_to_res]> as:pet:
+        - clickable pet_resurrect_task def:<[pet]>  save:pet_resurrect_<[pet]>_clickable
+        - define name "<[list_color]><npc[<[pet]>].name><&r>"
+    
+        - define pets "<[pets]><element[<&hover[This pet is dead. Click to resurrect it.]><[name]><&end_hover>].on_click[<entry[pet_resurrect_<[pet]>_clickable].command>]><&nl>"
+    - define header "<bold><&color[<color[61,42,8]>]><&font[adventurer]><element[<&sp>].repeat[10]><[owner].name>'s pets you can resurrect.<&r><&nl>"
+    - define book_texture <&chr[3057]>
+    - define book_textures "<white><&chr[F821]><&chr[F829]><&chr[F829]><&chr[F828]><[book_texture]><&chr[F801]><[book_texture]><&chr[F801]><[book_texture]><&nl>"
+    - define pets "<[book_textures]><&r><[header]><[pets]>"
+    - adjust <player> "show_book:pets_gui_book[book_pages=<[pets]><black>]"
+    
+
+pet_heal_task:
+    type: task
+    definitions: pet
+    script:
+    - if <player.has_flag[skill.veterinary].not>:
+        - narrate "You don't have the veterinary skill."
+        - stop
+
+    - if <player.flag[skill.veterinary.level]> < 1:
+        - narrate "You need an veterinary level of at least one to use it."
+        - stop
+    - if <npc[<[pet]>].health> == <npc[<[pet]>].health_max>:
+        - narrate "<npc[<[pet]>].name> is already at max health"
+        - stop
+    - if <proc[skill_check_proc].context[<player>|veterinary|0]> == "critical_fail":
+        - hurt <npc[<[pet]>]> <util.random.int[1].to[3]>
+        - narrate "Critical fail, you actually hurt your pet a little."
+        - stop
+    - else if <proc[skill_check_proc].context[<player>|veterinary|0]> && <proc[natural_skill_check_proc].context[<player>|beast_lore|<player.flag[skill.veterinary.level]>]>:
+        - narrate "You healed <npc[<[pet]>].name>."
+        - if <npc[<[pet]>].has_flag[poisoned]>:
+            - flag <npc[<[pet]>]> poisoned:!
+            - narrate "You have cured <npc[<[pet]>].name> of all poisons."
+        - heal <npc[<[pet]>]> <util.random.int[<player.flag[skill.veterinary.level].sub[3]>].to[<player.flag[skill.veterinary.level].add[4]>]>
+        - run raise_natural_skill_task def:<player>|beast_lore
+        - stop
+    - else if <proc[skill_check_proc].context[<player>|veterinary|0]> == "critical_success":
+        - narrate "The pet is fully healed."
+        - if <npc[<[pet]>].has_flag[poisoned]>:
+            - flag <npc[<[pet]>]> poisoned:!
+            - narrate "You have cured <npc[<[pet]>].name> of all poisons."
+        - heal <npc[<[pet]>]>
+        - run raise_natural_skill_task def:<player>|beast_lore
+        - stop
+    - else:
+        - narrate "You fail to heal your pet."
+
+pet_resurrect_task:
+    type: task
+    definitions: pet
+    script:
+
+    - if <player.has_flag[skill.veterinary].not>:
+        - narrate "You don't have the veterinary skill."
+        - stop
+
+    - if <player.flag[skill.veterinary.level]> < 1:
+        - narrate "You need an veterinary level of at least one to use it."
+        - stop
+    - if <proc[skill_check_proc].context[<player>|veterinary|0]> == "critical_fail":
+        - narrate "Your pet is resurrected but not bonded anymore."
+        - execute as_op "sentinel respawn --id <[pet]>"
+        - flag <npc[<[pet]>].flag[bonded_to].as_player> pet_dead:<-:<npc[<[pet]>]>
+        - wait 1t
+        - flag <npc[<[pet]>]> bonded_to:!
+        - stop
+    - else if <proc[skill_check_proc].context[<player>|veterinary|0]> && <proc[natural_skill_check_proc].context[<player>|beast_lore|0]>:
+        - narrate "You resurrected <npc[<[pet]>].name>!"
+        - execute as_op "sentinel respawn --id <[pet]>"
+        - flag <npc[<[pet]>].flag[bonded_to].as_player> pet_dead:<-:<npc[<[pet]>]>
+        - run raise_natural_skill_task def:<player>|beast_lore
+        - stop
+    - else if <proc[skill_check_proc].context[<player>|veterinary|0]> == "critical_success":
+        - narrate "Your pet is resurrected with a bonus stat."
+        - execute as_op "sentinel respawn --id <[pet]>"
+        - flag <npc[<[pet]>].flag[bonded_to].as_player> pet_dead:<-:<npc[<[pet]>]>
+        - run raise_natural_skill_task def:<player>|beast_lore
+        - stop
+    - else:
+        - narrate "You failed to resurrect your pet."
+    
+    # - if <player.has_flag[incognito]>:
+    #     - narrate "You cannot attempt incognito again for <player.flag[incognito].expiration.formatted>"
+    #     - stop
+
+pet_remove_targets:
+    type: task
+    script:
+    - foreach <player.flag[pets]> as:pet:
+        # - narrate <npc[<[pet]>].name>
+        - foreach <npc[<[pet]>].sentinel.targets> as:target:
+            # - narrate <[target]>
+            - execute as_op "sentinel removetarget uuid:<[target]>"
+
+pet_stop_task:
+    type: task
+    definitions: pet
+    script:
+    - if <[pet].has_flag[attacking]>:
+        - flag <[pet]> attacking:!
+        - execute as_op "sentinel removetarget allinone:MONSTERS|PLAYERS|NPCS --id <[pet].id>"
+        - follow stop
+
+pet_attack_task:
+    type: task
+    definitions: pet|target
+    script:
+    
+    - execute as_op "sentinel removetarget allinone:MONSTERS|PLAYERS|NPCS --id <[pet].id>" 
+    - define target_type "MONSTERS"
+    
+    - if <[target].is_player>:
+        - define target_type "PLAYERS"
+    - if <[target].is_npc>:
+        - define target_type "NPCS"
+
+    - execute as_op "sentinel addtarget <[target_type]> --id <[pet].id>"
+    - wait 1t
+    - execute as_op "sentinel addtarget uuid:<[target]> --id <[pet].id>"
+
+    - define target_status alive
+    
+    - while <[pet].has_flag[attacking]>:
+        - if <[target_type]> == "MONSTERS" || <[target_type]> == "NPCS":
+            - if <[target].is_spawned.not>:
+                - narrate "<npc[<[pet]>].name> has lost their quarry."
+                - execute as_op "sentinel removetarget allinone:MONSTERS|PLAYERS|NPCS --id <[pet].id>" 
+                - execute as_op "sentinel removetarget uuid:<[target]> --id <[pet].id>"
+                - flag <[pet]> attacking:!
+                - stop
+        - if <[target_type]> == "PLAYERS":
+            - if <[target].is_online.not> || <[target].has_flag[hidden]>:
+                - narrate "<npc[<[pet]>].name> has lost their quarry."
+                - flag <[pet]> attacking:!
+                - stop
+        - if <[pet].location.distance[<[target].location>]> <= 2:
+            - hurt <[target]> 1
+        - if <[pet].location.distance[<[target].location>]> > 2:
+            - walk <[pet]> <[target].location>
+        - wait 3s
+    
+pet_detail_task:
+    type: task
+    definitions: pet
+    script:
+    - define show_name_text Hide
+    - if <npc[<[pet]>].custom_name_visible>:
+        - define show_name_text Hide
+    - else:
+        - define show_name_text Show
+    - define header "<bold><&color[<color[61,42,8]>]><&font[adventurer]> <npc[<[pet]>].name><&r><&nl>"
+    - clickable pet_mount_task def:<[pet]> save:pet_mount_clickable
+    - clickable pet_stable_task def:<[pet]> save:pet_stable_clickable
+    - clickable pets_list_task  save:pet_list_clickable
+    - clickable pets_show_name_task def:<[pet]>  save:pet_show_name_clickable
+    - clickable pets_show_stats_task def:<[pet]>  save:pet_show_stats_clickable
+    - define bonded "<npc[<[pet]>].flag[average_loyalty].sum.div[<npc[<[pet]>].flag[average_loyalty].size>].round_down||n/a>"
+    - define stat_bar ""
+    - if <npc[<[pet]>].has_flag[bonded_to]>:
+        - define bonded "Bonded"
+    - if <npc[<[pet]>].has_flag[stat_bar]>:
+        - if <player.flag[skill.veterinary.level]> > 10:
+            - define stat_bar "Show Stats"
+            - define stat_bar "<&color[#caffa3]><&hover[Click to toggle pet stats]><element[<&lb> <[stat_bar]> <&rb>].on_click[<entry[pet_show_stats_clickable].command>]><&end_hover><&r>"
+    - define bonded "<&color[#255800]><[bonded]><&r>"
+    # - define stat_bar "<&color[#255800]><[stat_bar]><&r>"
+    - define mount "<&color[#caffa3]><&hover[Click to mount this pet.]><element[<&lb> Mount <&rb>].on_click[<entry[pet_mount_clickable].command>]><&end_hover><&r>"
+    - define stable "<&color[#caffa3]><&hover[Click to stable this pet.]><element[<&lb> Stable <&rb>].on_click[<entry[pet_stable_clickable].command>]><&end_hover><&r>"
+    - define show_name "<&color[#caffa3]><&hover[Click to toggle pet name]><element[<&lb> <[show_name_text]> Name <&rb>].on_click[<entry[pet_show_name_clickable].command>]><&end_hover><&r>"
+    
+    - define alive_time "<&color[#694b14]><&chr[2022]> Time alive: <bold><util.time_now.duration_since[<npc[<[pet]>].flag[pet_created_time]>].in_days.round||n/a> days<&r>"
+    - define loyalty "<&color[#694b14]><&chr[2022]> Loyalty: <bold><[bonded]><&r>"
+
+    - define back_to_list "<&color[#3d2a08]><&hover[Click to go back to your list of pets.]><element[<bold><&chr[21E6]><&r><&color[#3d2a08]> Back to pet list].on_click[<entry[pet_list_clickable].command>]><&end_hover><&r>"
+    - define book_texture <&chr[3057]>
+    - define book_textures "<white><&chr[F821]><&chr[F829]><&chr[F829]><&chr[F828]><[book_texture]><&chr[F801]><[book_texture]><&chr[F801]><[book_texture]><&nl>"
+    - define output "<[book_textures]><&r><[header]><&nl><element[<&sp>].repeat[1]><[stable]><element[<&sp>].repeat[5]><[mount]><&nl><[show_name]><[stat_bar]><&nl><&nl><[alive_time]><&nl><[loyalty]><&nl><&nl><[back_to_list]>"
+    
+    - adjust <player> "show_book:pets_gui_book[book_pages=<[output]><black>]"
+
+pet_release_task:
+    type: task
+    definitions: pet
+    script:
+    - narrate "You have released <npc[<[pet]>].name>"
+    # # - team name:sb_pets remove:<npc[<[pet]>]>
+    - remove <npc[<[pet]>].flag[pet_identifier].as_entity>
+    - flag <player> pets:<-:<[pet]>
+    - execute as_op "npc select <[pet]>" silent
+    - execute as_op "npc remove" silent
+    
+pet_rename_task:
+    type: task
+    definitions: new_name|pet
+    script:
+    - narrate "Pet renamed to <[new_name]>."
+    - rename <[new_name]> t:<npc[<[pet]>]>
+    - flag <npc[<[pet]>]> name:<[new_name]>
+
+pets_show_name_task:
+    type: task
+    definitions: pet
+    script:
+
+    - if <npc[<[pet]>].custom_name_visible>:
+        - adjust <npc[<[pet]>]> name_visible:false
+    - else:
+        - adjust <npc[<[pet]>]> name_visible:true
+
+# vanilla_tame_world:
+#     type: world
+#     events:
+#         on player tames entity:
+#         - narrate <context.entity.name>
+
+pet_stable_task:
+    type: task
+    definitions: pet
+    script:
+
+    - if <player.has_flag[stable_proximity]>:
+        - if <player.flag[stabled_pets].size> >= <player.flag[skill.taming.level].max[3]>:
+            - narrate "<&color[#0064df]><player.flag[stable_proximity].as_npc.name> <&color[#999999]>-> <&color[#0064df]>You: <&color[#d5f4fb]>You can only stable <player.flag[skill.taming.level].max[3]> pets at a time."
+            - stop
+        # - define stablemaster <player.location.find.npcs.within[6].filter[<server.npcs_assigned[stablemaster_assignment]>]>
+        # - narrate "the stablemaster is <[stablemaster]>"
+        - define amount <script[prices].data_key[stable]>
+        - inject take_currency_task
+        
+        - narrate "<&color[#0064df]><player.flag[stable_proximity].as_npc.name> <&color[#999999]>-> <&color[#0064df]>You: <&color[#d5f4fb]>Thank you <player.name>. We will take good care of <npc[<[pet]>].name>."
+        - flag <player> stabled_pets:->:<[pet]>
+        - flag <player> pets:<-:<[pet]>
+        - adjust server save_citizens
+        - despawn <npc[<[pet]>]>
+    - else:
+        - narrate "You need to be near a stable to utilize this."
+
+pet_claim_task:
+    type: task
+    definitions: pet
+    script:
+    - define pet_limit <player.flag[skill.natural.beast_lore_level].div[20].max[<player.flag[skill.taming.level]>].round_up>
+    - if <[pet_limit]> <= <player.flag[pets].size>:
+        - narrate "<red>You can only have <[pet_limit]> pets under your control. Release one of them before claiming from a stable."
+        - stop 
+    - narrate "<&color[#0064df]><player.flag[stable_proximity].as_npc.name> <&color[#999999]>-> <&color[#0064df]>You: <&color[#d5f4fb]>Here is your pet <npc[<[pet]>].name> <player.name>."
+    - flag <player> stabled_pets:<-:<[pet]>
+    - flag <player> pets:->:<[pet]>
+    - spawn <npc[<[pet]>]> <player.location>
+
+pets_gui_book:
+    type: book
+    title: Pets
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - ""
+
+
+stablemaster_assignment:
+    type: assignment
+    actions:
+        on assignment:
+            - trigger name:click state:true
+            - trigger name:chat state:true
+            - trigger name:proximity state:true radius:5
+        on enter proximity:
+            - flag <player> stable_proximity:<npc>
+        on exit proximity:
+            - flag <player> stable_proximity:!
+   
+       
+            
+    default constants:
+        price: <script[prices].data_key[stable]>
+    interact scripts:
+    - stablemaster_interact
+
+stablemaster_interact:
+    type: interact
+    steps:
+        1:
+            chat trigger:
+                1:
+                    trigger: <&7>/stable/ my pet.
+                    script:
+                    - narrate "what keyword <context.keyword>"
+                    - narrate "what message <context.message>"
+            click trigger:
+                script:
+                - narrate <yellow>=====================================
+                - ^if <player.has_flag[talked_to_holstrop].not>:
+                    - ^narrate format:npcchat "Hello, I am <npc.name>"
+                    - ^flag <player> talked_to_holstrop
+                - ^else:
+                    - ^narrate format:npcchat "Hello again <player.name>"
+                - narrate "<&color[#d5f4fb]>What would you like to do?"
+                - zap 2
+                - narrate  "<&click[Buy a horse.]><&color[#fbe154]>1. <&color[#54fbd2]>Buy a horse for <&color[#b87333]><script[prices].data_key[horse]> copper<&color[#54fbd2]>.<&end_click>"
+                - if <player.has_flag[pets]> && <player.flag[pets].size> >= 1:
+                    - narrate "<&click[Stable my horse.]><&color[#fbe154]>2. <&color[#54fbd2]>Stable a pet for <&color[#b87333]><script[prices].data_key[stable]> copper<&color[#54fbd2]>.<&end_click>"
+                - if <player.has_flag[stabled_pets]> && <player.flag[stabled_pets].size> >= 1:
+                    - narrate "<&click[Claim my pet.]><&color[#fbe154]>3. <&color[#54fbd2]>Claim a pet.<&end_click>"
+                
+        2:
+            proximity trigger:
+                entry:
+                    script:
+                    - flag <player> stable_proximity
+                    - zap 1
+                exit:
+                    script:
+                    - flag <player> stable_proximity:!
+                    - zap 1
+            chat trigger:
+                1:
+                    trigger: <&7>/1|Buy/ a horse.
+                    script:
+                    - zap 1
+                    - define amount <script[prices].data_key[horse]>
+                    - wait 1t
+                    - inject take_currency_task
+                    - define invisible false
+                    - define pet_entity horse
+                    - define custom_model ""
+                    - define entity_name horse
+                    - define color "brown|none"
+                    - define entity_type horse
+                    
+                    - inject spawn_pet_task
+                    - narrate format:npcchat "Here you are, your very own horse."
+                   
+                
+                2:
+                    trigger: <&7>/2|Stable/ a pet.
+                    script:
+                    - if <player.has_flag[pets]> && <player.flag[pets].size> >= 1:
+                        - narrate format:npcchat "I can stable"
+                        - foreach <player.flag[pets]> as:pet:
+                            - clickable pet_stable_task def:<[pet]>  save:pet_stable_clickable_<[pet]>
+                            - narrate "<element[<&hover[Click to stable this pet.]><blue><[loop_index]>. - <gold><npc[<[pet]>].name><&end_hover>].on_click[<entry[pet_stable_clickable_<[pet]>].command>]>"
+                    - else:
+                        - narrate "You don't have any pets I can stable."
+                    - zap 3
+                3:
+                    trigger: <&7>/3|Claim/ a pet.
+                    script:
+                    - if <player.has_flag[stabled_pets]> && <player.flag[stabled_pets].size> >= 1:
+                        - narrate format:npcchat "Here are the pets you have stabled here."
+                        - foreach <player.flag[stabled_pets]> as:pet:
+                            - clickable pet_claim_task def:<[pet]>  save:pet_claim_clickable_<[pet]>
+                            - narrate "<element[<&hover[Click to claim this pet.]><blue><[loop_index]>. - <gold><npc[<[pet]>].name><&end_hover>].on_click[<entry[pet_claim_clickable_<[pet]>].command>]>"
+                       
+                    - else:
+                        - narrate format:npcchat "You don't have any pets stabled that you can claim."
+                    - zap 4
+        3:
+            proximity trigger:
+                entry:
+                    script:
+                    - flag <player> stable_proximity
+                    - zap 1
+                exit:
+                    script:
+                    - flag <player> stable_proximity:!
+                    - zap 1
+            chat trigger:
+                1:
+                    trigger: <&7>/2|Stable/ my horse.
+                    script:
+                    - if <player.flag[pets].contains[<player.flag[pets].get[<context.keyword>]>]>:
+                        - run pet_stable_task def:<player.flag[pets].get[<context.keyword>]>."
+                    - else:
+                        - narrate format:npcchat "I didn't hear you. Could you click the name in the list?"
+                    - zap 1
+        4:
+            proximity trigger:
+                entry:
+                    script:
+                    - flag <player> stable_proximity
+                    - zap 1
+                exit:
+                    script:
+                    - flag <player> stable_proximity:!
+                    - zap 1
+            chat trigger:
+                1:
+                    trigger: <&7>/3|Claim/ my horse.
+                    script:
+                    - narrate format:npcchat "Select which pet you wish to claim."
+                    - if <player.flag[pets].contains[<player.flag[pets].get[<context.keyword>]>]>:
+                        - run pet_claim_task def:<player.flag[pets].get[<context.keyword>]>."
+                    - else:
+                        - narrate format:npcchat "I didn't hear you. Could you click the name in the list?"
+                    - zap 1
+            click trigger:
+                script:
+                - zap 1
+        
+
+learn_skill_task:
+    type: task
+    definitions: skill
+    script:
+    - narrate "You want to learn what?"
+
+buy_mount_task:
+    type: task
+    definitions: mount
+    script:
+    - narrate "You will buy a <[mount]>"
+      
+                
+# pet_assignment:
+#   type: assignment
+#   debug: true
+  
+#   actions:
+#     on assignment:
+#         - trigger name:click state:true
+#         - trigger name:chat state:true
+#     on death:
+#         # TODO need to figure out how to remove the pet identifier upon death
+#         # - remove <npc[<[pet]>].flag[pet_identifier].as_entity>
+#         - define master <npc.flag[pet_of]>
+#         - flag <[master]> pets:<-:<npc.id>
+#   interact scripts:
+#     - pet_interact
+
+
+# pet_interact:
+#   type: interact
+#   steps:
+#     1:
+#         click trigger:
+#             script:
+#             - clickable pet_rename_task def:<npc.id>  save:pet_rename_clickable
+#             - clickable pet_release_task def:<npc.id>  save:pet_release_clickable
+#             - narrate "What would you like to do?"
+#             - narrate "<&click[rename]>1.) Rename <npc.name><&end_click>"
+#             - narrate "<element[2.) Release <npc.name>].on_click[<entry[pet_release_clickable].command>]>"
+#             - zap 2
+#     2:
+#         chat trigger:
+#             1:
+#                 trigger: <green>/1/ /Rename/ What would you like to rename this pet?
+#                 script:
+#                 - zap 3
+#             2:
+#                 trigger: <&7>/2/ /Release/
+#                 script:
+#                 - run pet_release_task def:<npc.id>
+#         click trigger:
+#             script:
+#             - zap 1
+    
+#     3:
+#         chat trigger:
+#             1:
+#                 trigger: /*/
+#                 hide trigger message: true
+#                 script:
+#                 - narrate "Pet renamed to <context.message>."
+#                 - rename <context.message>
+#                 - zap 1
+#         click trigger:
+#             script:
+#             - zap 1

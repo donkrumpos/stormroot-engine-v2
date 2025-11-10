@@ -1,0 +1,12 @@
+underflame_abyss_world:
+    type: world
+    debug: false
+    events:
+        
+        on player damaged in:underflame_abyss_entrance_area:
+        - determine cancelled
+        on entity enters underflame_abyss_entrance_area:
+        # - announce <context.entity.is_monster>
+        - if <context.entity.is_mob>:
+            - teleport <context.entity> underflame_abyss_mob_spawn
+            

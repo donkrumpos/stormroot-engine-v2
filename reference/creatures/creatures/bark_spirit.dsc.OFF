@@ -1,0 +1,40 @@
+bark_spirit:
+    type: entity
+    # display_name: "Bark Spirit"
+    entity_type: villager
+        
+    flags:
+        karma: 30
+        fame: 30
+        biome: forest
+        rarity: 1
+        level: 2
+        eligible_block_spawn: grass_block
+        
+        script: bark_spirit_task
+        drops:
+            steeleaf:
+                quantity: 1
+                chance: .1
+            wildroot:
+                quantity: 1
+                chance: .1
+            oak_sapling:
+                quantity: 1
+                chance: .4
+            shard_of_life:
+                quantity: 1
+                chance: .05
+            oak_bark:
+                quantity: 2
+                chance: .25
+            dreamwood_twig:
+                quantity: 1
+                chance: .1
+        xp: 11
+        coin_drop:
+            copper: 
+                quantity: 1
+                chance: .5
+        custom_beast: true
+        custom_model_data: 1656552

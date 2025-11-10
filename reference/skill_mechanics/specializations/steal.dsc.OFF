@@ -1,0 +1,58 @@
+
+
+
+
+    
+
+
+
+
+
+
+
+steal_task:
+    type: task
+    definitions: item|slot
+    script:
+    - foreach <player.location.find_npcs_within[15]> as:guard:
+        - if <[guard].has_flag[guard]>:
+          - attack <[guard]> target:<player>
+    - if <player.has_flag[skill.specializations.steal].not>:
+        - narrate "You don't have the steal skill."
+        - stop
+    - define target <player.target||null>
+    
+    - if <[target]> != null:
+        - if <player.location.distance[<[target].location>]> < 2:
+            - if <player.has_flag[stealing]>:
+                - narrate "You must wait until you can steal again. <player.flag[stealing].expiration.formatted>"
+                - stop
+            - flag player stealing duration:<element[85].sub[<player.flag[current_dexterity]>].sub[<player.flag[skill.specializations.steal.level]>].max[5]>s
+            - if <proc[level_success_proc].context[<player.flag[skill.specializations.steal.level].add[<player.flag[current_dexterity].div[12].round_down>]>]>:
+                - narrate "you successfully steal."
+                - run set_karma_task def:<player>|-1 
+                - if <[item]> != null:
+                    # - take <[item].material.name>
+                    - give <[item]>
+                    - inventory set d:<[target].inventory> o:air slot:<[slot]>
+                - else:
+                    - narrate <[target].inventory.list_contents.random>
+                - if <[target].flag[skill.skills.perception_level].round||0> > <util.random[11].to[66]>:
+                    - narrate "<red><player.name> is stealing from you." targets:<[target].as_player>
+                    - run set_karma_task def:<player>|<[target].flag[skill.skills.perception_level].mul[-1].round||0> 
+            - else:
+                - narrate "You fail to steal."
+                - if <util.random.int[1].to[100]> > <player.flag[current_dexterity]>:
+                    - narrate "<red><player.name> is trying to steal from you." targets:<[target].as_player>
+                    - run set_karma_task def:<player>|-10
+            - if <util.random.int[1].to[3]> == 1:
+                        - run raise_natural_skill_task def:<[target]>|perception
+        - else:
+            - narrate "You must be next to the target to steal from them."
+
+steal_command:
+    type: command
+    name: steal
+    usage: steal
+    script:
+    - run steal_task def:null

@@ -1,0 +1,249 @@
+forge_gui:
+    type: inventory
+    inventory: Chest
+    title: <&sp><&sp><&sp><&sp><&sp><&sp><&sp><&2>Forge
+    size: 54
+    slots:
+    - "[] [] [] [] [] [] [] [] []"
+    - "[<item[diamond_hoe].with[custom_model_data=1682;display_name=Body Armor]>] [] [] [] [] [] [] [] []"
+    - "[<item[diamond_hoe].with[custom_model_data=1692;display_name=Edged Weapons]>] [] [<item[diamond_hoe].with[custom_model_data=1693;display_name=Piercing Weapons]>] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[gui_forge_upper] [gui_forge_lower] [<item[diamond_hoe].with[custom_model_data=1694;display_name=Repair Item;lore=Drop item here to repair.]>] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+
+forge_gui_generator:
+    type: task
+    script:
+    - define inv <inventory[forge_gui]>
+    # - give "<item[gui_longsword].with[display_name=Edged Weapons;lore=Click to see more.]>" to:<[inv]> slot:10
+    # - inventory set o:gui_longsword "display_name=edged" slot:10 d:<[inv]>
+    - inventory open d:<[inv]>
+
+
+smithing_world:
+  type: world
+  events:
+    on player right clicks anvil|smithing_table with:smiths_hammer:
+    - run forge_gui_generator
+    - determine passively cancelled
+    on player clicks in forge_gui:
+    - flag player forge_open:!
+    - define forge_ingot <player.flag[forge_ingot]>
+    - define inv <inventory[forge_gui]>
+    - define slot <context.slot>
+    - define action <context.action>
+    
+    # returns the ItemTag the player has clicked on.
+    - define item <context.cursor_item||null>
+    #  returns the item the Player is clicking with
+    - define cursor_item <context.cursor_item.script||null>
+    - if <[action]> == SWAP_WITH_CURSOR && <[slot]> == 39:
+      - run blacksmithing_fix_task def:<context.cursor_item>
+      # - narrate "<blue> we will repair <[cursor_item].flag[current_durability]>" targets:<server.match_player[sirbandersnatch]>
+    - if <context.clicked_inventory.script.name||null> == "forge_gui":
+      - narrate <context.slot> targets:<server.match_player[sirbandersnatch]>
+      - define display_name " "
+      - choose <[slot]>:
+        
+        - case 19:
+          - narrate "This is the chest slot"
+          - flag player forge_menu:chest
+          - give gui_platemail_tunic to:<[inv]> slot:15
+          - give gui_chainmail_tunic to:<[inv]> slot:16
+          - give gui_platemail_leggings to:<[inv]> slot:17
+          
+          - give gui_chainmail_leggings to:<[inv]> slot:24
+          - give gui_platemail_tunic to:<[inv]> slot:25
+          - give gui_platemail_tunic to:<[inv]> slot:26
+
+          - give gui_platemail_tunic to:<[inv]> slot:33
+          - give gui_platemail_tunic to:<[inv]> slot:34
+          - give gui_platemail_tunic to:<[inv]> slot:35
+        - case 20:
+          - narrate "This is the axe slot"
+        - case 11:
+          - narrate "This is the helmet slot"
+        - case 5 6 7 8 9 14 15 16 17 18 23 24 25 26 27 32 33 34 35 36 41 42 43 44 45:
+          - define item <context.item>
+          # - narrate "item: <blue><[item]>"
+          - if <player.has_flag[forge_ingot]>:
+            - define material "<[forge_ingot]>_ingot"
+            - define material_quantity <script[<[item].display>].data_key[flags.material_quantity]||1000>
+            - define player_quantity <player.inventory.quantity[<[material]>]>
+            - if <[player_quantity]> >= <[material_quantity]>:
+              - define smith_level <player.flag[skill.skills.blacksmithing.level]||1>
+              - define random_level <util.random.int[1].to[100]>
+              - define material_difficulty <script[rare_ingots_data].data_key[ingot.<[material]>.difficulty]>
+              - define item_difficulty <script[<[item].display>].data_key[flags.crafting_difficulty]>
+              - define difficulty_modifier <element[100].sub[<[item_difficulty]>].sub[<[material_difficulty]>]>
+              # - announce <green><[difficulty_modifier ]>
+              - if <proc[natural_skill_check_proc].context[<player>|blacksmithing|<[difficulty_modifier]>]>:
+                - take <[material]> quantity:<[material_quantity]>
+                - run make_item_task def:<player.flag[forge_ingot]>|<[item]>|<player>
+              - else:
+                - narrate "You fail to craft the item."
+                - take <[material]> quantity:<util.random[1].to[<[material_quantity].sub[2]>].max[1]>
+              # - run task:raise_passive_skill_task def:<player>|blacksmithing|0|0
+              - run raise_natural_skill_task def:<player>|blacksmithing
+            - else:
+              - narrate "You need <[material_quantity].sub[<[player_quantity]>]> more <[forge_ingot].replace[_].with[<&sp>]> ingots."
+          - else:
+            - narrate "You need to select a material first."
+        # - case 9:
+        #   - if <player.has_flag[forge_ingot]>:
+        #     - define material "material_<[forge_ingot]>_ingot"
+        #     - define material_quantity <script[longsword].yaml_key[material_quantity]>
+        #     - define player_quantity <player.inventory.quantity[<[material]>]>
+           
+        #     - if <[player_quantity]> >= <[material_quantity]>:
+        #       - take <[material]> quantity:<[material_quantity]>
+        #       - run make_item_task def:<player.flag[forge_ingot]>|longsword|<player>
+        #     - else:
+        #       - narrate "You need <[material_quantity].sub[<[player_quantity]>]> more <[forge_ingot]> ingots."
+        #   - else:
+        #     - narrate "You need to select a material first."
+        - case 19:
+          - narrate "this is the bladed slot"
+          - flag player forge_menu:bladed
+          - give gui_longsword to:<[inv]> slot:15
+          - give gui_cutlass to:<[inv]> slot:16
+          - give gui_broadsword to:<[inv]> slot:17
+          
+          - give gui_katana to:<[inv]> slot:24
+          - give gui_bardiche to:<[inv]> slot:25
+          - give gui_halberd to:<[inv]> slot:26
+
+          - give gui_scimitar to:<[inv]> slot:33
+          - give gui_viking_sword to:<[inv]> slot:34
+          - give gui_scythe to:<[inv]> slot:35
+          
+          # - choose <player.flag[forge_ingot]>:
+          #   - case dull_copper:
+          #     - give "selected[display_name=Dull Copper]" to:<[inv]> slot:46
+          
+        - case 21:
+          - narrate "This is the fencing scale slot"
+          - flag player forge_menu:piercing
+          - give <item[diamond_hoe].with[custom_model_data=1693;display_name=Dagger]> to:<[inv]> slot:15
+        - case 28:
+          - narrate "This is the shield slot"
+        - case 30:
+          - narrate "This is the polearm slot"
+        - case 29:
+          - narrate "This is the bashing slot"
+        - case 20:
+          - narrate "This is the throwing slot"
+        
+        - case 46:
+          - flag player forge_ingot:dull_copper
+        - case 47:
+          - flag player forge_ingot:dark_iron
+        - case 48:
+          - flag player forge_ingot:pyrzinium
+        - case 49:
+          - flag player forge_ingot:mystilium
+        - case 50:
+          - flag player forge_ingot:turgite
+        - case 51:
+          - flag player forge_ingot:arondite
+        - case 52:
+          - flag player forge_ingot:ogralt
+        - case 53:
+          - flag player forge_ingot:glalium
+        - case 54:
+          - flag player forge_ingot:arcanithril
+          
+        - default:
+          
+          - narrate default
+            # - determine passively cancelled
+      - if <[slot]> >= 46 && <[slot]> <= 54:
+        - narrate "slot: <[slot]>"
+        - define ingot_display_name <player.flag[forge_ingot].to_titlecase.replace[_].with[<&sp>].to_titlecase>
+        - flag player ingot_slot:<[slot]>
+        - narrate <player.flag[ingot_slot]>
+      - give "selected[display_name=<[ingot_display_name]>]" to:<[inv]> slot:<player.flag[ingot_slot]>
+      # - run forge_gui_generator
+      - inventory open d:<[inv]>
+      # - narrate <[slot]>
+        # 5,6,7,8,9
+        # 14,15,16,17,18
+        # 23,24,25,26,27
+        # 32,33,34,35,36
+        # 41,42,43,44,45
+        # 28
+    on player closes forge_gui:
+    - flag player forge_open:!
+    # - flag player forge_ingot:!
+    on furnace smelts dull_copper_ore:
+    - determine dull_copper_ingot
+    on furnace smelts dark_iron_ore:
+    - determine dark_iron_ingot
+    on furnace smelts pyrzinium_ore:
+    - determine brone_ingot
+    on furnace smelts mystrilium_ore:
+    - determine mystrilium_ingot
+    on furnace smelts turgite_ore:
+    - determine turgite_ingot
+    on furnace smelts arondite_ore:
+    - determine arondite_ingot
+    on furnace smelts ogralt_ore:
+    - determine ogralt_ingot
+    on furnace smelts glalium_ore:
+    - determine glalium_ingot
+    on furnace smelts arcanthril_ore:
+    - determine arcanthril_ingot
+    
+
+make_item_task:
+  type: task
+  definitions: material|item|player
+  script:
+  - define item <[item].display>
+  - define strength_requirement <script[<[item]>].data_key[flags.required_strength]>
+  - define item_number <item[<[item]>].custom_model_data>
+  - define crafted_bonuses ""
+  - define poison_damage 0
+  - define energy_damage 0
+  - define cold_damage 0
+  - choose <[material]>:
+    - case dull_copper:
+      - define custom_model_material 01
+      - if <item[<[item]>].flag[required_strength].exists>:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=required_strength:<item[<[item]>].flag[required_strength].sub[20].max[0]>;"
+      - if <item[<[item]>].flag[defense].exists>:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=defense:<item[<[item]>].flag[defense].add[10]>;"
+    - case dark_iron:
+      - define custom_model_material 02
+      - if <item[<[item]>].flag[stat.bonus.damage_types.cold]> < 2:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.damage_types.cold:2;"
+      - if <item[<[item]>].flag[stat.bonus.fire_resist].exists>:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.fire_resist:<item[<[item]>].flag[stat.bonus.fire_resist].add[2]>;"
+      - if <item[<[item]>].flag[stat.bonus.energy_resist].exists>:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.energy_resist:<item[<[item]>].flag[stat.bonus.energy_resist].add[7]>;"
+    - case pyrzinium:
+      - define custom_model_material 03
+      - if <item[<[item]>].flag[stat.bonus.cold_resist].exists>:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.cold_resist:<item[<[item]>].flag[stat.bonus.cold_resist].add[7]>;"
+      - if <item[<[item]>].flag[stat.bonus.cold_resist].exists>:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.poison_resist:<item[<[item]>].flag[stat.bonus.poison_resist].add[2]>;"
+      - if <item[<[item]>].flag[stat.bonus.energy_resist].exists>:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.energy_resist:<item[<[item]>].flag[stat.bonus.energy_resist].add[2]>;"
+      - if <item[<[item]>].flag[stat.bonus.damage_types.fire]> < 4:
+        - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.damage_types.fire:4;"
+    - case mystrilium:
+      - define custom_model_material 04
+    - if <script[<[item].display>].data_key[flags.material].exists> && <script[<[item].display>].data_key[flags.material]> != <[forge_ingot]>:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=material:<[forge_ingot]>"
+    - define crafted_bonuses "<[crafted_bonuses]>flag=crafted_by:<player>"
+  
+  
+  # - narrate "<green><item[<[item]>].flag[stat.bonus]>"
+  # - foreach <[crafted_bonuses]> as:bonus:
+  #   - narrate "<[bonus]> "
+  - narrate <[crafted_bonuses]>
+  - give "<item[<[item]>].with[custom_model_data=<[item_number]><[custom_model_material]>;display_name=<[material].replace[_].with[<&sp>].to_titlecase> <[item].to_titlecase>;<[crafted_bonuses]>]>"
+  # - narrate "giving <item[<[item]>]>;custom_model_data=<[item_number]><[custom_model_material]>;hides=attributes;display_name=<[material].replace[_].with[<&sp>].to_titlecase> <[item].to_titlecase>;lore=<[lore]>;]>"
+  # - give "<item[<[item]>]>;custom_model_data=<[item_number]><[custom_model_material]>;hides=attributes;display_name=<[material].replace[_].with[<&sp>].to_titlecase> <[item].to_titlecase>;]>"
+  # - give <item[iron_sword].with[custom_model_data=710104]>
+  # - narrate "Your blacksmithing is now at <player.flag[skill.passive.blacksmithing_level]>"

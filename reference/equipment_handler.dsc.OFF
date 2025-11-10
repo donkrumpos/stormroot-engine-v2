@@ -1,0 +1,952 @@
+durability_task:
+    type: task
+    definitions: equipment_piece|slot|extra_durability_loss
+    script:
+    # - define extra_durability_loss <[extra_durability_loss]||0>
+    # - narrate "<green>slot: <[slot]>"
+    - if <[equipment_piece].flag[maximum_durability]> == 1:
+        # when the max durability has been reduced to 1 the next reduction destroys the item
+            - take <[equipment_piece]>
+            - stop
+    - if <[equipment_piece].has_flag[current_durability]>:
+
+        - define durability_loss 0.25
+        - define current_durability <[equipment_piece].flag[current_durability]>
+        
+        - define acid_damage 0
+        # - if <[damage_type]> == acid:
+        #     - define acid_damage 1
+
+        - define durability_loss <[durability_loss].add[<[acid_damage]>]>
+        
+        
+        # when the durability goes down to zero take one away from maximum durability
+        - if <[equipment_piece].flag[current_durability]> == 1:
+            # - flag <[equipment_piece]> maximum_durability:-:1
+            - inventory flag slot:<[slot]> maximum_durability:-:1
+            - inventory flag slot:<[slot]> current_durability:<[equipment_piece].flag[maximum_durability].sub[1]>
+            
+        - else:
+            # the default durability reduction is a quarter of a point each hit
+            # - flag <[equipment_piece]> current_durability:-:.25
+            - define durability_loss <[equipment_piece].flag[current_durability].sub[0.25].sub[<[extra_durability_loss]||0>]>
+            # - narrate <red><[durability_loss].sub[1]>
+            - inventory flag slot:<[slot]> current_durability:<[durability_loss]>
+            # - narrate "<red> minus extra <[extra_durability_loss]>"
+            - wait 1t
+            # - narrate "<green>new durability: <[equipment_piece].flag[current_durability]>"
+
+durability_display_proc:
+    type: procedure
+    definitions: equipment_piece
+    script:
+    - define current_durability <[equipment_piece].flag[current_durability]>
+    - define maximum_durability <[equipment_piece].flag[maximum_durability]>
+    - define percentage <[current_durability].div[<[maximum_durability]>].mul[100].round>
+    - define message "You don't know the condition of this item"
+    - if <[percentage]> == 100:
+        - define message "This item is in perfect condition."
+    - if <[percentage]> < 100 && <[percentage]> >= 95:
+        - define message "This item is in near perfect condition."
+    - if <[percentage]> < 95 && <[percentage]> >= 90:
+        - define message "This item could use a little repair."
+    - if <[percentage]> < 90 && <[percentage]> >= 75:
+        - define message "This item could use some repair."
+    - if <[percentage]> < 75 && <[percentage]> >= 50:
+        - define message "This item needs some repair."
+    - if <[percentage]> < 50 && <[percentage]> >= 25:
+        - define message "This item is in much need of repair."
+    - if <[percentage]> < 25 && <[percentage]> >= 1:
+        - define message "This item is in desperate need of repair."
+    - determine <[message]>
+            
+equipment_command:
+    type: command
+    name: "equip"
+    description: Let's you see your equipment
+    usage: /equip
+    aliases:
+    - equipment
+    - e
+    - i
+    - inventory
+    - inv
+    # permission: denizen.skills_menu
+    # permission message: Sorry, <player.name>, you can't use my command because you don't have the permission '<permission>'!
+    script:
+    - run equipment_menu_generator
+
+equipment_menu_generator:
+    type: task
+    definitions: hand_item
+    script:
+    # - narrate "<red> running equipment menu generator" targets:<server.match_player[SirBandersnatch]>
+    # when the player opens their paperdoll, retains what equipment they have and puts it on the according slot
+    - define inv <inventory[equipment_menu]>
+    # - if <player.item_in_hand>:
+    # - narrate "hand item: <[hand_item]>"
+    - if <[hand_item]||null> != "null":
+        - give <[hand_item]>
+   
+    # ring slot 21
+    - if <player.has_flag[equipment.ring_slot_1]>:
+        - give <item[<player.flag[equipment.ring_slot_1]>]> to:<[inv]> slot:25
+    - else:
+        - give "<item[diamond_hoe].with[custom_model_data=1680;display_name=ring right hand slot;flag=gui_item:true]>" to:<[inv]> slot:25
+    # ring slot 2
+    - if <player.has_flag[equipment.ring_slot_2]>:
+        - give <item[<player.flag[equipment.ring_slot_2]>]> to:<[inv]> slot:26
+    - else:
+        - give "<item[diamond_hoe].with[custom_model_data=1680;display_name=ring left hand slot;flag=gui_item:true]>" to:<[inv]> slot:26
+    # bracelet slot 1
+    - if <player.has_flag[equipment.bracelet_slot_1]>:
+        - give <item[<player.flag[equipment.bracelet_slot_1]>]> to:<[inv]> slot:16
+    - else:
+        - give "<item[diamond_hoe].with[custom_model_data=1688;display_name=bracelet right wrist slot;flag=gui_item:true]>" to:<[inv]> slot:16
+    # bracelet slot 2
+    - if <player.has_flag[equipment.bracelet_slot_2]>:
+        - give <item[<player.flag[equipment.bracelet_slot_2]>]> to:<[inv]> slot:17
+    - else:
+        - give "<item[diamond_hoe].with[custom_model_data=1688;display_name=bracelet left wrist slot;flag=gui_item:true]>" to:<[inv]> slot:17
+    # head slot
+    - if <player.has_flag[equipment.head_slot]>:
+        - if <player.inventory.slot[40].material.name> == "air":
+            - give "<item[diamond_hoe].with[custom_model_data=1681;display_name=head slot;flag=gui_item:true]>" to:<[inv]> slot:5
+        - else:
+            - give <item[<player.flag[equipment.head_slot]>]> to:<[inv]> slot:5
+    - else:
+        - give "<item[diamond_hoe].with[custom_model_data=1681;display_name=head slot;flag=gui_item:true]>" to:<[inv]> slot:5
+    # chest slot
+    - if <player.has_flag[equipment.chest_slot]>:
+        - if <player.inventory.slot[39].material.name> == "air":
+            - give "<item[diamond_hoe].with[custom_model_data=1682;display_name=chest slot;flag=gui_item:true]>" to:<[inv]> slot:14
+        - else:
+            - give <item[<player.flag[equipment.chest_slot]>]> to:<[inv]> slot:14
+    
+    - else:
+        - give "<item[diamond_hoe].with[custom_model_data=1682;display_name=chest slot;flag=gui_item:true]>" to:<[inv]> slot:14
+    # gloves slot
+    - if <player.has_flag[equipment.gloves_slot]>:
+        - give <item[<player.flag[equipment.gloves_slot]>]> to:<[inv]> slot:22
+    - else:
+        - give "<item[diamond_hoe].with[custom_model_data=1687;display_name=gloves slot;flag=gui_item:true]>" to:<[inv]> slot:22
+    # legs slot
+    - if <player.has_flag[equipment.legs_slot]>:
+        - if <player.inventory.slot[38].material.name> == "air":
+            - give "<item[diamond_hoe].with[custom_model_data=1683;display_name=legs slot;flag=gui_item:true]>" to:<[inv]> slot:23
+        - else:
+            - give <item[<player.flag[equipment.legs_slot]>]> to:<[inv]> slot:23
+    - else:
+        - give "<item[diamond_hoe].with[custom_model_data=1683;display_name=legs slot;flag=gui_item:true]>" to:<[inv]> slot:23
+    # cape slot
+    - if <player.has_flag[equipment.cape_slot]>:
+        - if <player.inventory.slot[39].material.name> == "air":
+            - give "<item[diamond_hoe].with[custom_model_data=1686;display_name=cape slot;flag=gui_item:true]>" to:<[inv]> slot:3
+        - else:
+            - give <item[<player.flag[equipment.cape_slot]>]> to:<[inv]> slot:3
+    - else:
+        - give "<item[diamond_hoe].with[custom_model_data=1686;display_name=cape slot;flag=gui_item:true]>" to:<[inv]> slot:3
+    # boots slot
+    - if <player.has_flag[equipment.boots_slot]>:
+        - if <player.inventory.slot[37].material.name> == "air":
+            - give "<item[diamond_hoe].with[custom_model_data=1684;display_name=boots slot;flag=gui_item:true]>" to:<[inv]> slot:32
+        - else:
+            - give <item[<player.flag[equipment.boots_slot]>]> to:<[inv]> slot:32
+    - else:
+        - give "<item[diamond_hoe].with[custom_model_data=1684;display_name=boots slot;flag=gui_item:true]>" to:<[inv]> slot:32
+    # shield slot
+    - if <player.has_flag[equipment.shield_slot]>:
+        - if <player.inventory.slot[41].material.name> == "air":
+            - give "<item[diamond_hoe].with[custom_model_data=1685;display_name=shield slot;flag=gui_item:true]>" to:<[inv]> slot:12
+        - else:
+            - give <item[<player.flag[equipment.shield_slot]>]> to:<[inv]> slot:12
+    - else:
+        - give "<item[diamond_hoe].with[custom_model_data=1685;display_name=shield slot;flag=gui_item:true]>" to:<[inv]> slot:12
+    # decorative neck slot
+    - if <player.has_flag[equipment.neck_dec_slot]>:
+        - give <item[<player.flag[equipment.neck_dec_slot]>]> to:<[inv]> slot:7
+    - else:
+        - give "<item[diamond_hoe].with[custom_model_data=1689;display_name=decorative neck slot;flag=gui_item:true]>" to:<[inv]> slot:7
+    # neck armor slot
+    - if <player.has_flag[equipment.neck_armor_slot]>:
+        - give <item[<player.flag[equipment.neck_armor_slot]>]> to:<[inv]> slot:4
+    - else:
+        - give "<item[diamond_hoe].with[custom_model_data=1690;display_name=neck armor slot;flag=gui_item:true]>" to:<[inv]> slot:4
+    # arms slot
+
+    - if <player.has_flag[equipment.arms_slot]>:
+        - give <item[<player.flag[equipment.arms_slot]>]> to:<[inv]> slot:13
+    - else:
+        - give "<item[diamond_hoe].with[custom_model_data=1691;display_name=arms slot;flag=gui_item:true]>" to:<[inv]> slot:13
+    - inventory open d:<[inv]>
+
+calculate_equipment_bonuses:
+    type: task
+    definitions: old_item|new_item
+    script:
+    - if <[old_item].script.exists>:
+    # we are unequipping a cool item, we need to take away bonuses
+        - foreach <[old_item].flag[stat.bonus]> as:bonus:
+            - if <[bonus]> > 0:
+                # - narrate "bonus <red><[key]>: <[bonus]>"
+                - flag <player> stat.bonus.<[key]>.level:-:<[bonus]>
+        
+    - if <[new_item].script.exists>:
+        - foreach <[new_item].flag[stat.bonus]> as:bonus:
+            # - narrate "bonus <green><[key]>: <[bonus]>"
+            - flag <player> stat.bonus.<[key]>.level:+:<[bonus]>
+
+armor_set_complete:
+    type: task
+    definitions: old_item|new_item
+    script:
+    - ratelimit <player> 4t
+    - if <[new_item].material.name> == air:
+        - if <player.has_flag[armor_set_bonus]>:
+            - define bonus <player.flag[armor_set_bonus]>
+            - foreach <script[armor_set].data_key[set.<[bonus]>.bonus]> as:bonus:
+                - flag <player> stat.bonus.<[key]>.level:-:<[bonus]>
+                # - narrate "removing <[key]> <[bonus]>"
+            - flag <player> armor_set_bonus:!
+    - define this_set 
+    - if <[new_item].script.exists> && <[new_item].has_flag[set]>:
+        - define set <[new_item].flag[set]>
+        - if <script[armor_set].data_key[set].contains[<[set]>]>:
+            - define set_list
+            - define this_set <script[armor_set].data_key[set.<[set]>]>
+            - define equipment_list_requirements <[this_set].get[equipment]>"
+            - define equipment_list_acquired  <player.flag[equipment].filter[set]>
+            - foreach <player.flag[equipment]> as:equipment:
+                # - if <[equipment].material.name> == air:
+                #     - flag <player> equipment:<-:<[equipment]>
+                - if <[equipment].flag[set].exists>:
+                    - define set_list:->:<[equipment].script.name>
+
+    - if <[this_set].get[equipment].alphabetical> == <[set_list].alphabetical>:
+        - if <player.has_flag[armor_set_bonus].not>:
+            - flag <player> armor_set_bonus:<[new_item].flag[set]>
+            - foreach <script[armor_set].data_key[set.<[new_item].flag[set]>.bonus]> as:bonus:
+                - flag <player> stat.bonus.<[key]>.level:+:<[bonus]>
+
+
+equipment_menu_handler:
+    type: world
+    debug: true
+    events:
+        # on player death:
+        on player drags in equipment_menu:
+        # for some reason this helps with stopping players from putting items in non-slots
+     
+        - determine passively cancelled
+        - wait 1t
+       
+        # on player unequips armor:
+        # - narrate <context.old_item>
+       
+        on player equips armor:
+        # this handles the vanilla equipment
+        - if <context.slot> == "helmet":
+            - flag <player> equipment.head_slot:<context.new_item>
+        - if <context.slot> == "chestplate" || <context.slot> == "tunic":
+            - if <context.new_item.contains_text[elytra]>:
+                - flag <player> equipment.cape_slot:<context.new_item>
+            - else:
+                - flag <player> equipment.chest_slot:<context.new_item>
+        
+        - if <context.slot> == "leggings":
+            - flag <player> equipment.legs_slot:<context.new_item>
+        - if <context.slot> == "boots":
+            - flag <player> equipment.boots_slot:<context.new_item>
+        - run calculate_equipment_bonuses def:<context.old_item>|<context.new_item>
+        - run armor_set_complete def:<context.old_item>|<context.new_item>
+   
+
+        on player clicks item in inventory:
+        #this handles all inventories and disables swapping
+        - if <context.click> == SWAP_OFFHAND:
+            - determine cancelled
+            # - flag player oldoffhand:<player.item_in_offhand>
+            # - flag player oldslotitem:<context.item>
+            # - wait 1t
+            # - narrate <[oldoffhand]>
+            # - inventory set slot:41 o:<player.flag[oldoffhand]> destination:<player.inventory>
+            # - inventory set slot:<context.slot> o:<player.flag[olditemslot]> destination:<player.open_inventory>
+            # - if <context.item.has_flag[gui_item]>:
+            #     - give <context.item> to:<player.open_inventory> slot:<context.slot>
+ 
+        on player clicks in equipment_menu:
+        - define slot <context.slot>
+        - define action <context.action>
+        - narrate <[action]> targets:<server.match_player[SirBandersnatch]>
+        - if <[action]> == MOVE_TO_OTHER_INVENTORY:
+            - determine cancelled
+        # returns the ItemTag the player has clicked on.
+        - define item <context.item||null>
+
+        #  returns the item the Player is clicking with
+        - define cursor_item <context.cursor_item>
+        # - if <[cursor_item].scriptname> != "null":
+        #     - narrate "this item has a script"
+        
+        - define item_slot_type <context.cursor_item.flag[slot_type]>
+        # - narrate <[item_slot_type]>
+       
+        - if <context.clicked_inventory.script.name||null> == "equipment_menu":
+            - if <[item].has_flag[gui_item]>:
+                - if <[action]> == "PICKUP_ALL":
+                    - determine passively cancelled
+                    - wait 1t
+                - else:
+                    - wait 1t
+                    - take cursoritem
+
+            # - if <[action]> == "PLACE_ALL" || <[action]> == "SWAP_WITH_CURSOR":
+            #     - foreach <[cursor_item].flag[stat.bonus]> as:bonus:
+            #         - flag <player> stat.bonus.<[key]>.level:+:<[bonus]>
+            # - else if <[action]> == "PICKUP_ALL":
+            #     - foreach <[item].flag[stat.bonus]> as:bonus:
+            #         - flag <player> stat.bonus.<[key]>.level:-:<[bonus]>
+            - choose <[slot]>:
+                # gloves slot
+                - case 22:
+                    - if <[action]> == "PLACE_ALL" || <[action]> == "SWAP_WITH_CURSOR":
+                        - if <[item_slot_type]> == "gloves":
+                            - flag <player> equipment.gloves_slot:<[cursor_item]>
+                            - run equipment_menu_generator
+                        - else:
+                            - determine passively cancelled
+                            - wait 1t
+                            - run equipment_menu_generator def:<[cursor_item]>
+                    - else if <[action]> == "PICKUP_ALL":
+                        - flag <player> equipment.gloves_slot:!
+                        - if !<[item].has_flag[gui_item]>:
+                            - run equipment_menu_generator def:<[item]>
+                    - else:
+                        - flag <player> equipment.gloves_slot:!
+
+                # ring slot
+                - case 25:
+                    
+                    - if <[action]> == "PLACE_ALL" || <[action]> == "SWAP_WITH_CURSOR":
+                        - if <[item_slot_type]> == "ring":
+                            - flag <player> equipment.ring_slot_1:<[cursor_item]>
+                            - run equipment_menu_generator
+                        - else:
+                            - determine passively cancelled
+                            - wait 1t
+                            - run equipment_menu_generator def:<[cursor_item]>
+                    - else if <[action]> == "PICKUP_ALL":
+                        - flag <player> equipment.ring_slot_1:!
+                        - if !<[item].has_flag[gui_item]>:
+                            - run equipment_menu_generator def:<[item]>
+                    - else:
+                        - flag <player> equipment.ring_slot_1:!
+
+                # ring slot 2
+                - case 26:
+                   
+                    - if <[action]> == "PLACE_ALL" || <[action]> == "SWAP_WITH_CURSOR":
+                        - if <[item_slot_type]> == "ring":
+                            - flag <player> equipment.ring_slot_2:<[cursor_item]>
+                            - run equipment_menu_generator
+                        - else:
+                            - determine passively cancelled
+                            - wait 1t
+                            - run equipment_menu_generator def:<[cursor_item]>
+                    - else if <[action]> == "PICKUP_ALL":
+                        - flag <player> equipment.ring_slot_2:!
+                        - if !<[item].has_flag[gui_item]>:
+                            - run equipment_menu_generator def:<[item]>
+                    - else:
+                        - flag <player> equipment.ring_slot_2:!
+                # bracelet slot
+                - case 16:
+                    - if <[action]> == "PLACE_ALL" || <[action]> == "SWAP_WITH_CURSOR":
+                        - if <[item_slot_type]> == "bracelet":
+                            - flag <player> equipment.bracelet_slot_1:<[cursor_item]>
+                            - run equipment_menu_generator
+                        - else:
+                            - determine passively cancelled
+                            - wait 1t
+                            - run equipment_menu_generator def:<[cursor_item]>
+                    - else if <[action]> == "PICKUP_ALL":
+                        - flag <player> equipment.bracelet_slot_1:!
+                        - if !<[item].has_flag[gui_item]>:
+                            - run equipment_menu_generator def:<[item]>
+                    - else:
+                        - flag <player> equipment.bracelet_slot_1:!
+                # bracelet slot
+                - case 17:
+                    - if <[action]> == "PLACE_ALL" || <[action]> == "SWAP_WITH_CURSOR":
+                        - if <[item_slot_type]> == "bracelet":
+                            - flag <player> equipment.bracelet_slot_2:<[cursor_item]>
+                            - run equipment_menu_generator
+                        - else:
+                            - determine passively cancelled
+                            - wait 1t
+                            - run equipment_menu_generator def:<[cursor_item]>
+                    - else if <[action]> == "PICKUP_ALL":
+                        - flag <player> equipment.bracelet_slot_2:!
+                        - if !<[item].has_flag[gui_item]>:
+                            - run equipment_menu_generator def:<[item]>
+                    - else:
+                        - flag <player> equipment.bracelet_slot_2:!
+                # necklace slot
+                - case 7:
+                    - if <[action]> == "PLACE_ALL" || <[action]> == "SWAP_WITH_CURSOR":
+                        - if <[item_slot_type]> == "necklace":
+                            - flag <player> equipment.neck_dec_slot:<[cursor_item]>
+                            - run equipment_menu_generator
+                        - else:
+                            - determine passively cancelled
+                            - wait 1t
+                            - run equipment_menu_generator def:<[cursor_item]>
+                    - else if <[action]> == "PICKUP_ALL":
+                        - flag <player> equipment.neck_dec_slot:!
+                        - if !<[item].has_flag[gui_item]>:
+                            - run equipment_menu_generator def:<[item]>
+                    - else:
+                        - flag <player> equipment.neck_dec_slot:!
+                #head slot
+                - case 5: 
+                    - if <[action]> == "PLACE_ALL" || <[action]> == "SWAP_WITH_CURSOR":
+                        - if <[item_slot_type]> == "head" || <[cursor_item].material.name.contains[_helmet]>:
+                            - flag <player> equipment.head_slot:<[cursor_item]>
+                            - equip <player> head:<[cursor_item]>
+                            - wait 1t
+                            - run equipment_menu_generator
+                        - else:
+                            - flag <player> equipment.head_slot:!
+                            # - if <[action]>  != "PICKUP_ALL":
+                            - wait 1t
+                            - run equipment_menu_generator def:<[cursor_item]>
+                         
+                    - else if <[action]> == "PICKUP_ALL":
+                        # - determine passively cancelled
+                        # - wait 1t
+                        - flag <player> equipment.head_slot:!
+                        - equip <player> head:air
+
+                        - narrate <blue><player.equipment>
+                        - run equipment_menu_generator
+
+                        - if <[item].has_flag[gui_item].not>:
+                            - run equipment_menu_generator def:<[item]>
+                    - else:
+                        - flag <player> equipment.head_slot:!
+              
+                #chest slot
+                - case 14:
+                    - if <[action]> == "PLACE_ALL" || <[action]> == "SWAP_WITH_CURSOR":
+                        - if <[item_slot_type]> == "chest" || <[cursor_item].material.name.contains[_chestplate]>:
+                            - flag <player> equipment.chest_slot:<[cursor_item]>
+                            - equip <player> chest:<[cursor_item]>
+                            # - announce "chest slot should not be air but <[cursor_item]>"
+                            - run equipment_menu_generator
+                        - else:
+                            - flag <player> equipment.chest_slot:!
+                            - run equipment_menu_generator def:<[cursor_item]>
+                         
+                    - else if <[action]> == "PICKUP_ALL":
+                        - flag <player> equipment.chest_slot:!
+                        - equip <player> chest:air
+                        - if !<[item].has_flag[gui_item]>:
+                            - run equipment_menu_generator def:<[item]>
+                        
+                    - else:
+                        - flag <player> equipment.chest_slot:!
+
+                # legs slot
+                - case 23:
+                    
+                    - if <[action]> == "PLACE_ALL" || <[action]> == "SWAP_WITH_CURSOR":
+                        - if <[item_slot_type]> == "legs" || <[cursor_item].material.name.contains[_leggings]>:
+                            - flag <player> equipment.legs_slot:<[cursor_item]>
+                            - equip <player> legs:<[cursor_item]>
+                            - run equipment_menu_generator
+                        - else:
+                            - flag <player> equipment.legs_slot:!
+                            - run equipment_menu_generator def:<[cursor_item]>
+                         
+                    - else if <[action]> == "PICKUP_ALL":
+                        - flag <player> equipment.legs_slot:!
+                        - equip <player> legs:air
+                        - if !<[item].has_flag[gui_item]>:
+                            - run equipment_menu_generator def:<[item]>
+                        
+                    - else:
+                        - flag <player> equipment.legs_slot:!
+
+                # shield slot
+                - case 12:
+                   
+                    - if <[action]> == "PLACE_ALL" || <[action]> == "SWAP_WITH_CURSOR":
+                        - if <[item_slot_type]> == "shield" || <[cursor_item].material.name.contains[shield]>:
+                            - flag <player> equipment.shield_slot:<[cursor_item]>
+                            - equip <player> offhand:<[cursor_item]>
+                            - run equipment_menu_generator
+                        - else:
+                            - flag <player> equipment.shield_slot:!
+                            - run equipment_menu_generator def:<[cursor_item]>
+                         
+                    - else if <[action]> == "PICKUP_ALL":
+                        - flag <player> equipment.shield_slot:!
+                        - equip <player> offhand:air
+                        - if !<[item].has_flag[gui_item]>:
+                            - run equipment_menu_generator def:<[item]>
+                        
+                    - else:
+                        - flag <player> equipment.shield_slot:!
+
+                #cape slot
+                - case 3:
+                    
+                    - if <[action]> == "PLACE_ALL" || <[action]> == "SWAP_WITH_CURSOR":
+                        - if <[item_slot_type]> == "cape" || <[cursor_item].material.name.contains[elytra]>:
+                            - flag <player> equipment.cape_slot:<[cursor_item]>
+                            - equip <player> chest:<[cursor_item]>
+                            - run equipment_menu_generator
+                        - else:
+                            - flag <player> equipment.cape_slot:!
+                            - run equipment_menu_generator def:<[cursor_item]>
+                         
+                    - else if <[action]> == "PICKUP_ALL":
+                        - flag <player> equipment.cape_slot:!
+                        - equip <player> chest:air
+                        - if !<[item].has_flag[gui_item]>:
+                            - run equipment_menu_generator def:<[item]>
+                        
+                    - else:
+                        - flag <player> equipment.cape_slot:!
+                # boots slot
+                - case 32:
+                   
+                    - if <[action]> == "PLACE_ALL" || <[action]> == "SWAP_WITH_CURSOR":
+                        - if <[item_slot_type]> == "boots" || <[cursor_item].material.name.contains[boots]>:
+                            - flag <player> equipment.boots_slot:<[cursor_item]>
+                            - equip <player> boots:<[cursor_item]>
+                            - run equipment_menu_generator
+                        - else:
+                            - flag <player> equipment.boots_slot:!
+                            - run equipment_menu_generator def:<[cursor_item]>
+                         
+                    - else if <[action]> == "PICKUP_ALL":
+                        - flag <player> equipment.boots_slot:!
+                        - equip <player> boots:air
+                        - if !<[item].has_flag[gui_item]>:
+                            - run equipment_menu_generator def:<[item]>
+                        
+                    - else:
+                        - flag <player> equipment.boots_slot:!
+                # neck armor slot
+                - case 4:
+                   
+                    - if <[action]> == "PLACE_ALL" || <[action]> == "SWAP_WITH_CURSOR":
+                        - if <[item_slot_type]> == "neck_armor":
+                            - flag <player> equipment.neck_armor_slot:<[cursor_item]>
+                            - run equipment_menu_generator
+                        - else:
+                            - determine passively cancelled
+                            - wait 1t
+                            - run equipment_menu_generator def:<[cursor_item]>
+                    - else if <[action]> == "PICKUP_ALL":
+                        - flag <player> equipment.neck_armor_slot:!
+                        - if !<[item].has_flag[gui_item]>:
+                            - run equipment_menu_generator def:<[item]>
+                    - else:
+                        - flag <player> equipment.neck_armor_slot:!
+                # arms slot
+                - case 13:
+                    - if <[action]> == "PLACE_ALL" || <[action]> == "SWAP_WITH_CURSOR":
+                        - if <[item_slot_type]> == "arms":
+                            - flag <player> equipment.arms_slot:<[cursor_item]>
+                            - take cursoritem
+                            - run equipment_menu_generator
+                        - else:
+                            - determine passively cancelled
+                            - wait 1t
+                            - run equipment_menu_generator def:<[cursor_item]>
+                    - else if <[action]> == "PICKUP_ALL":
+                        - flag <player> equipment.arms_slot:!
+                        - if !<[item].has_flag[gui_item]>:
+                            - run equipment_menu_generator def:<[item]>
+                    - else:
+                        - flag <player> equipment.arms_slot:!
+                - default:
+                    - determine passively cancelled
+                    - wait 1t
+            - run calculate_equipment_bonuses def:<[item]>|<[cursor_item]>
+            - run armor_set_complete def:<[item]>|<[cursor_item]>
+            - inventory update
+          
+equipment_menu:
+    type: inventory
+    inventory: Chest
+    title: "<&r><&sp><&font[steamfront:comicbook4]><white><&font[steamfront:gui_icon]><<&r><ternary[<proc[armor_weight_test_proc].context[<player>]>].pass[<&color[#ff0000]>burdened<&r>].fail[unburdened]><element[<&sp>].repeat[<ternary[<proc[armor_weight_test_proc].context[<player>]>].pass[0].fail[2]>]><&color[#e5b477]><&r><white><&font[steamfront:gui_icon]>@<&r><proc[get_defense_display].context[<player>]||0><&r>"
+    size: 45
+    slots:
+    - "[<item[diamond_hoe].with[custom_model_data=20;display_name=Equipment Menu]>] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+
+
+
+get_armor_protection_command:
+    type: command
+    name: armor
+    script:
+    - define armor <proc[armor_protection_proc].context[<player>]>
+    - narrate "Your protection from armor is <[armor]>"
+
+
+get_armor_weight_command:
+    type: command
+    name: weight
+    script:
+    - define weight <proc[armor_weight_proc].context[<player>]||0>
+    - narrate "Your armor weight is <[weight]>"
+
+
+armor_weight_test_proc:
+    type: procedure
+    debug: false
+    definitions: player
+    script:
+    - define carrying_capacity <proc[attribute_skill_check_proc].context[<[player]>|strength]||10>
+    - define weight <proc[armor_weight_proc].context[<[player]>]>
+    # - announce "<[weight]> < <[carrying_capacity]>"
+    - if <[weight]> < <[carrying_capacity]>:
+        - determine false
+    - else:
+        - determine true
+    
+
+armor_weight_proc:
+    type: procedure
+    definitions: player
+    script:
+    - define weight 0
+    - foreach <[player].flag[equipment]> as:equipment:
+        - if <[equipment].material.name> == AIR:
+            - foreach next
+        - if <[equipment].has_script>:
+            - if <[equipment].has_flag[weight]>:
+                - define weight <[weight].add[<[equipment].flag[weight]>]>
+            - else:
+                - foreach next
+        - else:
+            - define weight <[weight].add[<proc[vanilla_armor_weight_proc].context[<[equipment].material.name>]>]>
+            # - narrate <proc[vanilla_armor_weight_proc].context[<[equipment].material.name>]>
+    - determine <[weight]>
+    
+
+   
+            
+    - determine <[weight]>
+
+vanilla_armor_weight_proc:
+    type: procedure
+    definitions: armor_piece
+    script:
+    - define vanilla_weight 0
+    - if <[armor_piece].contains[leather_]>:
+        - define vanilla_weight <[vanilla_weight].add[1]>
+    - if <[armor_piece].contains[chainmail_]>:
+        - define vanilla_weight <[vanilla_weight].add[3]>
+    - if <[armor_piece].contains[iron_]>:
+        - define vanilla_weight <[vanilla_weight].add[4]>
+    - if <[armor_piece].contains[golden_]>:
+        - define vanilla_weight <[vanilla_weight].add[2]>
+    - if <[armor_piece].contains[diamond_]>:
+        - define vanilla_weight <[vanilla_weight].add[2]>
+    - if <[armor_piece].contains[turtle_]>:
+        - define vanilla_weight <[vanilla_weight].add[1]>
+    - if <[armor_piece].contains[netherite_]>:
+        - define vanilla_weight <[vanilla_weight].add[5]>
+    - if <[armor_piece].contains[_chestplate]>:
+        - define vanilla_weight <[vanilla_weight].add[5]>
+    - if <[armor_piece].contains[_leggings]>:
+        - define vanilla_weight <[vanilla_weight].add[3]>
+    - if <[armor_piece].contains[_helmet]>:
+        - define vanilla_weight <[vanilla_weight].add[2]>
+    - if <[armor_piece].contains[_boots]>:
+        - define vanilla_weight <[vanilla_weight].add[2]>
+
+
+    - determine <[vanilla_weight]>
+
+armor_set_command:
+    type: command
+    name: set
+    script:
+    - narrate <proc[armor_set_proc].context[<player>]>
+
+armor_set_proc:
+    type: procedure
+    definitions: player
+    script:
+    - define equipment_type <list>
+    - define equipment_list <list>
+    - define server_item_types <list>
+    - foreach <[player].flag[equipment]> as:equipment:
+        - define this_equipment "<[equipment].flag[material]>_<[equipment].flag[item_script].data_key[item_type]>"
+        - define equipment_list:->:<[equipment].flag[item_script]>
+        - if <[equipment_type].contains[<[this_equipment]>].not>:
+            - define equipment_type:->:<[this_equipment]>
+            
+    - foreach <server.filter[data_key[type].is[==].to[item]]> as:item:
+        - if <[item].data_key[item_type]||null> != "null":
+            - if <[equipment_type].contains_any_text[<[item].data_key[item_type]>]>:
+                - if <[server_item_types].contains[<[item]>].not>:
+                    - define server_item_types:->:<[item]>
+           
+    - if <[server_item_types].exclude[<[equipment_list]>].is_empty>:
+        - foreach <[player].flag[equipment]> as:equipment:
+            - define material_list:->:<[equipment].flag[material]>
+            - define all_materials <[material_list].count[<[material_list].first>]>
+    - if <[material_list].size> == <[all_materials]>:
+        - determine true
+    - else:
+        - determine false
+
+
+armor_protection_proc:
+    type: procedure
+    definitions: player
+    script:
+    - define armor_protection 0
+    - define vanilla_armor_bonus <player.armor_bonus>
+    - foreach <[player].flag[equipment]> as:equipment:
+            # when unequipping from the vanilla armor menu it gives air in the slot, so we need to skip this
+        - if <[equipment].material.name> == "air":
+            
+            - foreach next
+        - else:
+            # for unique armor items
+            - if <[equipment].has_script>:
+                
+                - if <[equipment].has_flag[defense]> && <[equipment].flag[defense]> > 0:
+                    - define armor_protection <[armor_protection].add[<[equipment].flag[defense]>]>
+            - else:
+                - define armor_protection <[armor_protection].add[<script[vanilla_armor_data].data_key[armor.<[equipment].material.name>.armor_bonus]>]>
+ 
+    #add the armor bonus on for vanilla armor defense
+
+    - define armor_bonus <player.flag[stat.bonus.armor_bonus.level]>
+    - define armor_protection <[armor_protection].add[<[armor_bonus]>]>
+    - determine <[armor_protection]>
+
+medable_armor_command:
+    type: command
+    name: medable
+    script:
+    - define medable <proc[medable_armor_proc].context[<player>]>
+    - narrate "test: <[medable]>"
+
+medable_armor_proc:
+    type: procedure
+    definitions: player
+    script:
+    - define medable <list>
+    - foreach <[player].flag[equipment]> as:equipment:
+        - if <[equipment].material.name> == "air":
+            - foreach next
+        - else:
+            - if <[equipment].script||null> != "null":
+                - if <[equipment].script.data_key[medable]>:
+                    - define medable:->:<[equipment].script.data_key[medable]>
+                - else:
+                    - define medable:->:false
+            - else if <[equipment].has_flag[item_script]>:
+                
+                - if <[equipment].has_flag[property.mage_armor]>:
+                    - define medable:->:true
+
+                - else if <[equipment].flag[item_script].data_key[medable]||null> != "null":
+                    - define medable:->:<[equipment].flag[item_script].data_key[medable]>
+                - else:
+                    - define medable:->:false
+            
+            - else:
+                - define medable:->:true
+    
+    - if <[medable].contains[false]>:
+        - determine false
+    - else:
+        - determine true
+            
+
+get_stat_bonus:
+    type: procedure
+    definitions: player
+    script:
+    - define your_bonus <list>
+    - foreach <player.flag[equipment]> as:equipment:
+        - foreach <[equipment].flag[stat.bonus]> as:bonus:
+            - if <[bonus]> < 1:
+                - foreach next
+            - define "your_bonus:->:<[key].replace[_].with[<&sp>].to_titlecase>: <[bonus]>"
+    - if <[your_bonus].is_empty>:
+        - determine "You don't have any stat bonuses"
+    - else:
+        - determine <[your_bonus].separated_by[<&nl>]>
+
+
+armor_set:
+    type: data
+    set:
+        might:
+            equipment:
+                - bracers_of_might
+                - breastplate_of_might
+                - helm_of_might
+            bonus:
+                intelligence_increase: 10
+        nutcracker:
+            equipment:
+                - nutcrackers_mantle
+                - nutcrackers_helmet
+                - joyous_jackboots
+            bonus:
+                stamina_increase: 1
+
+
+equipment_size_proc:
+    type: procedure
+    definitions: player
+    script:
+
+    - define return_value true
+    - define equipment_size 0
+    - foreach <player.flag[equipment]> as:equipment:
+        - if <[equipment].flag[slot_type]> == ring || <[equipment].flag[slot_type]> == bracelet || <[equipment].flag[slot_type]> == necklace :
+            - foreach next
+        - if <[equipment].material.name> == air:
+            - foreach next
+        - else:
+            - define equipment_size:->:<[equipment]>
+    - if <[equipment_size].size> > 0:
+        - define return_value false
+    # returns true if the player doesn't have heavy armor, returns false if they do
+    - determine <[return_value]>
+
+get_defense_display:
+    type: procedure
+    definitions: player
+    script:
+    - define defense_level <proc[armor_protection_proc].context[<[player]>]>
+    - define last_defense_display <script[defense_level_data].data_key[defense].keys.size>
+    - define skill_level <script[defense_level_data].data_key[defense].keys.get[<[defense_level].div[3].round_up.min[<[last_defense_display]>]>]>
+    - define color <script[defense_level_data].data_key[defense.<[skill_level]>.color]>
+    - define display <&color[#<[color]>]><script[defense_level_data].data_key[defense.<[skill_level]>.message]>
+    # - narrate <[display]>
+    - determine <[display]>
+            
+
+
+defense_level_data:
+    type: data
+    defense:
+        3:
+            message: "Hardly Any"
+            title: "Initiate"
+            color: ff0000
+        6:
+            message: "Lowest"
+            title: Neophyte
+            color: ff4800
+        9:
+            message: "Inferior"
+            title: Novice
+            color: ff5500
+        12:
+            message: "Subpar"
+            title: Apprentice
+            color: ff8000
+        15:
+            message: "Minimal"
+            title: Journeyman
+            color: ffaa00
+        18:
+            message: "Modest"
+            title: Expert
+            color: ffd400
+        21:
+            message: "Average"
+            title: Adept
+            color: ffff00
+        24:
+            message: "Decent"
+            title: Adept
+            color: d5ff00
+        27:
+            message: "Moderate"
+            title: Master
+            color: d5ff00
+        30:
+            message: "Abundant"
+            title: Master
+            color: aaff00
+        33:
+            message: "Generous"
+            title: Master
+            color: 80ff00
+        36:
+            message: "Rugged"
+            title: Grandmaster
+            color: 55ff00
+        39:
+            message: "Toughened"
+            title: Grandmaster
+            color: 2bff00
+        42:
+            message: "Hardened"
+            title: Grandmaster
+            color: 00ff00
+        45:
+            message: "Solid"
+            title: Grandmaster
+            color: 00ff2b
+        48:
+            message: "High"
+            title: Elder
+            color: 00ff55
+        51:
+            message: "Significant"
+            title: Elder
+            color: 00ff80
+        54:
+            message: "Indurate"
+            title: Elder
+            color: 00ffaa
+        57:
+            message: "Profuse"
+            title: Elder
+            color: 00ffd5
+        60:
+            message: "Profound"
+            title: Elder
+            color: 00ffff
+        63:
+            message: "Extreme"
+            title: Elder
+            color: 00d5ff
+        66:
+            message: "Paramount"
+            title: Elder
+            color: 00aaff
+        69:
+            message: "Supreme"
+            title: Elder
+            color: 0080ff
+        72:
+            message: "Impervious"
+            title: Legendary
+            color: 0055ff
+        75:
+            message: "Impregnable"
+            title: Legendary
+            color: 002bff
+   

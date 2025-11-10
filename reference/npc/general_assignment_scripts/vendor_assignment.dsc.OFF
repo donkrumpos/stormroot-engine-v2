@@ -1,0 +1,330 @@
+vendor_assignment:
+  type: assignment
+  actions:
+    on assignment:
+    - trigger name:click state:true
+    - trigger name:chat state:true
+    - trigger name:proximity state:true radius:2
+  default constants:
+    chat_color: "<&color[<color[106,116,128]>]><npc.name> <&color[<color[64,70,77]>]>says: <&color[<color[173,189,208]>]> "
+    category: <script[vendor_wares_data].data_key[vendor.<npc.id>.category]>
+    bargain_level: <script[vendor_wares_data].data_key[vendor.<npc.id>.bargain_level]>
+    price_consistency: <script[vendor_wares_data].data_key[vendor.<npc.id>.price_consistency]>
+    # has_familiarity: true
+
+  interact scripts:
+  - vendor_interact
+  
+  
+vendor_interact:
+  type: interact
+  steps:
+    1:
+      proximity trigger:
+            entry:
+                script:
+                - flag <player> vendor_proximity
+                #if the banker npc has another script, dont open bank box. That script will zap to this scripts step 2
+                - if <npc.scripts.size> <= 1:
+                  - run vendor_greeting
+                  - zap 2
+            exit:
+                script:
+                - flag <player> vendor_proximity:!
+      click trigger:
+        script:
+        - zap 2
+      
+    2:
+      click trigger:
+        script:
+        - if <npc.has_flag[suspend_vendor]>:
+          - flag <npc> suspend_vendor:!
+          - stop
+        - run vendor_first_task
+
+vendor_greeting:
+  type: task
+  script:
+  - inject description_inject_task
+  - if <player.flag[npc.<npc.id>.familiarity.level]> > 6:
+    - narrate format:npcchat "Hello <player.name> Would you like to"
+  - else:
+    - narrate format:npcchat "Hail traveler. Welcome to my shop."
+
+vendor_first_task:
+  type: task
+  script:
+  - clickable vendor_task def:<npc>|buy until:12s save:vendor_buy_task_clickable
+  - clickable vendor_task def:<npc>|sell until:12s save:vendor_sell_task_clickable
+  - narrate format:npcchat_secondline "<element[<&hover[Buy items from <npc.name>]><&8><&lb><&color[#4b6dff]>Buy from me?<&8><&rb><&end_hover>].on_click[<entry[vendor_sell_task_clickable].command>]> <&8>or  <element[<&hover[Sell items to <npc.name>]><&8><&lb><&color[#ff482a]>Sell to me?<&8><&rb><&end_hover>].on_click[<entry[vendor_buy_task_clickable].command>]>"
+  - zap 1
+
+vendor_task:
+  type: task
+  definitions: npc|direction
+  script:
+  - define opposite_direction
+  - if <[direction]> == "buy":
+    - define opposite_direction sell
+  - if <[direction]> == "sell":
+    - define opposite_direction buy
+
+  - define inv <inventory[vendor_inventory]>
+  - if <npc.constant[<[direction]>].exists>:
+    - define vendor_item_slot 10
+    - foreach <npc.constant[<[direction]>]> as:item:
+      # - if <[loop_index]> > <player.flag[npc.<npc>.familiarity.level].div[2]||1>:
+      #   - foreach stop
+      - define price_quantity 1
+      - if <item[<[item]>].quantity> > 1:
+        - define price_quantity <item[<[item]>].quantity>
+      - if <item[<[item]>].has_flag[price]>:
+        - define price <item[<[item]>].flag[price]>
+      - else:
+        - define price <script[vanilla_items].data_key[item.<item[<[item]>].material.name>.rarity].div[10].round_up.mul[<[price_quantity]>]>
+      # - give "<[item]>" to:<[inv]> slot:<[vendor_item_slot]>
+      - if <[item].script.name> == scroll_01 && <[direction]> == buy:
+        - if <player.inventory.list_contents.filter[has_flag[bound_spell]]>:
+          - define item <player.inventory.list_contents.filter[has_flag[bound_spell]].random>
+          - give "<[item]>" to:<[inv]> slot:<[vendor_item_slot]>
+          - define vendor_item_slot:++
+          - foreach next
+      - give "<item[<[item]>].with[lore=<[direction].to_titlecase> Price: <[price]>].with_flag[price:<[price]>]>" to:<[inv]> slot:<[vendor_item_slot]>
+      
+      - define vendor_item_slot:++
+  
+
+ 
+  # - define vendor_item_slot 10
+  # - if <[npc].has_flag[current_inventory_duration].not>:
+  #   # if the npcs inventory duration is expired assign it again as well as a new inventory
+  #   - flag <[npc]> current_inventory:! 
+  #   - flag <[npc]> current_inventory_duration expire:1d
+
+  # - define wares_rarity <script[npc_data].data_key[npc.<npc.name>.wares_rarity]>
+  # - define price_consistency <script[npc_data].data_key[npc.<npc.name>.price_consistency]>
+  # - define bargain_level <script[npc_data].data_key[npc.<npc.name>.bargain_level]>
+  # - define economy <script[regions].data_key[region.<script[npc_data].data_key[npc.<npc.name>.region]>.economy_level]>
+  # - if <[npc].has_flag[current_inventory].not>:
+  #   - foreach <script[vanilla_items].data_key[item]> as:item:
+  #     - if <[item].get[category].contains_any[<script[npc_data].data_key[npc.<npc.name>.vendor_category]>]>:
+       
+  #       - define rarity <[item].get[rarity]||0>
+       
+  #       - define this_item <[item].get[material].name>
+  #       - define server_item_slot <util.random.int[1].to[54]>
+  #       - define this_item "<item[<[this_item]>]>"
+  #       - define vendor_item_slot:++
+  #       - if <util.random.int[0].to[<[npc].flag[current_inventory].size||1>]> == 1:
+         
+  #             #this should give half of the available items to the current inventory
+  #         - flag <[npc]> current_inventory:->:<[this_item]> 
+
+          
+  #   - if <script[npc_data].data_key[npc.<npc.name>].contains[other_vendor_<[direction]>_items]>:
+  #     - define rarity 100
+        
+  #     - if <util.random.int[0].to[2]> == 1:
+       
+  #       - define other_item <script[npc_data].data_key[npc.<npc.name>.other_vendor_<[direction]>_items].random>
+  #       - narrate <[other_item]>
+  #       - flag <[npc]> current_inventory:->:<[other_item]>
+  # - wait 1t
+  # - foreach <[npc].flag[current_inventory]> as:this_item:
+  #   - define vendor_item_slot:++
+  #   - define rarity 100
+  #   - if <script[vanilla_items].data_key[item].contains[<[this_item]>]>:
+  #       - define rarity <[item].get[rarity]||100>
+  #   - else:
+  #     - define rarity  <script[<[this_item]>].data_key[flags.rarity]||100>
+  #   - define price <proc[formulate_price_proc].context[<[direction]>|<[rarity]>|<[economy]>|<[bargain_level]>]>
+  #   - if <script[npc_data].data_key[npc.<npc.name>.other_vendor_<[opposite_direction]>_items].contains[<[this_item]>]>:
+  #     - foreach next
+    
+  #   - give "<item[<[this_item]>].with[lore=<[direction].to_titlecase> Price: <[price]>]>" to:<[inv]> slot:<[vendor_item_slot]>
+ 
+  - if <[direction]> == "buy":
+    - flag <player> vendor_direction:buying
+    # - narrate <player.flag[vendor_direction]>
+  - else if <[direction]> == "sell":
+    - flag <player> vendor_direction:selling
+    # - narrate <player.flag[vendor_direction]> 
+  # - give "<item[diamond_hoe].with[display_name=<[direction]>;custom_model_data=36;hides=ALL;]>" to:<[inv]> slot:46
+  # - narrate "Purse balance: <proc[purse_currency_proc].context[<player>]>"
+  # - narrate "Bank balance: <proc[bank_currency_proc].context[<player>]>"
+  # - if <[npc].flag[current_inventory]||null> == "null":
+  #   - if <[direction]> == "buy":
+      
+  #     - narrate format:npcchat ""
+  #     - narrate format:npcchat_secondline "I am not looking"
+  #     - narrate format:npcchat_secondline "to sell anything today."
+  #   - else:
+  #     - narrate format:npcchat "Sorry,"
+  #     - narrate format:npcchat_secondline "I am out of "
+  #     - narrate format:npcchat_secondline "wares for the day."
+  # - else:
+  #   - if <[direction]> == "buy":
+  #     - narrate format:npcchat ""
+  #     - narrate format:npcchat_secondline "Here are the items"
+  #     - narrate format:npcchat_secondline "I am looking for."
+  #   - else:
+  #     - narrate format:npcchat "What would you"
+  #     - narrate format:npcchat_secondline "like to buy?"
+  - give "<item[diamond_hoe].with[display_name=<[direction]>;custom_model_data=36;hides=ALL;]>" to:<[inv]> slot:46
+  - inventory open d:<[inv]> 
+  - zap 1
+
+
+vendor_world:
+  type: world
+  debug: true
+  events:
+    on player closes vendor_inventory:
+      - flag <player> vendor_direction:!
+ 
+    
+    on player clicks in vendor_inventory:
+      - define item <context.item.material.name>
+      - if <[item]> != air && <inventory[<context.clicked_inventory>].id_holder.name> == vendor_inventory && <context.slot> != 46:
+        - if <context.item.has_script>:
+          - define item  <context.item>
+        - if <context.item.has_flag[price].not> && <[item].script.name> != scroll_01:
+          - determine cancelled
+        - define price <context.item.flag[price]>
+        - if <player.has_flag[vendor_direction]> && <player.flag[vendor_direction]> == buying:
+          # - if <[item].script.name> == scroll_01:
+            # - run scroll_buyer_task def:<[item]>
+          
+          - if <player.inventory.contains_item[<[item]>]>:
+            
+            - take item:<[item]>
+            - if <[item].script.name> == scroll_01:
+              - define price 4
+              
+            - run give_player_currency_task def:<player>|<[price]>
+            
+            # - give copper_coin quantity:<[price]>
+          - else:
+            - narrate "You don't have this item."
+            
+        - else if <player.has_flag[vendor_direction]> && <player.flag[vendor_direction]> == selling:
+          - if <proc[inventory_balance_procedure].context[<[player]>].add[<proc[purse_currency_proc].context[<[player]>]>].add[<proc[bank_currency_proc].context[<[player]>]>]> < <[price]>:
+            - narrate  "You don't seem to have enough coin."
+            - determine cancelled
+            - stop
+          - run take_from_inventory_then_bank def:<player>|<[price]>
+          - give <[item]>
+          
+          
+                  
+          # - narrate "price: <[price]>"
+          # - narrate "Purse balance: <proc[purse_currency_proc].context[<player>]>"
+          # - narrate "Bank balance: <proc[bank_currency_proc].context[<player>]>"
+          
+            # - disengage
+            # - stop
+          # - give 
+            # - announce <[slot]>
+            # - define item <context.item>
+            # - narrate "<[slot]> <[item]>"
+          
+          - narrate "Purse balance: <proc[purse_currency_proc].context[<player>]>"
+          - narrate "Bank balance: <proc[bank_currency_proc].context[<player>]>"
+      - determine  cancelled
+    on player drags in vendor_inventory:
+      - determine cancelled
+
+# scroll_buyer_task:
+#   type: task
+#   definitions: scroll
+#   script:
+  
+
+vendor_inventory:
+    type: inventory
+    inventory: chest
+    title: "<&color[#e5b477]> Here's what I'm <tern[<player.flag[vendor_direction],is[==].to[buying]>].pass[buying].fail[selling]>"
+    size: 54
+    slots:
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+
+
+gui_task:
+    type: task
+    script:
+    - title "title:<&chr[F80B]><&chr[3044]><&chr[F82B]><&chr[3045]>" stay:10s
+    - title "title:<&chr[3045]>3" stay:10s
+
+
+price_consistency_proc:
+  type: procedure
+  definitions: consistency_number
+  script:
+  - define final_modifier 0
+  - define random_chance <util.random.int[1].to[100]>
+  - if <[random_chance]> > <[consistency_number]>:
+    - define another_modifier <element[101].sub[<[consistency_number]>].div[14]>
+    - narrate "mod: <[another_modifier].round>"
+    # - define modifier_two <[random_multiplier].div[14].round>
+    - define day_of_week_modifier <util.time_now.day_of_week>
+    - define final_modifier <[another_modifier].mul[<[day_of_week_modifier]>]>
+  - determine <[final_modifier].round>
+
+
+  # formulate_price_proc:
+  #   type: procedure
+  #   definitions: rarity
+  #   script:
+  #   - determine <[rarity]>
+
+
+formulate_price_proc:
+  type: procedure
+  definitions: buy_sell|rarity|economy|bargain
+  script:
+  - define buy_sell_modifier .3
+  - if <[buy_sell]> == "buy":
+    - define buy_sell_modifier .1
+  - else if <[buy_sell]> == "sell":
+    - define buy_sell_modifier 10
+  - define price <[rarity].mul[<[economy]>].mul[<[buy_sell_modifier]>].round>
+  - define bargain_level <[price].mul[<[bargain]>].div[100]>
+  - define price <[price].sub[<[bargain_level]>].round>
+  # - narrate "price: ---> <[rarity]>, <[buy_sell_modifier]> , <[economy]>"
+  - determine <[price]>
+
+
+
+  # - narrate "I don't have anything to sell right now." targets:<player>
+  #               - narrate "Apologies, friend, me wares be scarce at the moment." targets:<player>
+  #               - narrate "Sorry, traveler, me shelves be a tad empty at the moment." targets:<player>
+  #               - narrate "Sorry, traveler, me shelves be a tad empty at the moment.." targets:<player>
+  #               - narrate "Nary a thing to trade just now, but keep an eye out!" targets:<player>
+  #               - narrate "Regrettably, me stalls be bare for the time being." targets:<player>
+  #               - narrate "Me stock be runnin' low, but fear not, replenishment's on the way." targets:<player>
+  #               - narrate "Ah, seems me offerings have taken flight for a spell." targets:<player>
+  #               - narrate "Not a trinket to spare today, but tomorrow's another tale."" targets:<player>
+  #               - narrate "Empty-handed I am today, but fortune's wheel keeps turnin'." targets:<player>
+  #               - narrate "Me pockets be light today, but the market's always churnin'." targets:<player>
+  #               - narrate "No wares in sight for now, but stay tuned for the next show." targets:<player>
+
+
+
+  # - narrate "I don't have a need to buy anything right now." targets:<player>
+  #               - narrate "Me purse be light, friend, no need for a purchase just yet." targets:<player>
+  #               - narrate "No coin to spare at the moment, me friend, but thanks for askin'." targets:<player>
+  #               - narrate "Sorry, me coffers be a bit thin for buyin' at the present." targets:<player>
+  #               - narrate "Not in the market for purchases today, but appreciate the offer." targets:<player>
+  #               - narrate "No need for acquisitions at the moment, but perhaps another day." targets:<player>
+  #               - narrate "Me pockets be lean today, no room for buyin' just now." targets:<player>
+  #               - narrate "Ah, not in the mood for purchases today, but me thanks for askin'." targets:<player>
+  #               - narrate "No desire for acquisitions presently, but mayhaps in the future." targets:<player>
+  #               - narrate "Nothin' to buy today, but keep me in mind for future transactions." targets:<player>
+  #               - narrate "Sorry, friend, nothin' on me shopping list today, but cheers for askin'." targets:<player>
+  #               - narrate "No need for purchases at present, but me thanks for yer offerings." targets:<player>

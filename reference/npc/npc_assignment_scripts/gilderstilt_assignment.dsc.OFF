@@ -1,0 +1,279 @@
+gilderstilt_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:4
+    interact scripts:
+    - gilderstilt_interact
+
+    default constants:
+        appearance1: "<npc.name> is of the Hawk Clan, but has a different headdress on than the rest of his clan."
+        appearance2: "<npc.name> moves through the shadows of Bardtown's libraries like a specter of the past, his origins veiled in the mists of time."
+        appearance3: "His plumage, a mosaic of hues ranging from midnight blue to the deepest violet, bears faint traces of ink, each feather telling a story of countless hours spent immersed in the lore of his ancestors"
+        appearance4: "YGilderstilt's silhouette seems to blur and fade, merging with the ancient tomes and relics that surround him, a living embodiment of the mysteries that lie buried within Bardtown's labyrinthine archives."
+        appearance5: "Upon Gilderstilt's breast rests a pendant, its surface bearing faint runes that seem to pulse with a faint, otherworldly glow, hinting at the hidden path he treads in pursuit of a quest shrouded in ancient prophecy."
+        has_familiarity: true
+        dialog: gilderstilt_dialog
+        proximity: true
+        delay_proximity_join: true
+
+gilderstilt_dialog:
+    type: data
+    dialog:
+        1:
+            proximity:
+                1:
+                    statement:
+                        required_flag:
+                            flag: npc_proximity
+                        prohibited_flag:
+                            flag: npc.Gilderstilt.prox_count
+
+                        narration:
+                            1:
+                                - "Oh, I’m sorry, I didn’t see you there. I am deep in my studies."
+                            2:
+                                - "These new writings are fascinating, I didn't see you come in."
+                            3:
+                                - "I didn't realize you were there. My head is always in these texts."
+                2:
+                    required_flag:
+                        flag: npc_proximity
+                    prohibited_flag:
+                        flag: npc.Gilderstilt.prox_count
+                    narration:
+                        1:
+                            - "We Scribes need much focus to keep up these texts."
+                            - "We study the lore and legends of Deluvia, and this is our guildhall."
+                            - "The Hall_of_Mythos."
+                            - "One of but Five of the Great Bard Halls across our world."
+                    
+                3:
+                    prohibited_flag: npc_proximity
+                    script_to_run:
+                        script: reset_gilderstilt_gaze
+                    narration:
+                        - ""
+                4:
+                    required_flag:
+                        flag: 
+                            - npc_proximity
+                            - npc.Gilderstilt.prox_count
+                    prohibited_flag:
+                        flag: yewestra_parchment
+                    narration:
+                        1:
+                            - ""
+                        2:
+                            - "Ah, greetings once more, my dear visitor!"
+                        3:
+                            - "Well, if it isn't your familiar face returning to our humble hall."
+                        4:
+                            - "Ah, here you are again, like the sun rising over Bardtown."
+                        5:
+                            - "Oh, it seems the winds of fate have blown you back to our doorstep."
+                        6:
+                            - ""
+                        7:
+                            - "Back for another round of unexpected company, are we?"
+                        8:
+                            - "Ah, the wanderer returns, like a lost scribe finding his way home."
+                        9:
+                            - "Back for another tale, are you? Sit, sit, and let me fetch the tea."
+                        10:
+                            - "Well, well, well, if it isn't my unexpected guest making a reappearance."
+                        11:
+                            - "Ah, back for another chat, like a persistent riddle needing solving."
+                        12:
+                            - "Oh, you've returned! I hope you've come bearing more tales from yonder lands."
+                        13:
+                            - "Back again, like a scribe drawn to a fresh scroll awaiting its ink."
+                        14:
+                            - "Ah, back to my hearth you've come, like a scholar to an unfinished tome."
+                        15:
+                            - ""
+                        16:
+                            - ""
+                        
+                5:
+                    required_flag:
+                        flag:
+                            - npc_proximity
+                            - npc.Gilderstilt.prox_count
+                            - yewestra_parchment
+                    required_item:
+                        1:
+                            item: parchment
+                            item_flag: yewestra_parchment
+                            take_item: true
+                            quantity: 10
+                    flag_given:
+                        flag: hall_of_mythos
+                    script_to_run:
+                        script: open_mythos_fireplace
+                    narration:
+                        1:
+                            - "You have it!"
+                            - "Thank you player_name."
+                            - "You have served the guild well and you are now one of us."
+                            - "Go now, through the fake fireplace and down the steps and find Rosensleeve. He knows you'll be arriving"
+
+            click:
+                1:
+                    statement:
+                        script_to_run: 
+                            script: reset_gilderstilt_gaze
+                        prohibited_flag:
+                            flag: mythos_initiation_started
+                        # required_flag: 
+                            # flag: npc.Gilderstilt.prox_count
+                        # flag_value: 2
+                        narration:
+                            1: 
+                                - "Oh well hello there."
+                                - "I was hoping you would be coming."
+                            2: 
+                                - "Newling! Welcome!"
+                            3: 
+                                - "Well met Newling."
+                            4:
+                                - "Ah, well met, weary traveler, amidst the shadows of our halls."
+                            5: 
+                                - "Ah, greetings, newcomer!"
+                                - " May you find solace in our midst."
+                            6:
+                                - Hail, newcomer. A warm embrace to thee."
+                            7:
+                                - "Ah, a fresh face. Welcome to our company."
+                            8:
+                                - "Greetings, stranger! Enter and be at ease."
+                            9:
+                                - "Well met, wanderer! Your presence brings light to our abode."
+                            10: 
+                                - "Ah, newcomer! Your presence graces our humble abode."
+                    questions:
+                        1:
+                            required_flag:
+                                flag: mythos_invitation
+                            flag_given:
+                                flag: mythos_initiation_started
+                            prohibited_flag:
+                                flag: mythos_initiation_started
+                            narration:
+                                - "I would like to join the Hall of Mythos"
+                            answer:
+                                narration:
+                                    1:
+                                        - "Let the hall rejoice!"
+                                        - "Now there is just one small intiation task that is required before you can come to our council."
+                                        - "You have to have your own Tome in which to gather notes and studies."
+                                        - "My colleague, Yewestra, she crafts the most durable and delicate parchment I ever found. But, my old bird bones don't travel up and down the hill as well as they once did."
+                                        - "So I ask, if you could get from her parchment and some for yourself, I would be grateful."
+                                        - "And it is good to meet her, as she is a friend of the Bards."
+                        2:
+
+                            narration:
+                                - "What are the other Halls for Bards"
+                            answer:
+                                
+                                narration:
+                                    1:
+                                        - "I am glad you asked this marvelous question!"
+                                        - "the Hall_of_Harlequin" 
+                                        - "the Hall_of_Hearten" 
+                                        - "the Hall_of_Mischance"
+                                        - "and the Hall_of_Glossolalia" 
+                                        - "all of which more council can be found here in Bardtown." 
+                        3:
+                            flag_given:
+                                flag: mythos_invitation
+                            narration:
+                                - "Tell me more about the Hall of Mythos."
+                            answer:
+                                narration:
+                                    1:
+                                        - "This guild specializes in the bard's role in preserving and learning the ancient Deluvic tongue, among the many other languages."
+                                        - "It takes much perseverence and study."
+                                        - "If you would like to join you just have to go through our initiation."
+                        4:
+                            narration:
+                                - "I am instead interested in adventure and combat."
+                            answer:
+                                narration:
+                                    1:
+                                        - "Alas, as our very own Bovillus has authored, 'the quill is more powerful than the cudgel'"
+                                        - "but I recognize your interest."
+                                        - "It is certainly a dangerous world outside these walls."
+                                        - "You should go to talk to the ruggrds across the street for more about that."
+                                        - "Or other hunters out there in the wild. I have no taste for blood."
+                        5:
+                            required_flag:
+                                flag: mythos_initiation_started
+                            narration:
+                                - "How do I find Yewestra?"
+                            answer:
+                                narration:
+                                    1:
+                                        - "She lives on the island just west of this. If you cross the bridge, there is Aria Isle, with the tall spiky mountain. She has a hut just on the other side."
+               
+                2:
+                    required_flag:
+                        flag: 
+                            - mythos_initiation_started
+                            - npc.Gilderstilt.prox_count
+                    narration:
+                        1:
+                            - "player_name! Welcome."
+                        2:
+                            - "Welcome back player_name my kindred fellow."
+                        3:
+                            - "Always nice to see you player_name."
+                           
+                
+
+open_mythos_fireplace:
+    type: task
+    script:
+    - adjust <player> noclip:true
+    - flag <player> mythos_fireplace
+    - foreach <cuboid[glossolalia_fireplace].blocks> as:block_location:
+        - showfake air <[block_location]> duration:9s players:<player>
+    - wait 13s
+    
+    - adjust <player> noclip:false
+    - flag <player> mythos_fireplace:!
+
+glossolalia_fireplace_world:
+    type: world
+    events:
+        on player damaged:
+        - if <player.has_flag[glossolalia_fireplace]>:
+            - determine cancelled
+
+gilderstilt_interact:
+    type: interact
+    steps:
+        1:
+            proximity trigger:
+                entry:
+                    script:
+                    - execute as_server "npc skin --url https://minesk.in/7a155503e19c4ae5bd59fab3b7d529ee --id <npc.id>"
+                    - ratelimit <player> 15s
+                   
+                exit:
+                    script:
+                    - run reset_gilderstilt_gaze
+
+reset_gilderstilt:
+    type: task
+    script:
+    - flag <player> hall_of_glossolalia_01:!
+    - flag <player> npc.Gilderstilt.prox_count:!
+    - flag <player> gilderstilt_decline:!
+    - flag <player> gilderstilt_glossolalia:!
+    - flag <player> gilderstilt_bard_halls:!
+    - flag <player> mythos_invitation:!
+    - flag <player> mythos_initiation_started:!

@@ -1,0 +1,29 @@
+block_skill_task:
+    type: procedure
+    definitions: damager|defender
+    script:
+    - define skill_level <[defender].flag[skill.skills.block.level]>
+    - if <[skill_level]> > 0:
+        - if <[defender].location.facing[<[damager].location>]>:
+            - narrate Facing
+        - define dexterity <proc[attribute_skill_check_proc].context[<[defender]>|dexterity]>
+        - narrate <[skill_level]>
+        - if <proc[level_success_proc].context[<[defender]>|<[skill_level].add[<[dexterity].div[12].round_down>]>]>:
+            - determine true
+        - else:
+            - determine false
+
+
+   
+block_skill_world:
+    type: world
+    events:
+        # on player left clicks block:
+        # - if <player.has_flag[skill.skills.block.level]>:
+        #     - flag <player> blocking expire:5t
+        
+        on player damaged by entity:
+        - if <context.entity.has_flag[blocking]>:
+            - if <proc[block_skill_task].context[<context.damager>|<context.entity>]>:
+                - narrate format:game_message "You blocked your attackers blow" targets:<context.entity>
+                - determine cancelled

@@ -1,0 +1,228 @@
+ 
+
+
+saggis_assignment:
+  type: assignment
+  interact scripts:
+  - saggis_tnteract
+  actions:
+    on assignment:
+      - trigger name:proximity state:true radius:5
+      - trigger name:click state:true
+      - trigger name:chat state:true
+      - trigger name:damage state:true
+    on enter proximity:
+      - lookclose state:true
+    on damaged:
+      - determine cancelled
+
+saggis_tnteract:
+  type: interact
+  steps:
+    1:
+      proximity trigger:
+        entry:
+            script:
+            - execute as_server "npc skin --url https://minesk.in/74c985ad3a7d47d689c9fbccd3189dd1 --id <npc.id>"
+            - if <player.has_flag[saggis_known].not>:
+              - run description_inject_task 
+              - random:
+                - narrate "'allo, Saggis can ferry you across the harbor"
+                - narrate  "All right? Saggis ferry you across the harbor?"
+              - flag <player> saggis_known
+      click trigger:
+        script:
+        - run description_inject_task 
+        - engage
+        - if <server.flag[rothigport_crypt_ferry]> == "spot01":
+          - narrate "Ready for Saggis to take you to the Isle of Tombs?"
+          - clickable crypt_ferry_travel_02  until:5s save:saggis_yes_01_clickable for:<player> usages:1
+          - narrate "<&color[#028f0c]> <element[<&hover[Proceed to the Tomb?]><&8><&lb><&color[#00cb43]>Yes<&8><&rb><&end_hover>].on_click[<entry[saggis_yes_01_clickable].command>]> <&8>"
+          - zap 2
+        - else if <server.flag[rothigport_crypt_ferry]> == "spot02":
+          - narrate "Ready for Saggis to go back to Rothigport?"
+          - clickable crypt_ferry_travel_01  until:5s save:saggis_yes_02_clickable for:<player> usages:1
+          - narrate "<&color[#028f0c]> <element[<&hover[Proceed to the docks?]><&8><&lb><&color[#00cb43]>Yes<&8><&rb><&end_hover>].on_click[<entry[saggis_yes_02_clickable].command>]> <&8>"
+
+          - zap 2 duration:10s
+        - disengage
+
+    2:
+      chat trigger:
+        1:
+          trigger: <&7>/1/, Yes.
+          script:
+          - run crypt_ferry_travel_02
+          - zap 1
+    3:
+      chat trigger:
+        1:
+          trigger: <&7>/1/, Yes.
+          script:
+          - run crypt_ferry_travel_01
+          - zap 1
+
+
+# saggis_yes_01_task:
+#   type: task
+#   script:
+#   - if <player.has_flag[suspend_clickable].not>:
+#     - flag <player> suspend_clickable
+#     - define players_in_boat <cuboid[crypt_ferry_area_02].players>
+#     - run crypt_ferry_travel_02
+    
+    
+#     - zap 1 saggis_interact 
+#     - flag <player> suspend_clickable:!
+  
+
+
+# saggis_yes_02_task:
+#   type: task
+#   script:
+#   - if <player.has_flag[suspend_clickable].not>:
+#     - flag <player> suspend_clickable
+#     - run crypt_ferry_travel_01
+    
+
+#     - zap 1 saggis_interact 
+#     - flag <player> suspend_clickable:!
+
+
+crypt_ferry_travel_01:
+  type: task
+  definitions: bell
+  script:
+  - flag <server> crypt_ferry_traveling expire:5s
+  - define saggis_npc <player.location.find_npcs_within[100].filter[nickname.is[==].to[saggis]].filter[is_spawned].first>
+  - define players_in_boat <cuboid[crypt_ferry_area_02].players>
+  - if <[players_in_boat].size> > 0:
+    - if <[bell]> == "bell":
+      - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]><[saggis_npc].name><&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<[players_in_boat]>
+      - narrate "Saggis called, need to go. <red>Get out" targets:<[players_in_boat]>
+      - wait 4s
+  - if <schematic[crypt_ferry_01].exists.not>:
+    - ~schematic load name:crypt_ferry_01
+  - schematic paste name:crypt_ferry_01 crypt_ferry_location_01
+  - despawn  <[saggis_npc]> 
+  # - wait 1s
+  - spawn <[saggis_npc]>
+  - teleport <[saggis_npc]> saggis_location_01
+  - flag <server> rothigport_crypt_ferry:spot01
+  # - foreach <[players_in_boat]> as:entry:
+  - repeat 10:
+    - wait 1t
+    - teleport <[players_in_boat]> player_at_saggis_02
+  - repeat 10:
+    - wait 1t
+    - teleport <[players_in_boat]> player_at_saggis_01
+
+  - if <schematic[crypt_ferry_02_empty].exists.not>:
+    - ~schematic load name:crypt_ferry_02_empty
+  - schematic paste name:crypt_ferry_02_empty crypt_ferry_location_02
+  - zap 1 saggis_interact
+ 
+
+
+crypt_ferry_travel_02:
+  type: task
+  definitions: bell
+  script:
+  - flag <server> crypt_ferry_traveling expire:5s
+  - define saggis_npc <player.location.find_npcs_within[100].filter[nickname.is[==].to[saggis]].filter[is_spawned].first>
+  - define players_in_boat <cuboid[crypt_ferry_01].players>
+  - if <[players_in_boat].size> > 0:
+    - if <[bell]> == "bell":
+        - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]><[saggis_npc].name><&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<[saggis_npc].location.find_players_within[4]>
+        - narrate "Saggis called, need to go. <red>Get out" targets:<[players_in_boat]>
+        - wait 4s
+  - if <schematic[crypt_ferry_02].exists.not>:
+    - ~schematic load name:crypt_ferry_02
+  - schematic paste name:crypt_ferry_02 crypt_ferry_location_02
+  
+
+
+  
+  - despawn <[saggis_npc]>
+  # - wait 1s
+  - spawn <[saggis_npc]>
+  - teleport <[saggis_npc]> saggis_location_02
+  - flag <server> rothigport_crypt_ferry:spot02
+  
+  - repeat 10:
+    - wait 1t
+    - teleport <cuboid[crypt_ferry_01].players> player_at_saggis_01
+  - repeat 10:
+    - wait 1t
+    - teleport <cuboid[crypt_ferry_01].players> player_at_saggis_02
+  - if <schematic[crypt_ferry_01_empty].exists.not>:
+    - ~schematic load name:crypt_ferry_01_empty
+  - schematic paste name:crypt_ferry_01_empty crypt_ferry_location_01
+  - zap 1 saggis_interact
+
+
+# as:crypt_ferry_area_02
+
+
+   
+crypt_ferry_world:
+  type: world
+  events:
+  
+    on player clicks block location_flagged:crypt_ferry_bell_01:
+    - if <server.has_flag[crypt_ferry_traveling]>:
+      - stop
+    - if <player.has_flag[suspend_clickable].not>:
+      # - if <server.has_flag[saggis_traveling].not>:
+      #   - flag <server> saggis_traveling expire:3s
+      # - else:
+      #   - wait 3s
+      - define saggis_npc <player.location.find_npcs_within[100].filter[nickname.is[==].to[saggis]].filter[is_spawned].first>
+      - ratelimit <player> 2s
+      - wait 2s
+      - if <server.flag[rothigport_crypt_ferry]> == "spot02":
+        - run crypt_ferry_travel_01 def:bell
+        - wait 3s
+        - run description_inject_task def:<[saggis_npc]>
+        - random:
+          - narrate "You rang?"
+          - narrate "Yes master?"
+          - narrate "Ding dong, Saggis here."
+          - narrate "You ring, Saggis paddle."
+          - narrate "Go back, Saggis bring."
+        
+      - else:
+        
+        - run description_inject_task def:<[saggis_npc]>
+        - random:
+          - narrate "Saggis right here."
+          - narrate "Saggis always been here."
+          - narrate "Saggis not gone."
+          - narrate "Saggis will paddle."
+    
+    on player clicks block location_flagged:crypt_ferry_bell_02:
+    - if <server.has_flag[crypt_ferry_traveling]>:
+      - stop
+    - if <player.has_flag[suspend_clickable].not>:
+      - define saggis_npc <player.location.find_npcs_within[100].filter[nickname.is[==].to[saggis]].filter[is_spawned].first>
+      - ratelimit <player> 2s
+      - wait 2s
+      - if <server.flag[rothigport_crypt_ferry]> == "spot01":
+        - run crypt_ferry_travel_02 def:bell
+        - wait 3s
+        - run description_inject_task def:<[saggis_npc]>
+        - random:
+          - narrate "You called?"
+          - narrate "Traveler ask, Saggis answer."
+          - narrate "Saggis paddle fast for you."
+          - narrate "Yes traveler?"
+          - narrate "The ferryman cometh."
+          
+      - else:
+        
+        - run description_inject_task def:<[saggis_npc]>
+        - random:
+          - narrate "Saggis here already."
+          - narrate "Saggis love the sound of bell."
+          - narrate "Bell pretty sound."
+          - narrate "Here Saggis was."

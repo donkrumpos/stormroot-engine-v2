@@ -1,0 +1,59 @@
+
+petals_on_moss:
+  type: item
+  material: player_head
+  display name: ""
+  mechanisms:
+    skull_skin: 3b93291c-1cbc-4cf4-a239-414b3fada8b7|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDFhNjQ5OTAwMmE1NTcwODZmYjM4MWRmZjNhZTZmMTY3NDQ3NjVlNzg0ZGIxMDk5YWFhNjhiZGE5ZTNhNDMwMiJ9fX0=
+
+dark_purple_hydrangea:
+  type: item
+  material: player_head
+  display name: ""
+  mechanisms:
+    skull_skin: 333b6123-38fc-4871-b848-7fedb68b48fd|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjU5YjQyMjY1YmIyMmQzY2QwMDg0ZTE4MmIxMzkyYTVhODhiNzI4YWI1MWUwMzU5YTZjMDdlNGI4ZjllNjc1In19fQ==
+
+calendula_bush:
+  type: item
+  material: player_head
+  display name: ""
+  mechanisms:
+    skull_skin: 7e451f1f-ad69-44e2-87f0-210cb6909133|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODcwMzIyODBiNDMxMTgzMmI3MDBiM2Q5NGRmNDMyMjY2MjFiY2QxMTRkNTEzNzMwMmEwZmFhYjk3OTYzYmQ3MyJ9fX0=
+
+
+gooseberry_bush:
+  type: item
+  material: player_head
+  display name: ""
+  mechanisms:
+    skull_skin: 7a76292d-b300-4dff-ac04-54a5db1e7e3c|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjYzM2ZkNzc1OWExN2ZjZGI4M2RkNmEzODgwYzcxNmIwMzY1ODBlMjg4Yjc0NjA4N2Y0M2I1ODAxZTIxMDNjMiJ9fX0=
+
+sunflower_head:
+  type: item
+  material: player_head
+  display name: ""
+  mechanisms:
+    skull_skin: e3eecc71-c5fb-4fb7-8537-5c5d3aaad250|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTgwMjg5ODQ3Njk4NGZlMzgxMmIyYmNmOWU1ZGIyNTQ5NDNmNzEwOTBhM2M0ZjNmNWM5MTQ1MjRjNWNlNjA3MyJ9fX0=
+
+furry_moss:
+  type: item
+  material: player_head
+  display name: ""
+  mechanisms:
+    skull_skin: b2a0e1c4-25bd-46c0-8919-3b97221c6255|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGNjOWI4NWMwNjAyZGU2NWE3Mzc0MmY3NTE3N2Q3Njk4YmJkY2U5NmM3OThkOGUzMmI0MDA0YmRkMzNhYzVhYSJ9fX0=
+
+flower_bush:
+  type: item
+  material: player_head
+  display name: ""
+  mechanisms:
+    skull_skin: 54ecec3e-14bc-41da-a2eb-8980e4eef822|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzllZWVkYzIxM2NjY2UwMTdkZjlhZTAwZTBhOGRlNzdjZDAxYzE3OTE5YjZiY2JlZjVlYjUzNDE1NmI1MTdjZSJ9fX0=
+
+
+aloe_vera_plant:
+  type: item
+  material: player_head
+  display name: ""
+  mechanisms:
+    skull_skin: 4cebf4a4-3d4d-4e57-a448-edad7fefefb1|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmUzYzUzOGNhYTRkNmUzMDg5ZWUzNmY2OWM5NThlMWFiMzE4NTlhMjcyMjFlMGNkNjE3MzAzMDU4OWYwMzQ3MyJ9fX0=
+

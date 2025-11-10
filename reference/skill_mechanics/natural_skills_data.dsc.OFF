@@ -1,0 +1,517 @@
+# This is the natural skills that raise naturally through use. 
+# Every player gets a chance to use these
+
+
+skills_skills_data:
+  type: data
+  skills:
+    focus:
+        display_name: "Focus"
+        description: "Helps you focus during battle."
+        category: combat
+        title: Stoic
+        attribute:
+            dexterity: 100
+        
+    evaluate_intelligence:
+        display_name: "Evaluate Intelligence"
+        description: "Determine the mental ablities of your target."
+        category: creatures_sensing
+        title: Scholar
+        attribute:
+            intelligence: 100
+        
+    anatomy:
+        display_name: "Anatomy"
+        description: "Determine the physical ablities of your target."
+        category: creatures_sensing
+        title: Biologist
+        attribute:
+            intelligence: 80
+            strength: 20
+
+    healing:
+        display_name: "Healing"
+        description: "Ability to heal yourself and others with bandages. | Requires you to be holding a bandage."
+        category: healing
+        title: Healer
+        attribute:
+            intelligence: 80
+            dexterity: 20
+        
+    meditation:
+        display_name: "Meditation"
+        description: "naturally concentrate on regenerating your magical powers."
+        category: magic
+        title: Stoic
+        attribute:
+            intelligence: 100
+        
+    luck:
+        display_name: "Luck"
+        description: "Helps with random factors on Deluvia."
+        category: creatures_sensing
+        title: Gambler
+        
+    perception:
+        display_name: "Perception"
+        description: "Aids in your ability to sense items in your surroundings."
+        category: creatures_sensing
+        title: Observer
+        attribute:
+            intelligence: 100
+        
+    tactics:
+        display_name: "Tactics"
+        description: "Knowledge in martial combat and warfare."
+        category: combat
+        title: Tacticisn
+        attribute:
+            strength: 70
+            dexterity: 20
+            intelligence: 10
+
+    wrestling:
+        display_name: "Wrestling"
+        description: "Your proficiency using your bare hands."
+        category: combat
+        title: Wrestler
+        attribute:
+            strength: 80
+            dexterity: 20
+        
+    mace:
+        display_name: "Mace Fighting"
+        description: "Your weapon proficiency in crushing weapons."
+        category: combat
+        title: Armsman
+        attribute:
+            strength: 90
+            dexterity: 10
+        
+    sword:
+        display_name: "Swordsmanship"
+        description: "Your weapon proficiency in edged weapons."
+        category: combat
+        title: Swordsman
+        attribute:
+            strength: 80
+            dexterity: 20
+        
+    fencing:
+        display_name: "Fencing"
+        description: "Your weapon proficiency in piercing weapons."
+        category: combat
+        title: Fencer
+        attribute:
+            strength: 80
+            dexterity: 20
+        
+    archery:
+        display_name: "Archery"
+        description: "Your weapon proficiency in missle weapons."
+        category: combat
+        title: Archer
+        attribute:
+            strength: 80
+            dexterity: 20
+        
+    throwing:
+        display_name: "Throwing"
+        description: "Your weapon proficiency in throwing weapons."
+        category: combat
+        title: Bladeweaver
+        attribute:
+            strength: 90
+            dexterity: 10
+        
+    parrying:
+        display_name: "Parrying"
+        description: "Your  proficiency using shields."
+        category: combat
+        title: Duelist
+        attribute:
+            strength: 70
+            dexterity: 30
+        
+    magery:
+        display_name: "Magery"
+        description: "Your skill in studying the arcane arts."
+        category: magic
+        title: Mage
+        attribute:
+            intelligence: 100
+    
+    inscription:
+        display_name: "Inscription"
+        description: "Your skill crafting your own spells."
+        category: magic
+        title: Scribe
+        attribute:
+            intelligence: 100
+    
+    spirit_speak:
+        display_name: "Spirit Speak"
+        description: "Your ability to talk to the dead."
+        category: magic
+        title: Medium
+        attribute:
+            intelligence: 100
+        
+    lumberjacking:
+        display_name: "Lumberjacking"
+        description: "Your skill in felling trees and find rare lumber."
+        title: Lumberjack
+        attribute:
+            strength: 100
+        
+    mining:
+        display_name: "Mining"
+        description: "Your skill in finding rare ores."
+        category: crafting
+        title: Miner
+        attribute:
+            strength: 100
+        
+    musicianship:
+        display_name: "Musicianship"
+        description: "Your skill music and poetry."
+        category: bardic
+        title: Bard
+        attribute:
+            dexterity: 50
+            intelligence: 50
+        
+    willpower:
+        display_name: "Willpower"
+        description: "Your ability to not be persuaded."
+        category: creatures_sensing
+        title: Resistor
+        attribute:
+            intelligence: 60
+            dexterity: 20
+            strength: 20
+        
+    persuasion:
+        display_name: "Deception"
+        description: "Your ability deceive and con others."
+        category: creatures_sensing
+        title: Persuader
+        attribute:
+            intelligence: 90
+            dexterity: 10
+    
+    deception:
+        display_name: "Persuasion"
+        description: "Your ability convince others."
+        category: creatures_sensing
+        title: Deceiver
+        attribute:
+            intelligence: 90
+            dexterity: 10
+        
+    morale:
+        display_name: "Morale"
+        description: "Your feeling about your chances in battle, especially among your party."
+        category: combat
+        title: Hero
+        attribute:
+            intelligence: 70
+            dexterity: 10
+            strength: 20
+        
+    beast_lore:
+        display_name: "Beast Lore"
+        description: "Your knowledge and rapport with the fauna of Deluvia."
+        category: creatures_sensing
+        title: Naturalist
+        attribute:
+            intelligence: 90
+            strength: 10
+        
+    animal_taming:
+        display_name: "Animal Taming"
+        description: "Your ability to persuade a beast to be your pet."
+        category: creatures_sensing
+        title: Tamer
+        attribute:
+            strength: 80
+            intelligence: 20
+        
+    arms_lore:
+        display_name: "Arms Lore"
+        description: "Your knowledge of weapons and armor."
+        title: Weapons Master
+        category: crafting
+        attribute:
+            intelligence: 90
+            strength: 10
+        
+    item_identification:
+        display_name: "Item Identification"
+        description: "Your knowledge of items and artifacts."
+        category: crafting
+        title: Merchant
+        attribute:
+            intelligence: 100
+
+    blacksmithing:
+        display_name: "Blacksmithing"
+        description: "Your ability craft and repair weapons and armor."
+        category: crafting
+        title: Smith
+        attribute:
+            strength: 90
+            dexterity: 5
+            intelligence: 5
+        
+    jewelcrafting:
+        display_name: "Jewelcrafting"
+        description: "Your ability to work with jewels precious artifacts."
+        category: crafting
+        title: Jeweler
+        attribute:
+            strength: 80
+            dexterity: 5
+            intelligence: 15
+
+    tinkering:
+        display_name: "Tinkering"
+        description: "Your ability to build tools, hardware and gadgets."
+        category: crafting
+        title: Tinker
+        attribute:
+            strength: 80
+            dexterity: 5
+            intelligence: 15
+        
+    charisma:
+        display_name: "Charisma"
+        description: "Your rapport, affinty and trust with the inhabitants of Deluvia."
+        category: core
+        title: Charmer
+        attribute:
+            intelligence: 100
+
+    tailoring:
+        display_name: "Tailoring"
+        description: "Your ability to craft clothing and leather armor."
+        category: crafting
+        title: Tailor
+        attribute:
+            strength: 80
+            dexterity: 5
+            intelligence: 15
+
+    constitution:
+        display_name: "Constitution"
+        description: "Your ability to withstand the environment and your resolve to the elements."
+        category: core
+        title: Withstander
+        attribute:
+            strength: 100
+          
+    disguise:
+        display_name: "Disguise"
+        description: "Your ability to disguise as and impersonate another being."
+        title: Impersonator
+        category: rogue
+        attribute:
+            intelligence: 95
+            dexterity: 5
+    
+    hiding:
+        display_name: "Hiding"
+        description: "Your ability to hide."
+        title: Shade
+        category: survival
+        attribute:
+            dexterity: 100
+    
+    faith:
+        display_name: "Faith"
+        description: "Your trust, devotion and worship in your Gods."
+        category: religion
+        title: Cleric
+        attribute:
+            intelligence: 100
+
+    stealing:
+        display_name: "Stealing"
+        description: "Your ability to steal."
+        category: rogue
+        title: Pickpocket
+        attribute:
+            intelligence: 15
+            dexterity: 85
+
+    fire_resistance:
+        display_name: "Fire Resist"
+        element: fire
+        description: "Your ability to resist fire magic."
+        category: magic
+        
+    cold_resistance:
+        display_name: "Cold Resist"
+        element: water
+        description: "Your ability to resist water/cold magic."
+
+    air_resistance:
+        display_name: "Air Resist"
+        element: air
+        description: "Your ability to resist air/wind magic."
+
+    energy_resistance:
+        display_name: "Energy Resist"
+        element: energy
+        description: "Your ability to resist energy/storm magic."
+        
+    dirt_resistance:
+        display_name: "Dirt Resist"
+        element: dirt
+        description: "Your ability to resist dirt, dust, clay, mud, soil and decay magic."
+    
+    stone_resistance:
+        display_name: "Stone Resist"
+        element: stone
+        description: "Your ability to resist stone and magic derived from ore and mantle."
+        
+    death_resistance:
+        display_name: "Death Resist"
+        element: fire
+        description: "Your ability to resist death magic."
+        
+    life_resistance:
+        display_name: "Life Resist"
+        element: fire
+        description: "Your ability to resist life and nature magic."
+        
+    moon_resistance:
+        display_name: "Moon Resist"
+        element: moon
+        description: "Your ability to resist moon and night magic."
+        
+    day_resistance:
+        display_name: "Star Resist"
+        element: day
+        description: "Your ability to resist day and star magic."
+        
+    void_resistance:
+        display_name: "Void Resist"
+        element: void
+        description: "Your ability to resist void and chaos magic."
+        
+    poison_resistance:
+        display_name: "Poison Resist"
+        element: poison
+        description: "Your ability to resist poison magic."
+        
+    stone_resistance:
+        display_name: "Stone Resist"
+        element: stone
+        description: "Your ability to resist stone and ore magic."
+        
+
+skill_levels_data:
+    type: data
+    level:
+        0:
+            message: "None"
+            title: "Initiate"
+            color: ff0000
+        25:
+            message: "Very Low"
+            title: Neophyte
+            color: ff4800
+        50:
+            message: "Low"
+            title: Novice
+            color: ff5500
+        75:
+            message: "Medium"
+            title: Apprentice
+            color: ff8000
+        100:
+            message: "High"
+            title: Journeyman
+            color: ffaa00
+        125:
+            message: "Very High"
+            title: Expert
+            color: ffd400
+        150:
+            message: "Extremely High"
+            title: Adept
+            color: ffff00
+        175:
+            message: "Extremely High"
+            title: Adept
+            color: d5ff00
+        200:
+            message: "Extremely High"
+            title: Master
+            color: d5ff00
+        250:
+            message: "Extremely High"
+            title: Master
+            color: aaff00
+        275:
+            message: "Extremely High"
+            title: Master
+            color: 80ff00
+        300:
+            message: "Extremely High"
+            title: Grandmaster
+            color: 55ff00
+        325:
+            message: "Extremely High"
+            title: Grandmaster
+            color: 2bff00
+        350:
+            message: "Extremely High"
+            title: Grandmaster
+            color: 00ff00
+        375:
+            message: "Extremely High"
+            title: Grandmaster
+            color: 00ff2b
+        400:
+            message: "Extremely High"
+            title: Elder
+            color: 00ff55
+        425:
+            message: "Extremely High"
+            title: Elder
+            color: 00ff80
+        450:
+            message: "Massively High"
+            title: Elder
+            color: 00ffaa
+        475:
+            message: "Massively High"
+            title: Elder
+            color: 00ffd5
+        500:
+            message: "Massively High"
+            title: Elder
+            color: 00ffff
+        525:
+            message: "Massively High"
+            title: Elder
+            color: 00d5ff
+        550:
+            message: "Massively High"
+            title: Elder
+            color: 00aaff
+        575:
+            message: "Massively High"
+            title: Elder
+            color: 0080ff
+        600:
+            message: "Beyond Massive"
+            title: Legendary
+            color: 0055ff
+        625:
+            message: "Beyond Massive"
+            title: Legendary
+            color: 002bff

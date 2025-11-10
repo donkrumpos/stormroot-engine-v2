@@ -1,0 +1,14 @@
+world_loads_world:
+    type: world
+    debug: false
+    events:
+        on server prestart:
+        - createworld rothigport_crypts
+        - createworld druvvenrog
+        - createworld dirt_kingdom
+        # - createworld nether environment:NETHER
+        - createworld underflame_abyss environment:NETHER
+        # - createworld pool_of_dissolute
+        # - createworld dirt_kingdom
+        # - createworld altar_of_perf
+        # - createworld dungeon_vanitas

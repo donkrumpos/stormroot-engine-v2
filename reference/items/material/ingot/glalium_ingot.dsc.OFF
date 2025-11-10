@@ -1,0 +1,13 @@
+glalium_ingot:
+  type: item
+  debug: true
+  material: iron_ingot
+  rarity: 1
+  display name: Glalium Ingot
+  mechanisms:
+    custom_model_data: 2710408
+  recipes:
+    1:
+      type: furnace
+      input: glalium_ore
+      cook_time: 9t

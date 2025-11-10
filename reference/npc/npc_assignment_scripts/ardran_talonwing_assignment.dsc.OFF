@@ -1,0 +1,365 @@
+ardran_talonwing_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:4
+    # interact scripts:
+    # - ardran_talonwing_interact
+
+    default constants:
+        appearance1: "<npc.name> is of the Sparrow Clan, and seems kind and helpful."
+        appearance2: "<npc.name> feathers shimmered with the hues of twilight and whose eyes held the wisdom of ages past"
+        appearance3: "The wizard <npc.name>, his midnight-black plumage adorned with silver runes, moves with a silent grace that hints at secrets long kept"
+        appearance4: "With each step, <npc.ame>'s talons leave faint traces of arcane energy on the ground, his iridescent feathers reflecting the unseen forces swirling around him"
+        appearance5: "<npc.name> the enigmatic sage, bears the marks of forgotten battles etched into the patterns of his feathers, each scar telling a story of trials endured and secrets guarded."
+        sell: <list[scroll_01[display=Gust Scroll;flag=bound_spell:gust;flag=price:50]|scroll_01[display=Magic Armor Scroll;flag=bound_spell:magic_armor;flag=price:50]|scroll_01[display=Aquaorbis Scroll;flag=bound_spell:aquaorbis;flag=price:70]|scroll_blank[flag=price:10]]>
+        buy: <list[iron_sword|<item[scroll_01]>]>
+        dialog: ardran_talonwing_dialog
+        personality: ardran_talonwing_personality
+
+ardran_talonwing_personality:
+    type: data
+    character_data:
+        temperament: "resolute"
+        mannerisms:
+            contemplative_stance: "Ardran often adopts a contemplative stance, where he may be seen gazing into the distance or lost in thought, reflecting on memories of Avalore and his quest."
+            gentle_movements: "His movements are often gentle and deliberate, reflecting a sense of purpose and reverence for the task at hand."
+            focused_demeanor: "When engaged in conversation or working on his spells, Ardran maintains a focused demeanor, demonstrating his commitment to his goals and his willingness to invest time and effort into achieving them."
+            careful_speech: "Ardran's speech is measured and deliberate, reflecting his thoughtful nature. He chooses his words carefully, often conveying deep meaning and significance in his conversations."
+            tender_handling_of_amphithere_feathers: "When collecting Amphithere feathers near Bardtown, Ardran handles them with tender care and reverence, recognizing their importance as symbols of his homeland and his quest."
+            occasional_displays_of_determination: "In moments of challenge or adversity, Ardran may exhibit displays of determination, showcasing his unwavering resolve to overcome obstacles and achieve his objectives."
+            nostalgic_expressions: "Ardran's expressions may occasionally betray a sense of nostalgia, particularly when reminiscing about Avalore or reflecting on memories of his past."
+        hometown: Bardtown
+        educational_background: "Wizardry and Arcane Studies"
+        intelligence: "High; possesses deep understanding of magic and ancient lore"
+        self-esteem: "Moderate; influenced by past experiences and the loss of  Avalore "
+        hobbies: "Collecting Amphithere feathers, studying ancient texts, storytelling"
+        skills_talents: "Mastery of arcane magic, crafting powerful spells, storytelling"
+        loves: "His homeland of  Avalore , the beauty of magic, the promise of a brighter future"
+        morals_virtues: "Courage, resilience, loyalty to his kin and homeland"
+        phobias_fears: "The permanent loss of  Avalore , the resurgence of the Old Gods"
+        angered_by: "Injustice, betrayal, the abuse of power"
+        pet_peeves: "Disrespect for ancient traditions, ignorance of magical heritage"
+        obsessed_with: "Crafting a spell to bring back  Avalore , preserving Aven culture and heritage"
+        routines: "Daily meditation and study, storytelling sessions in Bardtown"
+        bad_habits: "Occasionally becomes too lost in nostalgia, tends to be overly cautious"
+        desires: "To bring back  Avalore , to reunite with his Aven brethren, to safeguard the future of magic"
+        flaws: "Tends to be overly sentimental, can be stubborn and resistant to change"
+        quirks: "Has a collection of Amphithere feathers, often tells stories of the Old Days"
+        favorite_sayings: "The past may be lost, but its echoes linger on."
+        disabilities: "None known"
+        secrets: "The full extent of his involvement in crafting the Aven's Veil"
+        regrets: "Not being able to prevent the destruction of Avalore during the war"
+        accomplishments: "Mastery of powerful spells, survival of the war against the Old Gods"
+        memories: "The beauty of  Avalore 's skies, the camaraderie of his fellow Aven during the war"
+        physical_strengths: "Ardran possesses agility and grace, thanks to his wings, enabling him to soar to great heights."
+        physical_weaknesses: "His  Avalore n form is vulnerable to physical exhaustion, limiting his endurance in prolonged activities."
+        intellectual_strengths: "Ardran's mind is a repository of ancient knowledge, enriched by years of study and contemplation."
+        intellectual_weaknesses: "His insatiable curiosity can sometimes lead him down paths of distraction, diverting his focus from the present."
+        interpersonal_strengths: "Ardran's empathy and compassion forge bonds of trust and understanding, fostering harmonious relationships with others."
+        interpersonal_weaknesses: "At times, his introverted nature may lead to periods of isolation, hindering his connections with others."
+        physical_abilities: "He possesses keen senses and reflexes, honed by years of navigating the skies and mastering the arcane arts."
+        magical_abilities: "The magic flows through Ardran's veins like the rivers of time, enabling him to weave spells of awe and wonder."
+        physical_illnesses_conditions: "His  Avalore n physiology is susceptible to ailments of the wing and feather, requiring careful attention and care."
+        mental_illnesses_conditions: "The weight of lost memories and shattered dreams can cast shadows upon his mind, yet he strives to find light amidst the darkness."
+        languages_known: "Ardran is fluent in the ancient tongue of the Aven, as well as the common languages spoken across the realms."
+        preferred_communication_methods: "He prefers direct and sincere communication, often engaging in deep conversations that delve into matters of the heart and the arcane."
+        accent: "Ardran's speech carries the melodic cadence of the Aven, infused with echoes of distant lands and forgotten skies."
+        style_and_pacing_of_speech: "His speech is deliberate and measured, reflecting a deep well of wisdom and contemplation."
+        pitch: "His voice resonates with a soothing timbre, capable of calming even the most turbulent of spirits."
+        laughter: "Ardran's laughter is warm and infectious, echoing through the air like the song of the wind."
+        smile: "His smile is gentle and genuine, a beacon of warmth amidst the darkness."
+        use_of_gestures: "He employs subtle gestures to emphasize his words, adding depth and meaning to his communication."
+        facial_expressions: "Ardran's facial expressions are expressive yet understated, conveying a wealth of emotion with a single glance."
+        verbal_expressions: "His verbal expressions are poetic and evocative, painting vivid images with the brushstrokes of his words."
+        birth_date: "Ardran was born under the brilliant glow of the Aven's Moon, on the eve of the Great Convergence, a celestial event foretold by ancient prophecies."
+        place_of_birth: "He was born amidst the towering spires of  Avalore , the legendary city nestled among the clouds, where the winds whispered secrets of old and magic flowed like rivers."
+        key_family_members: "Ardran's lineage traces back to the revered line of Aven Elders, whose wisdom guided the destiny of their people for generations. His parents, Aeris and Lyra Featherwing, were revered scholars and keepers of ancient lore."
+        notable_events_milestones: "One of the notable events in Ardran's life was the discovery of an ancient tome hidden within the archives of  Avalore , containing long-forgotten spells and prophecies. Another milestone was his initiation into the Order of the Arcane, where he honed his skills under the tutelage of master wizards."
+        criminal_record: "Ardran has never been associated with any criminal activity. His devotion to preserving ancient knowledge and protecting his homeland has always guided his actions."
+        affiliations: "Ardran is affiliated with the Order of the Arcane, a revered institution dedicated to the study and preservation of magical arts. He is also considered a guardian of  Avalore , sworn to protect its secrets and its people."
+        skeletons_in_the_closet: "While Ardran is respected and admired by many, there are whispers of a mysterious incident during his youth, shrouded in secrecy and speculation. Some say it involved a forbidden spell, while others claim it was a vision of a future yet to unfold. Whatever the truth may be, Ardran guards this secret closely, fearing the consequences of its revelation."
+        character_archetype: "Ardran embodies the archetype of the wise sage, drawing upon ancient wisdom and mystical knowledge to guide those around him."
+        character_arc: "Ardran's character arc follows a journey of self-discovery and redemption, as he grapples with the shadows of his past and strives to fulfill his destiny."
+        core_values: "At the core of Ardran's being are the values of wisdom, compassion, and preservation—values that drive his actions and define his purpose."
+        internal_conflicts: "Ardran wrestles with the weight of lost memories and the burden of unfulfilled prophecy, haunted by the ghosts of his past and the uncertainty of the future."
+        external_conflicts: "Externally, Ardran faces adversaries who seek to unravel the fabric of reality and unleash chaos upon the world. He must confront dark forces and overcome formidable challenges to safeguard the future of Avalore and its people."
+        goals: "Ardran's primary goal is to unlock the secrets of ancient magic and restore balance to the realms. He seeks to bring back Avalore from the brink of oblivion and prevent the resurgence of the Old Gods."
+        motivations: "Ardran is motivated by a deep sense of duty to his homeland and his people, as well as a burning desire to uncover the truth behind the mysteries of the past."
+        epiphanies: "Throughout his journey, Ardran experiences moments of profound revelation, where he gains insight into the nature of magic, the interconnectedness of all things, and the true meaning of sacrifice."
+        significant_events_plot_points: "From the discovery of ancient artifacts to the forging of powerful alliances, Ardran's path is marked by significant events and plot points that shape his destiny and the fate of the realms."
+        knowledge_of_how_to_use_scrolls: "You have two choices; employ the scroll directly for a single use, or adopt the superior method of transcribing the spell into a tome. With a spellbook, you wield its power as long as it rests in your hand."
+        spirituality: "Worships Lumareena at the Temple of the Dawn of the Sea."
+        relationships:
+            gilderstilt: 
+                - "Seek Gilderstilt, within the Hall of Mythos atop the Eastern hill. He possesses great expertise in this matter. Go, converse with him"
+                - "Ardran and Gilderstilt worked together on many occassions and even were in a battle together during The Great War."
+            yewestra:
+                - "Yewestra makes the best parchment for scrolls. He needs to visit her again one of these days."
+            zoltari:
+                - "Ardran and Zoltari were both generals in the Great War and feel it best not to boast about their magical power if the Inquisition ever comes to The Song Tide."
+            krizzdo:
+                - "Ardran tries to ignore Krizzdo"
+            risdoni:
+                - "Ardran knows Risdoni is a Master at Arms."
+        knowledge:
+            scribes_quill: "Proceed to fashion your own scribes_quill. Utilize the crafting table in the level below; place the ink sacs I gave you in the left column and the enchanted feather in the center."
+            inscription:
+            - "Indeed, inscription is the venerable craft of inscribing arcane wisdom upon tomes and scrolls, fashioning conduits of knowledge for mages to wield in the enchanting symphony of their spellcasting endeavors."
+            - "This skill is harnessed in the art of begetting spellbooks and scrolls, weaving the very essence of magic into the parchment, thus creating intertwinings of arcane might."
+            - "Seeking the arcane craft of scribing spell scrolls, are you? Indeed, you stand upon the very threshold of wisdom! With a steady hand and the mystical essence of reagents, a scroll becomes a beacon in the face of peril—a fine line betwixt life and death. Those versed in the ancient art of Inscription possess the skill to transcribe spells, birthing forth not merely scrolls but invaluable conduits of magic, ready to unfold their wonders in times of need." 
+
+            - "In the art of spell inscription, mastery begins with the ability to weave magic unaided by the written word. Ere you embark on the script, ensure you possess the requisite mage's proficiency, a reservoir of mana, and the necessary reagents. Next, procure a pristine scroll and the quill of a skilled scribe. Now comes the discernment of the specific enchantment you aspire to etch. It may seem a straightforward endeavor, yet the path is paved with subtleties. As in the honing of any skill, commence your journey with the inscription of simpler spells, for the ascent to more intricate incantations demands a foundation laid in diligent practice." 
+
+            - "In the realm of Inscription, the crux lies in the ethereal essence: mana. Etching the glyphs of a magical spell onto a scroll draws upon the wellspring of your mana. When crafting humble, lower-level spells, the drain is but a fleeting whisper, a mere murmur in the vast current of your magical reservoir. Yet, as you embark upon the weaving of loftier, higher-circle spells, be vigilant, for the ebb of your mana may hasten. In those moments, heed the counsel of pause or delve into the tranquility of meditation before resuming, for the harmonious balance of magic and mindful repose is the key to mastery."
+            - "Regrettably, I find myself bereft of the elusive amphithere_feather, a rare material I employ in the fashioning of my scribes_quill tools for the creation of scrolls and spellbooks. Behold yonder mountain, its lofty peaks concealing the nest where these coveted plumes repose. Should you muster the valor to retrieve one or two, I shall gladly initiate you into the sacred art of Inscription, setting you upon the path to wield the enchanting craft."
+        places:
+            - Rothigport
+            - Bardtown
+            - Avalore
+            - Runesbrook
+            - "Temple of the Dawn of the Sea"
+
+
+
+        # personality_type: "reflective introvert"
+        # temperament: resolute
+        # mannerisms:
+        #     contemplative_stance: "Ardran often adopts a contemplative stance, where he may be seen gazing into the distance or lost in thought, reflecting on memories of Avalore and his quest."
+        #     gentle_movements: "His movements are often gentle and deliberate, reflecting a sense of purpose and reverence for the task at hand."
+        #     focused_demeanor: "When engaged in conversation or working on his spells, Ardran maintains a focused demeanor, demonstrating his commitment to his goals and his willingness to invest time and effort into achieving them."
+        #     careful_speech: "Ardran's speech is measured and deliberate, reflecting his thoughtful nature. He chooses his words carefully, often conveying deep meaning and significance in his conversations."
+        #     tender_handling_of_amphithere_feathers: "When collecting Amphithere feathers, Ardran handles them with tender care and reverence, recognizing their importance as symbols of his homeland and his quest."
+        #     occasional_displays_of_determination: "In moments of challenge or adversity, Ardran may exhibit displays of determination, showcasing his unwavering resolve to overcome obstacles and achieve his objectives."
+        #     nostalgic_expressions: "Ardran's expressions may occasionally betray a sense of nostalgia, particularly when reminiscing about Avalore or reflecting on memories of his past."
+        # educational_background: "Wizardry and Arcane Studies"
+        # intelligence: "High; possesses deep understanding of magic and ancient lore"
+        # self-esteem: "Moderate; influenced by past experiences and the loss of  Avalore "
+        # hobbies: "Collecting Amphithere feathers, studying ancient texts, storytelling"
+        # skills_talents: "Mastery of arcane magic, crafting powerful spells, storytelling"
+        # loves: "His homeland of  Avalore , the beauty of magic, the promise of a brighter future"
+        # morals_virtues: "Courage, resilience, loyalty to his kin and homeland"
+        # phobias_fears: "The permanent loss of  Avalore , the resurgence of the Old Gods"
+        # angered_by: "Injustice, betrayal, the abuse of power"
+        # pet_peeves: "Disrespect for ancient traditions, ignorance of magical heritage"
+        # obsessed_with: "Crafting a spell to bring back  Avalore , preserving Aven culture and heritage"
+        # routines: "Daily meditation and study, storytelling sessions in Bardtown"
+        # bad_habits: "Occasionally becomes too lost in nostalgia, tends to be overly cautious"
+        # desires: "To bring back  Avalore , to reunite with his Aven brethren, to safeguard the future of magic"
+        # flaws: "Tends to be overly sentimental, can be stubborn and resistant to change"
+        # quirks: "Has a collection of Amphithere feathers, often tells stories of the Old Days"
+        # favorite_sayings: "The past may be lost, but its echoes linger on."
+        # disabilities: "None known"
+        # secrets: "The full extent of his involvement in crafting the Aven's Veil"
+        # regrets: "Not being able to prevent the destruction of Avalore during the war"
+        # accomplishments: "Mastery of powerful spells, survival of the war against the Old Gods"
+        # memories: "The beauty of  Avalore 's skies, the camaraderie of his fellow Aven during the war"
+        # physical_strengths: "Ardran possesses agility and grace, thanks to his wings, enabling him to soar to great heights."
+        # physical_weaknesses: "His  Avalore n form is vulnerable to physical exhaustion, limiting his endurance in prolonged activities."
+        # intellectual_strengths: "Ardran's mind is a repository of ancient knowledge, enriched by years of study and contemplation."
+        # intellectual_weaknesses: "His insatiable curiosity can sometimes lead him down paths of distraction, diverting his focus from the present."
+        # interpersonal_strengths: "Ardran's empathy and compassion forge bonds of trust and understanding, fostering harmonious relationships with others."
+        # interpersonal_weaknesses: "At times, his introverted nature may lead to periods of isolation, hindering his connections with others."
+        # physical_abilities: "He possesses keen senses and reflexes, honed by years of navigating the skies and mastering the arcane arts."
+        # magical_abilities: "The magic flows through Ardran's veins like the rivers of time, enabling him to weave spells of awe and wonder."
+        # physical_illnesses_conditions: "His  Avalore n physiology is susceptible to ailments of the wing and feather, requiring careful attention and care."
+        # mental_illnesses_conditions: "The weight of lost memories and shattered dreams can cast shadows upon his mind, yet he strives to find light amidst the darkness."
+        # languages_known: "Ardran is fluent in the ancient tongue of the Aven, as well as the common languages spoken across the realms."
+        # preferred_communication_methods: "He prefers direct and sincere communication, often engaging in deep conversations that delve into matters of the heart and the arcane."
+        # accent: "Ardran's speech carries the melodic cadence of the Aven, infused with echoes of distant lands and forgotten skies."
+        # style_and_pacing_of_speech: "His speech is deliberate and measured, reflecting a deep well of wisdom and contemplation."
+        # pitch: "His voice resonates with a soothing timbre, capable of calming even the most turbulent of spirits."
+        # laughter: "Ardran's laughter is warm and infectious, echoing through the air like the song of the wind."
+        # smile: "His smile is gentle and genuine, a beacon of warmth amidst the darkness."
+        # use_of_gestures: "He employs subtle gestures to emphasize his words, adding depth and meaning to his communication."
+        # facial_expressions: "Ardran's facial expressions are expressive yet understated, conveying a wealth of emotion with a single glance."
+        # verbal_expressions: "His verbal expressions are poetic and evocative, painting vivid images with the brushstrokes of his words."
+        # birth_date: "Ardran was born under the brilliant glow of the Aven's Moon, on the eve of the Great Convergence, a celestial event foretold by ancient prophecies."
+        # place_of_birth: "He was born amidst the towering spires of  Avalore , the legendary city nestled among the clouds, where the winds whispered secrets of old and magic flowed like rivers."
+        # key_family_members: "Ardran's lineage traces back to the revered line of Aven Elders, whose wisdom guided the destiny of their people for generations. His parents, Aeris and Lyra Featherwing, were revered scholars and keepers of ancient lore."
+        # notable_events_milestones: "One of the notable events in Ardran's life was the discovery of an ancient tome hidden within the archives of  Avalore , containing long-forgotten spells and prophecies. Another milestone was his initiation into the Order of the Arcane, where he honed his skills under the tutelage of master wizards."
+        # criminal_record: "Ardran has never been associated with any criminal activity. His devotion to preserving ancient knowledge and protecting his homeland has always guided his actions."
+        # affiliations: "Ardran is affiliated with the Order of the Arcane, a revered institution dedicated to the study and preservation of magical arts. He is also considered a guardian of  Avalore , sworn to protect its secrets and its people."
+        # skeletons_in_the_closet: "While Ardran is respected and admired by many, there are whispers of a mysterious incident during his youth, shrouded in secrecy and speculation. Some say it involved a forbidden spell, while others claim it was a vision of a future yet to unfold. Whatever the truth may be, Ardran guards this secret closely, fearing the consequences of its revelation."
+        # character_archetype: "Ardran embodies the archetype of the wise sage, drawing upon ancient wisdom and mystical knowledge to guide those around him."
+        # character_arc: "Ardran's character arc follows a journey of self-discovery and redemption, as he grapples with the shadows of his past and strives to fulfill his destiny."
+        # core_values: "At the core of Ardran's being are the values of wisdom, compassion, and preservation—values that drive his actions and define his purpose."
+        # internal_conflicts: "Ardran wrestles with the weight of lost memories and the burden of unfulfilled prophecy, haunted by the ghosts of his past and the uncertainty of the future."
+        # external_conflicts: "Externally, Ardran faces adversaries who seek to unravel the fabric of reality and unleash chaos upon the world. He must confront dark forces and overcome formidable challenges to safeguard the future of Avalore and its people."
+        # goals: "Ardran's primary goal is to unlock the secrets of ancient magic and restore balance to the realms. He seeks to bring back Avalore from the brink of oblivion and prevent the resurgence of the Old Gods."
+        # motivations: "Ardran is motivated by a deep sense of duty to his homeland and his people, as well as a burning desire to uncover the truth behind the mysteries of the past."
+        # epiphanies: "Throughout his journey, Ardran experiences moments of profound revelation, where he gains insight into the nature of magic, the interconnectedness of all things, and the true meaning of sacrifice."
+        # significant_events_plot_points: "From the discovery of ancient artifacts to the forging of powerful alliances, Ardran's path is marked by significant events and plot points that shape his destiny and the fate of the realms."
+
+ardran_talonwing_dialog:
+    type: data
+    dialog:
+        1:
+            click:
+                1:
+                    statement:
+                        narration:
+                            1:
+                                - "In what way may I be of assistance to you?"
+                            2:
+                                - "How may I aid your quest, my friend?"
+                            3:
+                                - "What assistance do you require of me?"
+                            4:
+                                - "In what manner can I lend my support?"
+                            5:
+                                - "How may I serve you in your endeavors?"
+                            6:
+                                - "What brings you seeking counsel from me?"
+                            7:
+                                - "How can I be of service to you today?"
+                            8:
+                                - "What is it that you seek, and how may I assist?"
+
+                    questions:
+                        1:
+                            narration:
+                                - "Can you teach me about inscription?"
+                            answer:
+                                narration:
+                                    1:
+                                        - "Indeed, inscription is the venerable craft of inscribing arcane wisdom upon tomes and scrolls, fashioning conduits of knowledge for mages to wield in the enchanting symphony of their spellcasting endeavors."
+                                        - "This skill is harnessed in the art of begetting spellbooks and scrolls, weaving the very essence of magic into the parchment, thus creating intertwinings of arcane might."
+                                        - "Seeking the arcane craft of scribing spell scrolls, are you? Indeed, you stand upon the very threshold of wisdom! With a steady hand and the mystical essence of reagents, a scroll becomes a beacon in the face of peril—a fine line betwixt life and death. Those versed in the ancient art of Inscription possess the skill to transcribe spells, birthing forth not merely scrolls but invaluable conduits of magic, ready to unfold their wonders in times of need." 
+                
+                                        - "In the art of spell inscription, mastery begins with the ability to weave magic unaided by the written word. Ere you embark on the script, ensure you possess the requisite mage's proficiency, a reservoir of mana, and the necessary reagents. Next, procure a pristine scroll and the quill of a skilled scribe. Now comes the discernment of the specific enchantment you aspire to etch. It may seem a straightforward endeavor, yet the path is paved with subtleties. As in the honing of any skill, commence your journey with the inscription of simpler spells, for the ascent to more intricate incantations demands a foundation laid in diligent practice." 
+
+                                        - "In the realm of Inscription, the crux lies in the ethereal essence: mana. Etching the glyphs of a magical spell onto a scroll draws upon the wellspring of your mana. When crafting humble, lower-level spells, the drain is but a fleeting whisper, a mere murmur in the vast current of your magical reservoir. Yet, as you embark upon the weaving of loftier, higher-circle spells, be vigilant, for the ebb of your mana may hasten. In those moments, heed the counsel of pause or delve into the tranquility of meditation before resuming, for the harmonious balance of magic and mindful repose is the key to mastery."
+                                        - "Regrettably, I find myself bereft of the elusive amphithere_feather, a rare material I employ in the fashioning of my scribes_quill tools for the creation of scrolls and spellbooks. Behold yonder mountain, its lofty peaks concealing the nest where these coveted plumes repose. Should you muster the valor to retrieve one or two, I shall gladly initiate you into the sacred art of Inscription, setting you upon the path to wield the enchanting craft."
+                        2:
+                            narration:
+                                - "Can you sell me some magic scrolls?"
+                            answer:
+                                
+                                narration:
+                                    1:
+                                        - "Ah, indeed! Your interest pleases me! Step into my market, where wonders await!"
+                                    2:
+                                        - "Yes, I certainly may."
+                                    3:
+                                        - "Welcome, seeker of treasures! Delight fills me as you browse my wares."
+                                    4:
+                                        - "Joy fills my heart as you peruse my market's offerings. What catches your eye?"
+                                    5:
+                                        - "A fine day for commerce! I am glad to share my goods with you."
+                                    6:
+                                        - "Greetings, friend! Your presence brings warmth to my market. What may I offer you?"
+                                    7:
+                                        - "Hail, traveler! My market welcomes you with open arms. Allow me to assist you."
+                                    8:
+                                        - "Ah, a patron! Your arrival brings gladness to my humble market."
+                                    9:
+                                        - "Step into the haven of my market, where every purchase brings mutual delight."
+                                    10:
+                                        - "It gladdens me to see eager buyers in my market. What can I provide for you today?"
+                                    11:
+                                        - "Welcome, welcome! Your interest in my goods fills me with joy. How may I serve you?"
+                                sell: true
+                        3:
+                            narration:
+                                - "How do I use magic scrolls?"
+                            answer:
+                                narration:
+                                    - "You have two choices; employ the scroll directly for a single use, or adopt the superior method of transcribing the spell into a tome. With a spellbook, you wield its power as long as it rests in your hand."
+                        4:
+                            narration:
+                                - "I have found Amphithere Feathers for you."
+                            required_flag: 
+                                flag: amphithere_feather
+                            required_item: 
+                                item: amphithere_feather
+                                quantity: 1
+                            prohibited_flag: 
+                                flag: ardran_talonwing_quill
+                            flag_given: 
+                                flag: ardran_talonwing_quill
+                            item_given: 
+                                item: ink_sac
+                                quantity: 3
+                            answer:
+                                narration:
+                                    1:
+                                        - "Rejoice! A day of mirth! Splendid, splendid. You tread the path admirably."
+                                        - "Proceed to fashion your own scribes_quill. Utilize the crafting table in the level below; place the ink sacs I gave you in the left column and the enchanted feather in the center."
+                                        - "If perchance you possess more amphithere feathers, I would gladly purchase them from you."
+                                    # - give ink_sac quantity:3
+                                    # - wait 2s
+                                    # - narrate "Then come back to me."
+                                    # - flag <player> ardran_talonwing_quill
+
+                        5:
+                            narration:
+                                - "Look here! I have crafted a scribes quill."
+                            required_flag: 
+                                flag: ardran_talonwing_quill
+                            prohibited_flag: 
+                                flag: ardran_talonwing_quill_complete
+                            required_item: 
+                                item: quill
+                                quantity: 1
+                                take_item: true
+                            item_given:
+                                item: parchment
+                                quantity: 1
+                            flag_given: 
+                                flag: ardran_talonwing_quill_complete
+                            answer:
+                                narration:
+                                    - "You've done it!"
+                                    - "Now this is the tool that you will use to craft scrolls."
+                                    - "Use this quill with any crafting table, and put in a piece of parchment, to make four blank scrolls."
+                        6:
+                            narration:
+                                - "How do I attain parchment?"
+                            flag_required: 
+                                flag: ardran_talonwing_quill_complete
+                            answer:
+                                narration:
+                                    - "Seek Gilderstilt, within the Hall of Mythos atop the Eastern hill. He possesses great expertise in this matter. Go, converse with him"
+                        7:
+                            narration:
+                                - "How do I craft my own spells?"
+                            flag_required:
+                                flag: ardran_talonwing_quill_complete
+                            answer:
+                                narration:
+                                    - "This is a long and arduous task."
+
+
+                            
+                        
+                # 3:
+                #     narration:
+                #         - "Can you teach me some magic spells"
+                #     answer:
+                #         narration:
+                #             - "Yes, let me teach you"
+                #         teach: true
+                
+        2:
+            statement:
+                narration:
+                    - "The existence of a scribe unfolds in unnumbered hours, stooped over a desk with quill and parchment, immersed in the meticulous study and transcription of spellbooks and scrolls."
+                    - "Yet, fear not the weariness, for the fruits of these labors find their way to your esteemed emporium, catering to the discerning mages in pursuit of arcane treasures."
+                    - "And let us not overlook the profound augmentation these tomes bring to your own incantations, for the might of knowledge amplifies the potency of thy spellcraft."
+            
+
+
+
+
+
+reset_ardran_talonwing:
+    type: task
+    script:
+    - flag <player> npc.ardran_talonwing.prox_count:!
+    - flag <player> ardran_talonwing_quill:!
+    - flag <player> ardran_talonwing_quill_complete:!
+    - flag <player> amphithere_feather:!

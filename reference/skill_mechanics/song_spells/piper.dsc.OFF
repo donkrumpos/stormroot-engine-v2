@@ -1,0 +1,42 @@
+piper_task:
+    type: task
+    script:
+    - if <player.has_flag[skill.piper.level]>:
+        - if !<player.item_in_hand.script.data_key[item_type].contains[instrument]>:
+            - narrate "You need an instrument in your hand to cast this spell"
+            - stop
+    - if <player.has_flag[piper_cooldown]>:
+        - ^narrate "<&8>[You can't play Piper again for <player.flag[piper_cooldown].expiration.formatted>]"
+        - stop
+    - else:
+        - flag <player> piper_cooldown duration:300s
+
+    - define level <player.flag[skill.piper.level]||1>
+    - if <player.has_flag[skill.natural.musicianship_level]>:
+        - define music_level <player.flag[skill.natural.musicianship_level]>
+    - else:
+        - flag <player> skill.natural.musicianship_level:1
+    - define persuasion <player.flag[skill.natural.persuasion_level]>
+    - define level <player.flag[skill.piper.level]>
+    - define mob_army <player.location.find.living_entities.within[32].filter[is_mob].filter[is_monster.not]>
+    - run raise_natural_skill_task def:<player>|persuasion
+    - run raise_natural_skill_task def:<player>|musicianship
+    
+    - if <[mob_army].is_empty>:
+        - narrate "There are no animals around to hear your song."
+        - stop
+   
+    - if <proc[natural_skill_check_proc].context[<player>|musicianship|<[persuasion].add[<[level]>].round_down>]>:
+        - flag <player> stat.stamina_level:-:<element[11].sub[<[level]>]>
+        - foreach <[mob_army]> as:mob:
+            - if <list[cat|wolf|chicken|cow|horse|pig|mule|sheep|rabbit|ocelot|polar_bear|fox].contains[<[mob].name>]>:
+                - wait 1s
+                - spawn <[mob].entity_type> <player.location.behind[3]>
+                - remove <[mob]>
+        - repeat 15:
+            - wait 5t
+            - playeffect at:<player.location.forward[2].above[1]> effect:note offset:0 special_data:2|<color[255,0,0]> data:1
+        
+        
+    - else:
+        - narrate "You played Piper horribly."

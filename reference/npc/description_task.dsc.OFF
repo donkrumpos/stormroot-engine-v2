@@ -1,0 +1,41 @@
+description_task:
+    type: task
+    definitions: npc
+    script:
+    - if <[npc].constant[appearance1]||null> == "null":
+        #this is the fallback in case there is not a description setup for this npc
+        - narrate format:npc_desc_chat "There's nothing interesting to see about this being." targets:<player>
+        - stop
+    - define perception_level <player.flag[skill.skills.perception_level].round_up>
+    - define distance <player.location.distance[<[npc].location>]>
+    - if <[distance]> > 10:
+        - narrate "You are too far away to notice much about this being." targets:<player>
+    #added a modifier that gets harder because this skill should be easy for new players
+    - define modifier <element[100].sub[<[perception_level]>].max[1]>
+    - define modifier <[modifier].sub[<[distance]>].max[1]>
+    - narrate format:npc_desc_chat <[npc].constant[appearance1]> targets:<player>
+    - if <proc[natural_skill_check_proc].context[<player>|perception|<[modifier]>]>:
+        
+        - if <[perception_level]> > 31:
+            - narrate format:npc_desc_chat <[npc].constant[appearance2]> targets:<player>
+        - if <[perception_level]> > 42:
+            - narrate format:npc_desc_chat <[npc].constant[appearance3]> targets:<player>
+        - if <[perception_level]> > 53:
+            - narrate format:npc_desc_chat <[npc].constant[appearance4]> targets:<player>
+        - if <[perception_level]> > 99:
+            - narrate format:npc_desc_chat <[npc].constant[appearance5]> targets:<player>
+        
+    - else:
+        - narrate format:game_message "Your perception skill is not high enough to determine much else." targets:<player>
+        - run raise_natural_skill_task def:<player>|perception|0|0
+    # use the player's perception to determine how much detail they get about the description
+    
+
+description_inject_task:
+    type: task
+    definitions: npc
+    script:
+    # - define char_count <element[70].sub[<npc.name.length>]>
+    
+    - clickable description_task def:<[npc]>  save:description_task_clickable until:6s for:<player>
+    - narrate "<&sp> <&font[steamfront:comicbook4]> <element[<&hover[<&color[#ababab]>Get a physical description of <bold><[npc].name><&r>]><&8><&color[#6993e2]><[npc].name><&8><&end_hover>].on_click[<entry[description_task_clickable].command>]> <&color[#596c8e]><&font[steamfront:comicbook4]>says: " targets:<player>

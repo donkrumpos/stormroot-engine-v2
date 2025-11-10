@@ -1,0 +1,13 @@
+turgite_ingot:
+  type: item
+  debug: true
+  material: iron_ingot
+  rarity: 1
+  display name: Turgite Ingot
+  mechanisms:
+    custom_model_data: 2710405
+  recipes:
+    1:
+      type: furnace
+      input: turgite_ore
+      cook_time: 6t

@@ -1,0 +1,42 @@
+senniloo_assignment:
+    type: assignment
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true
+    interact scripts:
+    - senniloo_interact
+
+
+senniloo_interact:
+    type: interact
+    steps:
+        1:
+            click trigger:
+                script:
+                - flag player senniloo_flag:++
+                - if <player.flag[senniloo_flag]> == 1:
+                    - narrate format:npcchat "I was displaced from my home when it sank into The Long Sea."
+                    - wait 1
+                    - narrate format:npcchat "Why are the gods mad at us?"
+                    - wait 1
+                    - narrate format:npcchat "Well, welcome to these wild lands, wherever this is."
+                - if <player.flag[senniloo_flag]> == 2:
+                    - narrate format:npcchat "Hi."
+                    - wait 1s
+                    - random 2:
+                      - narrate format:npcchat "If you can help me find my family, you would be my hero."
+                      - narrate format:npcchat "If you know where I can find a new home, I would be indebted to you."
+                - if <player.flag[senniloo_flag]> == 3:
+                    - narrate format:npcchat "Oh hello again."
+                    - wait 1s
+                    - random:
+                        - narrate format:npcchat "I am from the Arvondale. It is now at the bottom of The Long Sea."
+                        - narrate format:npcchat "Our world is in need of a hero to fight against the darkness."
+                    - execute as_server "mmocore admin exp give <player.name> main 10"
+                    - narrate "<&8>[You have received 10 XP.]"
+                - if <player.flag[senniloo_flag]> >= 4:
+                    - narrate format:npcchat "Hi."
+                    - narrate format:npcchat "I'm just going to sit here and sulk."
+                    - narrate "<&8>[Senniloo sits and and tears form at the corner of his eyes.]"

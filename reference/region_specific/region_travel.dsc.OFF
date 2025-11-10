@@ -1,0 +1,161 @@
+region_travel_world:
+    type: world
+    debug: false
+    events:
+        on player enters biome:
+        - if <player.has_flag[is_dead]>:
+            - if <player.location.find.entities[villager].within[32].filter[has_flag[wandering_healer]].is_empty>:
+                - run spawn_healer def:<player.location>
+        on player steps on block in:valley_of_the_moon:
+        - ratelimit <player> 1s
+        - define random_forward <util.random.int[5].to[11]>
+        - define random_amount <util.random.int[3].to[7]>
+        - playeffect effect:end_rod at:<player.location.forward[6]> quantity:20 offset:20,-1,20
+        - random:
+            - playeffect effect:glow at:<player.location.forward[<[random_forward]>]> quantity:<[random_amount]> offset:2.0
+            - playeffect effect:glow at:<player.location.chunk.random> quantity:<[random_amount].add[6]> offset:2.0
+            # - playeffect effect:redstone special_data:<util.random.int[0].to[255]>|1 at:<player.location.forward[3]> offset:4.0 quantity:100
+            - playeffect effect:FALLING_SPORE_BLOSSOM at:<player.location.forward[4].up[4]> quantity:2 offset:6,2,6
+            # - playeffect effect:end_rod at:<player.location.forward[<[random_forward]>]> quantity:20 offset:12,1,12
+            - playeffect effect:soul_fire_flame at:<player.location.forward[1]> quantity:2 offset:6
+        # - narrate block
+        on player steps on grass_block|moss_block in:fecundia:
+        - ratelimit <player> 1s
+        - define random_forward <util.random.int[5].to[11]>
+        - define random_amount <util.random.int[3].to[7]>
+        - define random_up <util.random.int[-2].to[6]>
+        - playeffect effect:end_rod at:<player.location.forward[6]> quantity:20 offset:20,<[random_up]>,20
+        - random:
+            - playeffect effect:glow at:<player.location.forward[<[random_forward]>]> quantity:<[random_amount]> offset:2.0
+            - playeffect effect:glow at:<player.location.chunk.random> quantity:<[random_amount].add[6]> offset:2.0
+            # - playeffect effect:redstone special_data:<util.random.int[0].to[255]>|1 at:<player.location.forward[3]> offset:4.0 quantity:100
+            - playeffect effect:FALLING_SPORE_BLOSSOM at:<player.location.forward[4].up[4]> quantity:2 offset:6,2,6
+            # - playeffect effect:end_rod at:<player.location.forward[<[random_forward]>]> quantity:20 offset:12,1,12
+            - playeffect effect:soul_fire_flame at:<player.location.forward[1]> quantity:2 offset:6
+        # - narrate block
+        on player enters duhmkazm_greater:
+        - flag <player> in_duhmkazm
+        - flag <player> death_spawn:<player.location>
+        on player exits duhmkazm_greater:
+        - flag <player> in_duhmkazm:!
+        on player enters frostwynn_greater:
+        - flag <player> in_frostwynn
+        - flag <player> death_spawn:<player.location>
+        on player exits frostwynn_greater:
+        - flag <player> in_frostwynn:!
+        on player enters underflame_abyss:
+        - flag <player> in_underflame_abyss
+        - flag <player> death_spawn:<player.location>
+        on player exits underflame_abyss:
+        - flag <player> in_underflame_abyss:!
+        # on player breaks block in:underflame_abyss:
+        # - if <player.location.areas.contains[golnash]>:
+        #     - stop
+        # - define difficulty <element[1000].sub[<player.location.distance[<location[golnash]>]>].div[10].round>
+        # - define random <util.random.int[1].to[<[difficulty]>]>
+        # - if <[random]> == 1 || <[difficulty]> < 3:
+        #     - stop
+       
+        # - determine cancelled
+        # - announce <[difficulty]>
+        # - if <proc[natural_skill_check_proc].context[<player>|mining]>
+        on delta time secondly:
+        - foreach <server.online_players.filter[has_flag[in_frostwynn]]> as:frozen_player:
+            - define distance <[frozen_player].location.distance[<location[frostwynn_center]>].div[10].round>
+            # - narrate "you're in frostwynn <[distance]>" targets:<[frozen_player]>
+            - define equipment_resistance <frozen_player.flag[stat.bonus.cold_resist.level]||0>
+            - define resist_success <proc[natural_skill_check_proc].context[<[frozen_player]>|cold_resistance]>
+            # - narrate <[distance]> targets:<[frozen_player]>
+            - if <[resist_success].not>:
+                - if <util.random.int[1].to[<[distance]>]> == 1:
+                    - define cold_damage_top <element[1000].sub[<[distance]>].max[3]>
+                    - define cold_damage <element[<util.random.int[1].to[<[cold_damage_top]>]>].sub[<[equipment_resistance]>].min[<[frozen_player].health.div[2]>]>
+                    # - narrate "<red><[cold_damage]>"  targets:<[frozen_player]>
+                    - hurt <[cold_damage]> <[frozen_player]> cause:freeze
+                    - narrate format:game_message "You have taken some cold damage" targets:<[frozen_player]>
+                    - narrate format:game_message "<[frozen_player]> has taken <[cold_damage]> cold damage" targets:<server.match_player[sirbandersnatch]]>
+                    - if <util.random.int[1].to[100]> == 100:
+                        - run raise_resist_spells_task def:<[frozen_player]>|cold
+                    - if <util.random.int[1].to[1000]> == 1000:
+                        - define cold_resist <[frozen_player].flag[skill.skills.cold_resistance.level].round_up.max[1]>
+                        - if <util.random.int[1].to[<[cold_resist]>].max[1]> == 1:
+                            - define slow_duration <util.random.int[1].to[6]>
+                            - cast slow duration:<[slow_duration]>
+                            - narrate "The cold of this realm slows time." targets:<[frozen_player]>
+            - else:
+                - if <util.random.int[1].to[30]> == 30:
+                    - run raise_resist_spells_task def:<[frozen_player]>|cold
+        - foreach <server.online_players.filter[has_flag[in_duhmkazm]]> as:scorched_player:
+            - define distance <[scorched_player].location.distance[<location[duhmkazm_center]>].div[10].round>
+            # - narrate "you're in frostwynn <[distance]>" targets:<[scorched_player]>
+            - define equipment_resistance <scorched_player.flag[stat.bonus.fire_resist.level]||0>
+            - define resist_success <proc[natural_skill_check_proc].context[<[scorched_player]>|fire_resistance]>
+            # - narrate <[distance]> targets:<[scorched_player]>
+            - if <[resist_success].not>:
+                - if <util.random.int[1].to[<[distance]>]> == 1:
+                    - define fire_damage_top <element[1000].sub[<[distance]>].max[3]>
+                    - define fire_damage <element[<util.random.int[1].to[<[fire_damage_top]>]>].sub[<[equipment_resistance]>].min[<[scorched_player].health.div[2]>]>
+                    # - narrate "<red><[cold_damage]>"  targets:<[scorched_player]>
+                    - hurt <[fire_damage]> <[scorched_player]> cause:hot_floor
+                    - narrate format:game_message "You have taken some fire damage" targets:<[scorched_player]>
+                    - if <util.random.int[1].to[100]> == 100:
+                        - run raise_resist_spells_task def:<[scorched_player]>|fire
+            - else:
+                - if <util.random.int[1].to[30]> == 30:
+                    - run raise_resist_spells_task def:<[scorched_player]>|fire
+        # on player enters *:
+        # - run remove_entityless_armorstands_task
+        on player enters volykragulon_bottom:
+        - teleport <player> underflame_abyss_entrance
+      
+        
+        on player enters area_flagged:spirited:
+        - run raise_natural_skill_task def:<player>|spirit_speak
+        on player enters polygon:
+        - run remove_entityless_armorstands_task def:<context.entity>
+        # - if <player.has_flag[death_timer].not>:
+        #     - foreach <player.location.find.surface_blocks.within[100]> as:block:
+        #         - if <[block].material.name>  != water:
+        #             - define respawn_point <[block]>
+        #             - flag <player> respawn_point:<[respawn_point]>
+        #             - foreach stop
+            # - narrate "<yellow>respawn point set as <player.flag[respawn_point]>"
+        - define title ""
+        - define subtitle ""
+        # so far polygons are server made regions, so we can track them. cuboids are other regions (eg. vendors, teleporting)
+        - narrate "<player.name> enters <context.area.note_name.replace[_].with[<&sp>].to_titlecase> because <context.cause>" targets:<server.match_player[SirBandersnatch]>
+        - ~discordmessage id:steamfront_bot channel:1099336718949302333 "<player.name||A new player> has entered <context.area.note_name.replace[_].with[<&sp>].to_titlecase> at <util.time_now.format> <player.flag[regions_visited.<context.area.note_name>]||0>"
+        # - if <script[regions].data_key[region].contains[<context.area.note_name>]>:
+        # spawn npcs that belong in this cuboid
+            # - run spawn_npcs_task def:<context.area.note_name>|<player.world.time.period>
+            # display a title if it is the player's first time in this area (if the area has a title)
+        - if <player.has_flag[regions_visited.<context.area.note_name>].not> || <player.flag[regions_visited.<context.area.note_name>]> < 1:
+            # - narrate <script[region_data].data_key[region].contains[<context.area.note_name>]>
+            - define xp_amount <player.flag[areas_entered].size.add[10]||10>
+            - give xp quantity:<[xp_amount]>
+            - run raise_natural_skill_task def:<player>|perception|0|0
+            - narrate format:game_message "You have received <[xp_amount]> XP."
+            - if <script[region_data].data_key[region].contains[<context.area.note_name>]>:
+                
+                # - narrate "<script[region_data].data_key[region]>  contains <context.area.note_name>" targets:<server.match_player[SirBandersnatch]>
+                - if <script[region_data].data_key[region.<context.area.note_name>].contains[title]>:
+                    - define title <script[region_data].data_key[region.<context.area.note_name>.title]>
+                - else:
+                    - define title ""
+                - if <script[region_data].data_key[region.<context.area.note_name>].contains[subtitle]>:
+                    - define subtitle <script[region_data].data_key[region.<context.area.note_name>.subtitle]>
+                - else:
+                    - define subtitle ""
+                - wait 4s
+                - title "title:<gold><&font[steamfront:title_font]><[title]><&r>" "subtitle:<green><[subtitle]>" targets:<player>
+                
+        # flag the player for the amount of times they enter the cuboid but at a rate limit that raises each time to keep them from spamming it.
+        - ratelimit <player> <player.flag[regions_visited.<context.area.note_name>].round.max[1]||1>s
+        - flag <player> regions_visited.<context.area.note_name>:++
+        
+        
+        
+        on player right clicks *_door:
+        #this is to automatically close doors that players leave open
+        - wait 5s
+        - switch <context.location> state:off

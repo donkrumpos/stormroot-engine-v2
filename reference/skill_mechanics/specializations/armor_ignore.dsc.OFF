@@ -1,0 +1,15 @@
+armor_ignore_task:
+    type: task
+    definitions: damager|defender|final_damage|final_defense
+    script:
+    - define armor_ignore_level <[damager].flag[skill.specializations.armor_ignore.level]||0>
+    - define arms_lore_level <[damager].flag[skill.specializations.arms_lore.level]||0>
+    - define defender_armor <proc[armor_protection_proc].context[<[defender]>]||0>
+    - define ignore_armor_damage <util.random.int[1].to[<[defender_armor].min[<[armor_ignore_level].add[<[arms_lore_level]>]>]>]>
+    - define final_defense <[final_defense].sub[<[ignore_armor_damage]>]>
+    - hurt <[final_damage].sub[<[final_defense]>]> <[defender]>
+    - narrate "You ignore some of your opponents armor." targets:<[damager]>
+    - narrate "<[damager].name> ignores some of <[defender].name> ARMOR. It is <[ignore_armor_damage]> less defense" targets:<server.match_player[sirbandersnatch]>
+    - if <util.random.int[1].to[5]> == 5:
+        - run raise_natural_skill_task def:<[damager]>|arms_lore|0|0
+    

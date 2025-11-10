@@ -1,0 +1,188 @@
+neddard:
+    type: assignment
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:9
+    interact scripts:
+    - neddard_interact
+
+
+neddard_interact:
+  type: interact
+  steps:
+    1:
+        proximity trigger:
+            entry:
+                script:
+                - if !<player.has_flag[neddard_flag]>:
+                    - if <player.has_flag[albus_spawn]>:
+                        - narrate format:npcchat "Welcome to Rothigport!"
+                        - narrate format:npcchat "Let me know if I can be of any help."
+                        - flag player neddard_flag
+                    - else if <player.has_flag[rothigport_spawn]>:
+                        - narrate format:npcchat "This is the edge of the city."
+                        - narrate format:npcchat "Are you headed out to the countryside of <&2>Song Tide<&a>?"
+                        - narrate format:npcchat "Let me know if I can be of any help."
+                        - flag player neddard_flag
+            exit:
+                script:
+                - if !<player.has_flag[neddard_land_msg]>:
+                    - if <player.has_flag[albus_spawn]>:
+                        - wait 4s
+                        - title "title:<green>Rothigport" "subtitle:<gold>The City of Guilds." fade_in:3s fade_out:2
+                        - flag player neddard_land_msg
+                    - else if <player.has_flag[rothigport_spawn]>:
+                        - wait 4s
+                        - title "title:<blue>Songtide" "subtitle:<gold>Realm of the Four Winds." fade_in:3s fade_out:2
+                        - flag player neddard_land_msg
+                        
+
+        click trigger:
+            script:
+            - flag player neddard_count:++
+            - if <player.flag[neddard_count]> <= 1:
+                - if <player.has_flag[albus_spawn]>:
+                    - engage
+                    - narrate format:npcchat "So this is your first time to <&2>Rothigport<&a>?"
+                    - wait 1s
+                    - narrate  "<&E>1. <&B>Yes, tell me about Rothigport"
+                    - narrate  "<&E>2. <&B>Goodbye"
+                    - disengage
+                    - zap step:2
+                - else if <player.has_flag[rothigport_spawn]>:
+                    - engage
+                    - narrate format:npcchat "Do you want to know more about the countryside of <&2>Song Tide<&a>?"
+                    - narrate  "<&E>1. <&B>Yes, tell me about Song Tide"
+                    - narrate  "<&E>2. <&B>Goodbye"
+                    - disengage
+                    - zap step:4
+                - else:
+                    - narrate format:npcchat "Rothigport has become a great city in this realm."
+            - else if <player.flag[neddard_count]> >= 2 && <player.flag[neddard_count]> <= 13:
+                - engage
+                - random:
+                    - narrate format:npcchat "Beware the kraken."
+                    - narrate format:npcchat "Beware the maelstrom."
+                    - narrate format:npcchat "Beware the Tempest."
+                    - narrate format:npcchat "Famous Rothigportians are <gold>Merki Prigtoon<&a>, <gold>Rosage<&a>, the <gold>Blackthorn Brothers<&a>, and <gold>Duke Percimor<&a>."
+                    - narrate format:npcchat "<&2>Song Tide<&a> is a good place to start a merchant career. Many adventurers come through here."
+                    - narrate format:npcchat "You can learn the path of magery out in <&2>Song Tide<&a>, since many mages wander about."
+                    - narrate format:npcchat "Though religion has faded in recent januul, this realm is a decent place to find a deity to follow."
+                    - narrate format:npcchat "<&2>Rothigport<&a> has grown the last many januul, that now I fear many thieves and swindlers lurk about."
+                    - narrate format:npcchat "Oh yes, there are many guilds in <&2>Rothigport<&a>, some of which you can still join."
+                    - narrate format:npcchat "Just head to the center of town, at the harbor to find the markets and people to talk to."
+                    - repeat 1:
+                        - if !<player.has_flag[neddard_magic]>:
+                            - narrate format:npcchat "Talk to <gold>Rosage<&a> in his tower on the east side of the harbor, to start to learn the arcane arts of magery."
+                            - flag player neddard_magic
+                        - else if <player.has_flag[neddard_magic]>:
+                            - narrate format:npcchat "Why I never pursued the arcane arts? I really don't know."
+                    - repeat 1:
+                        - if !<player.has_flag[neddard_cleric]>:
+                            - narrate format:npcchat "Talk to <gold>Pardieu<&a> in the chapel, in the northwest quarter of town, to start the path of cleric."
+                            - flag player neddard_cleric
+                        - else if <player.has_flag[neddard_cleric]>:
+                            - narrate format:npcchat "There are many shrines and temples sprinkled all over Song Tide."
+                    - repeat 1:
+                        - if !<player.has_flag[neddard_rogue]>:
+                            - narrate format:npcchat "Talk to <gold>Caravexio<&a> in the in the main harbor, to start the path of rogue."
+                            - flag player neddard_rogue
+                        - else if <player.has_flag[neddard_rogue]>:
+                            - narrate format:npcchat "Having a dagger hidden in your cloak is never a bad idea."
+                    - repeat 1:
+                        - if !<player.has_flag[neddard_warrior]>:
+                            - narrate format:npcchat "Talk to <gold>Magrat<&a> in the in the main harbor, to start the path of warrior."
+                            - flag player neddard_warrior
+                        - else if <player.has_flag[neddard_warrior]>:
+                            - narrate format:npcchat "Open battle scares me, but I understand the need to hunt monsters for the treasure."
+                - disengage
+            - else if <player.flag[neddard_count]> == 14:
+                - execute as_server "mmocore admin exp give <player.name> main 10"
+                - narrate "<&8>[You have received 10 XP.]"
+                - engage
+                - random:
+                    - narrate format:npcchat "If you're not interested in Rothigport, you can always build your own town out in The Wild."
+                    - narrate format:npcchat "If you're not interested in Rothigport, you can always try to go to the Central Kingdoms."
+                - disengage
+            - else if <player.flag[neddard_count]> == 15:
+                - engage
+                - random:
+                    - narrate format:npcchat "If you make it off of this island, put in a good word for me."
+                    - narrate format:npcchat "Be careful of getting ripped off from some of the vendors. Know your prices."
+                    - narrate format:npcchat "The more powerful mages live outside of town. Some are even in hiding."
+                    - narrate format:npcchat "Stay away from <red>Mandragor<&a>. She ate my cousin."
+                    - narrate format:npcchat "The more powerful mages live outside of town. Some are even in hiding."
+                    - narrate format:npcchat "I cried a little bit when my family's bridge got torn down and the big Blackthorn Bridge was built."
+                - disengage
+            - else if <player.flag[neddard_count]> >= 16:
+                - engage
+                - random:
+                    - narrate format:npcchat "It was a pleasure to meet you <player.name>. I may have more for you later."
+                    - narrate format:npcchat "Do stay safe out there <player.name>."
+                - disengage
+            
+    2:
+        chat trigger:
+            1:
+                trigger: <&7>/1/. /Yes/, tell me about /Rothigport/.
+                script:
+                - engage
+                - narrate format:npcchat "I have lived here all my life."
+                - narrate format:npcchat "The city is about 500 januul old, but is new relative to Song Tide herself."
+                - narrate format:npcchat "Gods and monsters lived about until us mortals tamed the land. . . well, at least this section of it.."
+                - narrate format:npcchat "with the help of the mages and clerics."
+                - narrate format:npcchat "Do you want to know more?"
+                - wait 2s
+                - narrate  "<&E>1. <&B>Yes, I love knowing this stuff."
+                - narrate  "<&E>2. <&B>No, Goodbye"
+                - zap step:3
+                - disengage
+            2:
+                trigger: <&7>/2/. Goodbye
+                script:
+                - engage
+                - narrate format:npcchat "Most of the others find me boring too.  :("
+                - disengage
+                - zap step:1
+    3:
+        chat trigger:
+            1:
+                trigger: <&7>/1/. /Yes/,  I love knowing this stuff.
+                script:
+                - engage
+                - narrate format:npcchat "Splendid!"
+                - wait 1s
+                - narrate format:npcchat "The city was built on docks in the middle of this harbor to protect us from the barbarians back in the day."
+                - narrate format:npcchat "However, now that things are much safer, this causeway was built, connecting us to the land."
+                - narrate format:npcchat "In the city you can find many people to tell you about the guilds, the fisherman, the boatsman, or becoming a mage, cleric or bard."
+                - narrate format:npcchat "There are also boats with passage to other parts of <&2>Deluvia<&a>."
+                - disengage
+                - zap step:1
+            2:
+                trigger: <&7>/2/. /Goodbye/.
+                script:
+                - engage
+                - narrate format:npcchat "Have fun in Rothigport."
+                - disengage
+                - zap step:1
+    4:
+        chat trigger:
+            1:
+                trigger: <&7>/1/. /Yes/, tell me about /Song Tide/.
+                script:
+                - engage
+                - narrate format:npcchat "There are several islands to explore. I have not been to them all."
+                - narrate format:npcchat "Some are very dangerous, with large mega beasts."
+                - narrate format:npcchat "Others have small hamlets or mage towers."
+                - narrate format:npcchat "Some mega fauna can be found south of here to conjure"
+                - disengage
+                - zap step:1
+            2:
+                trigger: <&7>/2/. /Goodbye/.
+                script:
+                - engage
+                - narrate format:npcchat "May all the enchantment of Song Tide be your adventure."
+                - disengage
+                - zap step:1

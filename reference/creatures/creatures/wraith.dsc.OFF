@@ -1,0 +1,83 @@
+wraith:
+    type: entity
+    # display_name: "Bark Spirit"
+    entity_type: bee[angry=true]
+        
+    flags:
+        karma: 30
+        fame: 30
+        # biome: forest
+        rarity: 1
+        eligible_block_spawn: air
+        
+        script: wraith_task
+        undead: true
+        drops:
+            essence_of_the_undead:
+                quantity: 1
+                chance: .1
+       
+        xp: 11
+        coin_drop:
+            copper: 
+                quantity: 1
+                chance: .5
+        custom_beast: true
+        mob:
+            wraith: true
+        custom_model_data: 656531
+
+
+wraith_world:
+    type: world
+    events:
+        on player kills wraith:
+        - if <util.random.int[0].to[3]>:
+            - run raise_natural_skill_task def:<player>|spirit_speak
+
+wraith_task:
+    type: task
+    debug: false
+    definitions: mob
+    script:
+    - run wraith_attack def:<[mob]>
+    # - while <[mob].is_spawned>:
+    #     - wait <util.random.int[3].to[6]>s
+    #     - run wraith_attack def:<[mob]>
+
+wraith_attack:
+    type: task
+    definitions: attacker
+    script:
+    - if <[attacker].is_spawned.not>:
+        - stop
+    - if <[attacker].location.find_players_within[15].size> == 0:
+        - stop
+    - define target <[attacker].location.find_players_within[15].first>
+    - if <[attacker].location.distance[<[target].location>]> > 6:
+        - stop
+    - else:
+        - foreach <[attacker].location.points_between[<[target].location>]> as:point:
+            - teleport <[attacker]> <[point]>
+            - wait 3t
+        - hurt 1 <[target]>
+    - if <util.random.int[0].to[3]> < 3:
+        - stop
+    - foreach <[attacker].location.points_between[<[target].eye_location.backward[1]>]> as:point:
+        - wait 1t
+        - hurt 2 <[point].find_players_within[1].first>
+        # - playeffect effect:redstone  at:<[point]> special_data:1|139,155,180 visibility:100 quantity:<[loop_index]> offset:0
+        - playeffect effect:redstone  at:<[point]> special_data:1|250,255,254 visibility:100 quantity:30 offset:0
+        # - playeffect effect:redstone  at:<[point].forward[2]> special_data:1|138,166,210 visibility:100 quantity:<element[40].sub[<[loop_index].mul[2]>]>  offset:0
+        - wait <util.random.int[3].to[6]>s
+    
+        
+    - if <util.random.int[1].to[22]> == 22:
+        # - playsound <context.entity.location> sound:steamfront:spells.sap_intel custom sound_category:hostile
+        - flag <[target]> skill.attribute.intelligence.level:-:1
+        - wait <util.random.int[4].to[8]>s
+        - narrate format:game_message "A wraith has sapped some of your intelligence temporarily." targets:<[target]>
+        - flag <[target]> skill.attribute.intelligence.level:+:1
+    - else:
+        - run spell_damage_task def:blight|<[target]>
+        - hurt 1 <[target]>

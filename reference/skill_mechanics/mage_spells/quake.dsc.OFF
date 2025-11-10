@@ -1,0 +1,51 @@
+quake_task:
+    type: task
+    debug: true
+    definitions: attacker|defender
+    script:
+    - define attacker <player>
+    - define target_location <[attacker].cursor_on>
+    - if <[attacker].has_flag[skill.spells.quake.level].not>:
+        - flag <[attacker]> skill.spells.quake.level:1
+    - define level <[attacker].flag[skill.spells.quake.level]>
+    - cast confusion duration:2s <[attacker]>
+    - repeat 5:
+        - wait 2t
+        # - showfake air <[attacker].location.above[1].find_blocks.within[<[value]>]> duration:3t players:<server.online_players>
+        - foreach <[attacker].location.find.surface_blocks.within[4]> as:block:
+            # - wait 1t
+            - playeffect effect:block_dust at:<[block]> special_data:dirt visibility:10 quantity:20 offset:1,1,1
+
+            - if <[block].find.living_entities.within[<[level]>].exclude[<[attacker]>].any>:
+                - define entity <[block].find.living_entities.within[<[level]>].exclude[<[attacker]>].first>
+                - repeat 3:
+                    - if <[entity].is_living>:
+                        # - hurt 1 <[entity]>
+                        - run spell_damage_task def:quake|<[entity]>|<[attacker]>
+                        - if <util.random.int[1].to[2]> == 2:
+                            - wait 1t
+                            - teleport <[entity]> <[entity].location.random_offset[1,0,1]>
+                        # - heal 1 <[entity]>
+                    - wait 1t
+                
+                
+                
+            - random:
+                - fakespawn falling_block[fallingblock_type=dirt] <[block].above[1]> duration:4t players:<server.online_players>
+                - showfake air <[attacker].location.above[1].find_blocks.within[<[value]>]> duration:5t players:<server.online_players>
+    - run spell_damage_task def:quake|<[attacker].location.find.living_entities.within[6].first>|<[attacker]>
+            # - if <[block].material.is_solid>:
+            #     - if <util.random.int[1].to[4]> == 2:
+            #         - wait 1t
+                
+            #     - showfake <[block].material.name> <[block].up[1]> duration:3t players:<server.online_players>
+                
+        
+            
+                # - showfake <[block].material.name> <[block]> duration:2t players:<server.online_players>
+    # - repeat 300:
+    #     - hurt 1 <[attacker]>
+    #     - if <util.random.int[1].to[2]> == 2:
+    #         - wait 1t
+    #         - teleport <[attacker]> <[attacker].location.random_offset[1,0,1]>
+    #     - heal 1 <[attacker]>

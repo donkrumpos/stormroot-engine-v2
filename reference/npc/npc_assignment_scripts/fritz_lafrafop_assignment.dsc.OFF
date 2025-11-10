@@ -1,0 +1,195 @@
+############################
+#    Bartender
+#     Script
+#  Made By: Navyboy
+############################
+# This script requires Vault!
+############################
+#   fritz_lafrafop Assignment
+############################
+fritz_lafrafop_assignment:
+  type: assignment
+  debug: false
+  actions:
+    on assignment:
+      - trigger name:click state:true
+      - trigger name:proximity state:true radius:5
+    on click:
+      - inject description_inject_task
+      - narrate format:npcchat "What can I get for you?"
+      - WAIT 1s
+      - give "<item[diamond_hoe].with[display_name=Bartender Menu;custom_model_data=36;hides=ALL;]>" to:fritz_bartender_inventory slot:46
+
+      - inventory open d:fritz_bartender_inventory
+    on enter proximity:
+      - ratelimit <player> 30s
+      - run fritzs_ears def:<npc>
+      
+      
+      - if  <player.flag[npc.<npc>.familiarity.level]> < 3:
+        - inject description_inject_task
+        - narrate format:npcchat "Welcome to the Whistlepig Pub"
+      - else:
+        - if <util.random.int[1].to[5]> == 5:
+          - inject description_inject_task
+          - narrate format:npcchat "Welcome back <player.name>"
+ 
+
+#############################
+#  How to add another drink
+#############################
+#First you need to make another item (Tells you how down belowË‡Ë‡)
+#Then you need to add the item to the inventory [i@name]
+#After you add it you need to make an event for it down below Ë‡Ë‡
+#After you make the event make sure to add the price!
+#To add a specific Potion, go to http://minecraft-ids.grahamedgecombe.com/potion-calculator
+#############################
+#   Bartender Assignment
+#############################
+fritz_bartender_inventory:
+  type: inventory
+  title: "<&6>Bartender Menu"
+  size: 54
+  slots:
+  - "[ale] [wine] [joli_rouge] [] [] [] [] [] []"
+  - "[black_rum] [whiskey] [orsinowl_ale] [] [] [] [] [] [] "
+  - "[water_melon_soda] [water_glass] [] []  [] [] [] [] []"
+  - [] [] [] [] [] [] [] [] []
+  - [] [] [] [] [] [] [] [] []
+  - "[<item[diamond_hoe].with[display_name=Bartender Menu;custom_model_data=36;hides=ALL;]>] [] [] [] [] [] [] [] [] "
+
+############################
+#  Bartender Chat/Handlers
+############################
+#If you want to add another drink event, copy and paste this template and fill in the correct information!
+#You can find the extraeffects at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html
+#############################
+#    on player clicks (drinkname) in fritz_bartender_inventory:
+#    - if <player.money> >= "(amount)" {
+#      - inventory close
+#      - money take quantity:(amount)
+#      - narrate "(amount) <&a>has been taken from your balance"
+#      - give (drinkname)
+#      } else {
+#      - inventory close
+#      - narrate "<&c>You do not have enough money!"
+#      }
+#   on player consumes (drinkname):
+#   - cast (extraeffect) duration:(time) power:(power)
+##############################
+
+
+fritz_bartender_inventory_Handler:
+  type: world
+  events:
+    
+    # on player clicks in fritz_bartender_inventory:
+    # - determine cancelled
+    on player drags in fritz_bartender_inventory:
+    - determine cancelled
+    on player clicks water_glass in fritz_bartender_inventory:
+    - give water_glass
+    - inventory close
+    on player clicks black_rum in fritz_bartender_inventory:
+    - if <proc[inventory_balance_procedure].context[<player>].add[<proc[purse_currency_proc].context[<player>]>]> >= 7:
+      - inventory close
+      - define price 7
+      - define new_amount <[price].sub[<proc[inventory_balance_procedure].context[<player>]>]>
+      - run take_currency_from_inventory_task def:7
+      - if <[new_amount]> > 0:
+        - run take_purse_currency_task def:<player>|<[new_amount]>
+      - narrate "7 copper has been taken from your balance"
+      - give black_rum 
+    - else:
+      - inventory close
+      - narrate "<&c>You do not have enough money!"
+
+   
+    on player clicks whiskey in fritz_bartender_inventory:
+    - if <proc[inventory_balance_procedure].context[<player>].add[<proc[purse_currency_proc].context[<player>]>]> >= 10:
+      - inventory close
+      - define price 10
+      - define new_amount <[price].sub[<proc[inventory_balance_procedure].context[<player>]>]>
+      - run take_currency_from_inventory_task def:10
+      - if <[new_amount]> > 0:
+        - run take_purse_currency_task def:<player>|<[new_amount]>
+      - narrate "10 copper has been taken from your balance"
+      - give whiskey
+    - else:
+      - inventory close
+      - narrate "<&c>You do not have enough money!"
+  
+  
+    on player clicks orsinowl_ale in fritz_bartender_inventory:
+    - if <proc[inventory_balance_procedure].context[<player>].add[<proc[purse_currency_proc].context[<player>]>]> >= 5:
+      - inventory close
+      - define price 14
+      - define new_amount <[price].sub[<proc[inventory_balance_procedure].context[<player>]>]>
+      - run take_currency_from_inventory_task def:14
+      - if <[new_amount]> > 0:
+        - run take_purse_currency_task def:<player>|<[new_amount]>
+      - narrate "5 <&a>has been taken from your balance"
+      - give orsinowl_ale
+    - else:
+      - inventory close
+      - narrate "<&c>You do not have enough money!"
+      
+   
+    on player clicks wine in fritz_bartender_inventory:
+    - if <proc[inventory_balance_procedure].context[<player>].add[<proc[purse_currency_proc].context[<player>]>]> >= 14:
+      - inventory close
+      - define price 14
+      - define new_amount <[price].sub[<proc[inventory_balance_procedure].context[<player>]>]>
+      - run take_currency_from_inventory_task def:14
+      - if <[new_amount]> > 0:
+        - run take_purse_currency_task def:<player>|<[new_amount]>
+      - narrate "14 <&a>has been taken from your balance"
+      - give wine
+    - else:
+      - inventory close
+      - narrate "<&c>You do not have enough money!"
+   
+    on player clicks joli_rouge in fritz_bartender_inventory:
+    - if <proc[inventory_balance_procedure].context[<player>].add[<proc[purse_currency_proc].context[<player>]>]> >= 5:
+      - inventory close
+      - define price 5
+      - define new_amount <[price].sub[<proc[inventory_balance_procedure].context[<player>]>]>
+      - run take_currency_from_inventory_task def:5
+      - if <[new_amount]> > 0:
+        - run take_purse_currency_task def:<player>|<[new_amount]>
+      - narrate "5 <&a>has been taken from your balance"
+      - give joli_rouge
+    - else:
+      - inventory close
+      - narrate "<&c>You do not have enough money!"
+      
+    
+    on player clicks water_melon_soda in fritz_bartender_inventory:
+    - if <proc[inventory_balance_procedure].context[<player>].add[<proc[purse_currency_proc].context[<player>]>]> >= 3:
+      - inventory close
+      - define price 3
+      - define new_amount <[price].sub[<proc[inventory_balance_procedure].context[<player>]>]>
+      - run take_currency_from_inventory_task def:3
+      - if <[new_amount]> > 0:
+        - run take_purse_currency_task def:<player>|<[new_amount]>
+      - narrate "3 <&a>has been taken from your balance"
+      - give water_melon_soda
+    - else:
+      - inventory close
+      - narrate "<&c>You do not have enough money!"
+      
+ 
+    
+     
+      
+fritzs_ears:
+    type: task
+    definitions: npc
+    script:
+    - if <[npc].location.find_entities[armor_stand].within[16].filter[has_flag[fritzs_ears]].any>:
+        - attach <[npc].location.find_entities[armor_stand].within[16].filter[has_flag[fritzs_ears]].first> to:<[npc]>
+    - else:
+        - spawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|rabbit_ears]>]" <[npc].location> save:fritzs_ears
+        - flag <entry[fritzs_ears].spawned_entity> fritzs_ears
+        - attach <entry[fritzs_ears].spawned_entity> to:<[npc]>
+        - adjust <entry[fritzs_ears].spawned_entity> armor_pose=HEAD|0,-1,0

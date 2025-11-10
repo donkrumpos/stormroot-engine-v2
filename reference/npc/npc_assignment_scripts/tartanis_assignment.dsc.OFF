@@ -1,0 +1,207 @@
+tartanis_assignment:
+    type: assignment
+    speed: 1t
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:3
+       
+   
+
+
+    interact scripts:
+    - tartanis_interact
+    default constants:
+        appearance1: "<npc.name> lives on the streets but you can tell he likes to give tips to those that pass by."
+        appearance2: "<npc.name> seems deeply passionate about his causes, and if you disagree with him he might harm you.  "
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+tartanis_interact:
+    type: interact
+    steps:
+        1:
+            proximity trigger:
+                entry:
+                    script:
+                    - if <player.flag[npc.<npc>.familiarity.level]||0> < 1:
+                        - inject description_inject_task
+                        - random:
+                            - narrate format:npcchat "Stop the movement to bring tolls to the Blackthorn Bridge!!"
+                            - narrate format:npcchat "Save the Bridge from Tolls! Sign my petition traveler."
+                            - narrate format:npcchat "Are you going to cross that bridge traveler? Did you know the officials want to charge a toll?"
+                            - narrate format:npcchat "Keep the corrupt politicians from enacting a toll on that bridge! Help me!"
+                            - narrate format:npcchat "If I get enough signatures, we might be able to keep the lawmakers from forcing a toll upon us for crossing that bridge."
+                            - narrate format:npcchat "Stop the toll! Stop the toll. Help me stop the toll traveler."
+                            
+                    
+                exit:
+                    script:
+                    - zap 1
+                    - if <player.flag[npc.<npc>.familiarity.level]||0> <= 1:
+                        - wait 1s
+                        - inject description_inject_task
+                        - random:
+                            - narrate format:npcchat "May the gods burn the bridge if a toll is enacted!"
+                            - narrate format:npcchat "They may want to keep the Westsiders from crossing over here with a toll. Can you believe it?"
+                            - narrate format:npcchat "Thanks for nothing. Gods bless you anyway."
+                            - narrate format:npcchat "You cannot keep passing as these overhanded changes are happening!"
+                            - narrate format:npcchat "Stop the toll! Stop the Toll!"
+            click trigger:
+                script:
+                - inject description_inject_task
+                - if <player.has_flag[npc.tartanis.yes_signed_tartanis_petition]>:
+            
+                # if the player has signed tartanis petition
+                    - if <player.flag[npc.<npc>.familiarity.level]||0> <= 11:
+                        - random:
+                            - narrate format:npcchat "Ah <player.name>! One of the esteemed supporters of our cause."
+                            - narrate format:npcchat "Nice to see you again <player.name>."
+                        - wait 5t
+                    
+                        - if <player.world.has_storm>:
+                            - random:
+                                - narrate format:npcchat "We have had better weather, I promise."
+                                - narrate format:npcchat "I will have more to tell you soon."
+                        - else if <player.location.world.time.period> == "night":
+                            - random:
+                                - narrate format:npcchat "A lovely night for a walk on the docks."
+                                - narrate format:npcchat "Nightime is when we work." 
+                        - else:
+                            - random:
+                                - narrate format:npcchat "How is your time in Rothigport?"
+                                - narrate format:npcchat "I hope you say in Rothigport a long time."
+                    - else if <player.flag[npc.<npc>.familiarity.level]||0> > 21:
+                        - if <player.flag[npc.n@15.familiarity.level]> > 2:
+                            - wait 2s
+                            - narrate format:npcchat "Oh you know <npc[15].name>?"
+                            - wait 2s
+                            - narrate format:npcchat "She is one of us."
+                            - if <player.has_flag[astra_tartanis].not>:
+                                - flag <player> npc.astra_tartanis
+                            - else:
+                                - if <util.random.int[0].to[6]> == 6:
+                                    - narrate format:npcchat "Watch out for Bufurmont. He is one of Prigtoon's lackeys."
+                        - else:
+                            - narrate format:npcchat "I've got your back."
+                    - else:
+                        - random:
+                            - narrate format:npcchat "Thanks for honoring the Old Gods <player.name>."
+                            - narrate format:npcchat "Seek the chapel in the middle of the Workling District."
+                            - narrate format:npcchat "I have high hopes for your <player.name>."
+                            - narrate format:npcchat "The Gods have kept us safe thus far, but now it is time for mortal heroes to step in."
+                            - narrate format:npcchat "We will always honor the Old Gods."
+                            - narrate format:npcchat "There are many shrines, altars and temples, to the Old Gods scattered across Song Tide Archipelago."
+
+                        # do some stuff here
+                - else if <player.has_flag[npc.tartanis.no_signed_tartanis_petition]>:
+                #  if the player has NOT signed tartanis petition
+                    - random:
+                        - narrate format:npcchat "I haven't anything else to say to you traveler. I understand your intentions now."
+                        - narrate format:npcchat "We've said all that we can to each other. Enjoy your stay in Rothigport."
+                        - narrate format:npcchat "Go talk to The Guild Elites if it's their attention you want."
+                        - narrate format:npcchat "There are two sides of the harbor and two sides in the class war."
+                        - narrate format:npcchat "We can beat this bridge toll without you."
+                - else:
+                    # If the player has not done either
+                    - clickable tartanis_petition_yes_task save:tartanis_petition_yes_task_clickable until:15s
+                    - clickable tartanis_petition_no_task save:tartanis_petition_no_task_clickable until:15s
+                    - if <player.flag[npc.<npc>.familiarity.level]||0> <= 1:
+                        - narrate format:npcchat "Thanks for stopping to talk"
+                        - narrate format:npcchat "Would you sign my petition to stop a toll for crossing the Blackthorn Bridge?"
+                        - wait 1s
+                       
+                        - flag <player> lore.rothigport.blackthornbridge:++
+                    - else:
+                        - narrate format:npcchat "Thanks for thinking about it again."
+                        - narrate format:npcchat "Would you now want to look at my petition to stop the toll?"
+                    - narrate  "<element[<&hover[Click to find out more about <npc.name>'s petition.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Yes, I would love to sign your petition.<&8><&rb><&end_hover>].on_click[<entry[tartanis_petition_yes_task_clickable].command>]>"
+                    - narrate  "<element[<&hover[Click to decline looking at <npc.name>'s petition.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>Let me think about it longer.<&8><&rb><&end_hover>].on_click[<entry[tartanis_petition_no_task_clickable].command>]>"
+                    - zap petition_ask duration:30s
+                - zap 1
+        petition_ask:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, Yes.
+                    script:
+                    - run tartanis_petition_yes_task
+                2:
+                    trigger: <&7>/2/, No.
+                    script:
+                    - run tartanis_petition_no_task
+
+tartanis_petition_yes_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - clickable sign_tartanis_petition_task save:sign_tartanis_petition_task_clickable 
+    - narrate format:npcchat "Great! We need more to our numbers. Here take a look."
+    - wait 2s
+    - define petition_content "<element[<&hover[click to sign the petition]>Sign Here<&end_hover>].on_click[<entry[sign_tartanis_petition_task_clickable].command>]>"
+    - adjust <player> "show_book:tartanis_petition[book_pages=<[petition_content]>]"
+    - zap 1
+
+tartanis_petition_no_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - if <player.flag[npc.<npc>.familiarity.level]||0> <= 11:
+        - random:
+            - narrate format:npcchat "Very well. I understand"
+            - narrate format:npcchat "May the Gods convince you otherwise."
+            - narrate format:npcchat "The Bridge's freedom is in your hands. Think deeper."
+            - narrate format:npcchat "It is only a matter of time until you will be on the wrong side."
+            - narrate format:npcchat "Alas, I hope you come around."
+            - narrate format:npcchat "There is not much time. I hope you change your mind."
+            - narrate format:npcchat "When you have to pay to cross the Blackthorn Bridge, then you might think otherwise."
+    - else:
+        - narrate format:npcchat "Bad news for the bridge and the people of Rothigport."
+        - wait 1t
+        - narrate format:npcchat "Consider your side chosen and watch your back traveler."
+        - wait 1t
+        - narrate format:npcchat "The gods are watching."
+        - flag <player> lore.rothigport.blackthornbridge:++
+        - flag <player> npc.tartanis.no_signed_tartanis_petition
+    - if <util.random.int[0].to[3]> == 3:
+        - if <player.flag[npc.n@15.familiarity.level]> > 2:
+            - wait 2s
+            - narrate format:npcchat "Give the gods blessings to <npc[15].name> for me."
+            - if <player.has_flag[astra_tartanis].not>:
+                - flag <player> npc.astra_tartanis
+
+sign_tartanis_petition_task:
+    type: task
+    script:
+    - define char_count ""
+    
+    - repeat <player.name.length.add[1]>:
+        - foreach <[char_count]> as:char:
+        
+            # - narrate <&font[steamfront:cursive]><[char]>
+            - adjust <player> "show_book:tartanis_petition[book_pages=Sign Here<&nl><&nl><&font[steamfront:cursive]><[char]>]"
+        - define char_count <[char_count]><player.name.char_at[<[value]>]>
+        - wait 2t
+    - wait 2s
+    - inventory close
+    - inject description_inject_task
+    - narrate format:npcchat "Mosticant felissy! Thank you!"
+    - wait 1t
+    - narrate format:npcchat "Thank you <player.name>! We will add you to our numbers. Consider the the Anti-Tollers Group among your friends."
+    - wait 1t
+    - narrate format:npcchat "But keep watch from those that wish to impede our freedoms."
+    - flag <player> lore.rothigport.blackthornbridge:++
+    - flag <player> npc.tartanis.yes_signed_tartanis_petition
+
+
+
+
+tartanis_petition:
+    type: book
+    title:  My Petitions
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - ""

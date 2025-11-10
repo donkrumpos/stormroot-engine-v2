@@ -1,0 +1,54 @@
+palmetto_assignment:
+  type: assignment
+  actions:
+    on assignment:
+    - trigger name:click state:true
+    - trigger name:chat state:true
+  default constants:
+    # chat_color: "<script[color_data2].data_key[npc_chat_name]><npc.name> <&color[<color[64,70,77]>]>says: <script[color_data2].data_key[npc_chat]> "
+    town_name: "Hawk Finster Hollow"
+    cleric_name: "<&color[<color[173,189,208]>].parse_color><npc[11].name>"
+
+    
+
+  interact scripts:
+  - palmetto_interact
+
+
+palmetto_interact:
+  type: interact
+  steps:
+    1:
+      click trigger:
+        script:
+        - zap step:1
+        - narrate "<npc.name>: <&color[<color[173,189,208]>]><npc.constant[town_name]> has few clerics, and only <npc.constant[cleric_name]> shows any interest in stopping the illness and she lacks the ability to cure diseases.
+        - narrate "<npc.name>: <&color[<color[173,189,208]>]>Since few townsfolk trust her, most."
+        - narrate ""
+        # - flag player palmetto_flag:++
+        # - if <player.flag[palmetto_flag]> == 1:
+        #     - narrate format:npcchat "Ahoy there, traveler. How did you get way out here? "
+        #     - wait 5t
+        #     - narrate format:npcchat "I am Sedfrer, one of the first refugees to these parts."
+        #     - execute as_server "mmocore admin exp give <player.name> main 10"
+        #     - narrate "<&8>[You have received 10 XP.]"
+        # - if <player.flag[palmetto_flag]> >= 2:
+        #     - narrate format:npcchat "Ahoy again."
+        #     - wait 5t
+        #     - narrate format:npcchat "How can I help?"
+        # - wait 5t
+        # - narrate  "<&E>1. <&B>I was trying to flee the Central Kingdoms. My ship must have crashed."
+        # - narrate  "<&E>2. <&B>I left the Central Kingdoms in haste. How can I get back?"
+        # - narrate  "<&E>3. <&B>I want to know the best way to navigate the Wild."
+        # - narrate  "<&E>4. <&B>Can you tell me more about the way of the sword?"
+        # - narrate  "<&E>5. <&B>Can you tell me more about becoming a trader on the high seas?"
+        # - narrate  "<&E>6. <&B>Can you teach me more about being a merchant out here in The Wild?"
+        # - narrate  "<&E>7. <&B>I want to learn more about going back to the big cities and being a merchant there?"
+        # - narrate  "<&E>8. <&B>I would like to stop talking to you."
+        # - flag player palmetto_flag:++
+        # - zap step:1
+    3:
+      click trigger:
+        script:
+        - zap step:1
+        

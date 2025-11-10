@@ -1,0 +1,30 @@
+ring_of_the_vile:
+  type: item
+  debug: true
+  material: diamond_hoe
+  display name: "Ring of the Vile "
+  flags:
+    stat:
+      bonus:
+        hit_point_increase: 0
+        hit_point_regeneration: 0
+        mana_regeneration: 0
+        defense_chance_increase: 0
+        stamina_loss_reduction: 0
+        stamina_increase: 0
+        dexterity_increase: 0
+        strength_increase: 0
+        intelligence_increase: 0
+        stamina_regeneration: 0
+        lower_mana_cost: 0
+        medable: true
+        fire_resist: 0
+        cold_resist: 0
+        poison_resist: 100
+        energy_resist: 0
+        faster_casting: 1
+        faster_cast_recovery: 1
+    slot_type: ring
+    weight: 0
+  mechanisms:
+    custom_model_data: 3

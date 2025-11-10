@@ -1,0 +1,14 @@
+pan_flute:
+  type: item
+  material: golden_hoe
+  display name: Pan Flute
+  flags:
+    slot_type: hand
+    two_handed: true
+  mechanisms:
+    custom_model_data: 82222122
+  lore:
+    - "You might be able to make wonderous sounds with this."
+
+
+

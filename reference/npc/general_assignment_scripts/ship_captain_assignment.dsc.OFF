@@ -1,0 +1,287 @@
+ship_captain_assignment:
+  type: assignment
+  interact scripts:
+  - ship_captain_tnteract
+  actions:
+    on assignment:
+      - trigger name:proximity state:true radius:5
+      - trigger name:click state:true
+      - trigger name:chat state:true
+      - trigger name:damage state:true
+    on enter proximity:
+      - lookclose state:true
+    on damaged:
+      - determine cancelled
+    
+ship_captain_format:
+    type: format
+    format: "<&color[#a19462]><npc.name><white><&co>-><&b>you<&co> <white> <text>"
+    #  format: "<&b><npc.name><&f> <&b>-> < &b>you<&co> <a><text>"
+#   default constants:
+#     chat_color: "<script[color_data].data_key[colors.npc_chat_name]><npc.name> <&color[<color[64,70,77]>]>says: <script[color_data].data_key[colors.npc_chat]> "
+#     price: <script[captain_information_data].data_key[captains.<npc.id>.price]>
+#     destination_display: <script[captain_information_data].data_key[captains.<npc.id>.destination_display]>
+#     destination_notable: <script[captain_information_data].data_key[captains.<npc.id>.destination_notable]>
+
+ori_moonsails_assignment:
+    type: assignment
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:9
+   
+    default constants:
+        appearance1: "<npc.name>'s has a sweet smile and you don't think she can steer you wrong."
+        appearance2: "Ori Moonsails looks like a young elvish woman, but it seems she knows much more than her age would tell you."
+        appearance3: "You feel that if you dropped a fish at his feet, he would scoop it up and reward you."
+        appearance4: "You can see he has much information that can help newcomers out, but not much more than that."
+
+captain_information_data:
+  type: data
+  captains:
+    Saggis Mroskin:
+      display_name: "Saggis"
+      skin: https://minesk.in/74c985ad3a7d47d689c9fbccd3189dd1
+    Captain Greets:
+      display_name: "Captain Greets"
+
+      locations:
+        rothigport:
+          destination_display: "Rothigport"
+          destination_location: rothigport_to_hawk_finster_hollow 
+          price: 20
+        hawk_finster_hollow:
+          destination_display: "Hawk Finster Hollow"
+          destination_location: hawk_finster_hollow_to_rothigport
+          price: 20
+    Liza Prowwind:
+      skin: https://minesk.in/bd1a032a0ebd432c83344f845052d4e0
+      internal_name: LizaProwwind
+      display_name: "Captain Liza Prowwind"
+      ship_name: "The Golden Porpoise"
+      owner: f17d9bef-c64c-4c08-85aa-e75d4b8b5a44
+      locations:
+        runesbrook:
+          destination_display: "Runesbrook"
+          destination_region: runesbrook_inner
+          destination_location: golden_porpoise_runesbrook
+          price: 20
+        rothigport:
+          destination_display: "Rothigport"
+          destination_region: rothigport_inner
+          destination_location: golden_porpoise_rothigport
+          price: 20
+
+    Beetroot Bart:
+      skin: https://minesk.in/8f19d6ae93b9405ca484d3b013cc7e63
+      internal_name: BeetrootBart
+      display_name: "Captain Beetroot Bart"
+      ship_name: "Flaming Chicken"
+      owner: 21b54da5-7719-4097-bfd9-5d1a5d15da91
+      locations:
+        rothigport:
+          destination_display: "Rothigport"
+          destination_region: rothigport_inner
+          destination_location: flaming_chicken_rothigport
+          price: 120
+        oulawynn:
+          destination_display: "Oulawynn"
+          destination_region: oulawynn_inner
+          destination_location: flaming_chicken_oulawynn
+          price: 100
+       
+    Ori Moonsails:
+      skin: https://minesk.in/0f76d05a3bf2448baa3752c96deea901
+      internal_name: OriMoonsails
+      display_name: "Captain Ori Moonsails"
+      ship_name: "The Tide Skipper"
+      locations:
+        bardtown:
+          destination_display: "Bardtown"
+          destination_server: songtide
+          destination_region: bardtown_inner
+          destination_location: tide_skipper_bardtown
+          destination_coords: <location[706.938,67,210.197,songtide]>
+          price: 20
+        rothigport:
+          destination_display: "Rothigport"
+          destination_server: songtide
+          destination_region: rothigport_inner
+          destination_location: tide_skipper_rothigport
+          destination_coords: <location[706.938,67,210.197,songtide]>
+          price: 20
+        padula_anchorite:
+          destination_display: "Padula Anchorite"
+          destination_server: thelongsea
+          destination_region: padula_anchorite_inner
+          destination_location: rothigport_to_wilderness
+          destination_coords: <location[528.675,67,-277.292,thelongsea]>
+          price: 20
+        # exodus_stronghold:
+        #   destination_display: "Exodus Stronghold"
+        #   destination_server: thelongsea
+        #   destination_region: exodus_stronghold_inner
+        #   destination_location: to_exodus_stronghold
+        #   destination_coords: <location[528.675,67,-277.292,world]>
+        #   price: 20
+    # OriMoonsails:
+    #   display_name: "Captain Ori Moonsails"
+    #   citizens_name: "Ori Moonsails"
+    #   locations:
+    #     rothigport:
+    #       destination_display: "Rothigport"
+    #       destination_server: songtide
+    #       destination_region: rothigport
+    #       destination_location: wilderness_to_rothigport
+    #       destination_coords: <location[706.938,67,210.197,songtide]>
+    #       price: 20
+    #     padula_anchorite:
+    #       destination_display: "Padula Anchorite"
+    #       destination_server: thelongsea
+    #       destination_region: padula_anchorite_inner
+    #       destination_location: rothigport_to_wilderness
+    #       destination_coords: <location[528.675,67,-277.292,thelongsea]>
+    #       price: 20
+
+    
+ship_captain_tnteract:
+  type: interact
+  steps:
+    1:
+      proximity trigger:
+        entry:
+            script:
+            - if <script[captain_information_data].data_key[captains.<npc.name>].contains[skin]>:
+              - execute as_server "npc skin --url <script[captain_information_data].data_key[captains.<npc.name>.skin]> --id <npc.id>"
+      click trigger:
+        script:
+        # - define this_captain <player.location.find_npcs_within[6]>
+        - if <script[captain_information_data].data_key[captains.<npc.name>].contains[owner]>:
+          - define owner <script[captain_information_data].data_key[captains.<npc.name>.owner]>
+          - narrate "<green> <player.uuid> == <[owner]> "
+          - if <player.uuid> == <[owner]>:
+            - inject description_inject_task
+            - narrate "Right away Master <player.name>!"
+            - heal <player>
+            - adjust <player> saturation:10
+            - foreach <script[captain_information_data].data_key[captains.<npc.name>.locations]> as:location:
+              - if <player.location.distance[<location[<script[captain_information_data].data_key[captains.<npc.name>.locations.<[key]>.destination_location]>]>]> > 10:
+                - teleport <player> <location[<script[captain_information_data].data_key[captains.<npc.name>.locations.<[key]>.destination_location]>]>
+                - stop
+              # - narrate <[location]>
+            # - run ship_captain_transport def:<script[captain_information_data].data_key[captains.<npc.name>.locations.first.destination_location>
+            - stop
+        - inject description_inject_task
+        - if <player.flag[npc.<npc>.familiarity.level]||0> <= 1:
+          - random:
+            - narrate "Hello I am <&color[#82b1f2]><script[captain_information_data].data_key[captains.<npc.name>.display_name]><&r> and I can take you to "
+            - narrate "Welcome to my ship <script[captain_information_data].data_key[captains.<npc.name>.ship_name]||<&sp>> can I take you to"
+        - else if <player.flag[npc.<npc>.familiarity.level]||0> < 17:
+          - random:
+            - narrate "Hello again! Would you like to go to"
+            - narrate "Oh Hello <player.name>, we are going to"
+            - narrate "Nice to see you again, can I take you to "
+            - narrate "Welcome aboard the <script[captain_information_data].data_key[captains.<npc.name>.ship_name]||my ship>"
+        - else:
+          - random:
+            - narrate "Welcome aboard <script[captain_information_data].data_key[captains.<npc.name>.ship_name]||my ship>"
+        - define location
+        - define price
+        - foreach <script[captain_information_data].data_key[captains.<npc.name>.locations]> as:location:
+          # Check to see if this destination is the current location, if so, don't show it
+          - if <player.location.cuboids.parse[note_name].contains[<script[captain_information_data].data_key[captains.<npc.name>.locations.<[key]>.destination_region]>]> || <player.location.polygons.parse[note_name].contains[<script[captain_information_data].data_key[captains.<npc.name>.locations.<[key]>.destination_region]>]>:
+            - foreach next
+          - define price <script[captain_information_data].data_key[captains.<npc.name>.locations.<[key]>.price]>
+          - define destination_name <script[captain_information_data].data_key[captains.<npc.name>.locations.<[key]>.destination_display]>
+          - define location <script[captain_information_data].data_key[captains.<npc.name>.locations.<[key]>.destination_location]>
+          
+          - clickable ship_captain_yes_task def:<npc>|<[price]>|<[location]>|<player> until:12s save:ship_captain_yes_task_clickable
+          - clickable ship_captain_no_task def:<npc> until:12s save:ship_captain_no_task_clickable
+          - narrate "<&color[#028f0c]><[destination_name]> <&r>for <[price]> copper. <element[<&hover[Pay and proceed to <[destination_name]>?]><&8><&lb><&color[#00cb43]>Yes<&8><&rb><&end_hover>].on_click[<entry[ship_captain_yes_task_clickable].command>]> <&8>or  <element[<&hover[Cancel this engagement?]><&8><&lb><&color[#ff482a]>No<&8><&rb><&end_hover>].on_click[<entry[ship_captain_no_task_clickable].command>]>"
+        - wait 5s
+
+    
+      # chat trigger:
+      #     1:
+      #         trigger: <&7>/1/. Yes, take my money and let's go.
+      #         script:
+      #         - run ship_captain_yes_task def:<npc>|<[price]>|<[location]>|<player>
+      #         - zap 1
+      #     2:
+      #         trigger: <&7>/2/. No, I don't need to travel.
+      #         script:
+      #         - run ship_captain_no_task def:<npc>
+      #         - zap 1
+
+
+ship_captain_yes_task:
+  type: task
+  definitions: npc|price|location|player
+  script:
+  - if <player.has_flag[bertaires_courier]> || <[location]> == rothigport_inner:
+    - narrate "You know Bertaire, you ride for free today."
+    - wait 2s
+    - run ship_captain_transport def:tide_skipper_rothigport
+    - stop
+  - if <player.has_flag[lorenzos_courier]> || <[location]> == bardtown_inner:
+    - narrate "You know Bertaire, you ride for free today."
+    - wait 2s
+    - run ship_captain_transport def:tide_skipper_bardtown
+    - stop
+  
+
+  - if <proc[inventory_balance_procedure].context[<[player]>].add[<proc[purse_currency_proc].context[<[player]>]>]> >= <[price]>:
+    - define new_amount <[price].sub[<proc[inventory_balance_procedure].context[<player>]>]>
+    - run take_currency_from_inventory_task def:<[price]>
+    - if <[new_amount]> > 0:
+      - run take_purse_currency_task def:<[player]>|<[new_amount]>
+   
+  - else:
+    - narrate  "You don't seem to have enough coin on you."
+    - disengage
+    - stop
+  - random:
+    - narrate "Very well. We will be ready to depart shortly." targets:<player>
+    - narrate "Excellent. We will embark soon."  targets:<player>
+    - narrate "Avast. We will leave presently."  targets:<player>
+    - narrate "Let's weigh anchor and head for new shores."  targets:<player>
+    - narrate "Setting the sails for across The Long Sea."  targets:<player>
+    - narrate "Splendid. We will be ready sail soon."  targets:<player>
+    - narrate "Second star to the right, and straight on til morning."  targets:<player>
+    - narrate "Nifty. We will shove off soon."  targets:<player>
+  
+  - wait 5s
+  - narrate "All aboard!"
+  
+  - wait 10t
+  - run ship_captain_transport def:<[location]>
+  
+    
+
+ship_captain_transport:
+  type: task
+  definitions: location
+  script:
+  - narrate <[location]> targets: <server.match_player[SirBandersnatch]>
+  - wait 1t
+  - ^cast blindness duration:5s
+  - cast confusion duration:8s
+  - teleport <player> <[location]>
+  - wait 2s
+  - narrate "You have traveled a great distance, across The Long Sea."
+  
+
+ship_captain_no_task:
+  type: task
+  definitions: npc
+  script:
+    - engage
+    - random:
+      - narrate format:ship_captain_format "Suit yourself.  Come back any time."
+      - narrate format:ship_captain_format "Understandable, sea travel is dangerous."
+      - narrate format:ship_captain_format "Sea travel is expensive. See you later."
+      - narrate format:ship_captain_format "Very well. Stay safe."
+    - wait 5s
+    - disengage
+

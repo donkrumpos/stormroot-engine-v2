@@ -1,0 +1,25 @@
+nidas_assignment:
+  type: assignment
+  actions:
+    on assignment:
+    - trigger name:click state:true
+    - trigger name:chat state:true
+    - trigger name:proximity state:true radius:2
+  # default constants:
+    
+    
+
+  interact scripts:
+  - nidas_interact
+
+
+nidas_interact:
+  type: interact
+  steps:
+    1:
+      proximity trigger:
+            entry:
+                script:
+                - narrate "The monks like their privacy."
+                - teleport <npc> <player.location.forward[1].up[1]>
+                # - teleport <player> <npc.location.forward[2]>

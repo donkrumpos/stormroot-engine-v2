@@ -1,0 +1,34 @@
+# shadow_strike_task:
+#     type: task
+#     definitions: damager|defender|final_damage|final_defense
+#     script:
+#     - define double_strike_level <[damager].flag[skill.specializations.double_strike.level]||0>
+#     - define arms_lore_level <[damager].flag[skill.specializations.arms_lore.level]||0>
+#     - wait 10t
+#     - animate <[damager]> animation:arm_swing
+#     - define damage_amount <util.random.int[1].to[<[final_damage].sub[<[final_defense]>]>]>
+#     - hurt <[damage_amount]> <[defender]>
+#     - narrate format:game_message "You hit your target twice.  " targets:<[damager]>
+    
+# shadow_strike_command:
+#     type: command
+#     usage: /shadow_strike
+
+
+
+shadow_strike_toggle_command:
+    type: command
+    name: shadow_strike
+    aliases:
+        - shadow
+        - shs
+    script:
+    - if <player.has_flag[skill.specializations.shadow_strike]>:
+      
+    
+        - if <player.has_flag[shadow_strike]>:
+            - flag <player> shadow_strike:!
+            - narrate  format:game_message "Shadow Strike toggled off."
+        - else:
+            - flag <player> shadow_strike
+            - narrate  format:game_message  "Shadow Strike toggled on."

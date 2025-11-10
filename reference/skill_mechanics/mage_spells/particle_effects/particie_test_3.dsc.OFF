@@ -1,0 +1,12 @@
+particle_test1:
+    type: task
+    script:
+    - define path <[target].points_between[<player.location.forward[16]>].distance[1]>
+    - playeffect flame <player.location> visibility:100 quantity:<[particleamount]>
+    - playeffect redstone <player.location> special_data:1|blue visibility:1000 quantity:<[particleamount]>
+    - foreach <[path].reverse>:
+        - wait 1t
+        - define projectile <[value].find.entities.within[1]>
+        - playsound ENTITY_ILLUSIONER_CAST_SPELL <player.location> pitch:-3
+        - playeffect redstone <[value].simple.as_location> special_data:1|orange visibility:1000 quantity:<[particleamount]>
+        - playeffect redstone <[value].simple.as_location> special_data:1|red visibility:250 quantity:<[particleamount]>

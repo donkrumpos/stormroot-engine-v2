@@ -1,0 +1,51 @@
+eldergreen_vineblade:
+  type: item
+  debug: false
+  material: stick
+  display name: Eldergreen Vineblade
+  
+  lore:
+  - A blade from ancient roots, cursed with untamed growth
+  - <&color[#32a852]>Poison Damage 30%
+  - <&color[#32a852]>Life Regeneration 5%
+  - <&color[#32a852]>Slows Target on Hit
+  
+  flags:
+    required_strength: 12
+    weapon_type: sword
+    craftable: true
+    attack_speed_increase: 0.1
+    hit_chance_increase: 5
+    weapon_speed: 9
+    weapon_damage_min: 9
+    weapon_damage_max: 13
+    luck: 1
+    two_handed: false
+    fire_damage: 0
+    cold_damage: 0
+    poison_damage: 30
+    energy_damage: 0
+    life_regen: 0.05
+    slow_effect_on_hit: true
+    material_qty: 8
+    unique: true
+  mechanisms:
+    custom_model_data: 7209004
+
+
+eldgreen_vineblade_swing_effect:
+  type: world
+  events:
+    on player clicks air with:eldergreen_vineblade:
+    # - playeffect effect:snowflake at:<player.eye_location> quantity:10 visibility:16
+    # - playeffect effect:happy_villager 
+    # - playeffect effect:spell_mob at:<player.location.add[<player.eye_location.direction.multiply[1]>]>  quantity:10 visibility:16
+    # - playeffect effect:drip_lava at:<player.location.add[<player.eye_location.direction.multiply[1]>]>  quantity:3 
+    - playeffect effect:dust at:<player.eye_location>   special_data:1.0|#008a41 quantity:3
+    - playeffect effect:falling_spore_blossom at:<player.eye_location.forward[0.5]> quantity:6
+
+    # - playeffect effect:happy_villager at:<player.location.add[<player.eye_location.direction.multiply[1]>]>  quantity:5 
+    # on player damages entity with:eldergreen_vineblade:
+    # - playeffect effect:snowflake at:<player.eye_location> quantity:100 visibility:16
+
+

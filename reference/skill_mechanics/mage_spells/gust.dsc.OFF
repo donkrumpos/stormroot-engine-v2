@@ -1,0 +1,32 @@
+gust_task:
+    type: task
+    definitions: attacker|target
+    script:
+    - if <[target].is_living>:
+        - playsound <player.location> sound:steamfront:spells.gust custom sound_category:players
+  
+    - define level <[attacker].flag[skill.spells.gust.level]||0>
+    - define random_level <util.random.int[1].to[<[level].add[1]>]>
+    # - adjust <player.target> velocity:<player.location.sub[<player.target>].normalize.mul[2].add[0,0.5,0]>
+    - foreach <[attacker].eye_location.points_between[<[attacker].cursor_on>]> as:point:
+        - wait 1t
+        - if <[point].find.living_entities.within[1].any>:
+            - foreach <[point].find.living_entities.within[2].exclude[<[attacker]>]> as:blown_target:
+            # - define targets <[point].find.living_entities.exclude[<player>].within[1]>
+                # - narrate "<red>pushing <[blown_target]> <[attacker].location.sub[<[point]>].normalize.mul[-1].mul[<[random_level]>]>"
+                - adjust <[blown_target]> velocity:<[attacker].location.sub[<[point]>].normalize.mul[-1].mul[<[random_level]>]>
+        - playeffect effect:redstone  at:<[point]> special_data:1|139,155,180 visibility:100 quantity:<[loop_index]> offset:0
+        - playeffect effect:redstone  at:<[point]> special_data:1|255,250,244 visibility:100 quantity:30 offset:0
+        - playeffect effect:redstone  at:<[point].forward[2]> special_data:1|138,166,210 visibility:100 quantity:<element[40].sub[<[loop_index].mul[2]>]>  offset:0
+    
+    # - push <[target]>  destination:<[target].location.backward_flat[<[random_level]>]> speed:<[level]> duration:<[level]>s save:pushed
+    # - push <[target]>  destination:<[target].backward_flat[<[random_level]>]> speed:<[level]> duration:<[level]>s save:pushed
+    - foreach <[target].location.cuboids> as:cuboid:
+        - if <[cuboid].flag[pvp]> ==  "deny":
+            - if <[target].is_npc> || <[target].is_player>:
+                - stop
+  
+    # - adjust <[target]> velocity:<[attacker].location.sub[<[attacker].target.location>].normalize.mul[-1].mul[<[random_level].add[3]>]>
+    - if <util.random.int[0].to[<[level]>]> > 2:
+        - run spell_damage_task def:gust|<[target]>|<[attacker]>
+    # - playsound <[target]> sound:steamfront:spells.gust custom sound_category:players

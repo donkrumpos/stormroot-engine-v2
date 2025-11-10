@@ -1,0 +1,28 @@
+fireball_effect_task:
+    type: task
+    definitions: radius
+    script:
+    - define radius <[radius]||5>
+    - define location <player.eye_location.down[1]>
+    - define effect flame,0,1,0
+    - define radius <[radius]>
+    - define rotation <util.random.decimal[0].to[<util.tau>]>
+    - define maxLength 20
+    - define effect <[effect].split[,].limit[4]>
+    - define length 0
+    - define angularVelocity <util.pi.div[16]>
+    - define pitchAngle <[location].pitch.add[90].to_radians>
+    - define yawAngle <[location].yaw.mul[-1].to_radians>
+    - while <[length].is[LESS].than[<[maxLength]>]>: 
+        - define vector <location[<[rotation].cos.mul[<[radius]>]>,<[length]>,<[rotation].sin.mul[<[radius]>]>]>
+        - define entity <[location].add[<[vector].rotate_around_x[<[pitchAngle]>].rotate_around_y[<[yawAngle]>]>].find.living_entities.within[1]>
+        
+        - if <[entity].is_empty.not>:
+            - if <[entity].contains[<player>].not>:
+                - hurt 10 <[entity]> 
+                # - narrate <[entity]>
+        - playeffect <[location].add[<[vector].rotate_around_x[<[pitchAngle]>].rotate_around_y[<[yawAngle]>]>]> "effect:<[effect].get[1]||flame>" "data:<[effect].get[2]||0>" "quantity:<[effect].get[3]||1>" "offset:<[effect].get[4]||0>"
+        - define rotation <[rotation].add[<[angularVelocity]>]>
+        - define length <[length].add[0.05]>
+        - if <[loop_index].mod[10]> == 0:
+            - wait 1t

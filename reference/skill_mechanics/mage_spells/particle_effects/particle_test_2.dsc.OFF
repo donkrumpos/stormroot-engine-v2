@@ -1,0 +1,11 @@
+particle_test2:
+    type: task
+    script:
+    - repeat 45:
+        - playeffect effect:cloud at:<player.eye_location.left[<[level].div[12]>].forward[<[level2]>]>|<player.eye_location.right[<[level].div[12]>].forward[<[level2]>]>|<player.eye_location.up[<[level].div[12]>].forward[<[level2]>]>|<player.eye_location.down[<[level].div[12]>].forward[<[level2]>]>  quantity:100 offset:.5,.5,.5
+    - foreach <player.location.points_between[<[targetsight].location>]> as:point:
+        - narrate <[loop_index]>
+        - define point:++
+        - wait 2t
+        - playeffect effect:FLAME at:<player.eye_location.forward[<[loop_index]>]> quantity:<[loop_index].mul[<[loop_index]>]> data:1 offset:1,1,1
+            

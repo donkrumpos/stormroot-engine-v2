@@ -1,0 +1,164 @@
+bertaire_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:4
+    interact scripts:
+    - bertaire_interact
+
+    default constants:
+        appearance1: "<npc.name>'lives in the wild but seems mysterious."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+
+
+bertaire_interact:
+    type: interact
+    steps:
+        1:
+            # proximity trigger:
+            #     entry:
+            #         script:
+            #         - execute as_server "npc skin --url https://minesk.in/22896f4c606c4cbf8e326814f4f9c7a1 --id <npc.id>"
+            click trigger:
+                script:
+                - if <player.has_flag[bertaire_decline]>:
+                    - zap 2 banker_interact player:<player>
+                    - stop
+
+                - if <player.has_flag[bertaires_courier].not>:
+                    - if <player.has_flag[lorenzos_courier]>:
+                        - inject description_inject_task
+                        - narrate "You came back and that is admirable!" targets:<player>
+                        - if <player.item_in_hand.has_flag[lorenzos_courier]>:
+                            - take <player.item_in_hand>
+                            - narrate "And he had this for me? His bag of documents for the bank!"
+                            - wait 2s
+                            - narrate "and for all of your trouble, let me give you a pouch of your own."
+                            - give "<item[purse].with[flag=blessed,purse;display=<player.name>'s Purse]>"
+                            - flag <player> bertaires_courier:!
+                            - flag <player> lorenzos_courier:!
+                            - flag <player> purse
+                            - wait 2s
+                            - narrate "This can be used to store extra coin beyond your normal backpack capacity."
+                            - wait 2s
+                            - narrate "And you can always keep items in your bank and we will do our best to have them at every branch"
+                            - wait 2s
+                            - narrate "And now you have access to all of the Bank of Deluvia's Branches."
+                            - wait 2s
+                            - narrate format:game_message "You can type <bold>/bank<&r> near a bank to open your account."
+                            - flag <player> bertaire_complete
+                        - stop
+                    - else:
+                        - if <player.item_in_hand.has_flag[lorenzos_courier]>:
+                            - take <player.item_in_hand>
+                            - narrate "I received word that Lorenzo was going to send this awhile ago. It is no good to us anymore." targets:<player>
+                            - wait 2s
+                            - narrate "Perhaps there will be a time in the future when you can help the bank." targets:<player>
+                            - flag <player> bertaire_decline
+                    # - if <player.flag[npc.<npc.id>.familiarity.level]> < 1 || <player.has_flag[npc.<npc.id>.familiarity.level].not>:
+                    - if <player.has_flag[bertaire_talk_01].not>:
+                        - inject description_inject_task
+                        - narrate "Welcome to the Bank of Deluvia, where. . ." targets:<player>
+                        - wait 2s
+                        - narrate "Wait, you're new here, aren't you?" targets:<player>
+                        - wait 2s
+                        - narrate "Well then really welcome!" targets:<player>
+                        - wait 2s
+                        - narrate "I have something that can help you out with coinage carrying conundrum," targets:<player>
+                        - wait 3s
+                        - narrate "upon the inevitable time when you have too much coin to carry." targets:<player>
+                        - wait 4s
+                        - narrate "Can you carry this bag of coin to my partner Lorenzo, in the next town over?" targets:<player>
+                        - wait 2s
+                        
+                        - flag <player> bertaire_talk_01
+                    - else:
+                        - random:
+                            - repeat 1:
+                                - narrate "How about it? It's a good idea to help out and get in good with the bankers." targets:<player>
+                                - wait 3s
+                                - narrate "Carry this to Lorenzo in Rothigport?" targets:<player>
+                            - repeat 1:
+                                - narrate "We're looking for the right person to be a courier this one time." targets:<player>
+                                - wait 3s
+                                - narrate "It's a nice to day sail through the islands." targets:<player>
+                            - repeat 1:
+                                - narrate "You seem like a willing soul." targets:<player>
+                                - wait 3s
+                                - narrate "and checking out Rothigport is always a nice trip." targets:<player>
+                    - clickable bertaire_task_01 save:bertaire_clickable_01 until:30s usages:1 for:<player>
+                    - clickable bertaire_task_02 save:bertaire_clickable_02 until:30s usages:1 for:<player>
+                    - narrate <&nl> targets:<player>
+                    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Yes, I would be glad to help you.<&8><&rb><&end_hover>].on_click[<entry[bertaire_clickable_01].command>]>" targets:<player>
+                    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>No, that seems like too much responsibility for me right now.<&8><&rb><&end_hover>].on_click[<entry[bertaire_clickable_02].command>]>" targets:<player>
+                    - if <player.has_flag[bertaire_complete]> || <player.has_flag[bertaire_decline]>:
+                        - zap 2 banker_interact player:<player>
+                    - zap 2 bertaire_interact player:<player> duration:15s
+
+
+        2:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. /Yes/, I would love to help you with that.
+                    script:
+                    - run bertaire_task_01
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. /No/, that seems like too much responsibility for me right now.
+                    script:
+                    - run bertaire_task_02
+                    - zap 1
+
+
+bertaire_task_01:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "Oh thank you, thank you!" targets:<player>
+        - wait 2s
+        - narrate "and keep this a secret, okay?" targets:<player>
+        - give "<item[purse].with[flag=bertaires_courier;display=Bertaires purse for Lorenze]>"
+        - flag <player> bertaires_courier expire:1d
+        - narrate "If you follow the the southern steps, down to the bottom and cross the bridge to the other small island, a boat docked there can bring you to Rothigport, where Lorenzo is at the bank. Just show him this bag."
+        - narrate format:game_message "Bertaire gives you a leather bag." targets:<player>
+        - wait 2s
+        - narrate "I will pay for your travel expenses." targets:<player>
+        - wait 2s
+        - narrate "I await your return helpful newcomer" targets:<player>
+        - zap 1 bertaire_interact
+        - flag <player> suspend_clickable:!
+
+
+bertaire_task_02:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "It is okay, I will find another." targets:<player>
+        - wait 2s
+        - zap 1 bertaire_interact
+        - flag <player> bertaire_decline
+        - flag <player> suspend_clickable:!
+
+
+
+reset_bertaire:
+    type: task
+    script:
+    - flag <player> bertaires_courier:!
+    - flag <player> lorenzos_courier:!
+    - flag <player> bertaire_talk_01:!
+    - flag <player> bertaire_complete:!
+    - flag <player> bertaire_decline:!

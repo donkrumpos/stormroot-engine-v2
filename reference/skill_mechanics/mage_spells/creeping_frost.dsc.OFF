@@ -1,0 +1,52 @@
+creeping_frost_task:
+    type: task
+    debug: true
+    definitions: attacker|defender
+    script: 
+    - if <[attacker].has_flag[skill.spells.creeping_frost.level].not>:
+        - flag <[attacker]> skill.spells.creeping_frost.level:1
+    - define level <player.flag[skill.spells.creeping_frost.level]>
+    - if <[defender].has_flag[creeping_frost]>:
+        - stop
+    - else:
+        - repeat <util.random.int[<[level].sub[3].max[1]>].to[<[level].add[3]>]>:
+            - wait <util.random.int[2].to[<[level].add[2]>]>s
+            - run spell_damage_task def:creeping_frost|<[defender]>|<[attacker]>|<[value]>
+            - run freeze_target_task def:<[defender]>|<[level]>
+            - showfake ice <[defender].location.up[1]> duration:3s players:<[defender]>
+            - showfake ice <[defender].location.up[2]> duration:3s players:<[defender]>
+            - define resist_success <proc[natural_skill_check_proc].context[<[defender]>|cold_resist]>
+            - if <[resist_success]>:
+                - run raise_resist_spells_task def:<[defender]>|cold
+                - repeat stop
+            - showfake ice <[attacker].location.find.surface_blocks.within[<[value]>]> duration:<[value]>s players:<server.online_players>
+        - flag <[defender]> creeping_frost:!
+
+
+
+    # - define level <[attacker].flag[skill.creepingfrost.level]>
+    # # - define ring <proc[particle_ring].context[<[attacker].location>|12|3]>
+    # # - define blocks <[attacker].location.down[1].material.name>
+    # # - narrate <[blocks]>
+    # # - narrate <[ring]>
+    # # - ^playeffect effect:flame at:<proc[particle_ring].context[<[attacker].location>|120|2]> quantity:12  offset:.15,.15,0
+    # # - run spell_damage_task def:frostnova|<[defender]>|<[attacker]>
+    # - repeat 4:
+    #     - define defender <[attacker].location.find.living_entities.within[<[value]>].exclude[<[attacker]>].exclude[<[attacker].location.find.living_entities.within[<[value].sub[1]>]>]>
+    #     - define damage <element[5].sub[<[value]>]>
+    #     - foreach <[defender]> as:target:
+    #         - run freeze_target_task def:<[target]>|<[level]>
+    #         - showfake ice <[target].location.up[1]> duration:3s players:<[target]>
+    #         - showfake ice <[target].location.up[2]> duration:3s players:<[target]>
+    #         - run spell_damage_task def:creepingfrost|<[target]>|<[attacker]>|<[damage]>
+    #     - showfake ice <[attacker].location.find.surface_blocks.within[<[value]>]> duration:<[value]>s players:<server.online_players>
+    #     - wait <[value]>t
+    # - foreach <player.location.find.surface_blocks[sand|clay|dirt|gravel|diorite|cobblestone|stone|polished_diorite|andesite|polished_andesite|granite|polished_granite].within[5]> as:block:
+    #     - announce "block: <[block]>"
+        # - modifyblock <[block]> snow
+    #     - define bottomblocks <def[value].location.add[0,-1,0].material>
+    #     - copyblock <def[value]> to:<def[value].location.add[0,-1,0]>
+    #     - modifyblock <def[value]> m@air
+    #     - wait 5m
+    #     - copyblock <def[value].location.add[0,-1,0]> to:<def[value]>
+    #     - modifyblock <def[value].location.add[0,-1,0]> <def[bottomblocks]>

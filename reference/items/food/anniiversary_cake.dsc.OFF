@@ -1,0 +1,21 @@
+anniversary_cake:
+  type: item
+  material: cake
+  display name: Birthday Cake
+  flags: 
+    anniversary_cake: true
+
+
+# cake_world:
+#   type: world
+#   events:
+#     on player right clicks block:
+#     - if <context.item.has_flag[anniversary_cake]>:
+#       - narrate "<red><player.name><gray> says: <&r> YUM!"
+#       - cast jump duration:20s amplifier:3
+#       - cast speed duration:50s amplifier:0
+#       - cast regeneration amplifier:4 duration:5s
+
+
+      
+    

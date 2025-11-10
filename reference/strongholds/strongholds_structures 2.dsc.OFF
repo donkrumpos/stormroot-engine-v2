@@ -1,0 +1,393 @@
+build_gui:
+  type: task
+  definitions: founder
+  script:
+  - define book_content <list>
+  - foreach <script[structures_data].data_key[structure]> as:structure:
+    - define display_name <[structure].get[display_name]>
+    - define schematic_name <[structure].get[schematic_name]>
+    - define hover_text "Click to know more about <[display_name]>"
+    # - clickable structure_page_gui def:<[key]> save:structure_page_gui_clickable until:3m usages:1 for:<player>
+    - clickable place_temp_structure def:<[schematic_name]> save:place_temp_structure_clickable until:3m usages:1 for:<player>
+    - define structure_item "<element[<&hover[hover stuff]><[display_name]><&end_hover>].on_click[<entry[place_temp_structure_clickable].command>]>"
+    # - narrate <[structure_item]>
+    - define book_content <[book_content].insert[<[structure_item]>].at[<[book_content].size>]>
+
+  - adjust <player> show_book:build_book[book_pages=<[book_content].separated_by[<&nl>]>]
+
+# view_from_above:
+#   type: task
+#   script:
+#   - define center_location <player.location>
+#   - spawn armor_stand[gravity=false;visible=false] <proc[get_chunk_center_ground].context[<[center_location]>].up[32].backward[16].left[16]> save:structure_spectate
+#   - adjust <player> gamemode:spectator
+#   - adjust <player> spectate:<entry[structure_spectate].spawned_entity>
+#   - look <entry[structure_spectate].spawned_entity> <proc[get_chunk_center_ground].context[<[center_location]>]>
+#   - foreach <proc[get_chunk_center_ground].context[<[center_location]>].up[32].left[32].points_between[<proc[get_chunk_center_ground].up[54].forward[32].right[33]>]> as:point:
+#     - teleport <entry[structure_spectate].spawned_entity> <[point].backward[10].right[10]>
+#     - look <entry[structure_spectate].spawned_entity> <proc[get_chunk_center_ground].context[<[center_location]>]>
+#     - if <[loop_index].is_even>:
+#       - wait 1t
+#   - wait 10s
+#   # - teleport <player> <player.location.chunk.surface_blocks.random.above>
+#   - adjust <player> spectate:<player>
+#   - adjust <player> gamemode:survival
+#   - remove <entry[structure_spectate].spawned_entity>
+
+view_from_above:
+  type: task
+  script:
+  - define center_location <player.location>
+  - spawn armor_stand[gravity=false;visible=false] <proc[get_chunk_center_ground].context[<[center_location]>].up[32].backward[16].left[16]> save:structure_spectate
+  - adjust <player> gamemode:spectator
+  - adjust <player> spectate:<entry[structure_spectate].spawned_entity>
+  - look <entry[structure_spectate].spawned_entity> <proc[get_chunk_center_ground].context[<[center_location]>]>
+  # - foreach <proc[get_chunk_center_ground].context[<[center_location]>].up[32].left[32].points_between[<proc[get_chunk_center_ground].up[54].forward[32].right[33]>]> as:point:
+  #   - teleport <entry[structure_spectate].spawned_entity> <[point].backward[10].right[10]>
+  #   - look <entry[structure_spectate].spawned_entity> <proc[get_chunk_center_ground].context[<[center_location]>]>
+  #   - if <[loop_index].is_even>:
+  #     - wait 1t
+  - wait 10s
+  # - teleport <player> <player.location.chunk.surface_blocks.random.above>
+  - adjust <player> spectate:<player>
+  - adjust <player> gamemode:survival
+  - if <entry[structure_spectate].spawned_entity.is_spawned>:
+    - remove <entry[structure_spectate].spawned_entity>
+
+place_temp_structure:
+  type: task
+  definitions: structure|origin
+  script:
+  - define founder <player>
+  - if <player.has_flag[member_of_stronghold]>:
+    - define founder <player.flag[member_of_stronghold.owner]>
+  - if <[founder].flag[stronghold.chunks].contains[<player.location.chunk>].not>:
+    - narrate "You need to be in a plot you own."
+  - define original_player_location <player.location>
+  # - if <[origin].exists.not>:
+  - define origin <proc[get_chunk_center_ground]>
+  - narrate "This is where the structure will be placed."
+  - wait 1t
+  - if <schematic[<[structure]>].exists.not>:
+    - ~schematic load name:<[structure]>
+  - wait 1t
+  - choose <player.location.direction>:
+    - case south:
+      - schematic rotate name:<[structure]> angle:90
+    - case west:
+      - schematic rotate name:<[structure]> angle:180
+    - case east:
+      - schematic rotate name:<[structure]> angle:270
+  - wait 1t
+  - schematic paste name:<[structure]> fake_to:<player> fake_duration:24s <[origin]>
+  
+  - clickable place_structure def:<[structure]>|<[origin]> save:place_structure_clickable until:24s usages:1 for:<player>
+  # - clickable rotate_schematic def:<[structure]>|<[origin]> save:rotate_schematic_clickable until:24s usages:1 for:<player>
+  - clickable cancel_schematic def:<player.location.chunk> save:cancel_schematic_clickable until:24s usages:1 for:<player>
+  - narrate "<element[<&color[#00cb43]>Confirm placement].on_click[<entry[place_structure_clickable].command>]><reset>" targets:<player>
+  # - narrate "<element[<&color[#0099FF]>or rotate clockwise 90°].on_click[<entry[rotate_schematic_clickable].command>]>"  targets:<player>
+  - narrate "<element[cancel placing this structure].on_click[<entry[cancel_schematic_clickable].command>]>"
+  # - inject view_from_above
+  # - wait 5s
+  - teleport <player> <player.location.chunk.surface_blocks.random.above>
+  
+  # - schematic unload name:<[structure].get[schematic_name]>
+      # - narrate  "<element[<&hover[Click to accept invitation.]><&8><&lb><&color[#00cb43]><&sp><&sp> <&B>Accept<&8><&sp><&sp><&rb><&end_hover>].on_click[<entry[add_stronghold_member_clickable].command>]>" targets:<[member]>
+cancel_schematic:
+  type: task
+  definitions: chunk
+  script:
+  - run revert_chunk def:<player.location.chunk>
+  
+
+rotate_schematic:
+  type: task
+  definitions: structure|origin
+  script:
+  - clickable cancel:<entry[place_structure_clickable].id>
+  - narrate "Rotating structure <[structure]> 90°"
+  - inject revert_chunk def:<player.location.chunk>
+  - schematic name:<[structure]> rotate angle:90
+
+  - wait 5t
+  - run place_temp_structure def:<[structure]>|<[origin]>
+
+place_structure:
+  type: task
+  definitions: structure|origin
+  script:
+  - clickable cancel:<entry[rotate_schematic_clickable].id>
+  - clickable cancel:<entry[place_structure_clickable].id>
+  - clickable cancel:<entry[cancel_schematic_clickable].id>
+  - define structure_name <script[structures_data].data_key[structure.<[structure]>.display_name]>
+  # - define schematic_name <[structure].get[schematic_name]>
+  - narrate "Placing <[structure_name]> structure at <proc[get_chunk_center_ground]>."  targets:<player>
+  - run save_chunk_schematic
+  # - define chunk_center <player.location.chunk.cuboid.center.highest.up[1]>
+  
+  - if <schematic[<[structure_name]>].exists.not>:
+    - ~schematic load name:<[structure]>
+  - wait 1t
+  # - choose <player.location.direction>:
+  #   - case south:
+  #     - schematic rotate name:<[structure]> angle:90
+  #   - case west:
+  #     - schematic rotate name:<[structure]> angle:180
+  #   - case east:
+  #     - schematic rotate name:<[structure]> angle:270
+  # - wait 1t
+  - schematic paste name:<[structure]> <[origin]>
+  - teleport <player> <player.location.chunk.surface_blocks.random.above>
+  - define schematic_cuboid <schematic[<[structure]>].cuboid[<proc[get_chunk_center_ground]>]>
+  - note <[schematic_cuboid]> as:<player>_structure_<[structure_name]>_<player.location.chunk.x>_<player.location.chunk.z>
+  - flag <cuboid[<player>_structure_<[structure_name]>_<player.location.chunk.x>_<player.location.chunk.z>]> structure:<[structure]>
+  - schematic create name:temp_<[structure]>_at_<player.location.chunk>_<util.current_time_millis> area:<[schematic_cuboid]> <proc[get_chunk_center_ground]>
+  - ~schematic save name:temp_<[structure]>_at_<player.location.chunk>_<util.current_time_millis>
+  - define founder <player>
+  - if <player.has_flag[stronghold.chunks]>:
+    - define founder <player>
+  - else if <player.has_flag[member_of_stronghold.role]> && <player.flag[member_of_stronghold.role]> == mayor:
+    - define founder <player.flag[member_of_stronghold.owner]>
+          
+  - flag <[founder]> stronghold.structures.<[structure_name]>.chunk:->:<player.location.chunk>
+  - flag <[founder]> stronghold.structures.<[structure_name]>.time_created:->:<util.time_now>
+  - wait 1t
+  - schematic unload name:<[structure]>
+
+  # - else:
+  #   - narrate "error in placing structure."
+    
+remove_building:
+  type: task
+  script:
+  - run revert_chunk
+  - define structure <player.location.areas.filter[flag[strcuture]]>
+  - note remove as:<player>_structure_<[structure]>_<player.location.chunk.x>_<player.location.chunk.z>
+  - flag <[founder]> stronghold.structures.<[structure]>.chunk:<-:<player.location.chunk>
+  - flag <[founder]> stronghold.structures.<[structure]>.time_created:<-:<util.time_now>
+
+structure_page_gui:
+  type: task
+  definitions: structure
+  script:
+  - define structure_data <script[structures_data].data_key[structure.<[structure]>]>
+  - define book_content <[structure]>
+  - adjust <player> show_book:build_book[book_pages=<[book_content].separated_by[<&nl>]>]
+
+
+schem_test_task:
+  type: task
+  script:
+  # - foreach <schematic[stall01].blocks> as:block:
+  #   - define y_max <schematic[stall01].height>
+  #   - define z_max <schematic[stall01].length>
+  #   - define x_max <schematic[stall01].width>
+  #   - narrate <[block].block[<[loop_index]>,<[loop_index]>,<[loop_index]>]>
+
+  - repeat <schematic[stall01].width>:
+    - define x <[value]>
+    # - narrate "<[value]>: <schematic[stall01].block[<[value]>,1,1]>"
+    - repeat <schematic[stall01].height>:
+      - define z <[value]>
+      - repeat <schematic[stall01].length>:
+        - define y <[value]>
+        - narrate <schematic[stall01].block[<[x].sub[1]>,<[y].sub[1]>,<[z].sub[1]>]>
+      
+    
+schem_types:
+  name: all-materials
+  type: command
+  script:
+  - foreach <script[structures_data].data_key[structures]> as:structure:
+    
+    - repeat <schematic[<[key]>].width>:
+      - define x <[value]>
+      # - narrate "<[value]>: <schematic[stall01].block[<[value]>,1,1]>"
+      - repeat <schematic[<[key]>].height>:
+        - define z <[value]>
+        - repeat <schematic[<[key]>].length>:
+          - define y <[value]>
+          
+          - define block <schematic[<[key]>].block[<[x].sub[1]>,<[y].sub[1]>,<[z].sub[1]>].after[m@].before[[]>
+          - define <[key]>_temp_list:->:<[block]>
+
+          # - define display_name <&sq><[type].replace_text[_].with[<&sp>].after[m@].before[[]><&sq>
+        
+         
+    - define <[key]>_deduplicated_temp_list <[<[key]>_temp_list].deduplicate>
+    - foreach <[<[key]>_deduplicated_temp_list]> as:block:
+      - if <[block].contains[air].not>:
+        - define count <[<[key]>_temp_list].count[<[block]>]>
+        - yaml id:stronghold_builds set build.<[block]>:<[count]>
+        - narrate "<[block]>: <[count]>"
+    - narrate ==========
+        # - stop
+
+find_stronghold_chests_task:
+  type: task
+  script:
+  - foreach <server.list_notables[cuboids].filter[starts_with[cu@stronghold_<player.name>]]> as:note:
+    - foreach <[note].blocks[chest]> as:chest:
+      - if <[chest].inventory.quantity[oak_log]> > 0:
+        - narrate <[chest].inventory.quantity[oak_log]> 
+  # - if <player.has_flag[stronghold]>:
+  #   - define chest_count 0
+  #   - foreach <player.flag[stronghold.chunks].as_cuboid> as:cuboid:
+  #     - narrate <[cuboid]>
+  #     - define chest_count:+:<[cuboid].find.blocks[chest]>
+    
+  #   - define chests "chests: <[chest_count]>"
+  #   - narrate <[chests]>
+
+structures_data:
+  type: data
+  structure:
+    mine_01:
+      display_name: Mine
+      description:
+        - "Allows you to mine for ore"
+        - "Recommended to have a place to store ore."
+      limit: -1
+      cost: 500
+      schematic_name: mine_05
+      
+    # well:
+    #   display_name: Well
+    #   cost: 2050
+    #   score: 100
+    #   limit: 1
+    #   required_items:
+    #     coal: 32
+    #     green_dye: 16
+    # stall01:
+    #   display_name: "Vendor Stall"
+    #   cost: 110
+    #   score: 100
+    #   limit: 10
+    #   required_items:
+    #     - wood/44
+    #     - wool/18
+    #     - stone/6
+    #   required_power_per_structure: 1
+
+
+check_warehouse_chests_task:
+  type: task
+  script:
+  - foreach <server.list_notables[locations].filter[contains[stronghold_warehouse_<player.name>]]> as:note:
+    - narrate <inventory[<[note]>]>
+    # - if <[note].inventory.quantity[oak_log]> > 0:
+      # - narrate <[note].inventory.quantity[oak_log]> 
+        
+
+structure_details_task:
+  type: task
+  definitions: passed_structure
+  script:
+  # - narrate <[passed_structure]>
+  - define structures
+  -
+  - define first_page <script[structures_data].data_key[structures.well]>
+  - foreach <script[structures_data].data_key[structures]> as:this_structure:
+    # - define first_page <script[structures_data].data_key[structures.<[key]>]>
+    - define structure_name "Name: <[key]>"
+    - define structure_cost "Cost: <[this_structure].get[cost]>"
+    - define structure_materials "Required Materials: <&nl>"
+    - define structure_width "Width: <schematic[<[key]>].width>"
+    - foreach <[this_structure].get[required_items]> as:required_item:
+      - define  structure_materials "<[structure_materials]><&sp><&sp><[required_item]><&nl>"
+    - define final_structure "<[structure_name]><&nl><[structure_cost]><&nl><[structure_materials]><&nl><[structure_width]>"
+    - define structures:->:<[final_structure]>
+    - if <[key]> == <[passed_structure]>:
+      - define first_page <[final_structure]>
+      - narrate <[loop_index]>
+  # - define structures 
+  # - narrate <[first_page]>
+  - define structures <[first_page]>|<[structures]>
+  - adjust <player> show_book:i@structure_details_book[book_pages=<[structures]>]
+
+get_chunk_center_ground:
+  type: procedure
+  definitions: location
+  script:
+  # note this can only be used with player location
+  - if <[location].exists.not>:
+    - define location <player.location>
+  - define chunk_center_absolute <proc[get_chunk_center_absolute].context[<[location].chunk>]>
+  - define chunk_center_ground <[chunk_center_absolute].down[<[location].y.sub[<[chunk_center_absolute].y>].abs>]>
+  - determine <[chunk_center_ground]>
+
+get_chunk_center_absolute:
+  type: procedure
+  definitions: chunk
+  script:
+  - if <[chunk].exists.not>:
+    - define chunk <player.location.chunk>
+  - define chunk_center_absolute <[chunk].cuboid.center>
+  - determine <[chunk_center_absolute]>
+
+revert_chunk:
+  type: task
+  definitions: chunk
+  script:
+  - if <[chunk].exists.not>:
+    - define chunk <player.location.chunk>
+  # - if <schematic[temp_<[chunk]>].exists>:
+  - ~schematic load name:temp_<[chunk]>
+  - wait 1t
+  - schematic paste name:temp_<[chunk]> <proc[get_chunk_center_absolute].context[<[chunk]>]>
+  - wait 1t
+  - schematic unload name:temp_<[chunk]>
+
+save_chunk_schematic:
+  type: task
+  script:
+  - schematic create name:temp_<player.location.chunk> area:<player.location.chunk.cuboid> <proc[get_chunk_center_absolute]>
+  - wait 1t
+  - ~schematic save name:temp_<player.location.chunk>
+  - wait 1t
+
+show_structures:
+  type: task
+  script:
+  - define book_content <list>
+  - foreach <player.flag[stronghold.structures]> as:structure:
+    - narrate <[structure]>
+  
+  # - adjust <player> show_book:structures_book[book_pages=<[book_content].separated_by[<&nl>]>]
+
+
+
+structure_details_book:
+    type: book
+    title: Stronghold Structure
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - <&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]>
+
+build_book:
+    type: book
+    title: Stronghold Structure
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - <&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]>
+
+
+
+
+structures_book:
+    type: book
+    title: Stronghold Structures
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - <&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]>
+
+
+
+

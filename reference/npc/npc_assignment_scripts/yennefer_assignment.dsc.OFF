@@ -1,0 +1,75 @@
+yennefer_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:2
+    interact scripts:
+    - yennefer_interact
+
+    default constants:
+        appearance1: "<npc.name> was a hunter of the days before the current Age, but has resolved himself to sell weapons in his favorite town."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+        has_familiarity: true
+       
+
+yennefer_interact:
+    type: interact
+    steps:
+        1:
+            # proximity trigger:
+            #     entry:
+            #         script:
+                    # - execute as_server "npc skin --url https://minesk.in/334d32536ea7497c874a55793cf4ac61 --id <npc.id>"
+                       
+
+                # exit:
+                #     script:
+                #     - run reset_yennefer_gaze
+            click trigger:
+                script:
+                - inject description_inject_task
+                - if <player.flag[npc.<npc>.familiarity.level]||0> < 1:
+                    - narrate "By the Gods, you are here!" targets<player>
+                    - wait 3s
+                    - narrate "There are many Gods, and many temples and shrines still across Deluvia." targets<player>
+                    - wait 3s
+                    - narrate "Do you know Rothigport even has it's own chapel to the Goddess Anona?" targets<player>
+                    - wait 3s
+                    - narrate "It is high above the other shacks in the Northwest quarter." targets<player>
+                    - wait 3s
+                    - narrate "Say hi to Tenbrose in the cellar from me if you go there.." targets<player>
+                - else:
+                    - if <player.has_flag[yennefer_spirit].not>:
+                        - flag <player> yennefer_spirit
+                        - narrate "If you're going to to into the tombs on the island, it is best to study the spirit world." targets:<player>
+                        - if <player.flag[skill.skills.spirit_speak]> < 11:
+                            - flag <player> skill.skills.spirit_speak:++
+                            - narrate format:game_message "Your Spirit Speak skill has raised by 1." targets:<player>
+                        - else:
+                            - run raise_natural_skill_task def:<player>|spirit_speak
+                    - else if <player.has_flag[yennefer_spirit]> && <player.has_flag[yennefer_mace].not>:
+                        - narrate "The best place to get more weapons and armor is on the opposite side of this harbor." targets:<player>
+                        - wait 2s
+                        - narrate "But for now, take this." targets:<player>
+                        - give mace_of_the_noob
+                        - narrate format:game_message "Yennefer has given you a mace that can help you." targets:<player>
+                        - flag <player> yennefer_mace
+
+                    - else:
+                        - narrate "All Hail Anona for her goodness!"
+        # 2:
+        #     chat trigger:
+        #         1:
+        #             trigger: <&7>/1/. I would like to talk to you yennefer.
+        #             script:
+        #             - inject yennefer_task_01
+        #             - zap 1
+      
+       
+

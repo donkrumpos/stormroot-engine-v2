@@ -1,0 +1,108 @@
+spellbook:
+    type: item
+    debug: false
+    material: book
+    display name: Spell Book
+    lore:
+    - Your tome of learned spells
+    flags:
+        item_type: spellbook
+        craftable: true
+        slot_type: shield
+        # bound: true
+        stat:
+            bonus:
+                intelligence_increase: 0
+                spell_damage_increase: 0
+                faster_casting: 0
+                faster_cast_recovery: 0
+                lower_mana_cost: 0
+                magery_skill_bonus: 0
+                lower_reagent_cost: 0
+        luck: 10
+        two_handed: false
+    
+        spell_damage_increase: 1
+        material_qty: 2
+    
+    mechanisms:
+        custom_model_data: 2114302
+    recipes:
+        1:
+            type: shaped
+            input:
+            - parchment|parchment|parchment
+            - parchment|leather|parchment
+            - parchment|parchment|parchment 
+    
+
+spellbook_world:
+    type: world
+    events:
+        # on player right clicks entity with:bandage:
+        on player right clicks air with:spellbook:
+            - narrate "this will open the spell inventory"
+        on player holds item:
+        - if <context.item.script.exists>:
+        # - if <context.item.script>:
+            - if <player.inventory.slot[<context.new_slot>].flag[identified_by]> != <player>:
+                - define original_lore <player.inventory.slot[<context.new_slot>].script.data_key[lore]>
+                - inventory adjust slot:<context.new_slot> "lore:<[original_lore]>"
+        
+        # - narrate <context.new_slot>
+        on player picks up item_flagged:identified_by:
+        - wait 1t
+        - if <context.item.flag[identified_by].contains[<player>].not>:
+            - define original_lore <context.item.script.data_key[lore]>
+            - inventory adjust slot:1 "lore:<[original_lore]>"
+     
+    
+        on player drops spellbook:
+        - if <player.has_flag[holding_spellbook]>:
+            - foreach <context.item.flag[stat.bonus]> as:property:
+                - flag <player> stat.bonus.<[key]>.level:-:<[property]>
+        on player swaps items:
+        - if <context.offhand.has_flag[bound]>:
+
+            - stop
+        - if <context.offhand.script.name> == "spellbook":
+            - if <player.has_flag[holding_spellbook].not>:
+                - flag <player> holding_spellbook
+            - foreach <context.offhand.flag[stat.bonus]> as:property:
+                - flag <player> stat.bonus.<[key]>.level:+:<[property]>
+        - else if <context.main.script.name> == "spellbook":
+            - if <player.has_flag[holding_spellbook]>:
+                - flag <player> holding_spellbook:!
+            - foreach <context.main.flag[stat.bonus]> as:property:
+                - flag <player> stat.bonus.<[key]>.level:-:<[property]>
+
+
+# tome_of_ancient_knowledge:
+#     type: item
+#     debug: false
+#     material: book
+#     display name: "Tome of Ancient Knowledge"
+#     lore:
+#     - Your tome of learned spells
+#     flags:
+#         item_type: spellbook
+#         craftable: true
+#         slot_type: shield
+#         # bound: true
+#         stat:
+#             bonus:
+#                 intelligence_increase: 5
+#                 spell_damage_increase: .1
+#                 faster_casting: 1
+#                 faster_cast_recovery: 1
+#                 lower_mana_cost: .15
+#                 magery_skill_bonus: .15
+#                 lower_reagent_cost: 1
+#         luck: 10
+#         two_handed: false
+    
+#         spell_damage_increase: 1
+#         material_qty: 2
+    
+#     mechanisms:
+#         custom_model_data: 2114302

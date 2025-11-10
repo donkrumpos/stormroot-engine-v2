@@ -1,0 +1,48 @@
+detect_hidden_command:
+    type: command
+    name: detecthidden
+    aliases:
+        - dh
+    script:
+    - if <player.has_flag[skill.detecthidden].not>:
+        - narrate "You don't have the Detect Hidden skill."
+        - stop
+    - if <player.flag[skill.detecthidden.level]||0> < 1:
+        - narrate "You need an Detect Hidden level of at least one to use it."
+        - stop
+    - if <proc[natural_skill_check_proc].context[<player>|perception|<player.flag[current_dexterity]>]> == "critical_fail":
+        - if <[targets].size> > 1:
+            - foreach <[targets]> as:target:
+                - flag <[target]> skill.natural.perception:+:1
+                - flag <[target]> skill.hide.level:+:1
+           
+                - narrate "<red>Critical Fail!"
+    - else if <proc[natural_skill_check_proc].context[<player>|perception|<player.flag[current_dexterity]>]>:
+        - define targets <player.location.find.players.within[12].filter[flag[hidden].is[==].to[true]]>
+        - if <player.flag[skill.natural.perception_level].round_up> < 11:
+            - narrate "You are unable to find hidden beings here."
+        - else if <player.flag[skill.natural.perception_level].round_up> > 11 && <player.flag[skill.natural.perception_level].round_up> < 66:
+            - if <[targets].size> == 1:
+                - narrate "One being is hiding nearby."
+            - if <[targets].size> == 0:
+                - narrate "No beings are hiding nearby."
+            - if <[targets].size> > 1:
+                - narrate "<[targets].size> beings are hiding nearby."
+        - else if <player.flag[skill.natural.perception_level].round_up> > 66 &&  <player.flag[skill.natural.perception_level].round_up> < 101:
+            - if <[targets].size> >= 1:
+                - foreach <[targets]> as:target:
+                    - narrate "<[target].name> is hiding nearby."
+        - else if <player.flag[skill.natural.perception_level].round_up> > 101:
+            - foreach <[targets]> as:target:
+                - narrate "<[target].name> is hiding <[target].location.points_between[<player.location>]> blocks <player.location.direction[<[target].location>]>."
+    - else if <proc[natural_skill_check_proc].context[<player>|perception|<player.flag[current_dexterity]>]> == "critical_success":
+        - if <[targets].size> > 1:
+            - foreach <[targets]> as:target:
+                - flag <[target]> hidden:!
+                - adjust <[target]> show_to_players
+                - narrate "Critical Success! You have flushed out <[target].name>."
+                - flag <player> skill.natural.perception:+:1
+    - else:
+        - narrate "You cannot detect anything."
+    - if <util.random.int[1].to[3]> == 1:
+        - run raise_natural_skill_task def:<player>|perception

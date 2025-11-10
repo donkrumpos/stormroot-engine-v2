@@ -1,0 +1,9 @@
+freeze_target_task:
+    type: task
+    definitions: player|duration
+    script:
+    - define origin_loc <[player].location>
+    - define duration <[duration].mul[20]>
+    - repeat <[duration]>:
+        - wait 1t
+        - teleport <[player]> <[origin_loc].as_location>

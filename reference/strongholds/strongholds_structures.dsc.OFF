@@ -1,0 +1,673 @@
+build_gui:
+  type: task
+  definitions: founder
+  script:
+  - define book_content <list>
+  - foreach <script[structures_data].data_key[structure]> as:structure:
+    - define display_name <[structure].get[display_name]>
+    - define schematic_name <[structure].get[schematic_name]>
+    - define hover_text "Click to know more about <[display_name]>"
+    # - clickable structure_page_gui def:<[key]> save:structure_page_gui_clickable until:3m usages:1 for:<player>
+    - clickable place_temp_structure def:<[schematic_name]>|<player.cursor_on_solid> save:place_temp_structure_clickable until:3m usages:1 for:<player>
+    - define structure_item "<element[<&hover[hover stuff]><[display_name]><&end_hover>].on_click[<entry[place_temp_structure_clickable].command>]>"
+    # - narrate <[structure_item]>
+    - define book_content <[book_content].insert[<[structure_item]>].at[<[book_content].size>]>
+
+  - adjust <player> show_book:build_book[book_pages=<[book_content].separated_by[<&nl>]>]
+
+place_temp_structure:
+  type: task
+  definitions: structure|origin
+  script:
+  - define founder <player>
+  - if <player.has_flag[member_of_stronghold]> && <player.flag[member_of_stronghold.role]> == mayor:
+    - define founder <player.flag[member_of_stronghold.owner]>
+  - if <[founder].flag[stronghold.chunks].contains[<player.location.chunk>].not>:
+    - narrate "You need to be in a plot you own."
+    - stop
+  - define origin <player.cursor_on_solid>
+ 
+  - if <schematic[<[structure]>].exists.not>:
+    - ~schematic load name:<[structure]>
+  - if <schematic[<[structure]>].cuboid[<[origin]>].is_within[<player.location.chunk.cuboid>].not>:
+    - narrate "The structure will not fit in this plot. Try another spot."
+    - stop
+  - if <[founder].flag[stronghold.locations.home].chunk.cuboid.intersects[<schematic[<[structure]>].cuboid[<[origin]>]>]>:
+    - narrate "Your home plot cannot have this structure. Try another plot."
+    - stop
+  - foreach <schematic[<[structure]>].cuboid[<[origin]>].blocks> as:block:
+    - if <[block].areas.filter[has_flag[structure]]>:
+      - narrate "This structure will overlap another structure. Please find a new place."
+      - stop
+  - if <script[structures_data].data_key[structure.<[structure]>].contains[stackable].not> || <script[structures_data].data_key[structure.<[structure]>.stackable]> != true:
+    - foreach <schematic[<[structure]>].cuboid[<[origin]>].expand[0,200,0].blocks> as:block:
+      - if <[block].areas.filter[has_flag[structure]]>:
+        - narrate "This structure cannot stack. Find another location"
+        - stop
+  - if <player.has_flag[placing_stronghold_structure]>:
+    - narrate "You're already in the process of placing a structure. Please wait."
+    - stop
+  - flag <player> placing_stronghold_structure expire:12s
+  - narrate "This is where the structure will be placed."
+ 
+  # - choose <player.location.direction>:
+  #   - case south:
+  #     - schematic rotate name:<[structure]> angle:90
+  #   - case west:
+  #     - schematic rotate name:<[structure]> angle:180
+  #   - case east:
+  #     - schematic rotate name:<[structure]> angle:270
+  # - wait 1t
+  - schematic paste name:<[structure]> fake_to:<player> fake_duration:12s <[origin]>
+  
+  - clickable place_structure def:<[structure]>|<[origin]> save:place_structure_clickable until:24s usages:1 for:<player>
+  # - clickable rotate_schematic def:<[structure]>|<[origin]> save:rotate_schematic_clickable until:24s usages:1 for:<player>
+  # - clickable cancel_schematic def:<player.location.chunk> save:cancel_schematic_clickable until:24s usages:1 for:<player>
+  - narrate "<element[<&color[#00cb43]>Confirm placement].on_click[<entry[place_structure_clickable].command>]><reset>" targets:<player>
+  # - narrate "<element[<&color[#0099FF]>or rotate clockwise 90°].on_click[<entry[rotate_schematic_clickable].command>]>"  targets:<player>
+  # - narrate "<element[cancel placing this structure].on_click[<entry[cancel_schematic_clickable].command>]>"
+ 
+cancel_schematic:
+  type: task
+  definitions: chunk
+  script:
+  - run revert_chunk def:<player.location.chunk>
+
+place_structure:
+  type: task
+  definitions: structure|origin
+  script:
+  - clickable cancel:<entry[rotate_schematic_clickable].id>
+  - clickable cancel:<entry[place_structure_clickable].id>
+  - clickable cancel:<entry[cancel_schematic_clickable].id>
+  - define structure_name <script[structures_data].data_key[structure.<[structure]>.display_name]>
+  - define schematic_name <script[structures_data].data_key[structure.<[structure]>.schematic_name]>
+  - narrate "Placing <[structure_name]> structure at <proc[get_chunk_center_ground]>."  targets:<player>
+  - run save_chunk_schematic
+  
+  - if <schematic[<[structure_name]>].exists.not>:
+    - ~schematic load name:<[structure]>
+  - wait 1t
+
+  - schematic paste name:<[structure]> <[origin]>
+  - define schematic_cuboid <schematic[<[structure]>].cuboid[<[origin]>]>
+  - define note_name <[schematic_name]>_<[origin].x>_<[origin].y>_<[origin].z>
+  - narrate <[note_name]>
+  - note <[schematic_cuboid]> as:<[note_name]>
+  - wait 1t
+  
+  - wait 1t
+  - flag <cuboid[<[note_name]>]> structure
+  - flag <cuboid[<[note_name]>]> chunk:<player.location.chunk>
+  - flag <cuboid[<[note_name]>]> time_created:<util.time_now>
+  - flag <cuboid[<[note_name]>]> schematic:<[schematic_name]>
+  - flag <cuboid[<[note_name]>]> origin:<[origin]>
+  - flag <cuboid[<[note_name]>]> name:<[structure_name]>
+  - flag <cuboid[<[note_name]>]> schematic:schematic_cuboid
+  - flag <cuboid[<[note_name]>]> no_build
+  - flag <cuboid[<[note_name]>]> no_build_structure
+  - flag <player> stronghold.structures:->:<[note_name]>
+  
+  - wait 1t
+  # - schematic unload name:<[structure]>
+  - if <script[structures_data].data_key[structure.<[structure]>].contains[npc]>:
+    - define npc <script[structures_data].data_key[structure.<[structure]>.npc]>
+    - run create_town_npc def:<[npc]>|<[note_name]>|<[schematic_name]>
+  - adjust server save
+    
+create_town_npc:
+  type: task
+  definitions: npc_type|notable|schematic
+  script:
+  # - narrate <[npc_type]>
+  - define npc_save_name <[npc_type]>_<[notable]>_<player.flag[stronghold.structures.<[notable]>.workers].size.add[1]||1>
+  # - flag <player> stronghold.structures.<[notable]>.workers:->:<[npc_save_name]>
+  - create player <[npc_type]> save:<[npc_save_name]> <schematic[<[schematic]>].origin>
+  - flag <entry[<[npc_save_name]>].created_npc> worker.type:<[npc_type]>
+  - flag <entry[<[npc_save_name]>].created_npc> worker.structure:<[notable]>
+  - flag <entry[<[npc_save_name]>].created_npc> worker.schematic:<[schematic]>
+  - flag <entry[<[npc_save_name]>].created_npc> worker.origin:<schematic[<[schematic]>].origin>
+  - flag <entry[<[npc_save_name]>].created_npc> worker.owner:<player>
+  - if <script[hired_npcs].data_key[npc.<[npc_type]>].contains[skill]>:
+    - flag <entry[<[npc_save_name]>].created_npc> skill.skills.<script[hired_npcs].data_key[npc.<[npc_type]>.skill]>.level:1
+  - flag <cuboid[<[notable]>]> workers:->:<entry[<[npc_save_name]>].created_npc>
+  - if <script[hired_npcs].data_key[npc.<[npc_type]>].contains[held_item]>:
+    - equip <entry[<[npc_save_name]>].created_npc> hand:<script[hired_npcs].data_key[npc.<[npc_type]>.held_item]>
+  # - teleport <player> <cuboid[<[notable]>].center>
+
+test_st:
+  type: task
+  script:
+  - foreach <player.flag[stronghold.structures]> as:structure:
+    - narrate <[structure]>
+
+remove_player_flags:
+  type: task
+  script:
+  - foreach <player.target.flag_map> as:flag:
+    - flag <player.target> <[flag]>:!
+
+remove_structure:
+  type: task
+  definitions: founder|structure|origin
+  script:
+  # - narrate <red><[structure]>
+  - define structure_name <script[structures_data].data_key[structure.<[structure]>.display_name]>
+ 
+  - if <cuboid[<[structure]>].has_flag[workers]>:
+    - foreach <cuboid[<[structure]>].flag[workers]> as:worker:
+      - if <[worker]>:
+        - remove <[worker]>
+  - flag <[founder]> stronghold.structures:<-:<[structure]>
+  - if <[founder].flag[stronghold.structures].size> < 1:
+    - flag <[founder]> stronghold.structures:!
+  
+  - foreach <cuboid[<[structure]>].blocks> as:block:
+    - playeffect effect:falling_dust at:<[block]> special_data:sand visibility:10 quantity:10
+    - if <[block].material.name> != air:
+      - if <util.random.int[0].to[1]> == 1:
+        - modifyblock <[block]> air
+      - else:
+        - modifyblock <[block]> gravel|air
+      # - if <util.random.int[0].to[1]> == 1:
+      #   - wait 1t
+  - note remove as:<cuboid[<[structure]>].note_name>
+  
+
+show_structures:
+  type: task
+  definitions: founder
+  script:
+  - define book_content <list>
+  - define remove_icon "<red><&chr[2715]><&sp>"
+  - foreach <[founder].flag[stronghold.structures]> as:structure:
+    - define notable_name <[structure]>
+    - define structure_name <cuboid[<[structure]>].flag[name]>
+    - narrate <[notable_name]>
+    # - define structure_name <cuboid[<[structure]>].flag[structure].keys.first>
+    - define schematic_name <cuboid[<[key]>].flag[schematic]>
+    - define origin <cuboid[<[key]>].flag[origin]>
+    # - foreach <[structure]> as:new_structure:
+    #   - narrate <[new_structure]>
+    - clickable remove_structure def:<[founder]>|<[notable_name]>|<[origin]> save:remove_structure_clickable until:3m usages:1 for:<player>
+    - clickable view_structure def:<[founder]>|<[schematic_name]> save:view_structure_clickable until:3m usages:1 for:<player>
+    - define structure_to_remove "<element[<&hover[<red>Raze structure<reset>]><[remove_icon]><&end_hover>].on_click[<entry[remove_structure_clickable].command>]>"
+    - define view_structure "<element[<&hover[View structure details<reset>]><[structure_name]><&end_hover>].on_click[<entry[view_structure_clickable].command>]>"
+    - define book_content <[book_content].insert[<[structure_to_remove]><[view_structure]>].at[<[book_content].size>]>
+  
+  
+  - adjust <player> show_book:structures_book[book_pages=<[book_content].separated_by[<&nl>]>]
+
+structure_page_gui:
+  type: task
+  definitions: structure
+  script:
+  - define structure_data <script[structures_data].data_key[structure.<[structure]>]>
+  - define book_content <[structure]>
+  - adjust <player> show_book:build_book[book_pages=<[book_content].separated_by[<&nl>]>]
+
+structures_data:
+  type: data
+  structure:
+    mine_06:
+      display_name: Mine
+      description:
+        - "Allows you to mine for ore"
+        - "Recommended to have a place to store ore."
+      limit: -1
+      cost: 500
+      schematic_name: mine_06
+      npc: miner
+      stackable: false
+      desirability: -6
+    warehouse_01:
+      display_name: Warehouse
+      description:
+        - "Allows you to store goods"
+      limit: -1
+      cost: 500
+      schematic_name: warehouse_01
+      stackable: false
+      special_message:
+        - "Place a chest to start storing materials from your workers."
+      desirability: 0
+    weapons_shop_01:
+      display_name: "Weapons Workshop"
+      description: 
+        - "Crafts Weapons"
+      limit: -1
+      cost: 500
+      schematic_name: weapons_shop_01
+      stackable: false
+      special_message:
+        - "Collects iron from your mine or warehouse and delivers to your armory."
+      npc: smith
+      desirablity: -4
+    lumbermill_01:
+      display_name: "Lumbermill"
+      description: 
+        - "Increases production of wood"
+      limit: -1
+      cost: 500
+      schematic_name: lumbermill_01
+      stackable: false
+      npc: lumberjack
+      desirablity: -6
+      
+    # well:
+    #   display_name: Well
+    #   cost: 2050
+    #   score: 100
+    #   limit: 1
+    #   required_items:
+    #     coal: 32
+    #     green_dye: 16
+    # stall01:
+    #   display_name: "Vendor Stall"
+    #   cost: 110
+    #   score: 100
+    #   limit: 10
+    #   required_items:
+    #     - wood/44
+    #     - wool/18
+    #     - stone/6
+    #   required_power_per_structure: 1
+
+compare_schematic:
+  type: task
+  definitions: schematic
+  script:
+  - narrate <[schematic]>
+
+remove_drops:
+  type: task
+  definitions: structure
+  script:
+  - foreach <cuboid[<[structure]>].expand[5,5,5].entities> as:dropped_entity:
+    - if <[dropped_entity].is_living.not> && <[dropped_item].item.has_flag[time]>:
+      - if <util.time_now.duration_since[<[dropped_entity].item.flag[time]>].in_seconds.round> > <util.random.int[91].to[133]>:
+        - remove <[dropped_entity]> 
+        # - narrate "removing <[dropped_entity]>" targets:<server.match_player[sirbandersnatch]>
+  
+  # targets:<server.match_player[sirbandersnatch]>
+
+organize_warehouse_chest:
+  type: task
+  definitions: chest
+  script:
+  - announce <green><[chest].list_contents>
+
+stronghold_worker:
+  type: task
+  definitions: npc|item
+  script:
+ 
+  - define chest_items_list <list>
+  - define chest_list <list>
+  # - wait <util.random.int[1].to[11]>s
+  - if <[npc].is_spawned.not>:
+    - spawn <[npc]> <cuboid[<[npc].flag[worker.structure]>].spawnable_blocks.random.up[1]>
+    # - flag <[npc]> dropping_ore
+  - if <[npc].has_flag[worker.owner].not>:
+    - stop
+  - define owner <[npc].flag[worker.owner]>
+  # - narrate "<[owner].flag[stronghold.structures].parse[as_cuboid]>" targets:<server.match_player[sirbandersnatch]>
+  - define type <[npc].flag[worker.type]>
+  # - define skill <[npc].flag[skill.skills.mining.level]||1>
+  - define warehouse <[owner].flag[stronghold.structures].parse[as_cuboid].filter[flag[name].contains[warehouse]]>
+  # - narrate "warehouse: <[warehouse]>" targets:<server.match_player[sirbandersnatch]>
+  - foreach <[warehouse]> as:this_warehouse:
+    - run remove_drops def:<[this_warehouse]>
+    - foreach <[this_warehouse].blocks.filter[material.name.is[==].to[chest]].filter[has_inventory]> as:chest:
+      # - announce "<red>   --- this chest before: Light: <[chest].light.sky> full: <[chest].inventory.is_full>"
+      - if <[chest].light.sky> > 6:
+        # to verify the chest is inside
+        - foreach next
+      - if <[chest].inventory.is_full>:
+        - foreach next
+      # - announce "<blue>   --- this chest: <[chest].inventory>"
+      - define chest_items_list <[chest_items_list].insert[<[chest].inventory.list_contents.filter[quantity.is_more_than[1]].filter[quantity.is_less_than[64]]>].at[<[chest_items_list].size>]>
+      
+      - define chest_list <[chest_list].insert[<[chest].inventory>].at[<[chest_list].size>]>
+  - define chest_list_material <[chest_items_list].parse[material.name]>
+  - define skill <element>
+  - define skill_level 1
+  - define worker_type <list>
+  - if <script[hired_npcs].data_key[npc.<[npc].flag[worker.type]>].contains[skill]>:
+    - define skill <script[hired_npcs].data_key[npc.<[npc].flag[worker.type]>.skill]> 
+    # - narrate "<script[hired_npcs].data_key[npc.<[npc]>]>"
+  - if <script[hired_npcs].data_key[npc.<[npc].flag[worker.type]>].contains[type]>:
+    - define worker_type <script[hired_npcs].data_key[npc.<[npc].flag[worker.type]>.type].random>
+  
+  - if <[npc].has_flag[skill.skills.<[skill]>.level].not>:
+    - flag <[npc]> skill.skills.<[skill]>.level:1
+  - if <[npc].has_flag[skill.skills.<[skill]>.level]>:
+    - define skill_level <[npc].flag[skill.skills.<[skill]>.level]>
+  # - narrate "<light_purple>worker type is <[worker_type]> and skill is <[skill]>" targets:<server.match_player[sirbandersnatch]>
+  # - narrate "<red>skill of <[skill]> <[skill_level]>" targets:<server.match_player[sirbandersnatch]>
+  # - narrate "<gold>this npc's data is <script[<[skill]>_data].data_key[material]> " targets:<server.match_player[sirbandersnatch]>
+  - define quantity <util.random.int[0].to[<[skill_level]>]>
+  - define random_material <script[<[skill]>_data].data_key[material].keys.random>
+  - define random_material_number <script[<[skill]>_data].data_key[material.<[random_material]>]>
+  # - narrate "random material is <[random_material]> and random material number is <[random_material_number]>" targets:<server.match_player[sirbandersnatch]>
+  - if <util.random.int[1].to[<[random_material_number]>]> == 1 && <[skill_level]> >= <[random_material_number]>:
+    
+    - define item <[random_material]>
+    - define maximum_quantity <util.random.int[8].to[<[skill_level].min[8]>]>
+    - define quantity <[quantity].sub[<[random_material_number]>].max[1].min[<[maximum_quantity]>]>
+    # - narrate "<red>worker type: <[worker_type]> <green>skill: <[skill]>" targets:<server.match_player[sirbandersnatch]>
+    - if <[worker_type]> == gatherer:
+      - if <[skill]> == lumberjacking:
+        # - narrate "<dark_aqua>this is lumberjack lumberjack making logs" targets:<server.match_player[sirbandersnatch]>
+        - define item <[item]>_log
+    - if <[worker_type]> == crafter:
+      - if <[skill]> == blacksmithing:
+        - if <item[<[item]>_ore].exists>:
+          - define item <[item]>_ore
+          # - announce <gold><[chest_list_material].contains[<[item]>_ore]>
+          - if <[chest_list_material].contains[<[item]>_ore]>:
+            - define index <[chest_list_material].find_all[<[item]>_ore]>
+            - narrate "<yellow><[item]>_ore found at index <[index]>" targets:<server.match_player[sirbandersnatch]>
+        # - narrate "<dark_aqua>find <[item]>_ore <[chest_list_material].find_all[<[item]>_ore]>" targets:<server.match_player[sirbandersnatch]>
+        - define item <[item]>_sword
+      - else if <[skill]> == lumberjacking:
+        - if <[chest_list_material].contains[<[item]>_log]>:
+          - define index <[chest_list_material].find_all[<[item]>_log]>
+          - foreach <[index]> as:index:
+            # - narrate "<red> old item <[chest_items_list].get[<[index]>]>" targets:<server.match_player[sirbandersnatch]>
+            - define material_quantity <[chest_items_list].get[<[index]>].quantity>
+            # - narrate "<blue>old quantity is <[material_quantity]>" targets:<server.match_player[sirbandersnatch]>
+            - if <[material_quantity]> >= 2:
+              - define new_item <[chest_items_list].get[<[index]>].with[quantity=<[material_quantity].sub[2]>]>
+              # - narrate "<yellow>new item to insert <[new_item]>" targets:<server.match_player[sirbandersnatch]>
+              - define <[chest_items_list]> <[chest_items_list].set[<[new_item]>].at[<[index]>]> quantity:<[material_quantity].sub[2]>
+              
+              # - narrate "<yellow>new quantity is <[chest_items_list].get[<[index]>]>"  targets:<server.match_player[sirbandersnatch]>
+              - define item <[item]>
+    # - narrate "<green>SUCCESS! <gold><[worker_type]> will produce <[quantity]> of <[item]> with skill <[skill]> of level <[skill_level]>" targets:<server.match_player[sirbandersnatch]>
+    # - narrate "<green> item is <[item]> with quantity <[quantity]>" targets:<server.match_player[sirbandersnatch]>
+    
+    # - narrate "<light_purple>running chest list <[chest_list]>" targets:<server.match_player[sirbandersnatch]>
+    - foreach <[chest_list]> as:chest_inventory:
+      - if <[chest_inventory].contains_item[bread]>:
+        - take item:bread from:<[chest_inventory]>
+        - if <[npc].flag[worker.no_food]> >= 1:
+          - flag <[npc]> worker.no_food:--
+        # - foreach next
+        - foreach stop
+        
+      - else:
+        - flag <[npc]> worker.no_food:++
+        - if <[npc].flag[worker.no_food]> > 0:
+          - narrate "<red>-Stopping production. No bread for <[npc].name>" targets:<server.match_player[sirbandersnatch
+          - stop
+        - else:
+          - foreach next
+        
+
+    - foreach <[chest_list]> as:chest_inventory:
+      - if <[chest_inventory].contains_item[<[item]>]>:
+        - define max_stack <item[<[item]>].max_stack>
+        - define current_quantity <[chest_inventory].slot[<[chest_inventory].find_item[<[item]>]>].quantity>
+        - if <[max_stack].sub[<[current_quantity]>].sub[<[quantity]>]> >= 0:
+          - define new_quantity <[quantity].add[<[current_quantity]>]>
+          # - narrate "<red>new quantity <[new_quantity]>" targets:<server.match_player[sirbandersnatch]>
+          - narrate "<green>chest contains item <item[<[item]>].with[quantity=<[new_quantity]>]>, will try combine" targets:<server.match_player[sirbandersnatch]>
+          - inventory set o:<item[<[item]>].with[quantity=<[new_quantity]>]> slot:<[chest_inventory].find_item[<[item]>]> d:<[chest_inventory]>
+          # - narrate "<yellow>has <[chest_inventory].slot[<[chest_inventory].find_item[<[item]>]>].quantity> <[item]> at slot <[chest_inventory].find_item[<[item]>]>  <green>Can fit <item[<[item]>].max_stack.sub[<[chest_inventory].slot[<[chest_inventory].find_item[<[item]>]>].quantity>]> more" targets:<server.match_player[sirbandersnatch]>
+          - stop
+        - else if <[max_stack].sub[<[current_quantity]>]> >= 0:
+          - define quantity_can_fit <[max_stack].sub[<[current_quantity]>]>
+          - define quantity <[quantity].sub[<[quantity_can_fit]>]>
+          - narrate "<blue>splitting amount in slot <[chest_inventory].find_item[<[item]>]>" targets:<server.match_player[sirbandersnatch]>
+          - inventory set o:<item[<[item]>].with[quantity=<[max_stack]>]> slot:<[chest_inventory].find_item[<[item]>]> d:<[chest_inventory]>
+        - else if <[quantity]> <= 0:
+          - stop
+        - else:
+          - foreach next
+    - if <[quantity]> > 0:
+      - narrate "moving on to empty chest" targets:<server.match_player[sirbandersnatch]>
+      - foreach <[chest_list]> as:chest:
+        - if <[chest].is_full>:
+          - foreach next
+        - else:
+          
+          - define air_slot <[chest].find_empty_slots.first>
+          # - narrate "air slot <[air_slot]>" targets:<server.match_player[sirbandersnatch]>
+          - inventory set o:<item[<[item]>].with[quantity=<[quantity]>]> slot:<[air_slot]> d:<[chest]>
+          - stop
+          - drop <item[<[item]>].with[quantity=<[quantity]>].with_flag[time:<util.time_now>]> <cuboid[<[npc].flag[worker.structure]>].spawnable_blocks.random>
+
+ 
+
+chest_organizer:
+  type: task
+  definitions: warehouse
+  script:
+  - define all_content <list>
+  - foreach <[warehouse].blocks> as:block:
+    - if <[block].material.name> != chest:
+      - foreach next
+    - if <[block].light.sky> > 6:
+      - foreach next
+    - define this_chest <[block].inventory>
+    - if <[this_chest].is_empty>:
+      - foreach next
+    - foreach <[this_chest].list_contents> as:item:
+      - if <[item].quantity> > 1:
+        - define all_content <[all_content].insert[<[item]>].at[<[all_content].size>]>
+      
+    # - define all_content <[all_content].include[<[this_chest].list_contents>]>
+  # - announce <light_purple><[all_content].separated_by[<&nl>]>
+  - define deduplicated_content <[all_content].deduplicate>
+  # - foreach <[all_content]> as:item:
+    
+    # - if <[item].quantity> > 1 && <[all_content].count[<[item]>]> > 1:
+      # - announce "<blue><[loop_index]>"
+    # - announce "<light_purple><[item]>"
+      # - announce "in index  <[all_content].find[<[item]>]>"
+    # - if <[loop_index]> == 100:
+    #   - foreach stop
+  - foreach <[all_content]> as:content_item:
+    - if <[all_content].count[<[content_item]>]> > 1:
+      - announce <[all_content]>
+  # - announce <&nl>======<&nl>
+
+
+run_stronghold_workers:
+  type: task
+  definitions: sh_str_player
+  script:
+  - define offline_modifier 0
+  - if <[sh_str_player].is_online.not>:
+    - wait <util.random.int[10].to[45]>s
+    - define offline_modifier 15
+  - foreach <[sh_str_player].flag[stronghold.structures]> as:structure:
+    - if <cuboid[<[structure]>].has_flag[workers]>:
+      - foreach <cuboid[<[structure]>].flag[workers]> as:worker:
+        - define type citizen
+        - if <[worker].has_flag[worker.type]>:
+          - define type <[worker].flag[worker.type]>
+        - if <script[hired_npcs].data_key[npc].contains[<[type]>]>:
+          - if <script[hired_npcs].data_key[npc.<[type]>].contains[script_name]>:
+            
+            - define npc_script <script[hired_npcs].data_key[npc.<[type]>.script_name]>
+            - define frequency <script[hired_npcs].data_key[npc.<[type]>.frequency]>
+            - if <util.random.int[1].to[<[frequency].add[<[offline_modifier]>]>]> == <[frequency]>:
+              - run stronghold_worker def:<[worker]>
+              # - run <[npc_script]> def:<[worker]>
+      - define contained_entities <cuboid[<[structure]>].entities>
+
+structures_requirements:
+  type: task
+  definitions: sh_str_player
+  script:
+  - define nothing
+
+
+
+stronghold_structures_world:
+  type: world
+  events:
+    on delta time minutely:
+    # - wait 35s
+    # - wait <util.random.int[0].to[11]>s
+    - foreach <server.players_flagged[stronghold.structures]> as:sh_str_player:
+      - run run_stronghold_workers def:<[sh_str_player]>
+    on delta time hourly:
+    - foreach <server.players_flagged[stronghold.structures]> as:sh_str_player:
+      - run structures_requirements def:<[sh_str_player]>
+
+get_chunk_center_ground:
+  type: procedure
+  definitions: location
+  script:
+  # note this can only be used with player location
+  - if <[location].exists.not>:
+    - define location <player.location>
+  - define chunk_center_absolute <proc[get_chunk_center_absolute].context[<[location].chunk>]>
+  - define chunk_center_ground <[chunk_center_absolute].down[<[location].y.sub[<[chunk_center_absolute].y>].abs>]>
+  - determine <[chunk_center_ground]>
+
+get_chunk_center_absolute:
+  type: procedure
+  definitions: chunk
+  script:
+  - if <[chunk].exists.not>:
+    - define chunk <player.location.chunk>
+  - define chunk_center_absolute <[chunk].cuboid.center>
+  - determine <[chunk_center_absolute]>
+
+revert_chunk:
+  type: task
+  definitions: chunk
+  script:
+  - if <[chunk].exists.not>:
+    - define chunk <player.location.chunk>
+  # - if <schematic[temp_<[chunk]>].exists>:
+  - ~schematic load name:temp_<[chunk]>
+  - wait 1t
+  - schematic paste name:temp_<[chunk]> <proc[get_chunk_center_absolute].context[<[chunk]>]>
+  - wait 1t
+  # - schematic unload name:temp_<[chunk]>
+
+save_chunk_schematic:
+  type: task
+  script:
+  - schematic create name:temp_<player.location.chunk> area:<player.location.chunk.cuboid> <proc[get_chunk_center_absolute]>
+  - wait 1t
+  - ~schematic save name:temp_<player.location.chunk>
+  - wait 1t
+
+save_pre_structure_schematic:
+  type: task
+  definitions: structure|origin
+  script:
+  - schematic create name:temp_<[structure]>_<[origin]> area:<[structure]> <[origin]>
+  - wait 1t
+  - ~schematic save name:temp_<[structure]>_<[origin]>
+  - wait 1t
+
+structure_details_book:
+    type: book
+    title: Stronghold Structure
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - <&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]>
+
+build_book:
+    type: book
+    title: Stronghold Structure
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - <&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]>
+
+structures_book:
+    type: book
+    title: Stronghold Structures
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - <&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]>
+
+hired_npcs:
+  type: data
+  debug: true
+  npc:
+    miner:
+      script_name: stronghold_miner
+      # the lower the frequency number, the more often it will run
+      frequency: 1
+      skill: mining
+      equipment: air|air|air|air
+      held_item: stone_pickaxe
+      type: 
+        - gatherer
+      # requirements are per hour
+      requirements:
+        bread: 1
+    smith:
+      script_name: stronghold_smith
+      frequency: 1
+      skill: blacksmithing
+      equipment: air|air|air|air
+      held_item: smiths_hammer
+      type: 
+        - crafter
+      # requirements are per hour
+      requirements:
+        bread: 1
+    lumberjack:
+      script_name: stronghold_lumberjack
+      frequency: 1
+      skill: lumberjacking
+      equipment: air|air|air|air
+      type: 
+        - gatherer
+        - crafter
+      held_item: iron_axe
+      # requirements are per hour
+      requirements:
+        bread: 1
+
+mining_data:
+  type: data
+  material:
+    stone: 1
+    cobblestone: 2
+    coal_ore: 1
+    iron_ore: 3
+    copper_ore: 4
+    gold_ore: 5
+    diamond_ore: 10
+    lapis_lazuli_ore: 6
+    emerald_ore: 6
+    redstone_ore: 6
+
+blacksmithing_data:
+  type: data
+  material:
+    stone: 1
+    iron: 3
+    gold: 5
+    diamond: 10
+    netherite: 20
+
+lumberjacking_data:
+  type: data
+  material:
+    oak: 1
+    spruce: 1
+    acacia: 1
+    jungle: 1
+    birch: 1
+    dark_oak: 2
+    mangrove: 2
+    crimson: 8
+    warped: 10
+    cherry: 6

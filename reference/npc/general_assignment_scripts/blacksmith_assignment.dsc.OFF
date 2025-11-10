@@ -1,0 +1,204 @@
+blacksmith_assignment:
+  type: assignment
+  actions:
+    on assignment:
+    - trigger name:click state:true
+    - trigger name:chat state:true
+    - trigger name:proximity state:true radius:2
+  default constants:
+    chat_color: "<&color[<color[106,116,128]>]><npc.name> <&color[<color[64,70,77]>]>says: <&color[<color[173,189,208]>]> "
+    category: <script[blacksmith_wares_data].data_key[blacksmith.<npc.id>.category]>
+    bargain_level: <script[blacksmith_wares_data].data_key[blacksmith.<npc.id>.bargain_level]>
+    price_consistency: <script[blacksmith_wares_data].data_key[blacksmith.<npc.id>.price_consistency]>
+    # has_familiarity: true
+
+  interact scripts:
+  - blacksmith_interact
+  
+  
+blacksmith_interact:
+  type: interact
+  steps:
+    1:
+      proximity trigger:
+            entry:
+                script:
+                - flag <player> blacksmith_proximity
+                #if the banker npc has another script, dont open bank box. That script will zap to this scripts step 2
+                - if <npc.scripts.size> <= 1:
+                  - run blacksmith_greeting
+                  - zap 2
+            exit:
+                script:
+                - flag <player> blacksmith_proximity:!
+      
+    2:
+      click trigger:
+        script:
+        - if <npc.has_flag[suspend_blacksmith]>:
+          - flag <npc> suspend_blacksmith:!
+          - stop
+        - run blacksmith_first_task
+
+blacksmith_greeting:
+  type: task
+  script:
+  - inject description_inject_task
+  - if <player.flag[npc.<npc.id>.familiarity.level]> > 6:
+    - narrate format:npcchat "Hello <player.name> Would you like to"
+  - else:
+    - narrate format:npcchat "Hail traveler. Welcome to my shop."
+
+blacksmith_first_task:
+  type: task
+  script:
+  - clickable blacksmith_fix_task  until:12s save:blacksmith_fix_task_clickable
+  - clickable blacksmith_lore_task  until:12s save:blacksmith_lore_task_clickable
+  - narrate format:npcchat_secondline "<element[<&hover[Have <npc.name> fix your item]><&8><&lb><&color[#ffcb62]>Fix your weapon or armor?<&8><&rb><&end_hover>].on_click[<entry[blacksmith_fix_task_clickable].command>]> "
+  - narrate format:npcchat_secondline "<element[<&hover[Have <npc.name> give lore about your item]><&8><&lb><&color[#ffcb62]>Give Lore about your weapon or armor?<&8><&rb><&end_hover>].on_click[<entry[blacksmith_lore_task_clickable].command>]> "
+
+arms_lore_task:
+  type: task
+  definitions: item|slot
+  script:
+  - define lore ""
+  - foreach <[item].flag[stat.bonus]> as:flag:
+    - if <[flag]> > 0:
+      - define lore  "<[lore]><[key]> <[flag]>"
+  - foreach <[item].flag[stat.bonus.damage_types]> as:flag2:
+    - if <[flag2]> > 0:
+      - define lore  "<[lore]><[key]> <[flag2]>"
+  - if <[item].has_flag[required_strength]>:
+    - define required_strength <[item].flag[required_strength]>
+    - define required_strength_message "This equipment doesn't require any strength."
+    - if <[required_strength]> > 0 && <[required_strength]> < 10:
+      - define required_strength_message "This item takes a little strength to use."
+    - if <[required_strength]> > 10 && <[required_strength]> < 20:
+      - define required_strength_message "This item takes some strength to use."
+    - if <[required_strength]> > 20 && <[required_strength]> < 30:
+      - define required_strength_message "This item takes adequate strength to use."
+    - if <[required_strength]> > 40 && <[required_strength]> < 50:
+      - define required_strength_message "This item takes significant strength to use."
+    - if <[required_strength]> > 50 && <[required_strength]> < 65:
+      - define required_strength_message "This item takes substantial strength to use."
+    - if <[required_strength]> > 65 && <[required_strength]> < 80:
+      - define required_strength_message "This item takes mighty strength to use."
+    - if <[required_strength]> > 80:
+      - define required_strength_message "This item takes monumental strength to use."
+    - define lore "<[lore]>Required Strength: <[required_strength_message]><&nl>"
+  - if <[item].has_flag[defense]>:
+    - define defense <[item].flag[defense]>
+    - define defense_message "This armor doesn't have protection."
+    - if <[defense]> > 0 && <[defense]> < 5:
+      - define defense_message "This armor has minor protection."
+    - if <[defense]> >= 5 && <[defense]> < 10:
+      - define defense_message "This armor has ample protection."
+    - if <[defense]> >= 10 && <[defense]> < 15:
+      - define defense_message "This armor has significant protection."
+    - if <[defense]> >= 15 && <[defense]> < 20:
+      - define defense_message "This armor has substantial protection."
+    - if <[defense]> >= 20 && <[defense]> < 30:
+      - define defense_message "This armor has extreme protection."
+    - if <[defense]> > 30:
+      - define defense_message "This armor has absolutely enormous protection."
+    - define lore "<[lore]>Defense: <[defense_message]><&nl>"
+  - if <[item].has_flag[weapon_damage_max]>:
+    - define damage <[item].flag[weapon_damage_max]>
+    - define damage_message "This weapon doesn't have damage."
+    - if <[damage]> > 0 && <[damage]> < 10:
+      - define damage_message "This weapon doesn't do much damage."
+    - if <[damage]> >= 10 && <[damage]> < 20:
+      - define damage_message "This weapon does a good amount damage."
+    - if <[damage]> >= 20 && <[damage]> < 30:
+      - define damage_message "This weapon does significant damage."
+    - if <[damage]> >= 30 && <[damage]> < 40:
+      - define damage_message "This weapon does a substantial amount of damage."
+    - if <[damage]> >= 40 && <[damage]> < 50:
+      - define damage_message "This weapon does a massive amount damage."
+    - if <[damage]> >= 50:
+      - define damage_message "This weapon does an insanely colossal amount damage."
+    - define lore "<[lore]>Damage: <[damage_message]><&nl>"
+  - define current_lore <[item].lore>
+  - define durability_message "Durability: <proc[durability_display_proc].context[<[item]>]><&nl>"
+  - define lore <[lore]><[durability_message]>
+  - inventory adjust slot:<[slot]> d:<player.inventory> "lore:<[lore]>"
+  
+blacksmith_lore_task:
+  type: task
+  script:
+  - narrate "What weapon or armor can I identify for you?"
+  - if <player.item_in_hand.material.name> != air:
+    - if <player.item_in_hand.has_script>:
+      - if <player.item_in_hand.has_flag[item_type]>:
+        - if <player.item_in_hand.flag[item_type]> == weapon || <player.item_in_hand.flag[item_type]> == armor:
+          - run arms_lore_task def:<player.item_in_hand>|<player.held_item_slot>
+          - wait 2s
+          - narrate "What I know has been added to this item."
+        - else:
+          - narrate "I cannot give you lore on this type of item."
+      - else:
+        - narrate "I can't identify this."
+
+    - else:
+      - narrate "I can't identify this as it is too basic for my talents."
+  - else:
+    - narrate "Hold the weapon or armor that you need identified."
+
+blacksmith_fix_task:
+  type: task
+  definitions: npc
+  script:
+  - narrate "What can I fix for you?" targets:<player>
+  - if <player.item_in_hand.material.name> != air:
+      - if <player.item_in_hand.has_script.not>:
+          - if <player.item_in_hand.durability> > 0:
+              - wait 2s
+              - narrate "This item <player.item_in_hand.material.name.replace[_].with[<&sp>]> needs repair!" targets:<player>
+              - wait 2s
+              - define price <player.item_in_hand.durability.mul[22].add[10]>
+              - narrate "Would you like me to repair it for <[price]> copper?" targets:<player>
+              - wait 1s
+              - narrate <&nl>
+              - clickable <npc.name>_task_01 def:<player.item_in_hand>|<[price]> save:<npc.name>_clickable_01 until:30s usages:1 for:<player>
+              - clickable <npc.name>_task_02 save:<npc.name>_clickable_02 until:30s usages:1 for:<player>
+              - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes, please fix it for this amount.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_01].command>]>" target:<player>
+              - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>No, I don't need it fixed that badly.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" target:<player>
+              - zap 2
+          - else:
+              - wait 2s
+              - narrate "It looks like this item doesn't need repair" targets:<player>
+      - else:
+          - wait 2s
+          - narrate "This <player.item_in_hand.display>?"
+          - if <player.item_in_hand.has_flag[maximum_durability]>:
+              - define current_durability <player.item_in_hand.flag[current_durability]>
+              - define maximum_durability <player.item_in_hand.flag[maximum_durability]>
+              - if <[current_durability]> < <[maximum_durability]>:
+                  - wait 2s
+                  - define difference <[maximum_durability].sub[<[current_durability]>]>
+                  - define percentage <[current_durability].div[<[maximum_durability]>].mul[100].round>
+                  - if <[percentage]> < 100 && <[percentage]> >= 90:
+                    - narrate "This item could use a little repair."
+                  - if <[percentage]> < 90 && <[percentage]> >= 75:
+                    - narrate "This item could use some repair."
+                  - if <[percentage]> < 75 && <[percentage]> >= 50:
+                    - narrate "This item needs some repair."
+                  - if <[percentage]> < 50 && <[percentage]> >= 25:
+                    - narrate "This item is in much need of repair."
+                  - if <[percentage]> < 25 && <[percentage]> >= 1:
+                    - narrate "This item is in desperate need of repair."
+                  - wait 2s
+                  - define price <[difference].mul[22].add[10].round_down>
+                  - narrate "Would you like me to repair it for <[price]> copper?" targets:<player>
+                  - wait 1s
+                  - narrate <&nl>
+                  - clickable <npc.name>_task_0 def:<player.item_in_hand>|<[price]> save:<npc.name>_clickable_01 until:30s usages:1 for:<player>
+                  - clickable <npc.name>_task_02 save:<npc.name>_clickable_02 until:30s usages:1 for:<player>
+                  - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes, please fix it for this amount.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_01].command>]>" target:<player>
+                  - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>No, I don't need it fixed that badly.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" target:<player>
+                  - zap 2
+              - else:
+                  - wait 2s
+                  - narrate "It looks like this item doesn't need repair" targets:<player>
+  - else:
+      - narrate "I cannot fix what you are showing me." targets:<player>

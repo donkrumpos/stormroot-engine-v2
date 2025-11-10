@@ -1,0 +1,12 @@
+rune_02:
+  type: item
+  debug: false
+  material: paper
+  display name:  Rune
+  lore:
+  - A small stone with a glyph etched in it
+  flags:
+    craftable: true
+  mechanisms:
+    custom_model_data: 62000414
+    

@@ -1,0 +1,34 @@
+frost_hand_task:
+    type: task
+    debug: true
+    definitions: attacker|defender
+    script:
+    - if <player.target.is_living>:
+        - playsound <player.location> sound:steamfront:spells.fireball2 custom sound_category:players
+    - if <script[spells_skills_data].data_key[spells.fireball].keys.contains[projectile]>:
+        # - define as "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|fireball_entity_item]"
+        - define projectile <script[spells_skills_data].data_key[spells.fireball.projectile]>
+        - create armor_stand[marker=true;visible=false;head:packed_ice] <player.location.relative[0,0.25,1]> "<gold>" save:fireshot
+        - define path <player.location.yaw>
+        - repeat 8:
+            - wait 2t
+            - define spot <entry[fireshot].created_npc.location>
+            - if <[spot].material> != m@air:
+              - remove <entry[fireshot].created_npc>
+            - teleport <entry[fireshot].created_npc> <[spot].with_yaw[<[path]>].relative[0,0,1]>
+            - foreach <entry[fireshot].created_npc.location.find_entities.within[2]> as:target:
+                - if ( <[target]> != <player> && <[target]> != <entry[fireshot].created_npc> ) && ( <[target]> != [target] && <[target]> != entry[fireshot].created_npc.location.find_entities.within[2] ):
+                    - run fireshot_projectile_task def:<[target]>
+                    - remove <entry[fireshot].created_npc>
+        - remove <entry[fireshot].created_npc>
+
+frost_hand_projectile_task:
+    type: task
+    script:
+    - define level <player.flag[skill.spells.frost_hand.level].add[<player.flag[skill.skills.magery.level]||10>]||10>
+    # - foreach <[hit_entities]> as:entity:
+        
+    - playsound <player>|<[entity].location> sound:steamfront:spells.firetouch2 custom sound_category:players
+    - run spell_damage_task def:Netherpull|<[1]>|<player>
+    - if <[level]> > <util.random.int[0].to[100]>:
+        - cast slow d:<[level]>

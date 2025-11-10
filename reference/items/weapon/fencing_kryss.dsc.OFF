@@ -1,0 +1,37 @@
+kryss:
+  type: item
+  debug: false
+  material: iron_sword
+  display name: Kryss
+  lore:
+  - An elegent weapon
+  - for a more sophisticated time.
+  flags:
+    required_strength: 10
+    weapon_type: fencing
+    craftable: true
+    swing_speed_increase: 0
+    hit_chance_increase: 0
+    weapon_speed: 70
+    weapon_damage_min: 4
+    weapon-damage_max: 30
+    luck: 0
+    two_handed: false
+    fire_damage: 0
+    cold_damage: 0
+    poison_damage: 0
+    energy_damage: 0
+    material_qty: 8
+  mechanisms:
+    custom_model_data: 7105
+    nbt:
+    - swing_speed_increase/0
+    - hit_chance_increase/0
+    - weapon_speed/70
+    - weapon_damage/4-30
+    - luck/0
+    - two_handed/false
+    - fire_damage/0
+    - cold_damage/0
+    - poison_damage/0
+    - energy_damage/0

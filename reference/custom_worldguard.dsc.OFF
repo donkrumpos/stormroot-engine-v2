@@ -1,0 +1,239 @@
+worldguard_world:
+    type: world
+    debug: false
+    events:
+        on block fades in:area_flagged:no_melt:
+        - determine cancelled
+        on player enters biome in:duhmkazm_greater:
+        - if <list[plains|savannah|mesa|badlands|desert|wooded_badlands|nether_wastes].contains[<context.new_biome.name>].not>:
+            - adjust <player.location.chunk> set_all_biomes:<biome[desert]>
+            - adjust <player.location.chunk> refresh_chunk
+            # - execute as_op "fillbiome <player.location.forward[2].left[2].up[10].simple.before[,overworld].replace[,].with[<&sp>]> <player.location.backward[2].right[2].down[60].simple.before[,overworld].replace[,].with[<&sp>]> minecraft:desert" --silent
+        
+        on player enters biome in:frostwynn_greater:
+        - if <context.new_biome.name.contains[ocean]>:
+            - adjust <player.location.chunk> set_all_biomes:<biome[frozen_ocean]>
+            - adjust <player.location.chunk> refresh_chunk
+        - else if <list[snowy_tundra|snowy_tiaga|ice_spikes|ice_plains_spikes|frozen_ocean|snowy_mountains|snowy_plains|snowy_slopes|frozen_river|snowy_beach|frozen_peaks].contains[<context.new_biome.name>].not>:
+            # - execute as_op "fillbiome <player.location.forward[2].left[2].up[10].simple.before[,overworld].replace[,].with[<&sp>]> <player.location.backward[2].right[2].down[60].simple.before[,overworld].replace[,].with[<&sp>]> snowy_tiaga" --silent
+            - adjust <player.location.chunk> set_all_biomes:<biome[snowy_tiaga]>
+            - adjust <player.location.chunk> refresh_chunk
+            - narrate "changing biome in frostwynn" targets:<server.match_player[sirbandersnatch]>
+        on player enters biome in:frostwynn_east:
+        - if <list[snowy_tundra|snowy_tiaga|ice_spikes|ice_plains_spikes|frozen_ocean|snowy_mountains|snowy_plains|snowy_slopes|frozen_river|snowy_beach|frozen_peaks].contains[<context.new_biome.name>].not>:
+            # - execute as_op "fillbiome <player.location.forward[2].left[2].up[10].simple.before[,overworld].replace[,].with[<&sp>]> <player.location.backward[2].right[2].down[60].simple.before[,overworld].replace[,].with[<&sp>]> snowy_tiaga" --silent
+            - adjust <player.location.chunk> set_all_biomes:<biome[snowy_tiaga]>
+            - adjust <player.location.chunk> refresh_chunk
+        on plant grows naturally in:area_flagged:no_build:
+        - determine cancelled
+        # on mob damages player_flagged:newbie:
+        # - determine <context.final_damage.div[2]>
+        # on mob enters area_flagged:no_mob_spawn:
+        # - determine cancelled
+        on entity explodes:
+        - determine passively cancelled
+        # on entity_flagged:no_explode explodes:
+        # - determine cancelled
+        on entity_flagged:no_combust combusts:
+        - determine cancelled
+        # on item_frame despawns:
+        # - announce  "Item frame despawned because <context.cause>"
+        # - ~discordmessage id:steamfront_bot channel:1030561376495738930 "Item frame despawned because <context.cause> at <context.entity.location>"
+
+        on player clicks *_fence_gate|*_trapdoor in:area_flagged:no_build:
+        - if <context.location.note_name> == krizzdos_axle:
+            - if <player.has_flag[has_krizzdos_bolt]> && <player.item_in_hand.script.name> == krizzdos_bolt:
+                - run fix_krizzdos_wheel
+                - flag <player> fixed_krizzdos_wheel
+                - take krizzdos_bolt
+        - if <context.location.has_flag[gate_accessible].not>:
+            - if <context.area.has_flag[builders]> && <context.area.flag[builders].contains[<player>]>:
+                - stop
+            - if <player.is_op.not>:
+                - determine cancelled
+        on snow forms in:fecundia:
+        - determine passively cancelled
+        on player exits area_flagged:pvp:
+        - if <context.to.cuboids.filter[flag[pvp].is[==].to[deny]].any>:
+            - narrate "<&color[#555555]>You are entering the protection of the guards."
+        - else:
+            - narrate "<&color[#555555]>You are leaving the protection of the guards."
+        
+        on entity damaged by player_flagged:newbie:
+        - flag <context.entity> newbie_aggro:<player> expire:30s
+        # on player damaged by entity in:rothigport_outer|albus|meruk:
+        # - determine cancelled
+        on player damages player in:area_flagged:no_pvp:
+        - narrate "Others cannot be damaged here."
+        - determine cancelled
+        on block spreads type:fire:
+        - determine cancelled
+        on leaves decay in:area_flagged:no_build:
+        - determine cancelled
+        on player takes item from lectern in:area_flagged:no_build:
+        - if <player.location.cuboids.filter[has_flag[builders]].filter[flag[builders].is[==].to[<player>]].any>:
+            - stop
+        - if <player.gamemode> != creative:
+            - determine cancelled
+        - if <player.has_flag[build].not>:
+            - if <player.is_op.not>:
+                - if <player.has_flag[no_build_message].not> || <player.flag[no_build_message].contains[<context.location.areas.filter[has_flag[no_build]].first.note_name>].not>:
+                    - flag <player>  no_build_message:->:<context.location.areas.filter[has_flag[no_build]].first.note_name>
+                    - narrate "<gold>Some power prevents you from destroying here."
+             
+                - determine cancelled
+        on player breaks block:
+        - if <player.has_flag[is_dead]>:
+            - narrate "You're dead." target:<player>
+            - determine cancelled
+        on player places block:
+        - if <player.has_flag[is_dead]>:
+            - narrate "You're dead." target:<player>
+            - determine cancelled
+        on player breaks block in:area_flagged:no_build_structure:
+        - define schematic <context.location.areas.filter[has_flag[schematic]].first.flag[schematic]>
+        - if <schematic[<[schematic]>].exists.not>:
+            - ~schematic load name:<[schematic]>
+        # - narrate "now ---> <schematic[<[schematic]>].blocks>"
+        - if <context.location.areas.filter[has_flag[structure]].first.flag[name]> == warehouse && <context.material.name> == chest:
+            - stop
+        - if <player.has_flag[stronghold_build_structure_message].not>:
+            - narrate "<gold>You cannot break blocks here. You must remove this structure."
+            - flag <player> stronghold_build_structure_message expire:15s
+        - determine cancelled  
+        on player places block in:area_flagged:no_build_structure:
+        # - narrate <context.location.areas.filter[has_flag[structure]]>
+        - if <context.location.areas.filter[has_flag[structure]].first.flag[name]> == warehouse && <context.material.name> == chest:
+            - flag <context.location.block> warehouse_chest:<player>
+            - stop
+        - if <player.has_flag[stronghold_build_structure_message].not>:
+            - narrate "<gold>You cannot place blocks in bought structures."
+            - flag <player> stronghold_build_structure_message expire:15s
+        - determine cancelled  
+        on player breaks block in:area_flagged:no_build:
+        - if <context.location.areas.filter[has_flag[owned_by]].any>:
+            - if <player.has_flag[stronghold_build_message].not> && <player.is_op.not> && <context.location.areas.filter[has_flag[builders]].filter[flag[builders].contains[<player>]].is_empty>:
+                - narrate format:game_message "You cannot contruct or destroy here as this area is protected for another builder."
+                - flag <player> stronghold_build_message expire:15s
+        # - if <player.location.areas.filter[has_flag[builders]].filter[flag[builders].is[==].to[<player>]].any>:
+        - if <context.location.areas.filter[has_flag[builders]].filter[flag[builders].contains[<player>]].any>:
+            - stop
+        - if <player.gamemode> != creative:
+            - determine cancelled
+        - if <player.has_flag[build].not>:
+            - if <player.is_op.not>:
+                - if <player.has_flag[no_build_message].not> || <player.flag[no_build_message].contains[<context.location.areas.filter[has_flag[no_build]].first.note_name>].not>:
+                    - flag <player>  no_build_message:->:<context.location.areas.filter[has_flag[no_build]].first.note_name>
+                    - narrate "<gold>Some power prevents you from destroying here."
+                - determine cancelled
+        on player places block in:area_flagged:no_build:
+        - if <player.location.areas.filter[has_flag[builders]].filter[flag[builders].is[==].to[<player>]].any>:
+            - stop
+        - if <player.gamemode> != creative:
+            - determine cancelled
+        - if <player.has_flag[build].not>:
+            - if <player.is_op.not>:
+                - if <player.has_flag[no_build_message].not> || <player.flag[no_build_message].contains[<context.location.areas.filter[has_flag[no_build]].first.note_name>].not>:
+                    - flag <player>  no_build_message:->:<context.location.areas.filter[has_flag[no_build]].first.note_name>
+                    - narrate "<gold>Some power prevents you from destroying here."
+                - determine cancelled
+        on player places item_frame:
+        - if <player.is_op>:
+            - define location <context.location>
+        on player damages item_frame:
+        - if <context.entity.has_flag[interact].not>:
+            - if <player.is_op>:
+                - narrate "<red>This entity will not be interactable to other players until flagged as <bold>'interact'"
+            - else:
+                - determine cancelled
+        on player right clicks item_frame:
+        - if <context.entity.has_flag[interact].not>:
+            - if <player.is_op>:
+                - narrate "<red>This entity will not be interactable to other players until flagged as <bold>'interact'"
+                # - narrate <context.item>
+            - else:
+                - determine passively cancelled
+        on entity spawns because natural in:area_flagged:no_mob_spawn:
+        - determine cancelled
+        on player trades with merchant:
+        - determine cancelled
+        on player enters biome in:the_long_sea|the_long_sea_north:
+        - execute as_player "killall animals"
+        - if <list[ocean|deep_ocean|frozen_ocean|warm_ocean|cold_ocean|deep_warm_ocean|deep_cold_ocean|lukewarm_ocean].contains[<context.new_biome.name>].not>:
+            # - adjust <player.location.chunk> set_all_biomes:<biome[deep_ocean]>
+            # - adjust <player.location.chunk> refresh_chunk
+            - adjust <context.to.chunk> set_all_biomes:<biome[deep_ocean]>
+            - adjust <context.to.chunk>  refresh_chunk
+            - narrate "<gray> <player.name> changing biome in the long sea" targets:<server.match_player[sirbandersnatch]>
+        - if <list[ocean|deep_ocean|frozen_ocean|warm_ocean|cold_ocean|deep_warm_ocean|deep_cold_ocean|lukewarm_ocean].contains[<context.old_biome.name>].not>:
+            - adjust <context.from.chunk> set_all_biomes:<biome[deep_ocean]>
+            - adjust <context.from.chunk> refresh_chunk
+
+      
+
+water:
+    type: task
+    script:
+    - foreach <player.location.find_blocks.within[32]> as:block:
+        # - if <[block].y> < 63 && <[block].material.name> == air:
+        #     - modifyblock <[block]> water
+        - if <[block].y> >= 63 && <[block].material.name> == water:
+            - modifyblock <[block]> air
+        # - if <[block].material.name> == lava:
+        #     - if <[block].y> >= 63:
+        #         - modifyblock <[block]> air
+        #     - else: 
+        #         - modifyblock <[block]> water
+    # - foreach <player.location.left.find_blocks.within[16]> as:block:
+    #     - if <[block].y> < 63 && <[block].material.name> == air:
+    #         - modifyblock <[block]> water
+    #     - if <[block].y> >= 63 && <[block].material.name> == water:
+    #         - modifyblock <[block]> air
+    #     - if <[block].material.name> == lava:
+    #         - if <[block].y> >= 63:
+    #             - modifyblock <[block]> air
+    #         - else: 
+    #             - modifyblock <[block]> water
+    # - foreach <player.location.right[16].find_blocks.within[16]> as:block:
+    #     - if <[block].y> < 63 && <[block].material.name> == air:
+    #         - modifyblock <[block]> water
+    #     - if <[block].y> >= 63 && <[block].material.name> == water:
+    #         - modifyblock <[block]> air
+    #     - if <[block].material.name> == lava:
+    #         - if <[block].y> >= 63:
+    #             - modifyblock <[block]> air
+    #         - else: 
+    #             - modifyblock <[block]> water
+    # - foreach <player.location.backward[16].find_blocks.within[16]> as:block:
+    #     - if <[block].y> < 63 && <[block].material.name> == air:
+    #         - modifyblock <[block]> water
+    #     - if <[block].y> >= 63 && <[block].material.name> == water:
+    #         - modifyblock <[block]> air
+    #     - if <[block].material.name> == lava:
+    #         - if <[block].y> >= 63:
+    #             - modifyblock <[block]> air
+    #         - else: 
+    #             - modifyblock <[block]> water
+    # - foreach <player.location.forward[16].find_blocks.within[16]> as:block:
+    #     - if <[block].y> < 63 && <[block].material.name> == air:
+    #         - modifyblock <[block]> water
+    #     - if <[block].y> >= 63 && <[block].material.name> == water:
+    #         - modifyblock <[block]> air
+    #     - if <[block].material.name> == lava:
+    #         - if <[block].y> >= 63:
+    #             - modifyblock <[block]> air
+    #         - else: 
+    #             - modifyblock <[block]> water
+    # - foreach <player.location.up[16].find_blocks.within[16]> as:block:
+    #     - if <[block].y> < 63 && <[block].material.name> == air:
+    #         - modifyblock <[block]> water
+    #     - if <[block].y> >= 63 && <[block].material.name> == water:
+    #         - modifyblock <[block]> air
+    #     - if <[block].material.name> == lava:
+    #         - if <[block].y> >= 63:
+    #             - modifyblock <[block]> air
+    #         - else: 
+    #             - modifyblock <[block]> water
+    - narrate done targets:<player>
+
+    

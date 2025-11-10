@@ -1,0 +1,15 @@
+pain_spike_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    - if <[attacker].has_flag[skill.spells.pain_spike.level].not>:
+        - flag <[attacker]> skill.spells.pain_spike.level:1
+    - define level <player.flag[skill.spells.pain_spike.level]>
+
+    - run spell_damage_task def:pain_spike|<[defender]>|<[attacker]>
+    - define resist_success <proc[natural_skill_check_proc].context[<[defender]>|poison_resist]>
+    - if <[resist_success]>:
+        - run raise_resist_spells_task def:<[defender]>|poison
+    - else:
+        - run poison_task def:<[attacker]>|<[defender]>|<[level]>|1
+        

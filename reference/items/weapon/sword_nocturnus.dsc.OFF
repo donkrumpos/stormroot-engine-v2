@@ -1,0 +1,33 @@
+nocturnus:
+  type: item
+  debug: false
+  material: stick
+  display name: Nocturnus
+  
+  lore:
+  - Cloaked in shadow, it whispers of the night
+  - <&color[#9c27b0]>Attack Speed Increase 15%
+  - <&color[#9c27b0]>Shadow Damage 40%
+  - <&color[#9c27b0]>Life Steal 10%
+
+  flags:
+    required_strength: 15
+    weapon_type: sword
+    craftable: true
+    attack_speed_increase: 0.15
+    hit_chance_increase: 5
+    weapon_speed: 8
+    weapon_damage_min: 10
+    weapon_damage_max: 14
+    luck: 2
+    two_handed: false
+    fire_damage: 0
+    cold_damage: 0
+    poison_damage: 0
+    energy_damage: 20
+    shadow_damage: 40
+    life_steal: 0.1
+    material_qty: 10
+    unique: true
+  mechanisms:
+    custom_model_data: 7209003

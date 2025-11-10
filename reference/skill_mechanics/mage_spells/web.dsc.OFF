@@ -1,0 +1,16 @@
+web_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    - if <[attacker].has_flag[skill.spells.web.level].not>:
+        - flag <player> skill.spells.web.level:1
+        - define level 1
+    - define level <[attacker].flag[skill.spells.web.level]>
+    - cast slow <[defender]> duration:<[level]>s amplifier:<[level]>
+    - showfake cobweb <[defender].location> duration:2s
+    - showfake cobweb <[defender].location.up[1]> duration:2s
+    - showfake cobweb <[defender].location.random_offset[1]> duration:2s
+    - wait 1s
+    - run spell_damage_task def:web|<[defender]>
+
+    - wait <util.random.int[1].to[<[level]>]>s

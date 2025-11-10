@@ -1,0 +1,54 @@
+energy_bolt_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    # - define attacker <player>
+    - define defender <[attacker].target>
+    - if <[attacker].has_flag[skill.spells.energy_bolt.level].not>:
+        - flag <player> skill.spells.energy_bolt.level:1
+        - define level 1
+    
+    - define level <[attacker].flag[skill.spells.energy_bolt.level]>
+    - define last_point <[defender].location>
+    - foreach <[attacker].location.up[1].points_between[<[defender].location>]> as:point:
+        # - repeat 10:
+        # - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<item[carrot_on_a_stick].with[custom_model_data=6180004]>]" <[point].down[2]> save:spark
+        # - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<item[carrot_on_a_stick].with[custom_model_data=6180004]>]" <[point].backward[2].down[2]> save:spark2
+        # - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<item[carrot_on_a_stick].with[custom_model_data=6180004]>]" <[point].backward[1].down[1]> save:spark3
+        # - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<item[carrot_on_a_stick].with[custom_model_data=6180004]>]" <[point].down[1]> save:spark4
+            
+        # - playeffect effect:ELECTRIC_SPARK at:<[point]> visibility:100 quantity:<[loop_index]>
+        - playeffect effect:flash at:<[point].backward[2]> visibility:10 quantity:1
+        - playeffect effect:sweep_attack at:<[point]> visibility:10 quantity:1
+        - wait 1t
+    - if <[last_point].find.living_entities.within[2].any>:
+        - define size <[last_point].find.living_entities.within[2].size>
+        - define target <[last_point].find.living_entities.within[2].random[<[level].max[1].min[<[size]>]>]>
+        - run spell_damage_task def:energy_bolt|<[target]>
+    - if <[level]> > 12:
+        - if <util.random.int[1].to[2]> == 2:
+            - run spell_damage_task def:energy_bolt|<[defender]>
+
+
+        # - remove <entry[spark].spawned_entity>
+        # # - wait 1t
+        # - remove <entry[spark2].spawned_entity>
+        # # - wait 1t
+        # - remove <entry[spark3].spawned_entity>
+        # - remove <entry[spark4].spawned_entity>
+
+    # - wait 3s
+    # - define resist_success <proc[natural_skill_check_proc].context[<[defender]>|energy_resist]>
+    # - if <[resist_success].not>:
+    #     - repeat <util.random.int[1].to[<[level]>]>:
+    #         - run spell_damage_task def:energy_bolt|<[defender]>
+    #         - playeffect effect:energy_bolt_huge at:<[defender].location> visibility:100 quantity:10 offset:1,1,1
+    #         - wait 1t
+    # - else:
+    #     - if <util.random.int[0].to[2]> == 2:
+    #         - run raise_resist_spells_task def:<[defender]>|energy
+    # - wait 1s
+    # - explode <[defender].location>
+        
+    
+    

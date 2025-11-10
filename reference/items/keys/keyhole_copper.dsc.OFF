@@ -1,0 +1,7 @@
+keyhole_copper:
+  type: entity
+  entity_type: item_frame
+  framed: dried_kelp[custom_model_data=81019200]
+  fixed: true
+  rotation: south
+  visible: false

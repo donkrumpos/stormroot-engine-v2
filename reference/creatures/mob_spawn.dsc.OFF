@@ -1,0 +1,699 @@
+mob_spawn_world:
+  type: world
+  debug: true
+  events:
+    # on chunk unloads entities:
+    # - run remove_entityless_armorstands_task
+    # on player clicks armor_stand:
+    # - narrate OUCH
+
+    on entity explodes:
+    - determine cancelled
+    after player enters biome:
+    # - define distance_out <player.location.distance[<location[meruk]>]>
+    # - narrate "distance out <[distance_out]>" targets:<server.match_player[sirbandersnatch]>
+    # entering a biome is what triggers a mob spawning
+    - run remove_entityless_armorstands_task def:<player>
+    # - if <player.location.areas.filter[has_flag[no_mob_spawn]].is_empty> && <player.has_flag[mob_spawn_timer].not>:
+      # - if <util.random.int[1].to[2]> == 2:
+      #   - run get_mob_task def:<player>|<context.new_biome>|<context.to>
+      
+    - if <player.location.areas.deduplicate.parse[note_name].contains[songtide]> && <player.location.areas.deduplicate.size> == 1:
+      # - narrate <player.location.areas.deduplicate.size>
+      - define mob_count <player.location.find_entities[dirt_elemental].within[32].size>
+      - if <[mob_count]> == 0:
+        - if <util.random.int[0].to[10]> == 10:
+          - wait 1s
+          # TODO turn this back on when dmodels is working 
+          # - run dmodels_spawn def:dirt_elemental
+  
+      
+      # - if <player.has_flag[stat.status.buff.mob_attraction]> && <player.flag[stat.status.buff.mob_attraction.level]> > 0:
+
+      #   - flag <player> mob_spawn_timer expire:<element[1],div[<[mob_attraction]>].mul[10].round_up||10>s
+
+    # - else if <player.location.areas.first.note_name> == songtide:
+    #     - narrate BINGO targets:<server.match_player[sirbandersnatch]>
+    #     - choose <util.random.in[0].to[100]>:
+    #       - case 1:
+    #         - run spawn_mob_task def:mongbat
+    #       - case 2:
+    #         - run spawn_mob_task def:moss_skitter
+    # - else:
+      # - narrate "<player.location.polygons.filter[has_flag[no_mob_spawn]]>  and <player.has_flag[mob_spawn_timer]>" targets:<server.match_player[sirbandersnatch]>
+      
+    # - inject remove_mobs_task def:<context.area>
+      # on dragon_welp targets:
+      # - if <context.target||null> != "null":
+      #   - run dragon_welp_skills_task def:<context.entity>|<context.target>
+      # - else:
+      #   - run dragon_welp_skills_task def:<context.entity>|<context.entity.location.find.living_entities.within[32].get[1]>
+
+
+mob_mech_world:
+    type: world
+    debug: false 
+    events:
+      on entity despawns:
+      - if <context.entity.has_flag[mob.custom_model]>:
+        - define model <context.entity.flag[mob.custom_model]>
+        - if <[model].is_spawned>:
+          - remove <[model]>
+       
+      on entity_flagged:mob dies:
+      - determine no_drops
+      - determine no_xp
+  
+      on entity dies:
+
+      - if <context.entity.has_flag[mob.spawned]>:
+      #   - remove <context.entity.flag[mob.custom_model]>
+      #   - remove <context.entity.flag[hurt_anim]>
+        - run get_mob_loot_task def:<context.entity>|<context.entity>|<context.damager>
+      #   - if <context.entity.is_spawned>:
+      #     - remove <context.entity>
+      #   # - determine cancelled
+      # on player hears sound:
+      # # - narrate "music category: <context.category>"
+      # - if <context.category> == MUSIC:
+      #   - adjust <player> stop_sound:MUSIC
+      #   #Disables vanilla minecraft music
+      #   - if <context.is_custom.not>:
+      #     - determine cancelled
+      # - if <context.category> == HOSTILE:
+      #   #Disables vanilla minecraft music
+      #   - if <context.is_custom.not>:
+      #     - determine cancelled
+      # - if <context.category> == AMBIENT:
+      #   #Disables vanilla minecraft music
+      #   - if <context.is_custom.not>:
+      #     - determine cancelled
+      # - if <context.is_custom.not>:
+      #   # this is so that we can play custom mob sounds and override the vanilla sounds
+      #   - if <context.sound_name.contains[pillager]>:
+      #     - determine cancelled
+      #   - if <context.sound_name.contains[vindicator]>:
+      #     - determine cancelled
+      on entity damaged by player:
+      - if <context.entity.has_flag[mob]>:
+        
+        - if <context.entity.has_flag[mob.entity_type]>:
+          
+          - if <context.entity.flag[mob.entity_type]> == gnoll:
+            - playsound <player> sound:steamfront:custom.mobs.gnoll.gnoll_yipe custom sound_category:hostile
+          - if <context.entity.flag[mob.entity_type]> == goblin:
+            - playsound <player> sound:steamfront:custom.mobs.goblin.goblinhurt1 custom sound_category:hostile
+          - if <context.entity.flag[mob.entity_type]> == kobold:
+            - playsound <player> sound:steamfront:custom.mobs.kobold.koboldhurt1 custom sound_category:hostile
+          - if <script[monster_data].data_key[monster.<context.entity.flag[mob.entity_type]>].exists>:
+
+            - if <script[monster_data].data_key[monster.<context.entity.flag[mob.entity_type]>].contains[hurt_custom_model_data]>:
+              - if <context.entity.has_flag[hurt_anim]>:
+                - stop
+              - define custom_model_data <script[monster_data].data_key[monster.<context.entity.flag[mob.entity_type]>.hurt_custom_model_data]>
+              - define non_hurt_armor_stand <context.entity.flag[mob.custom_model]> 
+              - define non_hurt_model <context.entity.flag[mob.custom_model].equipment_map.get[helmet]>
+              - adjust <[non_hurt_armor_stand]> equipment:AIR|AIR|AIR|AIR
+              
+              
+              
+              # - spawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<item[nether_brick].with[custom_model_data=<[custom_model_data]>]>]" <context.entity.location> save:hurt
+              # - attach <entry[hurt].spawned_entity> to:<context.entity>|0,0,0
+              - adjust <[non_hurt_armor_stand]> equipment:AIR|AIR|AIR|<item[nether_brick].with[custom_model_data=<[custom_model_data]>]>
+              - flag <entry[hurt].spawned_entity> armor_stand.hurt_model
+              - flag <context.entity> hurt_anim:<entry[hurt].spawned_entity>
+              - wait 10t
+              - adjust <[non_hurt_armor_stand]> equipment:AIR|AIR|AIR|<[non_hurt_model]>
+              - remove <context.entity.flag[hurt_anim]>
+              - if <context.entity.has_flag[hurt_anim]>:
+                - flag <context.entity> hurt_anim:!
+              - if <entry[hurt].spawned_entity.is_spawned||false>:
+                - remove <entry[hurt].spawned_entity>
+      on entity spawns because natural:
+      - if <list[drowned|husk|phantom|skeleton|skeleton_horse|stray|wither|wither_skeleton|zoglin|zombie|zombie_horse|zombie_villager|zombified_piglin].contains[<context.entity.name>]>:
+        - flag <context.entity> vulnerability:undead
+        - flag <context.entity> undead
+      on entity spawns because natural in:area_flagged:no_build:
+      - if <context.entity.is_monster>:
+        - determine cancelled
+      on phantom spawns because natural:
+      # - if <context.entity.name> == "PHANTOM":
+        # stop phantom spawing for the near future because they are annoying.
+      - determine cancelled
+      # - if <script[fauna_data].data_key[beast].contains[<context.entity.name>]>:
+      #   - flag <context.entity> reputation.karma.level:<script[fauna_data].data_key[beast.<context.entity.name>.karma]>
+      #   - flag <context.entity> reputation.fame.level:<script[fauna_data].data_key[beast.<context.entity.name>.fame]>
+
+# playsound_test:
+#   type: task
+#   script:
+#   - playsound <player> sound:steamfront:steamfront:mobs.gnoll.gnoll_yipe custom sound_category:hostile
+#   # - playsound <player> sound.steamfront:custom.padula custom sound_category:music
+
+remove_entityless_armorstands_task:
+  type: task
+  definitions: player
+  script:
+  - if <[player].location.find_entities[armor_stand].within[100].filter[has_flag[armor_stand.mob_model]].size> == 0:
+    - stop 
+  - foreach <[player].location.find_entities[armor_stand].within[100].filter[has_flag[armor_stand.mob_model]]> as:armor_stand:
+    - if <[armor_stand].has_flag[armor_stand.mob_model].not>:
+      - foreach next
+      
+      - if <[armor_stand].flag[armor_stand.mob_model].location.distance[<[armor_stand].location>]> < 2:
+        - foreach next
+    - teleport <[armor_stand].flag[armor_stand.mob_model]> <[armor_stand].location> 
+    - attach  <[armor_stand]> to:<[armor_stand].flag[armor_stand.mob_model]>
+    - if <[armor_stand].flag[armor_stand.mob_model].is_spawned.not>:
+      - remove <[armor_stand].flag[armor_stand.mob_model]>
+      - narrate "Should be removing <[armor_stand]>"
+      - remove <[armor_stand]>
+    # - else:
+    #   - attach <[armor_stand]> to:<[armor_stand].attached_to>
+      # - teleport <[armor_stand]> <[armor_stand].flag[armor_stand.mob_model].location>
+      # - debug LOG "<red> THIS _____-----____---> <[armor_stand].flag[armor_stand.mob_model]>"
+      # - attach <[armor_stand]> to:<[armor_stand].flag[armor_stand.mob_model]>|0,0,0   
+
+spawn_mob_command:
+  type: command
+  name: spawnmob
+  permission: denizen
+  tab completions:
+    1: <server.scripts.filter[container_type.equals[entity]].parse[name]>
+  script:
+  - run spawn_mob_task def:<context.args>
+
+despawn_mob_command:
+  type: command
+  name: despawn
+  tab completions:
+    1: <server.scripts.filter[container_type.equals[entity]].parse[name]>
+  script:
+  - define radius 16
+  - define mob <context.args.get[1]>
+  - if <context.args> > 1:
+    - define radius <context.args.get[2]>
+  - run despawn_mob_task def:<[mob]>|<player.location>|<[radius]>
+
+despawn_mob_task:
+  type: task
+  definitions: mob_type|location|radius
+  script:
+  # - define location <player.location>
+  - define mob_list <list>
+  - define mobs <[location].find_entities[<[mob_type]>].within[<[radius]||16>]>
+  - foreach <[mobs]> as:mob:
+    - remove <[mob].flag[mob.custom_model]>
+    - remove <[mob]>
+    - define mob_list:->:<[mob]>
+  - if <[mob_list].size> == 0 || <[mob_list].is_empty>:
+    - narrate "No mobs to remove"
+  - else:
+    - narrate "Removing <[mob_list]>"
+
+spawn_mob_task:
+  type: task
+  definitions: mob_type|location|target
+  script:
+  # - debug record start
+  - if <[location].length> > 0:
+    - define eligible_block <[location]>
+  - else:
+    - define a_block <script[<[mob_type]>].data_key[flags.eligible_block_spawn]>
+    - define player <player||null>
+    - if <[player]> == null:
+      - define player <[target]>
+    - define eligible_block <[player].location.find.surface_blocks[<[a_block]>].within[16].exclude[<[player].location.find.surface_blocks[<[a_block]>].within[8]>].random||null>
+    - if <[eligible_block]> == null:
+      - define eligible_block <[player].location.chunk.surface_blocks.random>
+    - if <script[<[mob_type]>].data_key[flags.unique].not||true>:
+      - define mobs_around <[eligible_block].find_entities.within[8].size>
+      - if <[mobs_around]> > 1:
+        - stop
+
+      - define light_level <script[<[mob_type]>].data_key[flags.light_level]||15>
+      - if <[eligible_block].light> >= <[light_level]>:
+        - stop
+      - if <[target]> == null:
+        - define target <[eligible_block].find.players.within[32].lowest[health]||<[eligible_block].find.players.within[32]>>
+
+      - define eligible_block <[eligible_block].up[1]>
+  
+  - spawn <[mob_type]> <[eligible_block]>  save:this_mob
+  - narrate "spawning <[mob_type]> at <[eligible_block].simple>" targets:<server.match_player[sirbandersnatch]>
+  - define this_mob <entry[this_mob].spawned_entity>
+  - invisible <[this_mob]> state:true
+  # - ~discordmessage id:steamfront_bot channel:1106302225988468776  "<green>spawning <[mob_type]> at <[eligible_block]> and targeting <[target].name>"
+  # - teleport <server.match_player[sirbandersnatch]> <[eligible_block]>
+  # - teleport <player> <[eligible_block].up[1]>
+  - equip <[this_mob]> hand:air
+  - wait 1t
+  - flag <[this_mob]> mob.spawned
+  - flag <[this_mob]> mob.entity_type:<[mob_type]>
+  - flag <[this_mob]> mob.mob_type:<[mob_type]>
+  - flag <[this_mob]> mob.custom_monster
+  - flag <[this_mob]> reputation.fame.level:<script[monster_data].data_key[monster.<[this_mob]>.fame]||0>
+  - flag <[this_mob]> reputation.karma.level:<script[monster_data].data_key[monster.<[this_mob]>.karma]||0>
+  # # - flag <[this_mob]> skill.skills.magery.level:<script[<[mob].name>].data_key[custom.magery]||10>
+  # # - flag <[this_mob]> attribute.strength.level:<util.random.int[<script[<[mob].name>].data_key[custom.strength].before[-]||10>].to[<script[<[mob].name>].data_key[custom.strength].after[-]||10>]>
+  # # - flag <[this_mob]> attribute.dexterity.level:<util.random.int[<script[<[mob].name>].data_key[custom.dexterity].before[-]||10>].to[<script[<[mob].name>].data_key[custom.dexteriy].after[-]||10>]>
+  # # - flag <[this_mob]> attribute.intelligence.level:<util.random.int[<script[<[mob].name>].data_key[custom.intelligence].before[-]||10>].to[<script[<[mob].name>].data_key[custom.intelligence].after[-]||10>]>
+  # # - flag <[this_mob]> mana:<util.random.int[<script[<[mob].name>].data_key[custom.intelligence].before[-]||10>].to[<script[<[mob].name>].data_key[custom.intelligence].after[-].add[10]||10>]>
+  # - adjust <[this_mob]> max_health:<util.random.int[<script[<[mob].name>].data_key[custom.strength].before[-]||10>].to[<script[<[mob].name>].data_key[custom.strength].after[-]||10>]>
+  - define distance_out <[this_mob].location.distance[<location[meruk]>].div[110].round.max[1]>
+  - define health <util.random.int[<script[<[mob_type]>].data_key[flags.health].sub[5].max[1]||10>].to[<script[<[mob_type]>].data_key[flags.health].add[5]||10>]>
+  - if <player.location.world.is_day>:
+    - define health <[health].add[<[health].div[2].max[2]>]>
+  - adjust <[this_mob]> max_health:<[health].add[<[distance_out]>]||10>
+  
+
+  - adjust <[this_mob]> health:<[health]||10>
+
+  - if <script[<[mob_type]>].data_key[flags.speed].exists>:
+    - adjust <[this_mob]> walk_speed:<script[<[mob_type]>].data_key[flags.speed]>
+  - define custom_model <script[<[mob_type]>].data_key[flags.custom_model_data]>
+  - define custom_model_item <item[nether_brick].with[custom_model_data=<[custom_model]>]>
+  # - wait 1s
+  # - give <player> <[custom_model_item]>
+  # - flag <player> mob_spawn_timer duration:<util.random.int[19].to[29]>s
+  - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=true;marker=true;collidable=true;equipment=air|air|air|<[custom_model_item]>]" <[this_mob].location> save:<[this_mob]>_model
+  # - give <player> <item[nether_brick].with[custom_model_data=656547]>
+  # - attach <entry[<[this_mob]>_model].spawned_entity> to:<[this_mob]> offset:0,0,0
+  #todo trying mount as the armor stand is not syncing well with attach
+  - mount <entry[<[this_mob]>_model].spawned_entity>|<[this_mob]> 
+  
+  # flag the mob with its armor stand model for later reference
+  - flag <[this_mob]> mob.custom_model:<entry[<[this_mob]>_model].spawned_entity>
+  # flag the armor stand model for later reference
+  - flag <entry[<[this_mob]>_model].spawned_entity> armor_stand.mob_model:<[this_mob]>
+  
+  # # - narrate "adding <[this_mob]> to server list"
+  # - flag server spawned_custom_mobs:->:<[this_mob]>
+  - wait 1t
+  # # - teleport <entry[<[this_mob]>_model].spawned_entity> <[key].location>
+  # - announce <red><script[<[mob_type]>].data_key[flags.script]>
+  - if <script[<[mob_type]>].data_key[flags.script].exists>:
+    - flag <[this_mob]> mob.script:<script[<[mob_type]>].data_key[flags.script]>
+    - run <script[<[mob_type]>].data_key[flags.script]> def:<[this_mob]>|<entry[<[this_mob]>_model].spawned_entity>
+  # - run mob_model_syncer def:<[this_mob]>
+  - definemap context:
+      mob: <[this_mob]>
+  - customevent id:custom_monster_spawn context:<[context]>
+  # - wait 1t
+  # - ~debug record submit save:mylog
+  # - narrate "Recorded log as <entry[mylog].submitted||<red>FAILED>"
+   
+# mob_model_syncer:
+#   type: world
+#   events:
+#     on delta time secondly:
+#     - foreach <server.online_players> as:player:
+#       - run remove_entityless_armorstands_task def:<[player]>
+#     # - announce <[mob].flag[mob.custom_model].location>
+#     # - wait 1s
+    
+
+get_mob_task:
+  type: task
+  debug: true
+  definitions: player|biome|block
+  script:
+  - define biome <player.location.biome.name>
+  - define moblist <server.scripts.filter[container_type.equals[entity]].filter[data_key[flags.biome].contains[<[biome]>]]>
+  # - narrate <red><[moblist].parse[name].contains_any[skitter]>---<light_purple><[moblist]>
+  # - if <[moblist].parse[name].contains_any[skitter].not>:
+  #   - stop
+  # - narrate <green><[moblist]>
+  - if <[moblist].is_empty>:
+    - stop
+  - define get_mob_from_list <[moblist].random>
+      #note to developer. every mob needs a biome key to be able to spawn with this method
+  - define rarity 100
+  - if <script[<[get_mob_from_list]>].data_key[flags].contains_any[rarity]>:
+    - define rarity <script[<[get_mob_from_list]>].data_key[flags.rarity]>
+  - define distance_out <[player].location.distance[<location[meruk]>]>
+  - define distance_out <[distance_out].div[100].round>
+  - if <script[<[get_mob_from_list]>].data_key[flags.level]||50> > <[distance_out]>:
+    - stop
+  - if <script[<[get_mob_from_list]>].data_key[flags].contains[unique]>:
+    - stop
+  
+  - if <player.location.find_entities[<[get_mob_from_list]>].within[20].size> >= 1:
+    #there is already one of these, so skip (for testing)
+    - stop
+  
+  - define random_spawn <util.random.decimal[1].to[100]>
+  
+  
+  - if <util.random.int[1].to[<[rarity]>]> != 1:
+    - stop
+  - run spawn_mob_task def:<[get_mob_from_list].name>|<[player]>
+  
+    
+remove_mobs_task:
+  type: task
+  definitions: area
+  script:
+  - foreach <player.location.find_entities[pillager].within[44].filter[flag[mob.spawned].is[==].to[true]]> as:mob:
+    - remove <[mob]>
+  - foreach <player.location.find_entities[armor_stand].within[64].filter[has_flag[armor_stand.mob_model]]> as:armor_stand:
+    - remove <[armor_stand]>
+  - foreach <player.location.find_entities[armor_stand].within[64].filter[has_flag[armor_stand.hurt_model]]> as:armor_stand:
+    - remove <[armor_stand]>
+
+get_mob_loot_task:
+  type: task
+  debug: true
+  definitions: mob|entity|damager
+  script:
+  - if <[damager].is_player.not>:
+    - stop
+  - define loot <script[<[mob].script.name>].data_key[flags.drops]>
+  - define damager_luck <proc[luck_calculator_proc].context[<[damager]>]>
+  - define drop_quantity <[damager].flag[skill.skills.luck.level].div[10].round_down.add[1]>
+  - define mob_rarity <script[<[mob].script.name>].data_key[flags.rarity]>
+  # - define item_chance <util.random.int[0].to[<[damager_luck].round_down>]>
+  # - announce "damager luck: <[damager_luck]>"
+  - define item_chance <util.random.int[0].to[1000]>
+  - if <[item_chance]> == 0:
+    - define item_chance 10001
+
+
+  # - announce "item chance: <[item_chance]>"
+  - drop xp quantity:<script[<[mob].script.name>].data_key[flags.xp].mul[<[damager_luck].div[10].add[1]>].round_up||1> <[entity].location>
+  # - announce <green><script[<[mob].script.name>].data_key[flags.xp].mul[<[damager_luck].div[10].add[1]>].round_up>
+  - define coin_drop <script[<[mob].script.name>].data_key[flags.coin_drop]>
+  - foreach <[coin_drop]> as:coin:
+    - define quantity <[coin].get[quantity]>
+    - define type <[key]>
+    - define chance <[coin].get[chance]>
+
+    - if <[chance]> <= <util.random_decimal.round_to[1]>:
+      - drop <[key]>_coin quantity:<[quantity]> <[entity].location>
+    
+  - foreach <[loot]> as:drop:
+    # - if <[loop_index]> == <[drop_quantity]>:
+    #   - stop
+    - define chance <[drop].get[chance].as_decimal.mul[100]>
+    - if <util.random.int[1].to[100]> <= <[chance]>:
+      - define quantity <[drop].get[quantity]>
+      - if <[quantity]> > 1:
+        - define quantity <util.random.int[1].to[<[quantity]>]>
+      # - announce "dropping <[key]>"
+      - drop <[key]> quantity:<[quantity]> <[entity].location>
+  - if <[item_chance]> <= <[damager_luck]>:
+    - define lucky_item <script[vanilla_items].data_key[item].keys.random>
+    - give <[lucky_item]> player:<[damager]>
+    - narrate "You get a lucky item of <[lucky_item]>" targets:<[damager]>
+    - if <[item_chance]> == <[damager_luck]>:
+      - define rare_list ""
+      - foreach <script[rare_items_data].data_key[item]> as:rare:
+        - if <script[rare_items_data].data_key[item.<[key]>].get[rarity]> <= <[mob_rarity]>:
+          - define rare_list:->:<[key]>
+      - give <[rare_list].random> player:<[damager]>
+
+  # - announce " damager luck: <[damager_luck]>"
+  # - define drop_item_list <script[monster_data].data_key[monster.<[mob]>.drops].random[1]>
+  # - announce "<[mob]> ----- <[drop_item_list]> --   "
+  
+  
+find_dead_players_task:
+  type: task
+  script:
+  - foreach <server.online_players_flagged[is_dead]> as:dead_player:
+    - narrate <[dead_player].name>
+    # - flag <[dead_player]> is_dead:!
+
+
+
+
+
+goblin:
+  type: entity
+  entity_type: zombie
+  collidable: false
+  age: baby
+  custom_name: Goblin
+  custom_name_visible: true
+  custom_model_data: 656503
+  health: 19
+  has_ai: true
+  visible: true
+  invulnerable: false
+  data:
+    fame: 10
+    karma: 3
+    intelligence: 10-50
+    dexterity: 50-60
+    strength: 20-30
+    magery: 11-19
+    biomes:
+      - beach
+      - ocean
+      - river
+      - forest
+    eligible_block_spawn:
+      - stone
+      - cobblestone
+      - sand
+      - grass
+    elevation: 60-80
+    worlds:
+      - songtide
+    aggro: 4
+    rarity: 5
+    undead: false
+    xp: 12-14
+    drops:
+      - iron_ingot|1|.5
+      - iron_sword|1|.2
+      - gold_ingot|1|.05
+      - bow|1|.1
+      - leather_tunic|1|.1
+      - leather_cap|1|.1
+      - copper_coin|1-3|1
+
+# kobold:
+#   type: entity
+#   entity_type: zombie
+#   collidable: false
+#   custom_name: Kobold
+#   custom_name_visible: true
+#   custom:
+#     intelligence: 40-50
+#     strength: 210-240
+#     visible: true
+#     invulnerable: false
+#     health: 20-30
+#     has_ai: true
+#     color: red
+#     biomes:
+#       - beach
+#       - ocean
+#       - river
+#       - forest
+#     eligible_block_spawn:
+#       - stone
+#       - cobblestone
+#       - sand
+#       - grass
+#     elevation: 60-80
+#     worlds:
+#       - songtide
+#     aggro: hostile
+#     rarity: 1
+#     undead: false
+#     xp: 6-13
+#     drops:
+#       - iron_ingot|1|.5
+#       - iron_sword|1|.2
+#       - gold_ingot|1|.05
+#       - bow|1|.1
+#       - leather_tunic|1|.1
+#       - leather_cap|1|.1
+#       - copper_coin|1-3|1
+
+# gnoll:
+#   type: entity
+#   entity_type: zombie
+#   collidable: false
+#   custom_name: Gnoll
+#   custom_name_visible: true
+#   custom:
+#     intelligence: 40-50
+#     strength: 210-240
+#     visible: true
+#     invulnerable: false
+#     health: 20
+#     has_ai: true
+#     color: red
+#     biomes:
+#       - beach
+#       - ocean
+#       - river
+#       - forest
+#     eligible_block_spawn:
+#       - stone
+#       - cobblestone
+#       - sand
+#       - grass
+#     elevation: 60-80
+#     worlds:
+#       - songtide
+#     aggro: hostile
+#     rarity: 1
+#     undead: false
+#     xp: 11-16
+#     drops:
+#       - iron_sword|1|.2
+#       - bow|1|.1
+#       - leather_tunic|1|.1
+#       - leather_cap|1|.1
+#       - javelin|1|.5
+#       - copper_coin|1-3|1
+
+# ettin:
+#   type: entity
+#   entity_type: iron_golem
+#   collidable: false
+#   custom_name: Ettin
+#   custom_name_visible: true
+#   custom:
+#     intelligence: 40-50
+#     strength: 210-240
+#     visible: true
+#     invulnerable: false
+#     health: 20
+#     has_ai: true
+#     color: red
+#     biomes:
+#       - beach
+#       - ocean
+#       - river
+#       - forest
+#     eligible_block_spawn:
+#       - stone
+#       - cobblestone
+#       - sand
+#       - grass
+#     elevation: 60-80
+#     worlds:
+#       - songtide
+#     aggro: hostile
+#     rarity: 5
+#     undead: false
+
+dmodels_world:
+  type: world
+  events:
+    on entity_flagged:mob damages player:
+    # - narrate <context.damager.flag[mob_model]>
+    - run dmodels_animate def.root_entity:<context.damager.flag[mob_model]> def.animation:attack1
+    on npc_flagged:mob damaged by player:
+    - run dmodels_animate def.root_entity:<context.entity.flag[mob_model]> def.animation:hurt1
+    on entity_flagged:mob dies:
+    - run dmodels_animate def.root_entity:<context.entity.flag[mob_model]> def.animation:death
+    - wait 32t
+    - run dmodels_delete def.root_entity:<context.entity.flag[mob_model]>
+
+earth_elemental_spawn:
+  type: task
+  script:
+  - create earth_elemental "Earth Elemental" <player.location> save:husk 
+  - flag <entry[husk].created_npc> mob
+  - adjust <entry[husk].created_npc> max_health:1
+  - adjust <entry[husk].created_npc> health:1
+  
+  - attack <entry[husk].created_npc> target:<player>
+  - invisible <entry[husk].created_npc>
+  - run dmodels_spawn_model def.model_name:moss_golem def.location:<player.location> save:spawned
+  
+  - define root <entry[spawned].created_queue.determination.first>
+  - flag <entry[husk].created_npc> mob_model:<entry[spawned].created_queue.determination.first>
+  - run dmodels_attach_to def.root_entity:<[root]> def.target:<entry[husk].created_npc> 
+  # - run dmodels_animate def.root_entity:<[root]> def.animation:walk
+  - assignment add script:mob_assignment npc:<entry[husk].created_npc>
+  # - execute as_server "sentinel removetarget uuid:<player.uuid> --id <npc.id>"
+
+  # - teleport <[root]> <player.location>
+  # - run dmodels_reset_model_position def.root_entity:<[root]>
+  # - run dmodels_animate def.root_entity:<[root]> def.animation:idle
+  # - run dmodels_end_animation def.root_entity:<[root]>
+
+dmodels_spawn:
+  type: task
+  definitions: mob
+  script:
+  - spawn <[mob]> save:mob 
+  - flag <entry[mob].spawned_entity> mob
+  # - attack <entry[husk].spawned_entity> target:<player>
+  - invisible <entry[mob].spawned_entity>
+  - run dmodels_spawn_model def.model_name:<[mob]> def.location:<player.location> save:spawned
+  - define root <entry[spawned].created_queue.determination.first>
+  - flag <entry[mob].spawned_entity> mob_model:<entry[spawned].created_queue.determination.first>
+  - run dmodels_attach_to def.root_entity:<[root]> def.target:<entry[mob].spawned_entity>  def.auto_animate:true
+
+# mob_ai_world:
+#     type: world
+#     events:
+#       on custom event id:custom_monster_spawn:
+#       # - announce "<gold>custom data -- <context.data>"
+#       - announce "<blue>custom data -- <context.data.get[mob]>"
+#       - define this_mob <context.data.get[mob]>
+      
+#       - wait 2s
+#       - announce "<red><[this_mob].health>"
+#       # - if <[this_mob].has_flag[mob.custom_monster].not>:
+#       #   - stop
+#       # - announce "<gold>did we get this far"
+#       - define next_move pick
+#       - define target ""
+#       - while <[this_mob].is_spawned>:
+#       #   - run remove_entityless_armorstands_task
+#         # - narrate "health: <[this_mob].health>" targets:<server.match_player[sirbandersnatch]>
+#         - if <[this_mob].health> <= 6:
+#             - define next_move run
+#         - choose <[next_move]>:
+#           - case pick:
+#             - narrate "<blue>targeting . . . " targets:<server.match_player[sirbandersnatch]>
+#             - define close <[this_mob].location.find.living_entities.within[15].filter[entity_type.is[!=].to[armor_stand]].exclude[<npc>|<context.entity>|armor_stand]>
+#             # - narrate "<blue><[close]>" targets:<server.match_player[sirbandersnatch]>
+#             - if <[close].is_empty>:
+#               - define next_move wait
+#             - else:
+#               - define target <[close].get[1]>
+#               - narrate "<blue><[target]>" targets:<server.match_player[sirbandersnatch]>
+#               - choose <[target].entity_type>:
+#                 - case player:
+#                   - define next_move attack
+#                 - case skeleton zombie creeper:
+#                   - define next_move run
+#                 - default:
+#                   - define next_move wait
+#         - case wait:
+#           - wait 1s
+#           - define next_move pick
+#         - case attack:
+#           - if <[this_mob].location.distance[<[target].location>]> < 2:
+#             - hurt <[target]> 2
+#             - narrate "<red><[this_mob]> attacking <[target]>" targets:<server.match_player[sirbandersnatch]>
+#           - else:
+                
+#             - if <[this_mob].is_monster.not>:
+#               - define speed 10
+#               - if <script[<[this_mob].script.name>].data_key[flags.speed].exists>:
+#                 - define speed <[speed].add[<element[30].sub[<script[<[this_mob].script.name>].data_key[flags.speed].mul[100]>]>]>
+#               - wait <[speed]>t
+#               - narrate "<gold><[this_mob]> moving in closer " targets:<server.match_player[sirbandersnatch]>
+#               - look <[this_mob].flag[mob.custom_model]> <[target]> 
+#               # - teleport <[this_mob]> <[this_mob].location.points_between[<[target].location>].get[2]>
+#             - adjust <[this_mob]> last_hurt_by:<[target]>
+#             - define next_move wait
+        
+#         - case run:
+#           - if <[this_mob].is_monster.not>:
+#             - adjust <[this_mob]> last_hurt_by:<[target]>
+#           - else:
+#             - walk <[this_mob]> <[this_mob].location.add[<[target].location.sub[<[this_mob].location>]>]>
+#           - define next_move wait
+#           - narrate "<green><[this_mob]> running away" targets:<server.match_player[sirbandersnatch]>

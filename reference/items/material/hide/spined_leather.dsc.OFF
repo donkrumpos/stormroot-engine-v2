@@ -1,0 +1,10 @@
+spined_leather:
+  type: item
+  debug: true
+  material: paper
+  rarity: 1
+  display name: Spined Leather
+  mechanisms:
+    custom_model_data: 62001510
+  flags:
+    material_difficulty: 5

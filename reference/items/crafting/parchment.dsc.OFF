@@ -1,0 +1,24 @@
+parchment:
+    type: item
+    material: paper
+    display name: Parchment
+    lore:
+    - "Some illuminators and scribes"
+    - "consider this the best material"
+    - "for creating their tomes and scrolls."
+    recipes:
+        1:
+            type: shapeless
+            input: sheepskin
+            output_quantity: 4
+
+
+parchment_world:
+    type: world
+    events:
+     
+        on parchment recipe formed:
+        # - narrate <player.item_in_hand.script.name>
+        - if <player.item_in_hand.script.name> != skinning_knife:
+            - determine cancelled
+      

@@ -1,0 +1,59 @@
+bank_sign:
+  type: item
+  material: carrot_on_a_stick
+  display name: Bank Sign 
+  mechanisms:
+    custom_model_data: 6481002
+
+
+stable_sign:
+  type: item
+  material: carrot_on_a_stick
+  display name: Stable Sign 
+  mechanisms:
+    custom_model_data: 6481003
+
+
+rusty_anchor_sign:
+  type: item
+  material: carrot_on_a_stick
+  display name: Rusty Anchor Sign 
+  mechanisms:
+    custom_model_data: 6481005
+  
+
+
+generate_signs_task:
+  type: task
+  script:
+  # - define bank_signs bank_sign_rothigport_01|bank_sign_rothigport_02|bank_sign_rothigport_03
+  # - define sign1 "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|bank_sign]"
+  # - spawn <[sign1]> <location[610,66,218,songtide]>  save:bank_sign1
+  
+  - define sign2 "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|bank_sign]"
+  - spawn <[sign2]> bank_sign_rothigport_01  save:bank_sign1
+  - adjust <[sigh2]> armor_pose=HEAD|0,0,0
+
+  # - define sign3 "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|bank_sign]"
+  # - spawn <[sign3]> <location[774,67,323,songtide]>  save:bank_sign3
+  # - adjust <entry[bank_sign3].spawned_entity> armor_pose:HEAD|0,3.16,0
+
+  # - remove <player.location.find.entities[armor_stand].within[10]>
+  # - define sign4 "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<item[carrot_on_a_stick].with[custom_model_data=1679]>]"
+  # - spawn <[sign4]> <location[416,68,264,world]>  save:sign4
+  # - adjust <entry[sign4].spawned_entity> armor_pose:HEAD|0,3.16,0
+
+
+generate_rusty_anchor_sign:
+  type: task
+  script:
+  - define rusty_anchor_sign "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|rusty_anchor_sign]"
+  - spawn <[rusty_anchor_sign]> <location[615.5,66,237.85,songtide]>  save:rusty_anchor_sign
+  - adjust <entry[rusty_anchor_sign].spawned_entity> armor_pose:HEAD|0,-4.7,0
+
+
+
+
+
+
+

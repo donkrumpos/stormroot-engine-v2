@@ -1,0 +1,76 @@
+mugstool:
+  type: item
+  material: brown_mushroom
+  display name: Mugstool 
+  mechanisms:
+    custom_model_data: 2260003
+    
+
+
+generate_mugstool:
+  type: task
+  script:
+  - define mugstool "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|mugstool]"
+  - spawn <[mugstool]> <player.location>  save:mugstool
+  - adjust <[mugstool]> armor_pose=HEAD|0,0,0
+  - flag <player.location> mugstool
+  # - flag <player.location.down[1]> mugstool
+  # - flag <player.location.up[1]> mugstool
+  
+
+mugstool_events:
+  type: world
+  events:
+    # on player clicks air:
+    # - narrate break
+    on player clicks block location_flagged:mugstool:
+    - if <player.has_flag[<context.location>_mugstool_timer].not>:
+      - drop mugstool <context.location>
+      - flag <player> <context.location>_mugstool_timer expire:<util.random.int[11].to[61]>s
+    on player clicks block location_flagged:meeks_stove:
+    - flag <player> cooking_meeks_stew expire:1m
+    - inventory open d:generic[holder=workbench]
+
+    - determine cancelled
+    on player clicks block location_flagged:meeks_books:
+    - wait 1t
+    - define inv <inventory[bookshelf_inventory]>
+    - give "<item[diamond_hoe].with[display_name=<[direction]>;custom_model_data=36;hides=ALL;]>" to:<[inv]> slot:46
+    - give <item[a_book_2].with[flag=book_script:meeks_book]> to:<[inv]> slot:5
+    # - give <item[a_book_1]> to:<[inv]> slot:5
+    - inventory open d:<[inv]> 
+    # on player clicks item_flagged:book_script in bookshelf_inventory:
+    # # - if <context.item.script.name.contains[a_book_1|a_book_2]>:
+    # - define meeks_book_content "I came down here to escape the Overworld.<&nl>Things were not right anymore.<&nl>Rothgigport was changing and the Tides that we read the omens from were indicating new evils abounding forth."
+    # - adjust <player> "show_book:natural_skills_gui_book[book_pages=<[meeks_book_content]>]"
+
+    # - determine cancelled
+    
+    on player crafts mugstool_stew:
+    # - if <player.has_flag[meeks_1].not>:
+    - if <player.has_flag[cooking_meeks_stew]>:
+      - run summon_meeks
+    # on player scrolls their hotbar in:meeks_inner:
+    # - wait 2s
+    # - if <player.inventory.slot[<context.new_slot>].script.name> == mugstool_stew:
+    #   - run summon_meeks
+      
+
+
+summon_meeks:
+  type: task
+  script:
+  - define npc <npc[159]>
+  - if <[npc].is_spawned.not>:
+    - spawn <[npc]> meeks_spawnpoint
+    - wait 3s
+    - walk <[npc]> meek_soup_point speed:0.02
+    - flag <player> cooking_meeks_stew:!
+    - look <[npc]> <player.eye_location>
+    - wait 1s
+
+    - inject description_inject_task def:<[npc]>
+    - narrate format:npcchat "Mmmm. Smells delectable." targets:<player>
+    - flag <player> meeks_1
+
+

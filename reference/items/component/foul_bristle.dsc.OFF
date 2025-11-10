@@ -1,0 +1,7 @@
+foul_bristle:
+  type: item
+  material: bowl
+  display name: Foul Bristle
+  mechanisms:
+    custom_model_data: 2110028
+    

@@ -1,0 +1,428 @@
+
+        
+wulvern_assignment:
+    type: assignment
+    debug: true
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:5
+    interact scripts:
+    - wulvern_interact
+
+    default constants:
+        appearance1: "<npc.name>'lives in the wild but seems mysterious."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+        skin: https://minesk.in/2fac6da1db9f4e51a3bedca5d3c839ee
+        has_familiarity: true
+
+
+wulvern_interact:
+    type: interact
+    steps:
+        1:
+            proximity trigger:
+                entry:
+                    script:
+                    - execute as_server "npc skin --url https://minesk.in/05bb9809fd424ce0abe19adc03911d1f"
+                    - if <player.has_flag[npc.<npc.name>.prox_count].not> || <player.flag[npc.<npc.name>.prox_count]> == 0:
+                        - inject description_inject_task
+                        - random:
+                            - narrate "How did you find me way up here traveler?" targets:<player>
+                            - narrate "I don't get to many people visiting me up here." targets:<player>
+                    - if <player.flag[wulvern_kill_quest.zombie]> == complete && <player.flag[wulvern_kill_quest.creeper]> == complete && <player.flag[wulvern_kill_quest.skeleton]> == complete:
+                        - if <util.random.int[0].to[4]> == 4:
+                            - narrate "Welcome back <player.name>." targets:<player>
+                    - else:
+                        - define kill_list <list>
+                        - define unkill_list <list>
+                        - if <player.has_flag[wulvern_kill_quest.zombie]>:
+                            - if <player.flag[wulvern_kill_quest.zombie]> >= 10:
+                                - define kill_list:->:zombies
+                            - else:
+                                - define unkill_list:->:zombies
+                        - if <player.has_flag[wulvern_kill_quest.creeper]>:
+                            - if <player.flag[wulvern_kill_quest.creeper]> >= 10:
+                                - define kill_list:->:creepers
+                            - else:
+                                - define unkill_list:->:creepers
+                        - if <player.has_flag[wulvern_kill_quest.skeleton]>:
+                            - if <player.flag[wulvern_kill_quest.skeleton]> >= 10:
+                                - define kill_list:->:skeletons
+                            - else:
+                                - define unkill_list:->:skeletons
+
+                        - if <[kill_list].size> > 0:
+                            - narrate "Bully for you <player.name>!"
+                            - wait 2s
+                            - narrate "You've killed the <[kill_list].separated_by[,<&sp>]>"
+                            
+                        - wait 2s
+                        - if <[unkill_list].size> > 0:
+                            - narrate "You have not killed the <[unkill_list].separated_by[,<&sp>]> yet."
+                        - foreach <[kill_list]> as:kill:
+                            - if <[kill]> == zombies:
+                                - narrate "For your help killing some zombies I wonder if you will accept this Undead Slayer Morning Star."
+                                - give <item[morning_star].with_flag[slayer:undead]>
+                                - flag <player> skill.skills.beast_lore.level:+:5
+                                - narrate format:game_message "Your Beast Lore skill goes up by 5."
+                                - flag <player> wulvern_kill_quest.zombie:complete
+                            - if <[kill_list].size> > 1:
+                                - wait 2s
+                            - if <[kill]> == creepers:
+                                - narrate "For your help killing some creepers" targets:<player>
+                                - if <player.flag[class.type]> == ranger:
+                                    - if <player.has_flag[skill.specializations.tracking.level].not>:
+                                        - narrate "I can teach you the skill of tracking."
+                                        - flag <player> skill.specializations.tracking.level:+:1
+                                        - wait 1s
+                                        - narrate format:game_message "You have received the specialization of Tracking"
+                                        - flag <player> stat.points.skill_points:+:1
+                                        - narrate format:game_message "You have received a Skill Point."
+                                        - narrate "and" targets:<player>
+                                - narrate "I can give you a shiny silver coin."
+                                - give silver_coin  
+                                - narrate format:game_message "Wulvern gives you a silver coin."
+                                - flag <player> wulvern_kill_quest.creeper:complete
+                            - if <[kill_list].size> > 1:
+                                - wait 2s
+                            - if <[kill]> == skeletons:
+                                - narrate "For your help killing some skeletons please let me give you this Undead Slayer Bow."
+                                - give <item[bow].with_flag[slayer:undead]>
+                                - flag <player> skill.skills.beast_lore.level:+:5
+                                - narrate format:game_message "Your Beast Lore skill goes up by 5."
+                                - flag <player> wulvern_kill_quest.skeleton:complete
+
+
+
+                    - flag <player> npc.<npc.name>.prox_count:++
+
+            click trigger:
+                script:
+                - inject description_inject_task
+                - if <player.flag[wulvern_kill_quest.zombie]> == complete && <player.flag[wulvern_kill_quest.creeper]> == complete && <player.flag[wulvern_kill_quest.skeleton]> == complete:
+    
+                    - if <player.has_flag[class.type]> && <player.flag[class.type]> == ranger:
+                        - if <player.has_flag[wulvern_tell_garroot]>:
+                            - narrate "There's not much I can help you with for right now." targets:<player>
+                        - else:
+                            - narrate "Now that you are a Ranger, I can tell you, that there is a whole network of us out there to help in our ways." targets:<player>
+                            - wait 3s
+                            - narrate "One such Ranger is <&color[#82b1f2]>Garroot<&r>. He can help you with more hunting learning. Although we don't like to give away our locations, I can tell you that he is on the other side of the island in a small cabin built into a tree." targets:<player>
+                            - flag <player> wulvern_tell_garroot
+                    - else if <player.has_flag[class.type]> != ranger:
+                        - if <player.has_flag[suspend_clickable].not>:
+                            - flag <player> suspend_clickable:!
+                            - zap 1
+                            - narrate "I could still teach you how to be a Ranger" targets:<player>
+                            - clickable <npc.name>_task_09 save:<npc.name>_clickable_09 until:30s usages:1 for:<player>
+                            - clickable <npc.name>_task_07 save:<npc.name>_clickable_07 until:30s usages:1 for:<player>
+                            - narrate <&nl> targets:<player>
+                            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes, I feel the call of the wild.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_09].command>]>" targets:<player>
+                            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>I'm not interested.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_07].command>]>" targets:<player>
+                            # - flag <player> suspend_clickable:!
+                            - zap 6 wulvern_interact player:<player> duration:14s
+                            - flag <player> suspend_clickable:!
+                    - else:
+                        - random:
+                            - narrate "I'm sure I'll be able to help a fellow mortal out later." targets:<player>
+                            - narrate "Have you been to Runesbrook down the hill? It is my favorate of all the cities." targets:<player>
+                            - narrate "Cities make me feel uncomfortable. I'm more at home out in the woods." targets:<player>
+                            - narrate "You can find most of us Rangers out in the wild." targets:<player>
+                - else:
+                    - if <player.has_flag[suspend_clickable].not>:
+                        
+                        - narrate "Are ye friend or foe?" targets:<player>
+                        - clickable <npc.name>_task_01 save:<npc.name>_clickable_01 until:30s usages:1 for:<player>
+                        - clickable <npc.name>_task_02 save:<npc.name>_clickable_02 until:30s usages:1 for:<player>
+                        - clickable <npc.name>_task_03 save:<npc.name>_clickable_03 until:30s usages:1 for:<player>
+                        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Friend, are you the one they call The Monster Hunter?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_01].command>]>" targets:<player>
+                        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>Foe, I've been sent to assassinate you.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" targets:<player>
+                        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>3. <&color[#6fd6cb]>Neither, I'm just looking for information.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" targets:<player>
+                        - flag <player> suspend_clickable:!
+                        - zap 2
+                
+                    
+        2:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. Friend, are you the one they call The Monster Hunter?
+                    script:
+                    - inject wulvern_task_01
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. Foe, I've been sent to assassinate you.
+                    script:
+                    - inject wulvern_task_02
+                    - zap 1
+
+                3:
+                    trigger: <&7>/3/. >Neither, I'm just looking for information.
+                    script:
+                    - inject wulvern_task_03
+                    - zap 1
+        3:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. How does one become a hunter?
+                    script:
+                    - inject wulvern_task_04
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. Why has the monster count risen so much lately?
+                    script:
+                    - inject <npc.name>_task_05
+                    - zap 1
+        4:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. Yes, tell me more.
+                    script:
+                    - inject wulvern_task_06
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. No, I don't care.
+                    script:
+                    - inject wulvern_task_07
+                    - zap 1
+        5:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. Yes, how can I help?
+                    script:
+                    - inject wulvern_task_08
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. No, I'm not interested.
+                    script:
+                    - inject wulvern_task_07
+                    - zap 1
+        
+        6:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. Yes, I feel the call of the wild.
+                    script:
+                    - inject wulvern_task_09
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. No, I'm not interested.
+                    script:
+                    - inject wulvern_task_07
+                    - zap 1
+        7:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. Yes, I am sure Ranger is right for my path.
+                    script:
+                    - inject wulvern_task_10
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. No, I'm not interested.
+                    script:
+                    - inject wulvern_task_07
+                    - zap 1
+
+                
+wulvern_task_01:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - zap 1
+        - inject description_inject_task
+        - narrate "Ha ha. That's quite the moniker." targets:<player>
+        - wait 2s
+        - narrate "Yes, I have heard it before, but you can just all me Wulvern as many of the folk do." targets:<player>
+        - wait 3s
+        - narrate "I guess I have a reputation for hunting, but lately there are so many monsters in our land, more than I can quell." targets:<player>
+        - clickable <npc.name>_task_04 save:<npc.name>_clickable_04 until:30s usages:1 for:<player>
+        - clickable <npc.name>_task_05 save:<npc.name>_clickable_05 until:30s usages:1 for:<player>
+        - narrate <&nl> targets:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>How does one become a hunter?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_04].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>Why has the monster count risen so much lately?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_05].command>]>" targets:<player>
+        - zap 3 wulvern_interact player:<player> duration:14s
+        - flag <player> suspend_clickable:!
+
+wulvern_task_02:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "Ha ha. I'm sure you have. As many before you have."  targets:<player>
+        - wait 3s
+        - narrate "I'll be sure to tell the other hunters in the guild to stay clear of you. heh"  targets:<player>
+        - flag <player> suspend_clickable:!
+        - flag <player> wulvern_foe
+        - zap 1 wulvern_interact player:<player> duration:14s
+
+wulvern_task_03:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - zap 1 wulvern_interact player:<player> duration:14s
+        - inject description_inject_task
+        - narrate "Ho! information does not come cheap."  targets:<player>
+        - wait 3s
+        - narrate "Come and see me again once you have some experience and we can talk more."  targets:<player>
+        - flag <player> suspend_clickable:!
+
+wulvern_task_04:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - zap 1
+        - inject description_inject_task
+        - narrate "Though one could be a hunter as a rogue or fighter, I feel the best class to profess is that or Ranger."  targets:<player>
+        - wait 3s
+        - narrate "Which is the profession I've trained in for the last decades."  targets:<player>
+        - if <player.flag[class.type]> == ranger:
+            - narrate "I see you are one of us."  targets:<player>
+        - else if <player.flag[class.type].exists>:
+            - narrate "If you were not another class, I might tell you more about the Ranger Hunter."  targets:<player>
+        - else:
+            - narrate "I can tell you more about the Ranger if you desire."  targets:<player>
+            - clickable <npc.name>_task_06 save:<npc.name>_clickable_06 until:30s usages:1 for:<player>
+            - clickable <npc.name>_task_07 save:<npc.name>_clickable_07 until:30s usages:1 for:<player>
+            - narrate <&nl> targets:<player>
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes, tell me more.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_06].command>]>" targets:<player>
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>No, I don't care.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_07].command>]>" targets:<player>
+            
+            - zap 4 wulvern_interact player:<player> duration:14s
+        - flag <player> suspend_clickable:!
+
+wulvern_task_05:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - inject description_inject_task
+        - narrate "I can't tell you the reason, but just that I am concerned."  targets:<player>
+        - wait 3s
+        - narrate "Perhaps a more sagacious elder in Runesbrook can give you a clue."  targets:<player>
+        - wait 3s
+        - narrate "I only know that it is my call to study and vanquish such beasts."  targets:<player>
+        - wait 3s
+        - narrate "I could use your help, if you're willing."  targets:<player>
+        - clickable <npc.name>_task_08 save:<npc.name>_clickable_08 until:30s usages:1 for:<player>
+        - clickable <npc.name>_task_07 save:<npc.name>_clickable_07 until:30s usages:1 for:<player>
+        - narrate <&nl> targets:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes, how can I help?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_08].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>I'm not interested.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_07].command>]>" targets:<player>
+        - flag <player> suspend_clickable:!
+        - zap 5 wulvern_interact player:<player> duration:14s
+
+wulvern_task_06:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - zap 1 wulvern_interact player:<player> duration:14s
+        - inject description_inject_task
+        - narrate "Rangers feel the most comfortable out in the Wild, among the beasts and flora of nature."  targets:<player>
+        - wait 3s
+        - narrate "Not only do we seek full knowledge of all living wild, we also are masters of weapons; especially the box."  targets:<player>
+        - wait 3s
+        - narrate "This makes us especially good at tracking our prey, even other Folk, if the need arises for the greater good."  targets:<player>
+        - wait 4s
+        - if <player.has_flag[class.type]> && <player.flag[class.type]> != ranger:
+            - narrate "I can see that you are already studying as a <player.flag[class.type]>"  targets:<player>
+            - wait 3s
+            - narrate "But if you ever want to join the call of the wild, you know where to find me."  targets:<player>
+        - else:
+            - narrate "I can teach you how to be a Ranger if this resonates with you."  targets:<player>
+            - narrate <&nl> targets:<player>
+            - clickable <npc.name>_task_09 save:<npc.name>_clickable_09 until:30s usages:1 for:<player>
+            - clickable <npc.name>_task_07 save:<npc.name>_clickable_07 until:30s usages:1 for:<player>
+            - narrate <&nl> targets:<player>
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes, I feel the call of the wild.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_09].command>]>" targets:<player>
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>I'm not interested.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_07].command>]>" targets:<player>
+        - flag <player> suspend_clickable:!
+        - zap 6 wulvern_interact player:<player> duration:14s
+
+
+wulvern_task_07:
+    type: task
+    script:
+    - inject description_inject_task
+    - random:
+        - narrate "Thanks for making your way up the hill."  targets:<player>
+        - narrate "Perhaps the good folk of Runesbrook can aid you."  targets:<player>
+        - narrate "There's not much else here for you except knowledge of beasts and how to kill them. I will bid thee farewall."  targets:<player>
+        - narrate "Goodbye then."  targets:<player>
+    - zap 1 wulvern_interact player:<player> duration:14s
+
+wulvern_task_08:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 wulvern_interact player:<player> duration:14s
+        - inject description_inject_task
+        - narrate "Agreeable to hear. We must get started right away"  targets:<player>
+        - wait 2s
+        - narrate "Help me by killing several of these creatures to abate."  targets:<player>
+        - narrate <&nl> targets:<player>
+        - wait 2s
+        - narrate "<green>Kill 10 Zombies" targets:<player>
+        - wait 1s
+        - narrate "<green>Kill 10 Skeletons" targets:<player>
+        - wait 1s
+        - narrate "<green>Kill 10 Creepers" targets:<player>
+        - wait 2s
+        - narrate <&nl> targets:<player>
+        - narrate "I can reward you for each task when you come back."  targets:<player>
+        - wait 1s
+        
+        - if <player.has_flag[wulvern_kill_quest.zombie].not>:
+            - flag <player> wulvern_kill_quest.zombie:0
+        - if <player.has_flag[wulvern_kill_quest.creeper].not>:
+            - flag <player> wulvern_kill_quest.creeper:0
+        - if <player.has_flag[wulvern_kill_quest.skeleton].not>:
+            - flag <player> wulvern_kill_quest.skeleton:0
+        - narrate "The Gods Speed hunter."  targets:<player>
+        - flag <player> suspend_clickable:!
+
+wulvern_task_09:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - zap 1 wulvern_interact player:<player> duration:14s
+        - inject description_inject_task
+        - narrate "Bully for you!"  targets:<player>
+        - wait 2s
+        - narrate "Choosing your life path is no delicate matter. There are many classes out there so are you sure?"  targets:<player>
+        - wait 1s
+        - narrate <&nl> targets<player>
+        - clickable <npc.name>_task_10 save:<npc.name>_clickable_10 until:30s usages:1 for:<player>
+        - clickable <npc.name>_task_07 save:<npc.name>_clickable_07 until:30s usages:1 for:<player>
+        - narrate <&nl> targets:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes, I am sure Ranger is right for my path.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_10].command>]>" targets:<player>
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>I'm not interested.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_07].command>]>" targets:<player>
+        - flag <player> suspend_clickable:!
+        - zap 7 wulvern_interact player:<player> duration:14s
+
+wulvern_task_10:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - zap 1 wulvern_interact player:<player> duration:14s
+        - flag <player> class.type:ranger
+        - inject description_inject_task
+        - narrate "Here is the first step on a brave long journey."  targets:<player>
+        - wait 2s
+        - narrate "Welcome."  targets:<player>
+        - wait 2s
+        - narrate "Come and see me again in the future."  targets:<player>
+
+        - flag <player> suspend_clickable:!
+
+

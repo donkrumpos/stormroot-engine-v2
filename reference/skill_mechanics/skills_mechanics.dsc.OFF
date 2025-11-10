@@ -1,0 +1,462 @@
+
+    
+natural_skill_check_proc:
+    type: procedure
+    definitions: player|skill|modifier
+    script:
+    # - narrate "<yellow>modifier::: <[modifier]>"
+    # - narrate "the skill being tested: <[skill]>"
+    - define adjusted_skill <[player].flag[skill.skills.<[skill]>.level].add[<[modifier].round||0>].round||1>
+    # - narrate "<player.flag[skill.skills.<[skill]>.level]>"
+    # - narrate "adjusted skill <[adjusted_skill]>"
+    # - define skill_cap_modifier <element[700].sub[<proc[natural_skills_total_proc]>].context[<[player]>]> 
+    # this uses a pseudo inverse sigmoid that Eric told me about
+    - define success_chance <element[1000].div[<[adjusted_skill].div[10].add[12]>]>
+    
+    - define random_roll <util.random.int[0].to[100]>
+    # - narrate "<[success_chance]> must be less than <[random_roll]>" targets:<server.match_player[sirbandersnatch]>
+    - if <[success_chance]> < <[random_roll]>:
+        #success!
+        - determine true
+    - else:
+        #fail :(
+        - determine false
+
+natural_skills_total_proc:
+    type: procedure
+    definitions: player
+    script:
+    # - announce "<gold><[player]> or <player>"
+    - define total 0
+    - foreach <player.flag[skill.skills].values> as:level:
+        
+        - if <[level].get[level].is_decimal> && <[level].get[level]> > 0:
+            - define total <[total].add[<[level].get[level]>]>
+            # - narrate <light_purple><[level].get[level]>
+    - determine <[total].round_down>
+
+natural_skills_total_task:
+    type: task
+    definitions: player
+    script:
+    - define total 0
+    - foreach <[player].flag[skill.skills].values> as:level:
+        # - narrate <[level].get[level]>
+        - define total <[total].add[<[level].get[level]>]>
+    - determine <[total].round_down>
+
+
+raise_natural_skill_task:
+    type: task
+    debug: true
+    definitions: player|skill|gain_mod|timer_mod|hard_value|skip
+    script:
+    - if <script[skills_skills_data].data_key[skills].contains[<[skill]>].not>:
+        - narrate "<red>trying to raise skill <[skill]> from not in data list" targets: <server.match_player[sirbandersnatch]>
+        - stop
+    - if <[skill]> == null:
+        - narrate "<red>trying to raise skill <[skill]> from null" targets: <server.match_player[sirbandersnatch]>
+        - stop
+    - if <[hard_value]> >= 1:
+        - flag <[player]> skill.skills.<[skill]>.level:+:<[hard_value]||1>
+    - define timer_mod <[timer_mod].max[0]||0>
+    - define gain_time 0
+
+    - define gain_mod <[gain_mod]||0>
+    - if <[player].as_player.has_flag[skill.skills.<[skill]>.level]>:
+        - if <[player].as_player.flag[skill.skills.<[skill]>.level]||0> < 1:
+            - flag <[player]> skill.skills.<[skill]>.level:1
+        - if <[player].has_flag[<[skill]>_skillgain_timer].not> || <[skip]> == true:
+            - define skill_cap <element[700]>
+            # raise players's skill  skill by small amount
+            # - announce <red><proc[natural_skills_total_proc].context[<player>]>
+            - define total_skills <proc[natural_skills_total_proc].context[<[player]>]>
+            - define skill_cap_modifier <[skill_cap].sub[<[total_skills]>].div[100].max[0.01]>
+            - define skill_raise_amt <element[1].div[<[player].flag[skill.skills.<[skill]>.level]||0>]>
+            - define skill_raise_amt <[skill_raise_amt].add[<[gain_mod]>]>
+            # - announce <green><[skill_raise_amt]>
+            - define skill_raise_amt <util.random.decimal[<[skill_raise_amt].sub[0.01]>].to[<[skill_raise_amt].add[<[skill_cap_modifier]>]>]>
+            # - announce <light_purple><[skill_raise_amt]>
+            - if <proc[natural_skills_total_proc].context[<[player]>]> > 1000:
+                - flag <[player]> skill.skills.<[skill]>.level:+:<[skill_raise_amt]||.0001>
+            - else:
+                - flag <[player]> skill.skills.<[skill]>.level:+:<[skill_raise_amt].mul[2]||.001>
+
+            - if <script[skills_skills_data].data_key[skills.<[skill]>].contains[attribute]>:
+                - foreach <script[skills_skills_data].data_key[skills.<[skill]>.attribute]>:
+                    - run raise_attribute_task def:<[player]>|<[key]>|<[value]>
+
+            - if <[skill]> != focus:
+            
+                - narrate format:game_message "Your <script[skills_skills_data].data_key[skills.<[skill]>.display_name]> raises by some." targets:<[player]>
+                - narrate format:game_message "<[player].name> <script[skills_skills_data].data_key[skills.<[skill]>.display_name]> raises by <[skill_raise_amt].round_to[2]||.0001>." targets:<server.match_player[sirbandersnatch]>
+            # set random time for skill gain timer
+            - define random_gain_time <util.random.int[2].to[9]>
+            - define accelerated_skill_gain_modifier 0
+            - if <player.has_flag[accelerated_skill_gain]> && <player.flag[accelerated_skill_gain].contains[<[skill]>]>: 
+                - define gain_time <[player].flag[skill.skills.<[skill]>.level].sub[10].max[1]>
+            - else:
+                - define gain_time <[player].flag[skill.skills.<[skill]>.level].mul[<[random_gain_time]>]||1>
+            - if <proc[natural_skills_total_proc].context[<[player]>]> > 1000:
+                # once all natural skills are over 1000 the time it takes to raise is longer
+                - define longer_skill_gain <proc[natural_skills_total_proc].context[<[player]>].round_down>
+            # - debug record start
+            - define gain_time:+:<[timer_mod].add[<[longer_skill_gain]>]>
+            # - ~debug record submit save:mylog
+            # - narrate "Recorded log as <entry[mylog].submitted||<red>FAILED>"
+           
+            
+            # reset skill gain timer
+            - flag <[player]> <[skill]>_skillgain_timer duration:<[gain_time].round_up>s
+    - else:
+        - flag <[player].as_player> skill.skills.<[skill]>.level:1
+
+raise_attribute_task:
+    type: task
+    definitions: player|attribute|chance
+    script:
+    - if <[player].has_flag[<[attribute]>_gain_timer].not>:
+        - define random <util.random.int[0].to[100]>
+        - if <[random]> <= <[chance]>:
+            - define attribute_timer_mod <[player].flag[skill.attribute.<[attribute]>.level].mul[<util.random.int[1].to[2]>].mul[<[player].flag[skill.attribute.<[attribute]>.level].sub[2].max[1]>]>
+            - flag <[player]> skill.attribute.<[attribute]>.level:+:1
+            - flag <[player]> <[attribute]>_gain_timer expire:<[attribute_timer_mod]>s
+       
+skill_check_proc:
+    type: procedure
+    definitions: player|skill|modifier
+    script:
+    # - narrate "the skill being tested: <[skill]>"
+    - define adjusted_skill <[player].flag[skill.<[skill]>.level].add[<[modifier]||0>]>
+    - define success_chance <element[1000].div[<[adjusted_skill].div[10].add[20]>]>
+    
+    - define random_roll <util.random.int[0].to[100]>
+    # - narrate " <[success_chance]> has to be less than <[random_roll]>"
+    # - if <[random_roll]> == 0:
+    #     - determine critical_fail
+        
+    # - if <[random_roll]> == 100:
+    #     - determine critical_success
+       
+    - if <[success_chance]> < <[random_roll]>:
+        - determine true
+
+
+use_command:
+    type: command
+    name: "use"
+    description: Uses a skill
+    usage: /use &lt>myArg1<&gt>
+    script:
+    - define use_skill <context.raw_args.to_lowercase>
+    
+    
+    - if <player.flag[skill.<[use_skill].replace[<&sp>]>.level]||0> >= 1:
+        - if <script[specializations_skills_data].data_key[skill.<[use_skill]>].contains[script]>:
+            - run <script[specializations_skills_data].data_key[skill.<[use_skill]>.script]>
+        - else:
+            - narrate "This skill cannot be used this way."
+    - else:
+        - narrate "You need to upgrade this skill before you can use it."
+    
+
+
+
+level_success_proc:
+    type: procedure
+    definitions: player|level
+    script:
+    - define percent_chance <element[1].div[<[level]>]>
+    - define percent_chance <[level].sub[<[percent_chance]>].mul[10]>
+    # - define percent_chance <[percent_chance].div[<[level]>]>
+
+    # - define percent_chance <[percent_chance].mul[100]>
+    # - define percent_chance <[percent_chance].sub[99]>
+    # - define percent_chance <[percent_chance].mul[100]>
+    - if <util.random.int[0].to[100]> < <[percent_chance]>:
+        - determine true
+
+skills_world:
+    type: world
+    events:
+        on player swaps items:
+        - if <context.offhand.has_flag[bound]>:
+            - determine cancelled
+        on player drops item_flagged:bound:
+        - determine CANCELLED
+        on player clicks item_flagged:bound in inventory:
+        # REMINDER this works only in adventure or survival mode
+
+        - narrate "This slot is bound to <player.flag[bound_spell.<player.held_item_slot>]>. You must <green>/unbind <&r>this slot"
+        - determine CANCELLED
+
+
+     
+hotkey_command:
+    type: command
+    name: hotkey
+    description: Let's you set a skill to your hotbar
+    usage: /hotkey &lt>myArg1<&gt>
+    # tab completions:
+    #     1: <player.flag[skill.specializations].keys>
+    tab complete:
+        - determine <proc[queued_special_skills_proc]>
+    aliases:
+        - hk
+    script:
+    - define skill <context.args.get[1].to_lowercase>
+    - define hk_args <context.args.get[2].to_lowercase||null> 
+    - run hotkey_task def:<[skill]>|<[hk_args]>
+
+queued_special_skills_proc:
+    type: procedure
+    script:
+    - define skills <list>
+    - foreach <player.flag[skill.specializations]> as:skill:
+        - if <script[specializations_skills_data].data_key[specializations.<[key]>].contains[type]> && <script[specializations_skills_data].data_key[specializations.<[key]>.type]> == queued:
+            - define skills <[skills].insert[<[key]>].at[<[skills].size>]>
+
+    - determine <[skills]>
+
+hotkey_task:
+    type: task
+    definitions: skill|hk_args
+    script:
+    
+    # - if <player.item_in_hand.script.data_key[item_type].contains[bindable]>:
+    # - if <script[specializations_skills_data].data_key[specializations.<[skill]>.type]> != queued:
+    #     - if <player.item_in_hand.material.name.contains[air].not>:
+    #         - narrate "You need to have a open slot to bind to."
+    #         - stop
+    - if <[skill]> == "dodge":
+        - narrate "yes it is dodge for some reason"
+        - if <[hk_args]> == "left":
+            - flag player hotkeyed_skill.<player.held_item_slot>:dodge_left
+            - give "<item[carrot_on_a_stick].with[custom_model_data=1676;display=Dodge left].with_flag[bound]>" slot:<player.held_item_slot>
+            - narrate "<[skill].to_titlecase> added to slot <player.held_item_slot> as a hotkey."
+            - adjust <player> item_slot:<context.previous_slot>
+            - stop
+        - if <[hk_args]> == "right":
+            - flag player hotkeyed_skill.<player.held_item_slot>:dodge_right
+            - narrate "<[skill].to_titlecase> added to slot <player.held_item_slot> as a hotkey."
+            - give "<item[carrot_on_a_stick].with[custom_model_data=1675;display=Dodge right;].with_flag[bound]>" slot:<player.held_item_slot>
+            - stop
+    - if <script[specializations_skills_data].data_key[specializations.<[skill]>].exists>:
+        - if <player.has_flag[skill.specializations.<[skill]>.level]>:
+            - if <player.flag[skill.specializations.<[skill]>.level]> < 1:
+                - narrate "You need to upgrade this skill before you can use it."
+                - stop
+            - else:
+                
+                - define icon 81016100
+                - if <script[specializations_skills_data].data_key[specializations.<[skill]>].contains[custom_model_data]>:
+                    - define icon <script[specializations_skills_data].data_key[specializations.<[skill]>.custom_model_data]>
+                - choose <script[specializations_skills_data].data_key[specializations.<[skill]>.type]>:
+                    # - case active:
+                        # active does not need mechanics as they always work without queuing
+                        # - equip <player> offhand:<item[dried_kelp].with[custom_model_data=<[icon]>;display=<[skill].to_titlecase>;flag=hotkeyed:<[skill]>]>
+                    - case queued:
+                        - equip <player> offhand:<item[dried_kelp].with[custom_model_data=<[icon]>;display=<[skill].to_titlecase>;flag=hotkeyed:<[skill]>]>
+                        - flag player hotkeyed_skill.<player.held_item_slot>:<[skill]>
+                    # - give <item[kelp].with[custom_model_data=1675;display=<[skill].to_titlecase>;flag=hotkeyed:<[skill]>]> slot:<player.offhand>
+                    - case aura:
+                        - give <item[dried_kelp].with[custom_model_data=<[icon]>;display=<[skill].to_titlecase>;flag=hotkeyed:<[skill]>]> slot:<player.held_item_slot>
+                        - flag player hotkeyed_skill.<player.held_item_slot>:<[skill]>
+                    - case default:
+                        - narrate "neeed"
+        - else:
+            - narrate "You don't have this skill."
+            - stop
+
+    - else:
+        - narrate "No such skill exists."
+        - stop
+
+    # - flag player hotkeyed_skill.<player.held_item_slot>:<[skill]>
+    - narrate format:game_message "<[skill].replace[_].with[<&sp>].to_titlecase> added to slot as a hotkey."
+    # - give <item[kelp].with[custom_model_data=1675;display=<[skill].to_titlecase>;flag=hotkeyed:<[skill]>]> slot:<player.held_item_slot>
+        
+
+hotkey_click_world:
+    type: world
+    events:
+        on player swaps items:
+        - if <context.main.has_flag[hotkeyed]>:
+            - define skill <context.main.flag[hotkeyed]>
+            - define type <script[specializations_skills_data].data_key[specializations.<[skill]>.type]>
+            - if <[type]> ==  queued:
+                - flag <player> hotkeyed_skill.41:!
+                - flag <player> current_queued_skill:!
+                - wait 1t
+                - take iteminhand
+            - else:
+                - define slot <player.held_item_slot>
+                - flag <player> hotkeyed_skill.<[slot]>:!
+                - take slot:offhand
+        # - if <context.offhand.has_flag[bound_spell]>:
+        #     - run clear_bound_spell_task def:
+           
+        on player right clicks block with:item_flagged:hotkeyed:
+        - define skill <context.item.flag[hotkeyed]>
+        - flag <player> current_queued_skill:<[skill]>
+        - narrate "<[skill]> queued"
+        # - run <script[specializations_skills_data].data_key[specializations.<[skill]>.script]>
+        on player left clicks block with:item_flagged:hotkeyed:
+        - ^determine cancelled 
+        # - if <player.has_flag[hotkeyed_skill.<player.held_item_slot>]>:
+        #     - define skill <player.flag[hotkeyed_skill.<player.held_item_slot>]>
+        #     - execute as_player "<[skill]>"
+       
+       
+        - if <player.has_flag[bound_spell]>:
+            - if <player.has_flag[bound_spell.<player.held_item_slot>]>:
+                - define slot <player.held_item_slot>
+                
+                - define cast_spell <player.flag[bound_spell.<player.held_item_slot>].values.first>
+            # - if <[cast_spell]> == "provocation":
+            #     - if <player.has_flag[provoke.target.first]>:
+            #         - define magery_mod 0
+            #         - define level_mod <player.flag[skill.provocation.level]>
+            #         - define magery_mod <player.flag[skill.natural.musicianship_level].round_down||1>
+                    
+            #         - ~run spell_task def:<[cast_spell].replace[<&sp>].with[]>|<player>
+            #         - inject locally subpaths.provoke.second
+            #     - else:
+            #         - inject locally subpaths.provoke.first
+            # - else:
+                - run spell_task def:<[cast_spell].replace[<&sp>].with[]>|<player>|<player.target>
+                
+         
+        - if <player.has_flag[hotkeyed_skill]>:
+            - if <player.has_flag[hotkeyed_skill.<context.slot>]>:
+                - narrate "This slot is hotkeyed to <player.flag[hotkeyed_skill.<context.slot>]>. You must <green>/unhotkey <&r>this slot"
+                - determine CANCELLED
+
+    
+clear_hotkey_skill_command:
+    type: command
+    name: unhotkey
+    description: Let's you unhotkey a spell
+    usage: /unhotkey
+    aliases:
+        - unhk
+    tab completions:
+        1: <player.flag[hotkeyed_skill.41]>
+    script:
+    - run clear_hotkey_skill_task def:<context.args.get[1]>
+
+clear_hotkey_skill_task:
+    type: task
+    definitions: skill
+    
+    script:
+    - narrate "<player.flag[hotkeyed_skill.41]> and <[skill]>"
+    - if <[skill]> == ALL:
+        - foreach <player.flag[hotkeyed_skill]> as:hotkeyed_skill:
+            - flag player hotkeyed_skill.<[key]>:!
+            - take slot:<[key]>
+            # - narrate "If providing an argument, your options are <green>all"
+    - else if <player.flag[hotkeyed_skill.41]> == <[skill]>:
+        - define hotkeyed_skill <player.flag[hotkeyed_skill.41]>
+        - flag player hotkeyed_skill.41:!
+        - take <player.item_in_offhand>
+        - narrate "You have unhotkeyed <[hotkeyed_skill]> from slot <player.held_item_slot>"
+    - else:
+        - if <player.has_flag[hotkeyed_skill.<player.held_item_slot>]>:
+            - define hotkeyed_skill <player.flag[hotkeyed_skill.<player.held_item_slot>]>
+            - flag player hotkeyed_skill.<player.held_item_slot>:!
+            - take <player.item_in_hand>
+            - narrate "You have unhotkeyed <[hotkeyed_skill]> from slot <player.held_item_slot>"
+        - else:
+            - narrate "You don't have a skill hotkeyed."
+
+is_in_party_proc:
+    type: procedure
+    definitions: player
+    script:
+    - if <[player].has_flag[party]>:
+        - define party <server.players_flagged[party].filter[flag[party].is[==].to[<player.flag[party]>]]>
+        - determine <[party]>
+
+
+second_wind_task:
+    type: task
+    script:
+    - narrate "second wind running <player.flag[stat.core.stamina_regeneration_rate.level]>"
+
+second_wind_command:
+    type: command
+    name: second_wind
+    usage: "/second_wind"
+    description: "You are ready for second wind"
+    script:
+    - run second_wind_task
+
+
+highest_skill_proc:
+    type: procedure
+    definitions: player|amount
+    script:
+    - if <[amount].exists.not>:
+        - define amount 1
+    - define skill_list <map>
+    - foreach <[player].flag[skill.skills]> as:skill:
+        - if <[player].flag[skill.skills.<[key]>.level]> < 1:
+            - foreach next
+     
+        - define category <script[skills_skills_data].data_key[skills.<[key]>.category]>
+        # - if <[skills_list].contains[<script[skills_skills_data].data_key[skills.<[key]>.category]>]>:
+        - define skill_list <[skill_list].include[<[key]>=<[player].flag[skill.skills.<[key]>.level].round>]>
+        # - narrate "<[category]> <[player].flag[skill.skills.<[key]>.level]>"
+    - define best_skill <[skill_list].sort_by_value.keys.last[<[amount]>]>
+    - determine <[best_skill].first>
+
+get_highest_skill_categories_proc:
+    type: procedure
+    definitions: player|amount
+    script:
+    - define skill_categories <list>
+    - define super_category <list>
+    - foreach <proc[highest_skill_proc].context[<player>|<[amount]>]> as:skill:
+        - if <script[skills_skills_data].data_key[skills.<[skill]>].contains[category]>:
+            - define category <script[skills_skills_data].data_key[skills.<[skill]>.category]>
+        - else:
+            - foreach next
+        # - if <[skills_list].contains[<script[skills_skills_data].data_key[skills.<[skill]>.category]>]>:s
+        - define skill_categories <[skill_categories].include[<[category]>]> 
+    - define deduped_list <[skill_categories].deduplicate>
+    - foreach <[deduped_list]> as:dedup:
+        - if <[skill_categories].count[<[dedup]>]> > 1:
+            - define super_category <[dedup]>
+    
+    - determine <[super_category]>
+
+
+highest_skill_title_proc:
+    type: procedure
+    definitions: skill
+    script:
+    - define title "Wanderer"
+    - if <script[skills_skills_data].data_key[skills.<[skill]>].contains[title]>:
+        - define title <script[skills_skills_data].data_key[skills.<[skill]>.title]>
+    - determine <[title]>
+
+get_title_from_skill:
+    type: procedure
+    definitions: player
+    script:
+    - determine <proc[highest_skill_title_proc].context[<proc[highest_skill_proc].context[<[player]>]>]>
+
+# class_data:
+#     type: data
+#     class:
+#         cleric:
+#             - prayer_spells
+#         mage:
+#             - spells
+#         bard:
+#             - song_spells
+#         rogue:
+#             - stealing
+        
+

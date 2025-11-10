@@ -1,0 +1,7 @@
+water_shard:
+  type: item
+  material: amethyst_shard
+  display name: Water Shard
+  mechanisms:
+    custom_model_data: 2180002
+    

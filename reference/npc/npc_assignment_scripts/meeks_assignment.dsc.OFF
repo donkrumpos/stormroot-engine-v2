@@ -1,0 +1,85 @@
+meeks_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:3
+        # on complete navigation:
+        # - inject description_inject_task
+        # - narrate format:npcchat "I completed navigation"
+        # on spawn:
+        # - wait 5s
+        # - inject description_inject_task
+        # - narrate format:npcchat "I spawned."
+
+        
+    interact scripts:
+    - meeks_interact
+
+    default constants:
+        appearance1: "<npc.name>'lives in the wild but seems mysterious."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+
+
+meeks_interact:
+    type: interact
+    steps:
+        1:
+            # proximity trigger:
+            #     move:
+            #         script:
+            #         - narrate <player.item_in_hand>
+            click trigger:
+                script:
+                - inject description_inject_task
+                - if  <player.item_in_hand.script.name> = mugstool_stew:
+                    - flag <player> meeks_mugstool_stew
+                    - take <player.item_in_hand>
+                    - narrate "Thank you. My favorite. How did you know?"
+                    - wait 1s
+                    - narrate "This stew nourishes my soul and my stomach."
+                    - wait 3s
+                    - narrate "Though I seek isolation and communion with the Gods, your presence is welcome."
+                    - wait 1s
+                    - narrate "What brings you to these depths of a forgotten world?"
+                    - zap 2
+                - else:
+                    - narrate "We don't find many other mortals down here. Be careful."
+        2:
+            click trigger:
+                script:
+                - inject description_inject_task
+                - if <player.has_flag[meeks_mugstool_stew]>:
+                    - narrate "Have you descended to bring offerings to the Goddess Putref?"
+                    - wait 2s
+                    - narrate "I can help you navigate these Underground Chambers"
+                    - wait 1s
+                    - narrate "but can you first go tell my brother, Roganth, who lives in Rothigport, that I am safe and well"
+                    - wait 1s
+                    - narrate "but do not tell him my location, as I fear him, and others will tread to these depths and desecrate these holy lands searching for me."
+                    - clickable meeks_brother_task save:meeks_brother_task_clickable until:20s
+                    - clickable meeks_brother_no_task save:meeks_brother_no_task_clickable until:20s
+                    - wait 1s
+                    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B> Yes, I can tell him you are safe and well..<&8><&rb><&end_hover>].on_click[<entry[meeks_brother_task_clickable].command>]>"
+                    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B> No I cannot make it all the way back to Rothigport..<&8><&rb><&end_hover>].on_click[<entry[meeks_brother_no_task_clickable].command>]>"
+                    - zap magprithimo_7 duration:20s
+
+
+        
+meeks_brother_task:
+    type: task
+    script:
+    - narrate "Thank you!"
+    - flag <player> meeks_brother_yes
+
+
+meeks_brother_no_task:
+    type: task
+    script:
+    - narrate "No problem"

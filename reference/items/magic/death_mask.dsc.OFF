@@ -1,0 +1,64 @@
+death_mask:
+  type: item
+  material: carved_pumpkin
+  display name: Death Mask
+  mechanisms:
+    custom_model_data: 81017610
+  flags:
+    level: 10
+    slot_type: head
+
+death_mask_placed:
+  type: item
+  material: dried_kelp
+  display name: Death Mask
+  mechanisms:
+    custom_model_data: 81028530
+
+death_mask_world:
+    type: world
+    debug: false
+    events:
+      on player equips death_mask:
+      - flag <player> skill.skills.spirit_speak.level:+:<context.new_item.flag[level].mul[5]> 
+      on player unequips death_mask:
+      - flag <player> skill.skills.spirit_speak.level:-:<context.new_item.flag[level].mul[5]> 
+   
+      on player right clicks block location_flagged:epitaph:
+      - if <player.location.areas.filter[has_flag[spirited_running]]>:
+        - stop
+      - define level <player.item_in_hand.flag[level]||1>
+      - if <context.location.has_flag[epitaph]>:
+        - define current_spirit_speak <player.flag[skill.skills.spirit_speak.level]||0>
+        - if <context.location.has_flag[channeled].not> && <player.item_in_hand.script.name> == death_mask:
+          # - narrate <player.item_in_hand.script>
+          - spawn armor_stand[marker=true;gravity=false;visible=false;equipment=air|air|air|death_mask] <location[ulvid_death_mask_location].forward[.5].up[.25]>  save:death_mask
+          # <context.location.center.forward[.25].down[1.5]>
+          - flag <context.location> death_masked:<player>
+          - flag <context.location> death_mask_item:<entry[death_mask].spawned_entity>
+          - flag <context.location> channeled
+          - take <player.item_in_hand>
+          # - take <player.item_in_hand>
+
+          # - while <player.has_flag[spirited_location]>:
+          - narrate "You are now in tune with this Spirit." targets:<player>
+          - if <player.location.areas.filter[has_flag[spirited]]>:
+            # this runs in the specific area script, for right now, rothigport crypts
+            - run spirited_task def:<player.location.areas.filter[has_flag[spirited]].first.flag[spirited]>|<player>
+            - flag <player.location.areas.filter[has_flag[spirited]].first]> spirited_running
+          - define current_spirit_speak <player.flag[skill.skills.spirit_speak.level]||0>
+          - flag <player> skill.skills.spirit_speak.level:+:<[level].mul[10]>
+          - flag <player> stat.status.buff.channeling expire:<[level].add[10]>s
+          - wait <[level].add[10]>s
+          - flag <player> skill.skills.spirit_speak.level:-:<[level].mul[10]>
+          
+        - else:
+          - define death_mask <context.location.flag[death_masked]>
+          - if <[death_mask]> == <player>:
+            - remove <context.location.flag[death_mask_item]>
+            - give death_mask player:<player>
+            - flag <context.location> channeled:!
+            - flag <context.location> death_masked:!
+            
+            - flag <player> stat.status.buff.channeling:!
+        

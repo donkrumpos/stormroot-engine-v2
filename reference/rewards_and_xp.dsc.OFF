@@ -1,0 +1,158 @@
+rewards_world:
+    type: world
+    debug: true
+    events:
+        on player joins:
+        - flag <player> log_time:<util.time_now>
+        on player levels up:
+        - flag <player> level:++
+        - adjust <player> level:0
+        # - define level <context.new_level>
+        # - if <[level]> <= 10:
+        #     - flag player stat.points.skill_points.level:++
+        #     - narrate format:game_message "You have received a Skill Point."
+        # - if <[level]> <= 3:
+        #     - flag player stat.points.attribute_points.level:++
+        #     - narrate format:game_message "You have received an Attribute Point."
+        # - define skill_chance 0
+        # - foreach <player.flag[skill.specializations]> as:spec:
+        #     - define skill_chance <[skill_chance].add[<[spec].get[level]>]>
+        # - if  <[level]> == <[skill_chance]>":
+        #     - flag player stat.points.skill_points.level:++
+        #     - narrate format:game_message "You have received a Skill Point."
+        # - define attr_chance <player.flag[skill.attribute.strength.level].add[<player.flag[skill.attribute.dexterity.level]>].add[<player.flag[skill.attribute.intelligence.level]>].div[2]>
+        # - if <[level]> == <[attr_chance]>:
+        #     - flag player stat.points.attribute_points.level:++
+        #     - narrate format:game_message "You have received an Attribute Point."
+        # - if <[level].mod[11]> == 0:
+        #     - flag player stat.points.skill_points.level:++
+        #     - narrate format:game_message "You have received a Skill Point."
+        # - if <[level].mod[50]> == 0:
+        #     - flag player stat.points.attribute_points.level:++
+        #     - narrate format:game_message "You have received an Attribute Point."
+
+join_reward_task:
+    type: task
+    definitions: player
+    script:
+    - wait 5s
+    - define time <proc[get_player_scores_proc].context[<player>]>
+    - if <player.has_flag[login_reward].not>:
+        - flag <player> login_reward expire:24h
+        # This sets a flag so that NPCs or other environments can give daily login rewards
+        # - if <util.random.int[0].to[1]> == 0:
+        #     - give xp quantity:<element[10].add[<[time].div[24]>]>
+        #     - narrate format:game_message "You have received <element[10].add[<[time].div[24]>]> XP."
+        # - else:
+        #     - if <[time]> < 40: 
+        #         - give bread quantity:12
+        #     - else:
+        #         - give deluvic_coin
+        #         - narrate format:game_message "You have received an Ancient Deluvic Coin."
+        
+
+
+    - if <player.flag[score.time_in_songtide].div[18000]>:
+        # After 10 real times days of being in Songtide, the player is considered a citizen
+        - flag <player> score.citizen:->:songtide
+    - if <player.has_flag[score.rank].not>:
+        - flag <player> score.rank:Neophyte
+    - define reward_time <element[1000].div[<[time].div[10].add[10]>]>
+    - if <[time]> >= 24 && <player.flag[score.rank]> == "Neophyte":
+        - flag <player> score.rank:Novice
+        - narrate "You have been in Deluvia a full day!!"
+        - give xp quantity:<[time]>
+        - narrate format:game_message "You have received <[time]> XP."
+    - if <[time]> >= 48 && <player.flag[score.rank]> == "Novice":
+        - flag <player> score.rank:Apprentice
+        - give xp quantity:<[time]>
+        - narrate format:game_message "You have received <[time]> XP."
+    - if <[time]> >= 96 && <player.flag[score.rank]> == "Apprentice":
+        - flag <player> score.rank:Journeyman
+        - give xp quantity:<[time]>
+        - narrate format:game_message "You have received <[time]> XP."
+    - if <[time]> >= 192 && <player.flag[score.rank]> == "Journeyman":
+        - flag <player> score.rank:Expert
+        - give xp quantity:<[time]>
+        - narrate format:game_message "You have received <[time]> XP."
+    - if <[time]> >= 384 && <player.flag[score.rank]> == "Expert":
+        - flag <player> score.rank:Adept
+        - give xp quantity:<[time]>
+        - narrate format:game_message "You have received <[time]> XP."
+    - if <[time]> >= 768 && <player.flag[score.rank]> == "Adept":
+        - flag <player> score.rank:Master
+        - give xp quantity:<[time]>
+        - narrate format:game_message "You have received <[time]> XP."
+    - if <[time]> >= 1536 && <player.flag[score.rank]> == "Master":
+        - flag <player> score.rank:Grandmaster
+        - give xp quantity:<[time].add[50]>
+        - narrate format:game_message "You have received <[time].add[50]> XP."
+    - if <[time]> >= 4608 && <player.flag[score.rank]> == "Grandmaster":
+        - flag <player> score.rank:Elder
+        - give xp quantity:<[time].add[500]>
+        - narrate format:game_message "You have received <[time].add[500]> XP."
+    - if <[time]> >= 4608 && <player.flag[score.rank]> == "Grandmaster":
+        - flag <player> score.rank:Elder
+        - give xp quantity:<[time].mul[2]>
+        - narrate format:game_message "You have received <[time].mul[2]> XP."
+    - if <[time]> >= 18432 && <player.flag[score.rank]> == "Elder":
+        - flag <player> score.rank:Legendary
+        - give xp quantity:<[time].mul[3]>
+        - narrate format:game_message "You have received <[time].mul[3]> XP."
+
+get_lucky_luck:
+    type: procedure
+    definitions: player
+    script:
+    - define log_time <player.flag[log_time]>
+    - define log_duration <util.time_now.duration_since[<[log_time]>].seconds.round>
+    - define reciprocal_exponent <element[1].div[<[log_duration]>].mul[100000]>
+    - define max <util.random.int[1].to[<[reciprocal_exponent].round>]>
+    - define min <util.random.int[0].to[<player.flag[skill.skills.luck.level].round||0>]>
+    - if <[min]> > <[max]>:
+        - determine true
+    - else:
+        - determine false
+
+get_player_scores_proc:
+    type: procedure
+    definitions: player
+    script:
+    # - narrate "time on server <util.time_now.duration_since[<player.flag[firstlogin]>].in_minutes.round> minutes"
+    # - narrate <player.flag[firstlogin]>
+    - define hours <player.statistic[play_one_minute].div[72000].round>
+
+    # - define server_minutes <player.flag[score.time_on_server].div[60].round>
+    # - define server_hours <[minutes].div[60]>
+    # - define server_minutes_remainder <[minutes].mod[60]>
+    # - if <[server_minutes_remainder]> > 1:
+    #     - define server_minutes_remainder  "<[server_minutes_remainder]> minutes"
+    # - else:
+    #     - define server_minutes_remainder  "<[server_minutes_remainder]> minute"
+    # - if <[hours]> >= 1:
+    #     - define hours "<[hours]> hours"
+    # - else:
+    #     - define hours ""
+        
+    - define days <[hours].div[24]>
+    - determine <[hours]>
+
+daily_login_bonus_data:
+    type: data
+    loot:
+        1:
+            - apple
+        2: 
+            - bread
+        3: 
+            - wood_sword
+
+
+deluvic_coin:
+  type: item
+  debug: true
+  material: iron_ingot
+  rarity: 1
+  display name: Ancient Deluvic Coin
+  mechanisms:
+    custom_model_data: 51204

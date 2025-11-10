@@ -1,0 +1,26 @@
+scroll_blank:
+  type: item
+  debug: false
+  material: paper
+  display name:  Blank Scroll
+  lore:
+  - A blank spell scroll
+  mechanisms:
+    custom_model_data: 62000001
+  recipes:
+    1:
+      type: shapeless
+      input: parchment
+      output_quantity: 4
+
+craft_scroll_world:
+    type: world
+    events:
+        on scroll_blank recipe formed:
+        # - narrate <player.item_in_hand.script.name>
+        - if <player.item_in_hand.script.name> != quill:
+            - determine cancelled
+          # on scroll_* recipe formed:
+
+
+

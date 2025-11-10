@@ -1,0 +1,245 @@
+member_stronghold_time_proc:
+  type: procedure
+  definitions: member
+  script:
+  - if <[member].exists.not>
+    - define member <player>
+  - define member_time <util.time_now.duration_since[<[member].flag[member_of_stronghold.join_time]>].in_days.round>
+  - determine <[member_time]>
+
+get_stronghold_members_time_proc:
+  type: procedure
+  definitions: player_asking
+  script:
+  - define founder <[player_asking]>
+  
+  - define total_member_time 0
+  - foreach <[founder].flag[stronghold.members]> as:member:
+      - define total_member_time <[total_member_time].add[<proc[player_chunk_amount_proc].context[<[member]>]>]>
+  - determine <[total_member_time]>
+
+
+get_stronghold_total_time_proc:
+  type: procedure
+  definitions: player
+  script:
+  - define time 0
+  - define members_time 0
+  - if <[player].has_flag[stronghold.members]>:
+    - define members_time <proc[get_stronghold_members_time_proc].context[<[player]>]||0>
+    # - narrate <[time]>
+  - define player_time <proc[player_chunk_amount_proc].context[<[player]>]>
+  - define time <[player_time].add[<[members_time]>]>
+  - determine <[time]>
+
+
+player_chunk_amount_proc:
+  type: procedure
+  definitions: player
+  #description: Gets the chunk claim limit on an individual player
+  script:
+  - define time 0
+  # - define time_played_modifier <[player].flag[time_played_modifier]||0>
+  # - define first_join <[player].flag[first_join]>
+  # - define time <[first_join].from_now.in_days>
+  - define time <[player].statistic[play_one_minute].div[20].div[60].div[60].div[24].round>
+  # - define time <[time].add[<[time_played_modifier]>]>
+  - determine <[time]>
+
+highlight_chunk_task:
+  type: task
+  script:
+  - define cuboid <player.location.chunk.cuboid>
+  - define available unowned
+  - if <player.location.areas.is_empty>:
+    - define available unowned
+  - else if <player.location.areas.filter[flag[owned_by].equals[<player>]]>:
+    - define available owned_by_you
+  - else if <player.location.areas.filter[flag[owned_by].equals[<player>].not]>:
+    - define available owned_by_other
+    - narrate "This plot is owned by someone else."
+
+  - define block_type white_stained_glass
+  - if <[available]> == unowned:
+    - define block_type green_stained_glass
+  - else if <[available]> == owned_by_other:
+    - define block_type barrier
+  - else if <[available]> == owned_by_you:
+    - define block_type blue_stained_glass
+
+  # - playeffect effect:block_marker special_data:<[block_type]> at:<[cuboid].outline.parse[center]> offset:0 targets:<player> visibility:64
+  - define center <[cuboid].center>
+  - playeffect effect:block_marker special_data:<[block_type]> at:<[cuboid].with_min[<[cuboid].min.with_x[<[center].x>]>].with_max[<[cuboid].max.with_x[<[center].x>]>].outline.parse[center]> offset:0 targets:<player> visibility:64
+  - playeffect effect:block_marker special_data:<[block_type]> at:<[cuboid].with_min[<[cuboid].min.with_y[<[center].y>]>].with_max[<[cuboid].max.with_y[<[center].y>]>].outline.parse[center]> offset:0 targets:<player> visibility:64
+  - playeffect effect:block_marker special_data:<[block_type]> at:<[cuboid].with_min[<[cuboid].min.with_z[<[center].z>]>].with_max[<[cuboid].max.with_z[<[center].z>]>].outline.parse[center]> offset:0 targets:<player> visibility:64
+  
+
+stronghold_stats_proc:
+  type: procedure
+  definitions: founder
+  script:
+  - define stats <list>
+  - define founder_name "Founder: <[founder].name>"
+  - define stats <[stats].insert[<[founder_name]>].at[<[stats].size>]>
+
+  - define morale "<&hover[Morale is determined by several factors such as how long members are in your Stronghold.]>Morale:<&end_hover> <proc[get_stronghold_morale].context[<[founder]>]>"
+  - define plots_available <proc[get_stronghold_total_time_proc].context[<[founder]>]>
+  - define plots_number "<&hover[The quantity of plots your Stronghold contains.]>Plots:<&end_hover> <[founder].flag[stronghold.chunks].size>/<[plots_available]>"
+
+  - define members "<&hover[Members are your administrative staff of your Stronghold in addition to <tern[<[founder].equals[<player >]>].pass[yourself].fail[<[founder].name>]>.]>Members:<&end_hover>  <[founder].flag[stronghold.members].size||0>"
+  - define stats <[stats].insert[<[members]>].at[<[stats].size>]>
+  - define stats <[stats].insert[<[plots_number]>].at[<[stats].size>]>
+  - define stats <[stats].insert[<[morale]>].at[<[stats].size>]>
+  - define stats <[stats].reverse.separated_by[<&nl><&nl>]>
+  - determine "<[stats]>"
+
+stronghold_commands_tab_complete:
+  type: procedure
+  definitions: args
+  script:
+  # - if <[args].size> > 1:
+  # - if <player.has_flag[member_of_stronghold.role]> || <player.has_flag[stronghold.chunks]>:
+  #   - determine <list[invite|kick]>
+  - define output <empty>
+  - define args <[args].split_args>
+  - choose <[args].first>:
+    # - case leave:
+    #   - if <player.has_flag[member_of_stronghold].not>:
+    #     - determine cancelled
+
+    - case invite:
+      - if <server.online_players_flagged[!stronghold].parse[name].any>:
+        - if <player.has_flag[stronghold.chunks]> || <player.flag[member_of_stronghold.role]> == mayor: 
+          # - define output <server.online_players_flagged[!stronghold].filter[has_flag[!member_of_stronghold]].parse[name]>
+          - define output "<server.online_players_flagged[!stronghold].exclude[<server.players_flagged[member_of_stronghold]>].parse[name]>"
+      - else:
+        - define output "<red>No one is around to invite."
+    - case kick:
+      - if <player.has_flag[stronghold.members]> && <player.flag[stronghold.members].any>:
+        - define output <player.flag[stronghold.members].parse[name]>
+      - else if <player.flag[member_of_stronghold.role]> == reeve || <player.flag[member_of_stronghold.role]> == mayor:
+        - define founder <player.flag[member_of_stronghold.owner]>
+        - define mayor <[founder].flag[stronghold.members].filter[flag[member_of_stronghold.role].equals[mayor]].first>
+        - define output <[founder].flag[stronghold.members].exclude[<[founder]>|<player>|<[mayor]>].parse[name]>
+      - else:
+        - define output "<red>You have no members to kick."
+  - determine <[output]>
+
+
+get_stronghold_morale:
+  type: procedure
+  definitions: founder
+  script:
+  - define morale 0
+  - if <[founder].has_flag[stronghold.members]> && <[founder].flag[stronghold.members].size> > 0:
+    - foreach <[founder].flag[stronghold.members]> as:member:
+      - define morale  <[morale].add[<util.time_now.duration_since[<[member].flag[member_of_stronghold.join_time]>].in_days.round>]||1>
+  - define morale_level <element[<[morale]>].round_to_precision[3]>
+  - define morale_data <script[morale_data].data_key[level.<[morale_level]>.message]>
+  - narrate <[morale_level]>
+  - determine <[morale_data]>
+
+
+morale_data:
+    type: data
+    level:
+        0:
+            message: "None"
+            title: "Initiate"
+            color: ff0000
+        3:
+            message: "Very Low"
+            title: Neophyte
+            color: ff4800
+        6:
+            message: "Low"
+            title: Novice
+            color: ff5500
+        9:
+            message: "Medium"
+            title: Apprentice
+            color: ff8000
+        12:
+            message: "High"
+            title: Journeyman
+            color: ffaa00
+        15:
+            message: "Very High"
+            title: Expert
+            color: ffd400
+        18:
+            message: "Extremely High"
+            title: Adept
+            color: ffff00
+        21:
+            message: "Extremely High"
+            title: Adept
+            color: d5ff00
+        24:
+            message: "Extremely High"
+            title: Master
+            color: d5ff00
+        27:
+            message: "Extremely High"
+            title: Master
+            color: aaff00
+        30:
+            message: "Extremely High"
+            title: Master
+            color: 80ff00
+        33:
+            message: "Extremely High"
+            title: Grandmaster
+            color: 55ff00
+        36:
+            message: "Extremely High"
+            title: Grandmaster
+            color: 2bff00
+        39:
+            message: "Extremely High"
+            title: Grandmaster
+            color: 00ff00
+        42:
+            message: "Extremely High"
+            title: Grandmaster
+            color: 00ff2b
+        45:
+            message: "Extremely High"
+            title: Elder
+            color: 00ff55
+        48:
+            message: "Extremely High"
+            title: Elder
+            color: 00ff80
+        51:
+            message: "Massively High"
+            title: Elder
+            color: 00ffaa
+        54:
+            message: "Massively High"
+            title: Elder
+            color: 00ffd5
+        57:
+            message: "Massively High"
+            title: Elder
+            color: 00ffff
+        60:
+            message: "Massively High"
+            title: Elder
+            color: 00d5ff
+        63:
+            message: "Massively High"
+            title: Elder
+            color: 00aaff
+        66:
+            message: "Massively High"
+            title: Elder
+            color: 0080ff
+        69:
+            message: "Beyond Massive"
+            title: Legendary
+            color: 0055ff
+        72:
+            message: "Beyond Massive"
+            title: Legendary
+            color: 002bff

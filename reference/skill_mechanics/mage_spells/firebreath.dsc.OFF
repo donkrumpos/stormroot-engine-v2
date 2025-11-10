@@ -1,0 +1,39 @@
+firebreath_task:
+    type: task
+    definitions: attacker|defender
+    script:
+
+    - if !<[attacker].is_spawned>:
+        - stop
+
+    - repeat 64:
+        - playeffect flame at:<[attacker].location.up[1].forward[1]> velocity:<[attacker].location.direction.vector.mul[0.5]> quantity:10 offset:1,1,1
+        # - burn <[attacker].target> duration:10s
+        - if <[attacker].cursor_on||null> != "null":
+            - foreach <[attacker].eye_location.points_between[<[attacker].cursor_on>]> as:point:
+                - define target <[point].find.living_entities.within[3].exclude[<[attacker]>].random||null>
+                - if <[target]> != "null":
+                    - burn <[target]> duration:1s
+                    - if <proc[natural_skill_check_proc].context[<[attacker]>|magery|0]>:
+                        - ratelimit <[attacker]> 2s
+                        - run spell_damage_task def:firebreath|<[target]>|<[attacker]>|<[critical_success]||0>
+                    # - narrate "hurting <[target]>"
+        - wait 1t
+    
+    
+        # - burn  duration:1s
+        # - narrate <[entity]>
+        
+        # - foreach <[attacker].eye_location.points_between[<[attacker].cursor_on>]> as:point:
+        #     - foreach <[point].find.living_entities.within[6].exclude[<[attacker]>]> as:entity:
+        #         - burn <[entity]> 10s
+
+firebreath_task2:
+    type: task
+    definitions: attacker|defender
+    script:
+    - repeat 384:
+        - wait 1t
+        - narrate "value <[value]>"
+        - define currentBlock <player.location.up[1].add[<player.location.direction.vector.mul[<[value]>]>]>
+        - playeffect at:<[currentBlock]> effect:flame quantity:160

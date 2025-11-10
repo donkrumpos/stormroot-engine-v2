@@ -1,0 +1,19 @@
+clumsy_task:
+    type: task
+    debug: true
+    definitions: attacker|defender
+    script:
+    - if <[attacker].has_flag[skill.spells.clumsy.level].not>:
+        - flag <[attacker]> skill.spells.clumsy.level:1
+    - define current_dexterity <proc[attribute_skill_check_proc].context[<[defender]>|dexterity]>
+    # - narrate <[current_dexterity]>
+    # - flag <[defender]> current_dexterity:-:<[attacker].flag[skill.spells.clumsy.level].min[<[current_dexterity]>]>
+    - flag <[defender]> stat.core.stamina.level:-:<[attacker].flag[skill.spells.clumsy.level]>
+    - wait <[attacker].flag[skill.spells.clumsy.level]>s
+    - flag <[defender]> stat.core.stamina.level:+:<[attacker].flag[skill.spells.clumsy.level]>
+    - if <[attacker].flag[skill.spells.clumsy.level]> > 10:
+        - repeat 5:
+            - wait <util.random.int[1].to[5]>s
+            - if <util.random.int[0].to[3]> == 3:
+                - cast confusion duration:2s <[defender]>
+            

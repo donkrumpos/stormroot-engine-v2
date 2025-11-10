@@ -1,0 +1,35 @@
+cutlet_candycane:
+  type: item
+  debug: false
+  material: stick
+  display name: Cutlet Candycane
+  
+  lore:
+  - It's fun to sing a slaying song tonight
+  - <&color[#24daff]>Swing Speed Increase 20%
+  - <&color[#24daff]>Cold Damage 50%
+
+  
+  
+  flags:
+    required_strength: 10
+    weapon_type: sword
+    craftable: true
+    attack_speed_increase: .2
+    hit_chance_increase: 0
+    weapon_speed: 10
+    weapon_damage_min: 8
+    weapon-damage_max: 12
+    luck: 0
+    two_handed: false
+    fire_damage: 0
+    cold_damage: 50
+    poison_damage: 0
+    energy_damage: 0
+    material_qty: 8
+    unique: true
+  mechanisms:
+    custom_model_data: 7209001
+   
+
+

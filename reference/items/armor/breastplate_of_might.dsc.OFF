@@ -1,0 +1,37 @@
+breastplate_of_might:
+  type: item
+  debug: false
+  material: iron_chestplate
+  display name: Breastplate of Might
+  lore:
+  - <&b><&l>power
+  - <&b><&l>wear.
+  flags:
+    defense: 10
+    stat:
+      bonus:
+        hit_point_increase: 0
+        hit_point_regeneration: 0
+        mana_regeneration: .15
+        defense_chance_increase: .15
+        stamina_loss_reduction: 1
+        stamina_increase: 10
+        dexterity_increase: 1
+        strength_increase: 1
+        intelligence_increase: 1
+        stamina_regeneration: 1
+        lower_mana_cost: 0
+        medable: true
+        fire_resist: 0
+        cold_resist: 0
+        poison_resist: 100
+        energy_resist: 0
+    defense_modifier: Defense
+    current_durability: 355
+    maximum_durability: 355
+    required_strength: 35
+    item_type: armor
+    set: might
+    slot_type: chest
+  mechanisms:
+    custom_model_data: 8102602

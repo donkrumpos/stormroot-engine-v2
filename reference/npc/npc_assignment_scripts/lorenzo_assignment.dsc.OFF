@@ -1,0 +1,115 @@
+lorenzo_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:4
+    interact scripts:
+    - lorenzo_interact
+
+    default constants:
+        appearance1: "<npc.name>'lives in the wild but seems mysterious."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+
+lorenzo_interact:
+    type: interact
+    steps:
+        1:
+            # proximity trigger:
+            #     entry:
+            #         script:
+            #         - narrate "hey"
+        
+            click trigger:
+                script:
+                - inject description_inject_task
+                - narrate "Hello, and welcome to the bank of Deluvia." targets:<player>
+                - wait 2s
+                - if <player.has_flag[bertaires_courier].not> && <player.item_in_hand.has_flag[bertaires_courier]>:
+                    - take <player.item_in_hand>
+                    - narrate "hmm that item looks familiar but it is quite old." targets:<player>
+                - if <player.has_flag[bertaires_courier]> && <player.item_in_hand.has_flag[bertaires_courier]>:
+                    - narrate "Oh my! Beltaire sent you." targets:<player>
+                    - wait 2s
+                    - narrate "Here, let me take that from you." targets:<player>
+                    - if <player.item_in_hand.has_flag[bertaires_courier]>:
+                        - take <player.item_in_hand>
+                        - narrate format:game_message "Lorenzo takes the bag that Bertaire gave you."
+                        - narrate "Thank you."  targets:<player>
+                        - wait 2s
+                        - narrate "You are on your way to becoming a friend of the Bank" targets:<player>
+                        - wait 2s
+                        - narrate "Now can you bring a package back to her?"
+                        - clickable <npc.name>_task_01 save:<npc.name>_clickable_01 until:15s usages:1 for:<player>
+                        - clickable <npc.name>_task_02 save:<npc.name>_clickable_02 until:15s usages:1 for:<player>
+
+                        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Yes, I can bring a package back.<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_01].command>]>" target:<player>
+                        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>No, I'm tired.<&8><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" target:<player>
+                        - zap 2
+                    - else:
+                        - narrate "I guess I was mistaken."
+                        - stop
+                - zap 2 banker_interact player:<player>
+                    # - wait 2s
+                    # - narrate "Well then really welcome!" targets:<player>
+                    # - wait 2s
+                    # - narrate "I have something that can help you out with coinage carrying conundrum," targets:<player>
+                    # - wait 1s
+                    # - narrate "upon the inevitable time when you have too much coin to carry." targets:<player>
+                    # - wait 2s
+                    # - narrate "Can you carry this bag of coin to my partner lorenzo, in the next time over?" targets:<player>
+                   
+        2:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. /Yes/, I would love to help you with that.
+                    script:
+                    - run <npc.name>_task_01
+                    - zap 1 lorenzo_interact
+                2:
+                    trigger: <&7>/1/. /No/, that seems like too much responsibility for me right now.
+                    script:
+                    - run <npc.name>_task_02
+                    - zap 1 lorenzo_interact
+
+
+lorenzo_task_01:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "We appreciate it." targets:<player>
+        - give "<item[purse].with[flag=lorenzos_courier;display=Lorenzos purse for Bertaire]>"
+        - flag <player> bertaires_courier:!
+        - flag <player> lorenzos_courier expire:1d
+        - flag <player> suspend_clickable:!
+        - wait 2s
+        - zap 1 lorenzo_interact
+       
+
+
+lorenzo_task_02:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1 lorenzo_interact
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "You have done enough." targets:<player>
+        - flag <player> suspend_clickable:!
+        
+
+reset_lorenzo_task:
+    type: task
+    script:
+    - flag <player> bertaires_courier:!
+
+

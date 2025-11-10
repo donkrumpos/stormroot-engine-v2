@@ -1,0 +1,26 @@
+shock_task:
+    type: task
+    definitions: attacker|do_damage
+    script:
+    - define level <[attacker].flag[skill.spells.shock.level]>
+    - define target_entity <[attacker].location.forward[1].find_entities.within[1].exclude[<[attacker]>].first>
+    - foreach <[attacker].cursor_on.find_blocks[water].within[<[level]>]> as:water_block:
+        - define electrocute <[water_block].find.living_entities.within[1].first>
+        - if <[electrocute].location.material.name> == water:
+            - if <[electrocute].is_living>:
+                # - narrate "shocking <[electrocute]>"
+                - if <[electrocute].is_player> && <[do_damage].not>:
+                    # if area does not have pvp don't damage player
+                    - foreach next
+                - run spell_damage_task def:spark|<[electrocute]>|<[attacker]>
+                - playeffect effect:flash at:<[electrocute].location> quantity:3
+                - if <[target].is_player>:
+                    - playsound <[electrocute].location> sound:steamfront:spells.spark custom sound_category:players
+
+                    - define random <util.random.int[0].to[70]>
+                    - if <[random]> == 0:
+                        - stop
+                    - if <[random]> < <[level]>:
+                        - repeat 12:
+                            - title "title:<&font[steamfront:font]><&chr[3416]>" targets:<[electrocute]> stay:2t fade_in:0s fade_out:0s
+                            - wait 3t

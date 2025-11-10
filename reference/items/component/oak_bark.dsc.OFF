@@ -1,0 +1,7 @@
+oak_bark:
+  type: item
+  material: bowl
+  display name: Oak Bark
+  mechanisms:
+    custom_model_data: 2110009
+    

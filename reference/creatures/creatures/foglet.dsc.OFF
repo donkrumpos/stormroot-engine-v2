@@ -1,0 +1,53 @@
+foglet:
+    type: entity
+    entity_type: llama
+    # mechanisms:
+        
+    flags:
+        custom_beast: true
+        karma: -10
+        fame: 0
+        biome: 
+            - forest
+            - dark_forest
+            - birch_forest
+            - old_growth_birch_forest
+        light_level: 6
+        rarity: 30
+        level: 10
+        strength: 100
+        dexterity: 5
+        intelligence: 10
+        health: 30
+        no_combusts: true
+        no_explode: true
+        eligible_block_spawn: grass_block
+        custom_model_data: 1656558
+        drops:
+            foul_bristle:
+                quantity: 1
+                chance: .1
+        coin_drop:
+            copper: 
+                quantity: 5
+                chance: .25
+        xp: 24
+
+
+foglet_world:
+    type: world
+    events:
+        on foglet damages player:
+        - run fog_task def:<context.entity>
+
+fog_task:
+    type: task
+    definitions: player
+    script:
+    # - cast blindness duration:8s amplfier:1
+    # - playeffect effect:campfire_cosy_smoke at:<[player].location.add[0,-2,0]> quantity:2000 offset:1,1,1
+    - bossbar update hud_<[player].uuid> options:create_fog players:<[player]>
+    - wait 10s
+    - bossbar update hud_<[player].uuid> options:darken_sky players:<[player]>
+ 
+    

@@ -1,0 +1,1789 @@
+components_data:
+    type: data
+    component:
+        corpse_nettle:
+            display_name: "Corpse Nettle"
+            elements:
+                - "death"
+            biome: 
+                - "dark_forest"
+                - "swamp"
+        feainnewedd:
+            display_name: "Feainnewedd"
+            elements:
+                - "life"
+            biome: 
+                - "flower_forest"
+                - "meadow"
+        wolfsbane:
+            display_name: "Wolfsbane"
+            elements:
+                - "death"
+            biome: 
+                - "dark_forest"
+                - "taiga"
+        ahrim_weed:
+            display_name: "Ahrim Weed"
+            elements:
+                - "death"
+            biome: 
+                - "swamp"
+                - "dark_forest"
+        ash:
+            display_name: "Ash"
+            elements:
+                - "fire"
+            biome: 
+                - "basalt_deltas"
+                - "eroded_badlands"
+        blood_moss:
+            display_name: "Blood Moss"
+            elements:
+                - "death"
+            biome: 
+                - "swamp"
+                - "dark_forest"
+        boar_hide:
+            display_name: "Boar Hide"
+            elements: []
+            biome: 
+                - "forest"
+                - "birch_forest"
+        boar_tusk:
+            display_name: "Boar Tusk"
+            elements:
+                - "death"
+            biome: 
+                - "forest"
+                - "birch_forest"
+        crystal_ice:
+            display_name: "Crystal Ice"
+            elements:
+                - "ice"
+            biome: 
+                - "frozen_ocean"
+                - "snowy_beach"
+        delu_moss:
+            display_name: "Delu Moss"
+            elements:
+                - "life"
+            biome: 
+                - "lush_caves"
+                - "mushroom_fields"
+        delu_spores:
+            display_name: "Delu Spores"
+            elements:
+                - "life"
+            biome: 
+                - "lush_caves"
+                - "mushroom_fields"
+        dharok_weed:
+            display_name: "Dharok Weed"
+            elements:
+                - "death"
+            biome: 
+                - "swamp"
+                - "dark_forest"
+        dreamwood_twig:
+            display_name: "Dreamwood Twig"
+            elements:
+                - "life"
+            biome: 
+                - "flower_forest"
+                - "jungle"
+        foul_bristle:
+            display_name: "Foul Bristle"
+            elements:
+                - "death"
+            biome: 
+                - "swamp"
+                - "dark_forest"
+        garlic:
+            display_name: "Garlic"
+            elements:
+                - "life"
+            biome: 
+                - "plains"
+                - "sunflower_plains"
+        gillyweed:
+            display_name: "Gillyweed"
+            elements:
+                - "water"
+            biome: 
+                - "ocean"
+                - "cold_ocean"
+        gunthan_weed:
+            display_name: "Gunthan Weed"
+            elements:
+                - "death"
+            biome: 
+                - "swamp"
+                - "dark_forest"
+        horn_leaves:
+            display_name: "Horn Leaves"
+            elements:
+                - "life"
+            biome: 
+                - "savanna"
+                - "mangrove_swamp"
+        karil_weed:
+            display_name: "Karil Weed"
+            elements:
+                - "death"
+            biome: 
+                - "swamp"
+                - "dark_forest"
+        mugstool:
+            display_name: "Mugstool"
+            elements:
+                - "poison"
+            biome: 
+                - "dark_forest"
+                - "swamp"
+        oak_bark:
+            display_name: "Oak Bark"
+            elements:
+                - "life"
+            biome: 
+                - "forest"
+                - "birch_forest"
+        shard_of_life:
+            display_name: "Shard of Life"
+            elements:
+                - "life"
+            biome: 
+                - "lush_caves"
+                - "mushroom_fields"
+        steeleaf:
+            display_name: "Steeleaf"
+            elements:
+                - "life"
+            biome: 
+                - "flower_forest"
+                - "jungle"
+        torag_weed:
+            display_name: "Torag Weed"
+            elements:
+                - "death"
+            biome: 
+                - "swamp"
+                - "dark_forest"
+        verac_weed:
+            display_name: "Verac Weed"
+            elements:
+                - "death"
+            biome: 
+                - "swamp"
+                - "dark_forest"
+        water_shard:
+            display_name: "Water Shard"
+            elements:
+                - "water"
+            biome: 
+                - "ocean"
+                - "river"
+        wildroot:
+            display_name: "Wildroot"
+            elements:
+                - "life"
+            biome: 
+                - "flower_forest"
+                - "jungle"
+        yew_leaf:
+            display_name: "Yew Leaf"
+            elements:
+                - "life"
+            biome: 
+                - "forest"
+                - "birch_forest"
+        ginseng:
+            display_name: "Ginseng"
+            elements:
+                - "life"
+            biome: 
+                - "mushroom_fields"
+                - "flower_forest"
+        mandrake_root:
+            display_name: "Mandrake Root"
+            elements:
+                - "life"
+            biome: 
+                - "mushroom_fields"
+                - "flower_forest"
+        sulphurous_ash:
+            display_name: "Sulphurous Ash"
+            elements:
+                - "fire"
+            biome: 
+                - "basalt_deltas"
+                - "nether_wastes"
+        black_pearl:
+            display_name: "Black Pearl"
+            elements:
+                - "water"
+            biome: 
+                - "ocean"
+                - "deep_ocean"
+        moon_seeds:
+            display_name: "Moon Seeds"
+            elements:
+                - "night"
+            biome: 
+                - "dark_forest"
+                - "forest"
+        spider_silk:
+            display_name: "Spider's Silk"
+            elements:
+                - "death"
+            biome: 
+                - "dark_forest"
+                - "jungle"
+        nightshade:
+            display_name: "Nightshade"
+            elements:
+                - "death"
+            biome: 
+                - "dark_forest"
+                - "swamp"
+        bat_wing:
+            display_name: "Bat Wing"
+            elements:
+                - "night"
+            biome: 
+                - "dark_forest"
+                - "cave"
+        grave_dust:
+            display_name: "Grave Dust"
+            elements:
+                - "death"
+            biome: 
+                - "dark_forest"
+                - "swamp"
+        daemon_blood:
+            display_name: "Daemon Blood"
+            elements:
+                - "death"
+            biome: 
+                - "nether_wastes"
+                - "nether_forest"
+        nox_crystal:
+            display_name: "Nox Crystal"
+            elements:
+                - "void"
+            biome: 
+                - "the_void"
+                - "end_barrens"
+        pig_iron:
+            display_name: "Pig Iron"
+            elements:
+                - "metal"
+            biome: 
+                - "savanna"
+                - "plains"
+        acidic_heart:
+            display_name: "Acidic Heart"
+            elements:
+                - "poison"
+            biome: 
+                - "nether_wastes"
+                - "nether_forest"
+        ambrosia:
+            display_name: "Ambrosia"
+            elements:
+                - "life"
+            biome: 
+                - "flower_forest"
+                - "lush_caves"
+        cockatrice_eye:
+            display_name: "Cockatrice Eye"
+            elements:
+                - "life"
+            biome: 
+                - "lush_caves"
+                - "dark_forest"
+        cyclops_eye:
+            display_name: "Cyclops Eye"
+            elements:
+                - "life"
+            biome: 
+                - "lush_caves"
+                - "dark_forest"
+        dread_shard:
+            display_name: "Dread Shard"
+            elements:
+                - "void"
+            biome: 
+                - "the_void"
+                - "nether_wastes"
+        hippogryph_egg:
+            display_name: "Hippogryph Egg"
+            elements:
+                - "life"
+            biome: 
+                - "birch_forest"
+                - "taiga"
+        hippogryph_talon:
+            display_name: "Hippogryph Talon"
+            elements:
+                - "life"
+            biome: 
+                - "birch_forest"
+                - "taiga"
+        hydra_fang:
+            display_name: "Hydra Fang"
+            elements:
+                - "poison"
+            biome: 
+                - "swamp"
+                - "dark_forest"
+        hydra_venom:
+            display_name: "Hydra Venom"
+            elements:
+                - "poison"
+            biome: 
+                - "swamp"
+                - "dark_forest"
+        pixie_dust:
+            display_name: "Pixie Dust"
+            elements:
+                - "life"
+            biome: 
+                - "lush_caves"
+                - "mushroom_fields"
+        stymphalian_bird_feather:
+            display_name: "Stymphalian Bird Feather"
+            elements:
+                - "life"
+            biome: 
+                - "lush_caves"
+                - "dark_forest"
+        witherbone:
+            display_name: "Witherbone"
+            elements:
+                - "death"
+            biome: 
+                - "nether_wastes"
+                - "nether_forest"
+        troll_tusk:
+            display_name: "Troll Tusk"
+            elements:
+                - "death"
+            biome: 
+                - "savanna"
+                - "plains"
+        dewgonia:
+            display_name: "Dewgonia"
+            elements:
+                - "life"
+            biome: 
+                - "swamp"
+                - "flower_forest"
+        grove_stone:
+            display_name: "Grove Stone"
+            elements:
+                - "stone"
+            biome: 
+                - "lush_caves"
+                - "flower_forest"
+        wildwood:
+            display_name: "Wildwood"
+            elements:
+                - "life"
+            biome: 
+                - "jungle"
+                - "dark_forest"
+        carmenite:
+            display_name: "Carmenite"
+            elements:
+                - "fire"
+            biome: 
+                - "nether_wastes"
+                - "nether_forest"
+        crumble_horn:
+            display_name: "Crumble Horn"
+            elements:
+                - "earth"
+            biome: 
+                - "savanna"
+                - "plains"
+        fiery_blood:
+            display_name: "Fiery Blood"
+            elements:
+                - "fire"
+            biome: 
+                - "nether_wastes"
+                - "nether_forest"
+        liveroot:
+            display_name: "Liveroot"
+            elements:
+                - "Life/Nature"
+            description: "A resilient root that thrives in dark, damp soil, pulsating with the vitality of the earth."
+            biomes:
+                - "forest"
+                - "swamp"
+                - "old_growth_birch_forest"
+                - "old_growth_pine_taiga"
+                - "old_growth_spruce_taiga"
+
+        twilight_orb:
+            display_name: "Twilight Orb"
+            elements:
+                - "Moon/Night"
+            description: "An orb infused with the essence of twilight, shimmering with a mesmerizing blend of light and shadow."
+            biomes:
+                - "dark_forest"
+                - "deep_dark"
+                - "end_barrens"
+                - "end_highlands"
+                - "end_midlands"
+
+        frogs_tongue:
+            display_name: "Frog's Tongue"
+            elements:
+                - "Water/Ice"
+            description: "A sticky, slimy tongue extracted from the mouth of a mystical frog, imbued with the essence of aquatic magic."
+            biomes:
+                - "jungle"
+                - "mangrove_swamp"
+                - "swamp"
+                - "lush_caves"
+                - "rivers"
+
+        amber:
+            display_name: "Amber"
+            elements:
+                - "Life/Nature"
+                - "Fire"
+            description: "A fossilized resin that traps the essence of ancient life forms within its golden depths."
+            biomes:
+                - "beach"
+                - "forest"
+                - "swamp"
+                - "mushroom_fields"
+                - "jungle"
+
+        thorns:
+            display_name: "Thorns"
+            elements:
+                - "Nature"
+            description: "Sharp, thorny brambles that guard secrets hidden deep within the heart of the forest."
+            biomes:
+                - "dark_forest"
+                - "flower_forest"
+                - "forest"
+                - "old_growth_birch_forest"
+                - "old_growth_spruce_taiga"
+
+        foul_fumes:
+            display_name: "Foul Fumes"
+            elements:
+                - "Void/Chaos"
+                - "Poison"
+            description: "Noxious fumes that emanate from the depths of the underworld, corroding all they touch with their toxic touch."
+            biomes:
+                - "nether_wastes"
+                - "soul_sand_valley"
+
+        mutantis:
+            display_name: "Mutantis"
+            elements:
+                - "Void/Chaos"
+            description: "A mysterious substance that mutates and distorts reality, twisting the fabric of existence itself."
+            biomes:
+                - "end_barrens"
+                - "end_highlands"
+                - "end_midlands"
+
+        mystunguent:
+            display_name: "Mystunguent"
+            elements:
+                - "Void/Chaos"
+                - "Magic"
+            description: "An arcane ointment infused with eldritch energies, capable of enhancing magical abilities."
+            biomes:
+                - "windswept_forest"
+                - "windswept_gravelly_hills"
+                - "windswept_hills"
+                - "windswept_savanna"
+
+        necrostone:
+            display_name: "Necrostone"
+            elements:
+                - "Death"
+                - "Stone/Ore"
+            description: "A dark, ominous stone that resonates with the echoes of the underworld, exuding an aura of death and decay."
+            biomes:
+                - "basalt_deltas"
+                - "nether_wastes"
+                - "soul_sand_valley"
+
+        belladonna:
+            display_name: "Belladonna"
+            elements:
+                - "Poison"
+            description: "A deadly plant with beautiful yet poisonous berries, known to induce visions of the otherworldly."
+            biomes:
+                - "birch_forest"
+                - "dark_forest"
+                - "flower_forest"
+                - "forest"
+                - "swamp"
+
+        seer_stone:
+            display_name: "Seer Stone"
+            elements:
+                - "Magic"
+            description: "A mystical stone that grants visions of the past, present, and future to those who possess the gift of sight."
+            biomes:
+                - "mountains"
+                - "river"
+                - "savanna_plateau"
+                - "stony_peaks"
+
+        wormwood:
+            display_name: "Wormwood"
+            elements:
+                - "Nature"
+            description: "A bitter herb that grows in the shadows of ancient ruins, said to ward off evil spirits and curses."
+            biomes:
+                - "birch_forest"
+                - "dark_forest"
+                - "flower_forest"
+                - "forest"
+                - "swamp"
+        ironwood_bark:
+            display_name: "Ironwood Bark"
+            elements:
+                - "Nature"
+            description: "A dense, metallic bark harvested from the ancient ironwood trees of Deluvia, prized for its resilience and magical properties."
+            biomes:
+                - "old_growth_birch_forest"
+                - "old_growth_spruce_taiga"
+
+        gloomshroom_cap:
+            display_name: "Gloomshroom Cap"
+            elements:
+                - "Death"
+            description: "The cap of a fungal growth found in the darkest corners of Deluvia's underworld, exuding an aura of gloom and decay."
+            biomes:
+                - "deep_dark"
+                - "end_barrens"
+
+        embershroud_ash:
+            display_name: "Embershroud Ash"
+            elements:
+                - "Fire"
+            description: "Ash collected from the remnants of ancient volcanic eruptions, cloaked in the fiery essence of Deluvia's molten core."
+            biomes:
+                - "basalt_deltas"
+                - "stony_peaks"
+
+        thistlewhisper_seed:
+            display_name: "Thistlewhisper Seed"
+            elements:
+                - "Wind/Air"
+                - "Life/Nature"
+            description: "A delicate seed carried on the wind, whispering secrets of the natural world and imbued with the essence of the breeze."
+            biomes:
+                - "windswept_forest"
+                - "windswept_savanna"
+
+        frostfire_essence:
+            display_name: "Frostfire Essence"
+            elements:
+                - "Ice"
+                - "Fire"
+            description: "A rare and volatile substance formed at the intersection of ice and fire, capable of freezing and burning with equal intensity."
+            biomes:
+                - "frozen_peaks"
+                - "frozen_river"
+
+        moonlit_bloom:
+            display_name: "Moonlit Bloom"
+            elements:
+                - "Moon/Night"
+                - "Life/Nature"
+            description: "A luminous flower that blooms under the light of the moon, radiating ethereal beauty and mystical energy."
+            biomes:
+                - "cherry_grove"
+                - "small_end_islands"
+
+        crimson_nightshade:
+            display_name: "Crimson Nightshade"
+            elements:
+                - "Moon/Night"
+                - "Poison"
+            description: "A poisonous flower that thrives in the moonlit darkness, its crimson petals concealing deadly toxins."
+            biomes:
+                - "crimson_forest"
+                - "old_growth_birch_forest"
+
+        voidcrystal_fragment:
+            display_name: "Voidcrystal Fragment"
+            elements:
+                - "Void/Chaos"
+            description: "A shard of crystallized void energy, fractured from the heart of the void and pulsating with chaotic power."
+            biomes:
+                - "the_void"
+                - "end_highlands"
+
+        lunar_lichens:
+            display_name: "Lunar Lichens"
+            elements:
+                - "Moon/Night"
+                - "Nature"
+            description: "Bioluminescent lichens that glow softly in the moonlight, casting an eerie yet enchanting radiance."
+            biomes:
+                - "cold_ocean"
+                - "end_midlands"
+
+        sablewing_feather:
+            display_name: "Sablewing Feather"
+            elements:
+                - "Night/Moon"
+                - "Wind/Air"
+            description: "A jet-black feather from the sablewing, a nocturnal bird that soars through the night sky with silent grace."
+            biomes:
+                - "dark_forest"
+                - "windswept_hills"
+        shadowroot_essence:
+            display_name: "Shadowroot Essence"
+            elements:
+                - "Night/Moon"
+                - "Death"
+            description: "A dark essence extracted from the roots of shadow-laden trees, imbued with the whispers of the night and the chill of death."
+            biomes:
+                - "dark_forest"
+                - "swamp"
+
+        celestial_ember:
+            display_name: "Celestial Ember"
+            elements:
+                - "Fire"
+                - "Day/Sun"
+            description: "An ember infused with the radiant energy of the sun, flickering with ethereal flames that dance in the daylight."
+            biomes:
+                - "sunflower_plains"
+                - "warm_ocean"
+
+        crystalized_mist:
+            display_name: "Crystalized Mist"
+            elements:
+                - "Water/Ice"
+                - "Wind/Air"
+            description: "A delicate crystal formed from the frozen mist of Deluvia's icy winds, shimmering with iridescent hues."
+            biomes:
+                - "snowy_taiga"
+                - "frozen_ocean"
+
+        soulbloom_petal:
+            display_name: "Soulbloom Petal"
+            elements:
+                - "Life/Nature"
+                - "Death"
+            description: "A translucent petal from the elusive soulbloom flower, said to hold the essence of life and the passage of souls."
+            biomes:
+                - "mushroom_fields"
+                - "nether_wastes"
+
+        eternal_iceheart:
+            display_name: "Eternal Iceheart"
+            elements:
+                - "Ice"
+                - "Life/Nature"
+            description: "A heart-shaped shard of eternal ice, pulsating with the essence of life and the unyielding chill of winter."
+            biomes:
+                - "frozen_peaks"
+                - "ice_spikes"
+
+        astral_blossom:
+            display_name: "Astral Blossom"
+            elements:
+                - "Chaos/Void"
+                - "Nature"
+            description: "A rare blossom that blooms only in the presence of chaos and void, its petals shifting and shimmering with otherworldly energy."
+            biomes:
+                - "void/chaos"
+                - "end_barrens"
+
+        emberglow_lantern:
+            display_name: "Emberglow Lantern"
+            elements:
+                - "Fire"
+                - "Wind/Air"
+            description: "A lantern fueled by emberglow, emitting a warm and comforting light that dances with the breeze."
+            biomes:
+                - "bamboo_jungle"
+                - "desert"
+
+        soulspire_crystal:
+            display_name: "Soulspire Crystal"
+            elements:
+                - "Death"
+                - "Nature"
+            description: "A crystal imbued with the essence of souls, emanating a faint, haunting glow that resonates with the pulse of life."
+            biomes:
+                - "soul_sand_valley"
+                - "nether_wastes"
+        frostfire_opal:
+            display_name: "Frostfire Opal"
+            elements:
+                - "Ice"
+                - "Fire"
+            description: "An opalescent gemstone formed from the fusion of freezing ice and scorching flames, radiating an enchanting, contradictory light."
+            biomes:
+                - "frozen_peaks"
+                - "volcanic_caverns"
+
+        etherium_shard:
+            display_name: "Etherium Shard"
+            elements:
+                - "Void/Chaos"
+                - "Day/Sun"
+            description: "A shard of pure etherium, resonating with the chaotic energy of the void and the vibrant brilliance of the sun."
+            biomes:
+                - "end_barrens"
+                - "sunflower_plains"
+
+        phantom_bloom:
+            display_name: "Phantom Bloom"
+            elements:
+                - "Night/Moon"
+                - "Life/Nature"
+            description: "A spectral blossom that blooms only under the moon's gaze, its petals exuding an ephemeral fragrance that revitalizes the soul."
+            biomes:
+                - "dark_forest"
+                - "flower_forest"
+
+        quicksilver_essence:
+            display_name: "Quicksilver Essence"
+            elements:
+                - "Water/Ice"
+                - "Wind/Air"
+            description: "A shimmering essence born from the union of swift winds and flowing waters, possessing the fluidity of mercury and the grace of the breeze."
+            biomes:
+                - "cold_ocean"
+                - "windswept_forest"
+
+        emberheart_blossom:
+            display_name: "Emberheart Blossom"
+            elements:
+                - "Fire"
+                - "Life/Nature"
+            description: "A vibrant blossom that thrives in the heat of volcanic soil, its fiery petals symbolizing the resilience of life in the face of adversity."
+            biomes:
+                - "volcanic_caverns"
+                - "lush_caves"
+
+        moonshadow_orb:
+            display_name: "Moonshadow Orb"
+            elements:
+                - "Night/Moon"
+                - "Void/Chaos"
+            description: "An ethereal orb veiled in shadows, imbued with the mystic energies of the moon and the enigmatic void."
+            biomes:
+                - "dark_forest"
+                - "void/chaos"
+
+        frostfire_rose:
+            display_name: "Frostfire Rose"
+            elements:
+                - "Ice"
+                - "Fire"
+            description: "A rare rose that blooms amidst the freezing flames of icy volcanoes, its petals untouched by the scorching heat yet chilled to the bone."
+            biomes:
+                - "frozen_peaks"
+                - "volcanic_caverns"
+
+        soulspark_crystal:
+            display_name: "Soulspark Crystal"
+            elements:
+                - "Death"
+                - "Day/Sun"
+            description: "A crystal that glimmers with the radiant energy of the sun, capturing the fleeting essence of departed souls within its luminous core."
+            biomes:
+                - "soul_sand_valley"
+                - "sunflower_plains"
+        starlotus_petals:
+            display_name: "Starlotus Petals"
+            elements:
+                - "Night/Moon"
+                - "Life/Nature"
+            description: "Delicate petals of the starlotus flower, shimmering with the soft glow of moonlight and imbued with the essence of life itself."
+            biomes:
+                - "dark_forest"
+                - "lush_caves"
+
+        silverfern_fronds:
+            display_name: "Silverfern Fronds"
+            elements:
+                - "Moon/Night"
+                - "Wind/Air"
+            description: "Gossamer-like fronds of the silverfern plant, whispering secrets in the night breeze and reflecting the silvery light of the moon."
+            biomes:
+                - "dark_forest"
+                - "jungle"
+
+        dreambloom_blossom:
+            display_name: "Dreambloom Blossom"
+            elements:
+                - "Life/Nature"
+                - "Void/Chaos"
+            description: "A luminescent blossom that blooms only in the realm of dreams, its petals shimmering with otherworldly hues and dancing with chaotic energy."
+            biomes:
+                - "lush_caves"
+                - "void/chaos"
+
+        ethereal_mistleaf:
+            display_name: "Ethereal Mistleaf"
+            elements:
+                - "Void/Chaos"
+                - "Water/Ice"
+            description: "A rare mistleaf that thrives in the fog-shrouded realms of chaos, its translucent leaves emitting an otherworldly glow amidst icy waters."
+            biomes:
+                - "dripstone_caves"
+                - "void/chaos"
+
+        celestial_dewdrops:
+            display_name: "Celestial Dewdrops"
+            elements:
+                - "Life/Nature"
+                - "Day/Sun"
+            description: "Glistening dewdrops that form only under the gentle caress of the morning sun, imbued with the rejuvenating essence of nature's embrace."
+            biomes:
+                - "flower_forest"
+                - "sunflower_plains"
+
+        nightshade_nectar:
+            display_name: "Nightshade Nectar"
+            elements:
+                - "Night/Moon"
+                - "Death"
+            description: "A potent nectar extracted from the toxic nightshade flower, its dark essence intertwined with the mysteries of the moon and the realm of the dead."
+            biomes:
+                - "dark_forest"
+                - "swamp"
+
+        etherbloom_essence:
+            display_name: "Etherbloom Essence"
+            elements:
+                - "Void/Chaos"
+                - "Life/Nature"
+            description: "An ethereal essence distilled from the elusive etherbloom, bridging the gap between chaos and nature with its shimmering brilliance."
+            biomes:
+                - "lush_caves"
+                - "void/chaos"
+
+        whisperwind_willow:
+            display_name: "Whisperwind Willow"
+            elements:
+                - "Wind/Air"
+                - "Life/Nature"
+            description: "A graceful willow tree that sways with the whispers of the wind, its leaves carrying the essence of life on gentle zephyrs."
+            biomes:
+                - "forest"
+                - "swamp"
+        shimmercap_spores:
+            display_name: "Shimmercap Spores"
+            elements:
+                - "Life/Nature"
+                - "Void/Chaos"
+            description: "Tiny spores that drift from the caps of shimmering mushrooms, carrying the essence of nature's chaos in their ethereal glow."
+            biomes:
+                - "lush_caves"
+                - "mushroom_fields"
+
+        frostspire_fungus:
+            display_name: "Frostspire Fungus"
+            elements:
+                - "Ice/Water"
+                - "Void/Chaos"
+            description: "Tower-like fungi that rise from frost-covered caverns, emanating an icy chill and the chaotic energy of the void."
+            biomes:
+                - "frozen_peaks"
+                - "snowy_taiga"
+
+        soulshroud_mycelium:
+            display_name: "Soulshroud Mycelium"
+            elements:
+                - "Death"
+                - "Void/Chaos"
+            description: "A dark mycelium that carpets the floor of desolate caves, infused with the essence of death and the swirling chaos of the void."
+            biomes:
+                - "deep_dark"
+                - "soul_sand_valley"
+
+        azuregill_cap:
+            display_name: "Azuregill Cap"
+            elements:
+                - "Water/Ice"
+                - "Life/Nature"
+            description: "The cap of a mushroom that thrives in icy waters, its vibrant azure hue reminiscent of crystal-clear lakes and teeming with natural vitality."
+            biomes:
+                - "frozen_ocean"
+                - "ice_spikes"
+
+        voidveil_mushroom:
+            display_name: "Voidveil Mushroom"
+            elements:
+                - "Void/Chaos"
+                - "Night/Moon"
+            description: "A fungus that flourishes in the shadows of the night, its veil-like cap veiling the world in darkness and chaos."
+            biomes:
+                - "dark_forest"
+                - "void/chaos"
+
+        luminescent_toadstool:
+            display_name: "Luminescent Toadstool"
+            elements:
+                - "Day/Sun"
+                - "Life/Nature"
+            description: "A toadstool that glows with a soft radiance under the warm embrace of the sun, illuminating the forest floor with its natural brilliance."
+            biomes:
+                - "flower_forest"
+                - "sunflower_plains"
+
+        crystalcrown_mushroom:
+            display_name: "Crystalcrown Mushroom"
+            elements:
+                - "Earth/Stone"
+                - "Life/Nature"
+            description: "A majestic mushroom crowned with crystalline formations, drawing nourishment from the earth and pulsating with the vitality of nature."
+            biomes:
+                - "birch_forest"
+                - "mushroom_fields"
+        adamantine_shard:
+            display_name: "Adamantine Shard"
+            elements:
+                - "Stone/Ore"
+                - "Fire"
+            description: "A razor-sharp shard of adamantine ore, capable of enhancing the destructive force of spells and weapons with its unparalleled hardness."
+            biomes:
+                - "basalt_deltas"
+                - "stony_peaks"
+
+        cindersteel_ingot:
+            display_name: "Cindersteel Ingot"
+            elements:
+                - "Fire"
+                - "Metal"
+            description: "An ingot forged from molten cindersteel ore, imbued with the fiery essence of the forge and capable of inflicting searing wounds upon foes."
+            biomes:
+                - "basalt_deltas"
+                - "crimson_forest"
+
+        emberite_crystal:
+            display_name: "Emberite Crystal"
+            elements:
+                - "Fire"
+                - "Crystal"
+            description: "A shimmering crystal infused with the essence of fire, capable of channeling intense heat to augment the potency of magical and physical attacks."
+            biomes:
+                - "basalt_deltas"
+                - "crimson_forest"
+
+        pyrostone_fragment:
+            display_name: "Pyrostone Fragment"
+            elements:
+                - "Fire"
+                - "Stone/Ore"
+            description: "A fragment of pyrostone ore, radiating intense heat and capable of amplifying the destructive power of spells and weaponry with its fiery resonance."
+            biomes:
+                - "basalt_deltas"
+                - "crimson_forest"
+
+        brimstone_essence:
+            display_name: "Brimstone Essence"
+            elements:
+                - "Fire"
+                - "Void/Chaos"
+            description: "A volatile essence distilled from brimstone ore, pulsating with chaotic flames that empower attacks with unrivaled ferocity and destructive force."
+            biomes:
+                - "basalt_deltas"
+                - "nether_wastes"
+
+        molten_core:
+            display_name: "Molten Core"
+            elements:
+                - "Fire"
+                - "Energy"
+            description: "The molten core of a volcano, harnessed into a potent essence that supercharges spells and weaponry with blistering heat and eruptive power."
+            biomes:
+                - "basalt_deltas"
+                - "crimson_forest"
+
+        blazeheart_gem:
+            display_name: "Blazeheart Gem"
+            elements:
+                - "Fire"
+                - "Crystal"
+            description: "A fiery gemstone pulsating with the essence of the inferno, capable of enhancing the destructive potential of attacks with its scorching radiance."
+            biomes:
+                - "basalt_deltas"
+                - "crimson_forest"
+
+        igneous_fragment:
+            display_name: "Igneous Fragment"
+            elements:
+                - "Fire"
+                - "Stone/Ore"
+            description: "A fragment of igneous ore, seething with molten energy and capable of imbuing weapons and spells with the searing fury of volcanic eruptions."
+            biomes:
+                - "basalt_deltas"
+                - "crimson_forest"
+
+        crimsonsteel_plate:
+            display_name: "Crimsonsteel Plate"
+            elements:
+                - "Fire"
+                - "Metal"
+            description: "A plate forged from crimsonsteel ore, infused with the essence of fire and capable of granting unparalleled strength and destructive power to armor and weapons."
+            biomes:
+                - "basalt_deltas"
+                - "crimson_forest"
+
+        infernal_essence:
+            display_name: "Infernal Essence"
+            elements:
+                - "Fire"
+                - "Void/Chaos"
+            description: "An essence seething with infernal energy, drawn from the depths of the abyss and capable of unleashing devastating attacks imbued with chaotic flames."
+            biomes:
+                - "basalt_deltas"
+                - "nether_wastes"
+
+        hellfire_shard:
+            display_name: "Hellfire Shard"
+            elements:
+                - "Fire"
+                - "Energy"
+            description: "A shard infused with the essence of hellfire, pulsating with intense heat and capable of empowering spells and weaponry with infernal flames."
+            biomes:
+                - "basalt_deltas"
+                - "nether_wastes"
+
+        scorchstone_fragment:
+            display_name: "Scorchstone Fragment"
+            elements:
+                - "Fire"
+                - "Stone/Ore"
+            description: "A fragment of scorchstone ore, blazing with searing heat and capable of enhancing attacks with the fiery rage of volcanic eruptions."
+            biomes:
+                - "basalt_deltas"
+                - "crimson_forest"
+
+        pyresteel_ingot:
+            display_name: "Pyresteel Ingot"
+            elements:
+                - "Fire"
+                - "Metal"
+            description: "An ingot forged from pyresteel ore, infused with the essence of flames and capable of imbuing weapons and armor with the scorching fury of the inferno."
+            biomes:
+                - "basalt_deltas"
+                - "crimson_forest"
+
+        flameheart_crystal:
+            display_name: "Flameheart Crystal"
+            elements:
+                - "Fire"
+                - "Crystal"
+            description: "A crystal pulsating with the essence of the flameheart, capable of empowering attacks with the scorching heat of volcanic eruptions and infernal flames."
+            biomes:
+                - "basalt_deltas"
+                - "crimson_forest"
+
+        inferno_core:
+            display_name: "Inferno Core"
+            elements:
+                - "Fire"
+                - "Energy"
+            description: "The blazing core of the inferno, harnessed into a potent essence that amplifies the destructive power of spells and weaponry with its searing intensity."
+            biomes:
+                - "basalt_deltas"
+                - "nether_wastes"
+        starlight_shimmer:
+            display_name: "Starlight Shimmer"
+            elements:
+                - "Mystical Dust"
+                - "Energy"
+            description: "A shimmering dust infused with the essence of starlight, capable of imbuing spells and artifacts with celestial energies and ethereal brilliance."
+            biomes:
+                - "meadow"
+                - "flower_forest"
+
+        moonbeam_powder:
+            display_name: "Moonbeam Powder"
+            elements:
+                - "Mystical Dust"
+                - "Night"
+            description: "A fine powder that glows with the silvery radiance of moonbeams, enhancing the potency of spells and enchantments with the tranquil essence of the night."
+            biomes:
+                - "small_end_islands"
+                - "old_growth_birch_forest"
+
+        sunspark_dust:
+            display_name: "Sunspark Dust"
+            elements:
+                - "Mystical Dust"
+                - "Day"
+            description: "Golden dust that sparkles with the radiant energy of the sun, infusing spells and artifacts with the warmth and vitality of daylight."
+            biomes:
+                - "sunflower_plains"
+                - "savanna"
+
+        twilight_essence:
+            display_name: "Twilight Essence"
+            elements:
+                - "Mystical Dust"
+                - "Night"
+                - "Day"
+            description: "An ethereal essence that bridges the realms of night and day, granting spells and artifacts the power to harness both the tranquility of twilight and the vibrancy of dawn."
+            biomes:
+                - "flower_forest"
+                - "old_growth_birch_forest"
+
+        dreamweaver_glitter:
+            display_name: "Dreamweaver Glitter"
+            elements:
+                - "Mystical Dust"
+                - "Night"
+                - "Dream"
+            description: "Glittering dust that dances with the dreams of the subconscious, empowering spells and artifacts with the surreal essence of the dream realm."
+            biomes:
+                - "flower_forest"
+                - "old_growth_birch_forest"
+
+        astral_sparkle:
+            display_name: "Astral Sparkle"
+            elements:
+                - "Mystical Dust"
+                - "Night"
+                - "Energy"
+            description: "Sparkling dust infused with the astral energies of the cosmos, enhancing spells and artifacts with the boundless power of the celestial realm."
+            biomes:
+                - "small_end_islands"
+                - "old_growth_birch_forest"
+
+        luminous_ember:
+            display_name: "Luminous Ember"
+            elements:
+                - "Mystical Dust"
+                - "Day"
+                - "Energy"
+            description: "An ember that glows with the radiant energy of the sun, imbuing spells and artifacts with the fiery brilliance of daylight."
+            biomes:
+                - "sunflower_plains"
+                - "savanna"
+
+        voidmist_glitter:
+            display_name: "Voidmist Glitter"
+            elements:
+                - "Mystical Dust"
+                - "Void/Chaos"
+            description: "Glittering dust that shimmers with the enigmatic energies of the void, infusing spells and artifacts with the chaotic essence of the abyss."
+            biomes:
+                - "deep_dark"
+                - "nether_wastes"
+
+        ethereal_spark:
+            display_name: "Ethereal Spark"
+            elements:
+                - "Mystical Dust"
+                - "Void/Chaos"
+                - "Energy"
+            description: "A sparking dust infused with the ethereal energies of the void, empowering spells and artifacts with the unpredictable essence of chaos."
+            biomes:
+                - "deep_dark"
+                - "nether_wastes"
+
+        celestial_glitter:
+            display_name: "Celestial Glitter"
+            elements:
+                - "Mystical Dust"
+                - "Day"
+                - "Night"
+            description: "Glittering dust that radiates with the harmonious energies of both day and night, imbuing spells and artifacts with the balance and beauty of the celestial cycle."
+            biomes:
+                - "flower_forest"
+                - "old_growth_birch_forest"
+
+        whisperwind_silica:
+            display_name: "Whisperwind Silica"
+            elements:
+                - "Mystical Dust"
+                - "Air"
+            description: "Fine silica dust carried on the whispering winds, enhancing spells and artifacts with the gentle essence of air and freedom."
+            biomes:
+                - "flower_forest"
+                - "meadow"
+
+        stardust_essence:
+            display_name: "Stardust Essence"
+            elements:
+                - "Mystical Dust"
+                - "Energy"
+                - "Crystal"
+            description: "An essence infused with the cosmic energies of stardust, empowering spells and artifacts with the crystalline brilliance of the celestial realm."
+            # biomes:
+            #     - "small_end_islands"
+            #     - "flower_forest
+        amberbloom_petals:
+            display_name: "Amberbloom Petals"
+            elements:
+                - "Flora"
+                - "Crystal"
+            description: "Glowing petals of the rare Amberbloom flower, prized for their luminous hue and crystalline essence, often used in enchantments to enhance clarity and insight."
+            biomes:
+                - "flower_forest"
+                - "meadow"
+
+        verdant_moss:
+            display_name: "Verdant Moss"
+            elements:
+                - "Flora"
+                - "Nature"
+            description: "Lush moss imbued with the essence of nature, thriving in shaded groves and damp caverns, sought after for its rejuvenating properties and connection to the earth."
+            biomes:
+                - "lush_caves"
+                - "mushroom_fields"
+
+        sundew_tendril:
+            display_name: "Sundew Tendril"
+            elements:
+                - "Flora"
+                - "Sun/Day"
+            description: "Delicate tendrils of the Sundew plant, basking in the sun's warm embrace, known for their adhesive properties and healing sap, often used in poultices and potions."
+            biomes:
+                - "sunflower_plains"
+                - "flower_forest"
+
+        nightshade_blossom:
+            display_name: "Nightshade Blossom"
+            elements:
+                - "Flora"
+                - "Moon/Night"
+            description: "Ethereal blossoms that bloom under the moon's pale light, exuding a haunting fragrance and possessing potent magical properties, often used in potions and rituals."
+            biomes:
+                - "dark_forest"
+                - "swamp"
+
+        crimson_thorn:
+            display_name: "Crimson Thorn"
+            elements:
+                - "Flora"
+                - "Chaos"
+            description: "Thorny vines that thrive in the chaotic energies of the Crimson Forest, their crimson thorns harboring volatile magic, used in potions and alchemical concoctions."
+            biomes:
+                - "crimson_forest"
+
+        frostfern_leaf:
+            display_name: "Frostfern Leaf"
+            elements:
+                - "Flora"
+                - "Ice"
+            description: "Delicate leaves of the Frostfern plant, shimmering with frost, prized for their ability to withstand freezing temperatures and used in potions to impart frosty resilience."
+            biomes:
+                - "frozen_ocean"
+                - "snowy_taiga"
+
+        emberbloom_petal:
+            display_name: "Emberbloom Petal"
+            elements:
+                - "Flora"
+                - "Fire"
+            description: "Vibrant petals of the Emberbloom flower, glowing with fiery hues, known for their association with flame and used in rituals to kindle the spirit."
+            biomes:
+                - "crimson_forest"
+                - "frozen_peaks"
+
+        sylphlily_blossom:
+            display_name: "Sylphlily Blossom"
+            elements:
+                - "Flora"
+                - "Air"
+            description: "Graceful blossoms that dance on the breeze, imbued with the essence of air and freedom, cherished for their ethereal beauty and used in charms to invoke the winds."
+            biomes:
+                - "bamboo_jungle"
+                - "windswept_forest"
+
+        moonbeam_lotus:
+            display_name: "Moonbeam Lotus"
+            elements:
+                - "Flora"
+                - "Night"
+            description: "Exquisite lotus blooms that unfurl under the moon's gentle glow, emitting a soft, silvery light and possessing restorative properties, often sought by healers and enchanters."
+            biomes:
+                - "old_growth_birch_forest"
+                - "swamp"
+
+        faeflower_nectar:
+            display_name: "Faeflower Nectar"
+            elements:
+                - "Flora"
+                - "Day"
+            description: "Sweet nectar harvested from the luminous Faeflower, basking in the daylight's warmth, prized for its rejuvenating properties and used in potions to restore vitality."
+            biomes:
+                - "flower_forest"
+                - "meadow"
+
+        arcane_lotus:
+            display_name: "Arcane Lotus"
+            elements:
+                - "Flora"
+                - "Arcane"
+            description: "Mystical lotus blooms that resonate with arcane energies, their petals shimmering with otherworldly light, used in rituals and spells to channel the power of the arcane."
+            biomes:
+                - "lush_caves"
+                - "mushroom_fields"
+
+        shadowvine_creeper:
+            display_name: "Shadowvine Creeper"
+            elements:
+                - "Flora"
+                - "Night"
+                - "Chaos"
+            description: "Twisting vines that thrive in the shadows, their glossy leaves veined with darkness, infused with the chaotic energies of the night, used in potions and charms of shadow magic."
+            biomes:
+                - "dark_forest"
+                - "swamp"
+
+        sunset_rose:
+            display_name: "Sunset Rose"
+            elements:
+                - "Flora"
+                - "Day"
+                - "Fire"
+            description: "Radiant roses that bloom under the sun's warm rays, their petals ablaze with fiery hues, symbolizing passion and vitality, often used in potions and spells of love and courage."
+            biomes:
+                - "flower_forest"
+                - "meadow"
+
+        crystalbloom_iris:
+            display_name: "Crystalbloom Iris"
+            elements:
+                - "Flora"
+                - "Crystal"
+                - "Nature"
+            description: "Exotic irises that grow amidst crystalline formations, their petals shimmering with the hues of precious gems, prized for their beauty and used in rituals of nature magic."
+        feywing_feather:
+            display_name: "Feywing Feather"
+            elements:
+                - "Air"
+                - "Life/Nature"
+            description: "A delicate feather plucked from the wing of a fairy, imbued with the essence of the breeze and the whimsy of the fey, often used in charms and potions of flight and levitation."
+            biomes:
+                - "flower_forest"
+                - "meadow"
+
+        pixie_sparkle:
+            display_name: "Pixie Sparkle"
+            elements:
+                - "Energy"
+                - "Life/Nature"
+            description: "Glimmering dust left behind by mischievous pixies, pulsating with playful energy and magic, used in potions and enchantments to invoke the whims of the fey."
+            biomes:
+                - "flower_forest"
+                - "mushroom_fields"
+
+        feyblossom_nectar:
+            display_name: "Feyblossom Nectar"
+            elements:
+                - "Life/Nature"
+                - "Water/Ice"
+            description: "Enchanting nectar harvested from the mystical Feyblossom flower, beloved by fairies for its sweet fragrance and rejuvenating properties, often used in elixirs and rituals of renewal."
+            biomes:
+                - "flower_forest"
+                - "meadow"
+
+        sprite_dust:
+            display_name: "Sprite Dust"
+            elements:
+                - "Energy"
+                - "Night"
+            description: "Shimmering dust carried by nocturnal sprites, glowing softly in the moonlight and possessing enchanting properties, used in potions and spells to instill dreams and illusions."
+            biomes:
+                - "flower_forest"
+                - "dark_forest"
+
+        feyfire_ember:
+            display_name: "Feyfire Ember"
+            elements:
+                - "Fire"
+                - "Life/Nature"
+            description: "A glowing ember infused with the essence of fey magic, flickering with ethereal flames and radiating warmth and protection, often sought after for its comforting presence."
+            biomes:
+                - "flower_forest"
+                - "dark_forest"
+
+        luminescent_wisp:
+            display_name: "Luminescent Wisp"
+            elements:
+                - "Air"
+                - "Energy"
+            description: "A shimmering wisp of pure energy, guided by the whims of the fairies and dancing through the night sky, often used in spells and rituals of illumination and guidance."
+            biomes:
+                - "flower_forest"
+                - "lush_caves"
+
+        feyglow_moss:
+            display_name: "Feyglow Moss"
+            elements:
+                - "Crystal"
+                - "Life/Nature"
+            description: "Bioluminescent moss that thrives in the presence of fairies, glowing with an otherworldly light and harboring magical energies, often used in potions and rituals of enchantment."
+            biomes:
+                - "flower_forest"
+                - "mushroom_fields"
+
+        sylphwind_fluff:
+            display_name: "Sylphwind Fluff"
+            elements:
+                - "Air"
+                - "Life/Nature"
+            description: "Delicate wisps of airy fluff carried by sylphs, imbued with the essence of nature and freedom, often used in charms and spells to evoke the winds and commune with the fey."
+            biomes:
+                - "flower_forest"
+                - "meadow"
+
+        feybloom_pollen:
+            display_name: "Feybloom Pollen"
+            elements:
+                - "Day"
+                - "Life/Nature"
+            description: "Golden pollen collected from the blossoms of the Feybloom flower, shimmering with the warmth of the sun and the vitality of nature, often used in potions and rituals of growth and abundance."
+            biomes:
+                - "flower_forest"
+                - "meadow"
+
+        ethereal_willow_down:
+            display_name: "Ethereal Willow Down"
+            elements:
+                - "Night"
+                - "Life/Nature"
+            description: "Downy tufts from the branches of ethereal willows, imbued with the magic of the night and the tranquility of the fey realm, often used in spells and charms of protection and solace."
+            biomes:
+                - "flower_forest"
+                - "dark_forest"
+
+        faerie_frost:
+            display_name: "Faerie Frost"
+            elements:
+                - "Ice"
+                - "Life/Nature"
+            description: "Glistening frost formed by the playful antics of winter fairies, imbued with the chill of the frost and the magic of the fey, often used in spells and potions to invoke frosty enchantments."
+            biomes:
+                - "flower_forest"
+                - "frozen_peaks"
+
+        butterfly_dreams:
+            display_name: "Butterfly Dreams"
+            elements:
+                - "Dream"
+                - "Life/Nature"
+            description: "Vibrant dreams woven by daytime fairies, imbued with the warmth of the sun and the ephemeral beauty of butterflies, often used in potions and spells to inspire joy and creativity."
+        enchanted_dewdrops:
+            display_name: "Enchanted Dewdrops"
+            elements:
+                - "Water/Ice"
+                - "Life/Nature"
+            description: "Glistening dewdrops imbued with the magic of the fey, sparkling with the purity of water and the chill of ice, often used in potions and rituals of rejuvenation and clarity."
+            biomes:
+                - "flower_forest"
+                - "meadow"
+
+        faeriefire_spark:
+            display_name: "Faeriefire Spark"
+            elements:
+                - "Fire"
+                - "Energy"
+            description: "A flickering spark of fey magic, dancing with vibrant flames and crackling with energy, often used in spells and rituals to ward off darkness and inspire courage."
+            biomes:
+                - "flower_forest"
+                - "dark_forest"
+
+        dreamweaver_silk:
+            display_name: "Dreamweaver Silk"
+            elements:
+                - "Air"
+                - "Dream"
+            description: "Fine silk spun by the dreamweavers of the fey realm, woven with threads of imagination and woven into ethereal tapestries, often used in charms and spells of dreams and illusions."
+            biomes:
+                - "flower_forest"
+                - "lush_caves"
+
+        feywild_essence:
+            display_name: "Feywild Essence"
+            elements:
+                - "Arcane"
+                - "Life/Nature"
+            description: "An essence drawn from the heart of the feywild, pulsating with arcane and natural energies, often used in rituals and spells to bridge the mortal realm with the realm of the fey."
+            biomes:
+                - "flower_forest"
+                - "lush_caves"
+        infernal_essence:
+            display_name: "Infernal Essence"
+            elements: 
+                - Chaos
+            description: "A vile substance exuding chaotic energy, harvested from the depths of the inferno."
+            biomes: 
+                - nether_wastes
+                - crimson_forest
+                - warped_forest
+
+        abyssal_shard:
+            display_name: "Abyssal Shard"
+            elements: 
+                - Void
+            description: "A shard of darkness from the abyss, emanating an aura of void energy."
+            biomes: 
+                - end_barrens
+                - soul_sand_valley
+
+        demons_blood:
+            display_name: "Demon's Blood"
+            elements: 
+                - Chaos
+            description: "The foul blood of a demon, coursing with chaotic energy and malevolence."
+            biomes: 
+                - nether_wastes
+                - crimson_forest
+
+        shadowfire_ember:
+            display_name: "Shadowfire Ember"
+            elements: 
+                - Chaos
+            description: "An ember infused with chaotic energy, flickering with dark flames."
+            biomes: 
+                - nether_wastes
+                - crimson_forest
+
+        corrupted_soulstone:
+            display_name: "Corrupted Soulstone"
+            elements: 
+                - Death
+            description: "A stone tainted by death, capturing the essence of corrupted souls."
+            biomes: 
+                - end_barrens
+                - soul_sand_valley
+
+        hellfire_brimstone:
+            display_name: "Hellfire Brimstone"
+            elements: 
+                - Fire
+            description: "Brimstone from the depths of hell, burning with intense flames."
+            biomes: 
+                - nether_wastes
+                - crimson_forest
+
+        nether_spine:
+            display_name: "Nether Spine"
+            elements: 
+                - Void
+            description: "A spine-like structure from the nether, pulsating with void energy."
+            biomes: 
+                - nether_wastes
+                - soul_sand_valley
+
+        felsteel_ingot:
+            display_name: "Felsteel Ingot"
+            elements: 
+                - Chaos
+            description: "An ingot forged in the fires of chaos, imbued with demonic power."
+            biomes: 
+                - nether_wastes
+                - crimson_forest
+
+        searing_shadowflame:
+            display_name: "Searing Shadowflame"
+            elements: 
+                - Void
+            description: "A flame that burns with shadowy energy, consuming all in its path."
+            biomes: 
+                - nether_wastes
+                - soul_sand_valley
+
+        blighted_essence:
+            display_name: "Blighted Essence"
+            elements: 
+                - Death
+            description: "An essence corrupted by death, emanating a dark and foul aura."
+            biomes: 
+                - end_barrens
+                - soul_sand_valley
+
+        daemons_fang:
+            display_name: "Daemon's Fang"
+            elements: 
+                - Chaos
+            description: "A razor-sharp fang from a powerful daemon, infused with chaotic energy."
+            biomes: 
+                - nether_wastes
+                - crimson_forest
+
+        infernal_ash:
+            display_name: "Infernal Ash"
+            elements: 
+                - Chaos
+            description: "Ashes from the inferno, swirling with chaotic energies and dark remnants."
+            biomes: 
+                - nether_wastes
+                - crimson_forest
+        whispering_moonstone:
+            display_name: "Whispering Moonstone"
+            elements:
+                - Moon
+                - Spirit
+            description: "A luminous stone that softly whispers secrets of the night, echoing the ancient songs of the moon and bestowing visions upon those who listen."
+            biomes:
+                - cherry_grove
+                - old_growth_birch_forest
+
+        singing_sunflower:
+            display_name: "Singing Sunflower"
+            elements:
+                - Sun
+                - Life
+            description: "A radiant flower that sings with the joy of dawn, its petals shimmering with golden light and filling the air with sweet melodies that uplift the soul."
+            biomes:
+                - sunflower_plains
+                - meadow
+
+        shadowfire_opal:
+            display_name: "Shadowfire Opal"
+            elements:
+                - Fire
+                - Shadow
+            description: "A gemstone that burns with dark flames, casting shifting shadows that dance to an otherworldly rhythm and ensnare the unwary in a mesmerizing trance."
+            biomes:
+                - crimson_forest
+                - nether_wastes
+
+        whispering_mistleaf:
+            display_name: "Whispering Mistleaf"
+            elements:
+                - Mist
+                - Nature
+            description: "A delicate leaf veiled in shimmering mist, its whispers carrying the secrets of the forest and bestowing tranquility upon those who breathe its fragrance."
+            biomes:
+                - flower_forest
+                - swamp
+
+        twilight_emberstone:
+            display_name: "Twilight Emberstone"
+            elements:
+                - Twilight
+                - Fire
+            description: "A stone that glows with the hues of dusk and dawn, its fiery embers flickering with the twilight's embrace and illuminating the path of wanderers in the twilight hours."
+            biomes:
+                - dark_forest
+                - warped_forest
+
+        glimmering_stardust:
+            display_name: "Glimmering Stardust"
+            elements:
+                - Star
+                - Magic
+            description: "A sparkling dust that falls from the heavens, carrying the dreams of distant stars and infusing objects with the enchanting magic of the cosmos."
+            biomes:
+                - beach
+                - end_barrens
+        snickerwhip_squanderglop:
+            display_name: "Snickerwhip Squanderglop"
+            elements:
+                - Chaos
+                - Magic
+            description: "A peculiar substance that wiggles and writhes with uncontrollable glee, emitting bursts of chaotic magic that confound the senses and bewilder the mind."
+            biomes:
+                - twisted_hills
+                - eroded_badlands
+
+        quibblethorn_quagmire:
+            display_name: "Quibblethorn Quagmire"
+            elements:
+                - Nature
+                - Death
+            description: "A tangled thicket of thorny vines that ensnares the unwary traveler, its murky depths teeming with whispers of the forgotten and echoes of the lost."
+            biomes:
+                - dark_forest
+                - swamp
+
+        whimsywick_wobblewort:
+            display_name: "Whimsywick Wobblewort"
+            elements:
+                - Magic
+                - Chaos
+            description: "A luminescent plant that sways and swivels with mischievous intent, its iridescent leaves shimmering with unpredictable bursts of magical energy."
+            biomes:
+                - mushroom_fields
+                - whimsy_wilds
+
+        fizzlefop_fandango:
+            display_name: "Fizzlefop Fandango"
+            elements:
+                - Fire
+                - Chaos
+            description: "A fizzling concoction that erupts into a cacophony of colorful flames, dancing wildly to an unseen rhythm and leaving behind a trail of chaotic delight."
+            biomes:
+                - nether_wastes
+                - end_barrens
+
+        muddlebumble_miserymire:
+            display_name: "Muddlebumble Miserymire"
+            elements:
+                - Mist
+                - Death
+            description: "A desolate marsh shrouded in a perpetual fog of despair, its gloomy waters whispering tales of sorrow and longing to those who dare to venture within."
+            biomes:
+                - swamp
+                - dark_forest
+        tatterdemalion_tincture:
+            display_name: "Tatterdemalion Tincture"
+            elements: 
+                - "Nature"
+                - "Night"
+            description: >
+                "Within a vial of swirling hues, this elixir concocts an aura of whimsy, its essence distilled from the laughter of fairies and the whispers of ancient trees. When imbibed under the moon's soft glow, it bestows upon the drinker a fleeting glimpse into the realm of dreams, where reality dances with fantasy and wishes take flight on gossamer wings."
+            biomes:
+                - "forest"
+                - "swamp"
+
+
+target_orb_data:
+    type: data
+    target_items:
+    "Soulstone Shard":
+        target_type: single
+        description: "This shimmering gemstone, when infused into a spellcasting focus, enables the caster to target a single entity, delving into the essence of the individual's soul with pinpoint accuracy."
+    "Aetheric Prism":
+        target_type: cone
+        description: "A crystalline prism that refracts the mystical energies of the aether, allowing the caster to unleash spells in a cone-shaped area, affecting all within its spectral arc."
+    "Leyline Scepter":
+        target_type: linear
+        description: "Crafted from enchanted wood and imbued with the power of ley lines, this scepter channels magic into a linear path, casting spells that surge forth in a straight line, striking all in their wake."
+    "Starcaller Orb":
+        target_type: location
+        description: "A radiant orb infused with celestial energies, granting the caster the ability to target specific locations with stellar precision, guiding spells to their intended destinations across vast distances."
+    "Essence Amulet":
+        target_type: nearest
+        description: "An amulet containing a fragment of the caster's own essence, empowering spells to affect the nearest target, drawing upon the innate connection between caster and surroundings."
+    "Ethereal Talisman":
+        target_type: offset
+        description: "Wrought from ethereal silver and adorned with arcane glyphs, this talisman grants the caster the ability to offset spell effects, allowing for precise manipulation of magical energies to alter reality subtly."
+    "Memory Stone":
+        target_type: remember
+        description: "A polished stone etched with intricate runes, imbued with the power of memory magic, enabling the caster to cast spells that leave a lasting impression, etching their effects into the fabric of reality for future recall."
+    "Anima Focus":
+        target_type: self
+        description: "A shimmering crystal attuned to the caster's life force, enabling spells that target the caster's own being, empowering self-enhancement or protective magics to bolster their strength in times of need."
+    "Concordance Relic":
+        target_type: area_of_effect
+        description: "A relic forged from harmonious materials, resonating with the magic of unity, allowing the caster to cast spells with area-of-effect properties, fostering camaraderie and cooperation among allies."
+    "Chaos Shard":
+        target_type: random
+        description: "A jagged shard infused with chaotic energies, enabling spells that strike random targets within a designated area, embracing the unpredictable nature of chaos to wreak havoc upon foes."
+    "Arcane Link":
+        target_type: chain
+        description: "A delicate chain woven from threads of pure magic, establishing a mystical connection between the caster and their allies, allowing spells to chain between multiple targets, binding them together in shared fortune or fate."
+    "Dreamcatcher Totem":
+        target_type: group
+        description: "Carved from the wood of enchanted trees and adorned with shimmering feathers, this totem harnesses the power of dreams, enabling spells that affect groups of targets within the realm of slumber, shaping destinies through the ethereal realm."

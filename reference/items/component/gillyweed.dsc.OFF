@@ -1,0 +1,7 @@
+gillyweed:
+  type: item
+  material: bowl
+  display name: Gillyweed
+  mechanisms:
+    custom_model_data: 2110019
+    

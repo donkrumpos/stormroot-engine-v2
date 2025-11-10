@@ -1,0 +1,20 @@
+log_01:
+  type: item
+  material: player_head
+  display name: ""
+  mechanisms:
+    skull_skin: 9ab0eb10-d2d1-4af3-8464-c25dcbea8e3d|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDI0ZWExMTU3Y2FhZjZmNDc2YzAyZDk2NzQxYTUzMzlhM2MxMTFkN2VlYjcxZGZkODAxN2YwNzgzMDU1NDU5MSJ9fX0=
+
+log_02:
+  type: item
+  material: player_head
+  display name: ""
+  mechanisms:
+    skull_skin: 983ade85-b156-421b-aa1e-b776a999070b|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTlkODA2Yjc1ZWM5NTAwNmM1ZWMzODY2YzU0OGM1NTcxYWYzZTc4OGM3ZDE2MjllZGU2NGJjMWI3NDg4NTljZCJ9fX0=
+
+log_03:
+  type: item
+  material: player_head
+  display name: ""
+  mechanisms:
+    skull_skin: e23ef92a-720c-4dc6-90cf-cb4e929099ea|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzg1ZTEyYTNlZDk3NzczNWI0MWVhMTk4ZTM2ZjFlY2ViMzFmNmIzODg3MzhhYjNkNGZhZGVlNmZiZDY0ZDlhZCJ9fX0=

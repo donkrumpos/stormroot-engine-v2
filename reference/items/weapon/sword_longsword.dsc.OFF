@@ -1,0 +1,44 @@
+longsword:
+  type: item
+  debug: false
+  material: stick
+  display name: Longsword
+  
+  lore:
+  - An elegent weapon
+  - for a more sophisticated time.
+  flags:
+    material_quantity: 8
+    price: 35
+    rarity: 19
+    required_strength: 15
+    item_type: weapon
+    weapon_type: sword
+    craftable: true
+    crafting_difficulty: 10
+    two_handed: false
+    weapon_speed: 70
+    weapon_damage_max: 15
+    weapon_damage_min: 9
+    material: iron
+    stat:
+      bonus:
+        attack_speed_increase: 0
+        hit_chance_increase: 0
+        damage_increase: 0
+        dexterity_increase: 0
+        strength_increase: 0
+        intelligence_increase: 0
+        luck: 0
+        damage_types:
+          fire: 0
+          cold: 0
+          poison: 0
+          energy: 0
+    damage: 5
+      
+    current_durability: 355
+    maximum_durability: 355
+  mechanisms:
+    custom_model_data: 71021
+   

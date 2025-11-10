@@ -1,0 +1,199 @@
+arms_lore:
+    type: task
+    definitions: item|slot
+    script:
+    - if <util.random.int[0].to[30]> == 30:
+    # this gives them a chance to raise the skill, just by trying
+        - run raise_natural_skill_task def:<player>|arms_lore|0|0
+    - define item <player.item_in_hand>
+    - if <[item].script.exists.not>:
+    # lore is only for non-vanilla items
+        - narrate "No lore can be determined for <[item].material.name.replace[_].with[<&sp>]>"
+        - stop
+    # - narrate <[item]>
+    - define lore <list>
+    - if <[item].has_flag[weapon_type]>:
+        - define lore "<[lore].insert[Weapon type: <script[skills_skills_data].data_key[skills.<[item].flag[weapon_type]>.display_name]>].at[<[lore].size>]>"
+    - if <[item].has_flag[required_strength]>:
+        - define lore "<[lore].insert[Required Strength: <[item].flag[required_strength]>].at[<[lore].size>]>"
+    - if <[item].has_flag[two_handed]> && <[item].flag[two_handed]>:
+        - define lore "<[lore].insert[Two-handed].at[<[lore].size>]>"
+    - if <[item].has_flag[weapon_speed]>:
+        - define lore "<[lore].insert[Weapon Speed: <[item].flag[weapon_speed]>].at[<[lore].size>]>"
+    
+    
+    - inventory adjust slot:<player.held_item_slot> "lore:<[lore]>"
+    
+
+
+arms_lore_command:
+    name: arms_lore
+    type: command
+    script:
+    - run new_arms_lore_task def:<player.item_in_hand>|<player.held_item_slot>
+
+new_arms_lore_task:
+    type: task
+    definitions: item|slot
+    script:
+    - define lore <list>
+    - if <[item].has_flag[weapon_type]>:
+        - define lore "<[lore].insert[Weapon type: <script[skills_skills_data].data_key[skills.<[item].flag[weapon_type]>.display_name]>].at[<[lore].size>]>"
+    - if <[item].has_flag[two_handed]> && <[item].flag[two_handed]>:
+        - define lore "<[lore].insert[Two-handed].at[<[lore].size>]>"
+    - if <[item].has_flag[weapon_speed]>:
+        - define weapon_speed <[item].flag[weapon_speed]>
+        - define weapon_speed_message "This weapon is as fast as the wind."
+        - if <[weapon_speed]> > 10 && <[weapon_speed]> <= 25:
+            - define weapon_speed_message "This weapon is extremely fast."
+        - if <[weapon_speed]> > 25 && <[weapon_speed]> <= 40:
+            - define weapon_speed_message "This weapon is super fast."
+        - if <[weapon_speed]> > 40 && <[weapon_speed]> <= 55:
+            - define weapon_speed_message "This weapon is very fast."
+        - if <[weapon_speed]> > 55 && <[weapon_speed]> <= 70:
+            - define weapon_speed_message "This weapon is pretty fast."
+        - if <[weapon_speed]> > 70 && <[weapon_speed]> <= 85:
+            - define weapon_speed_message "This weapon is neither fast nor slow."
+        - if <[weapon_speed]> > 85 && <[weapon_speed]> <= 100:
+            - define weapon_speed_message "This weapon is not too fast."
+        - if <[weapon_speed]> > 100 && <[weapon_speed]> <= 115:
+            - define weapon_speed_message "This weapon is slow."
+        - if <[weapon_speed]> > 115:
+            - define weapon_speed_message "This weapon is very slow."
+        - define lore "<[lore].insert[Weapon Speed: <[weapon_speed_message]>].at[<[lore].size>]>"
+    - foreach <[item].flag[stat.bonus]> as:flag:
+      - if <[flag]> > 0:
+        # - define lore  "<[lore]><[key]> <[flag]>"
+        - narrate "<[key]> <[flag]>"
+  #   - foreach <[item].flag[stat.bonus.damage_types]> as:flag2:
+  #     - if <[flag2]> > 0:
+  #       - define lore  "<[lore]><[key]> <[flag2]>"
+    - if <[item].has_flag[required_strength]>:
+        - define required_strength <[item].flag[required_strength]>
+        - define required_strength_message "This equipment doesn't require any strength."
+        - if <[required_strength]> > 0 && <[required_strength]> < 10:
+            - define required_strength_message "This item takes a little strength to use."
+        - if <[required_strength]> > 10 && <[required_strength]> <= 20:
+            - define required_strength_message "This item takes some strength to use."
+        - if <[required_strength]> > 20 && <[required_strength]> <= 40:
+            - define required_strength_message "This item takes adequate strength to use."
+        - if <[required_strength]> > 40 && <[required_strength]> <= 50:
+            - define required_strength_message "This item takes significant strength to use."
+        - if <[required_strength]> > 50 && <[required_strength]> <= 65:
+            - define required_strength_message "This item takes substantial strength to use."
+        - if <[required_strength]> > 65 && <[required_strength]> <= 80:
+            - define required_strength_message "This item takes mighty strength to use."
+        - if <[required_strength]> > 80:
+            - define required_strength_message "This item takes monumental strength to use."
+        - define lore "<[lore].insert[Required Strength: <[required_strength_message]>].at[<[lore].size>]>"
+    - if <[item].has_flag[defense]>:
+        - define defense <[item].flag[defense]>
+        - define defense_message "This armor doesn't have protection."
+        - if <[defense]> > 0 && <[defense]> < 5:
+            - define defense_message "This armor has minor protection."
+        - if <[defense]> >= 5 && <[defense]> < 10:
+            - define defense_message "This armor has ample protection."
+        - if <[defense]> >= 10 && <[defense]> < 15:
+            - define defense_message "This armor has significant protection."
+        - if <[defense]> >= 15 && <[defense]> < 20:
+            - define defense_message "This armor has substantial protection."
+        - if <[defense]> >= 20 && <[defense]> < 30:
+            - define defense_message "This armor has extreme protection."
+        - if <[defense]> > 30:
+            - define defense_message "This armor has absolutely enormous protection."
+        - define lore "<[lore].insert[Defense: <[defense_message]>].at[<[lore].size>]>"
+    - if <[item].has_flag[weapon_damage_max]>:
+        - define damage <[item].flag[weapon_damage_max]>
+        - define damage_message "This weapon doesn't have damage."
+        - if <[damage]> > 0 && <[damage]> < 10:
+            - define damage_message "This weapon doesn't do much damage."
+        - if <[damage]> >= 10 && <[damage]> < 20:
+            - define damage_message "This weapon does a good amount damage."
+        - if <[damage]> >= 20 && <[damage]> < 30:
+            - define damage_message "This weapon does significant damage."
+        - if <[damage]> >= 30 && <[damage]> < 40:
+            - define damage_message "This weapon does a substantial amount of damage."
+        - if <[damage]> >= 40 && <[damage]> < 50:
+            - define damage_message "This weapon does a massive amount damage."
+        - if <[damage]> >= 50:
+            - define damage_message "This weapon does an insanely colossal amount damage."
+        - define lore "<[lore].insert[Damage: <[damage_message]>].at[<[lore].size>]>"
+    # - define current_lore <[item].lore>
+    - define durability_message "Durability: <proc[durability_display_proc].context[<[item]>]>"
+    - define lore <[lore].insert[<[durability_message]>].at[<[lore].size>]>
+    - inventory adjust slot:<[slot]> d:<player.inventory> "lore:<[lore]>"
+
+# arms_lore_task:
+#   type: task
+#   definitions: item|slot
+#   script:
+#   - narrate <red>THISRAN
+#   - define lore <list>
+#   - if <[item].has_flag[weapon_type]>:
+    
+#     - define lore "<[lore].insert[Weapon type: <script[skills_skills_data].data_key[skills.<[item].flag[weapon_type]>.display_name]>].at[<[lore].size>]>"
+    
+#   - if <[item].has_flag[two_handed]> && <[item].flag[two_handed]>:
+#     - define lore "<[lore].insert[Two-handed].at[<[lore].size>]>"
+#   - if <[item].has_flag[weapon_speed]>:
+#     - define lore "<[lore].insert[Weapon Speed: <[item].flag[weapon_speed]>].at[<[lore].size>]>"
+# #   - foreach <[item].flag[stat.bonus]> as:flag:
+# #     - if <[flag]> > 0:
+# #       - define lore  "<[lore]><[key]> <[flag]>"
+# #   - foreach <[item].flag[stat.bonus.damage_types]> as:flag2:
+# #     - if <[flag2]> > 0:
+# #       - define lore  "<[lore]><[key]> <[flag2]>"
+#   - if <[item].has_flag[required_strength]>:
+#     - define required_strength <[item].flag[required_strength]>
+#     - define required_strength_message "This equipment doesn't require any strength."
+#     - if <[required_strength]> > 0 && <[required_strength]> < 10:
+#       - define required_strength_message "This item takes a little strength to use."
+#     - if <[required_strength]> > 10 && <[required_strength]> < 20:
+#       - define required_strength_message "This item takes some strength to use."
+#     - if <[required_strength]> > 20 && <[required_strength]> < 30:
+#       - define required_strength_message "This item takes adequate strength to use."
+#     - if <[required_strength]> > 40 && <[required_strength]> < 50:
+#       - define required_strength_message "This item takes significant strength to use."
+#     - if <[required_strength]> > 50 && <[required_strength]> < 65:
+#       - define required_strength_message "This item takes substantial strength to use."
+#     - if <[required_strength]> > 65 && <[required_strength]> < 80:
+#       - define required_strength_message "This item takes mighty strength to use."
+#     - if <[required_strength]> > 80:
+#       - define required_strength_message "This item takes monumental strength to use."
+#     - define lore "<[lore].insert[Required Strength: <[required_strength_message]>].at[<[lore].size>]>"
+#   - if <[item].has_flag[defense]>:
+#     - define defense <[item].flag[defense]>
+#     - define defense_message "This armor doesn't have protection."
+#     - if <[defense]> > 0 && <[defense]> < 5:
+#       - define defense_message "This armor has minor protection."
+#     - if <[defense]> >= 5 && <[defense]> < 10:
+#       - define defense_message "This armor has ample protection."
+#     - if <[defense]> >= 10 && <[defense]> < 15:
+#       - define defense_message "This armor has significant protection."
+#     - if <[defense]> >= 15 && <[defense]> < 20:
+#       - define defense_message "This armor has substantial protection."
+#     - if <[defense]> >= 20 && <[defense]> < 30:
+#       - define defense_message "This armor has extreme protection."
+#     - if <[defense]> > 30:
+#       - define defense_message "This armor has absolutely enormous protection."
+#     - define lore "<[lore].insert[Defense: <[defense_message]>].at[<[lore].size>]>"
+#   - if <[item].has_flag[weapon_damage_max]>:
+#     - define damage <[item].flag[weapon_damage_max]>
+#     - define damage_message "This weapon doesn't have damage."
+#     - if <[damage]> > 0 && <[damage]> < 10:
+#       - define damage_message "This weapon doesn't do much damage."
+#     - if <[damage]> >= 10 && <[damage]> < 20:
+#       - define damage_message "This weapon does a good amount damage."
+#     - if <[damage]> >= 20 && <[damage]> < 30:
+#       - define damage_message "This weapon does significant damage."
+#     - if <[damage]> >= 30 && <[damage]> < 40:
+#       - define damage_message "This weapon does a substantial amount of damage."
+#     - if <[damage]> >= 40 && <[damage]> < 50:
+#       - define damage_message "This weapon does a massive amount damage."
+#     - if <[damage]> >= 50:
+#       - define damage_message "This weapon does an insanely colossal amount damage."
+#     - define lore "<[lore].insert[Damage: <[damage_message]>].at[<[lore].size>]>"
+#   - define current_lore <[item].lore>
+#   - define durability_message "Durability: <proc[durability_display_proc].context[<[item]>]><&nl>"
+#   - define lore <[lore].insert[<[durability_message]>].at[<[lore].size>]>
+#   - inventory adjust slot:<[slot]> d:<player.inventory> "lore:<[lore]>"

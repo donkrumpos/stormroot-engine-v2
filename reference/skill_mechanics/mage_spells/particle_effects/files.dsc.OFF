@@ -1,0 +1,7 @@
+flies:
+    type: task
+    script:
+    - repeat 10:
+        - playeffect effect:warped_spore at:<player.location> quantity:100 offset:10,10,10
+        - wait 10t
+        - playeffect effect:warped_spore at:<player.location> quantity:100 offset:3,2,3

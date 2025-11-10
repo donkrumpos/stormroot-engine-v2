@@ -1,0 +1,308 @@
+
+bartender_assignment:
+  type: assignment
+  debug: false
+  actions:
+    on assignment:
+      - trigger name:click state:true
+      - trigger name:proximity state:true radius:5
+    on click:
+      - inject description_inject_task
+      - narrate format:npcchat "What can I get for you?"
+      - WAIT 1s
+      - give "<item[diamond_hoe].with[display_name=Bartender Menu;custom_model_data=36;hides=ALL;]>" to:bartender_Inventory slot:46
+
+      - inventory open d:bartender_Inventory
+    on enter proximity:
+      - ratelimit <player> 30s
+      
+      
+      - if  <player.flag[npc.<npc>.familiarity.level]> < 3:
+        - inject description_inject_task
+        - narrate format:npcchat "Welcome to the Rusty Anchor"
+      - else:
+        - if <util.random.int[1].to[5]> == 5:
+          - inject description_inject_task
+          - narrate format:npcchat "Welcome back <player.name>"
+
+    default constants:
+        has_familiarity: true
+ 
+
+#############################
+#  How to add another drink
+#############################
+#First you need to make another item (Tells you how down belowË‡Ë‡)
+#Then you need to add the item to the inventory [i@name]
+#After you add it you need to make an event for it down below Ë‡Ë‡
+#After you make the event make sure to add the price!
+#To add a specific Potion, go to http://minecraft-ids.grahamedgecombe.com/potion-calculator
+#############################
+#   Bartender Assignment
+#############################
+bartender_inventory:
+  type: inventory
+  title: "<&6>Bartender Menu"
+  size: 54
+  slots:
+  - "[ale] [wine] [joli_rouge] [] [] [] [] [] []"
+  - "[black_rum] [whiskey] [orsinowl_ale] [] [] [] [] [] [] "
+  - "[water_melon_soda] [water_glass] [] []  [] [] [] [] []"
+  - [] [] [] [] [] [] [] [] []
+  - [] [] [] [] [] [] [] [] []
+  - "[<item[diamond_hoe].with[display_name=Bartender Menu;custom_model_data=36;hides=ALL;]>] [] [] [] [] [] [] [] [] "
+
+############################
+#   Bartender Drinks
+############################ 
+#(This is the basic format for a drink)
+#drink:
+#  type: item
+#  material: "373:8194"
+#  display name: "<&c>RedCow"
+#  lore:
+#  - "Hyper drink that will get you"
+#  - "speeding around!"
+############################
+#     Hard Drinks
+############################
+black_rum:
+  type: item
+  material: potion[color=black]
+  display name: "<&8>Black rum"
+  flags:
+    price: 7
+  lore:
+  - "If there is one drink that practically every"
+  - "bartender in Deluvia knows, it is the Black rum"
+  - "<white>7 copper"
+whiskey:
+  type: item
+  material: potion[color=<&color[#ffaa00]>]
+  display name: "<&6>Whiskey"
+  flags:
+    price: 10
+  lore:
+  - "Lets not have another Whiskey Rebellion"
+  - "<white>10 copper"
+orsinowl_ale:
+  type: item
+  material: potion[color=<&color[#ffff55]>]
+  display name: "<&color[#ffff55]>Orsinowl Ale"
+  flags:
+    price: 5
+  lore:
+  - "Rothigport's very own specialty."
+  - "<white>5 copper"
+wine:
+  type: item
+  material: potion[color=<&color[#aa00aa]>]
+  display name: "<&5>Wine"
+  flags:
+    price: 14
+  lore:
+  - "Old squished up grapes"
+  - "14 copper"
+joli_rouge:
+  type: item
+  material: potion[color=<&color[#da995f]>]
+  display name: "<&color[#da995f]>Joli Rouge"
+  flags:
+    price: 5
+  lore:
+  - "Apple cidre maybe?"
+  - "5 copper"
+############################
+#     Soft Drinks
+############################
+
+water_melon_soda:
+  type: item
+  material: potion[color=<&color[#fe006c]>]
+  display name: "<&a>Water Melon Soda"
+  flags:
+    price: 3
+  lore:
+  - "WATER MELONS!!"
+  - "3 copper"
+
+water_glass:
+  type: item
+  material: potion[color=<&color[#c1e8f2]>]
+  display name:  "Water"
+  flags:
+    price: 0
+  lore:
+  - "Bland. Old. Water."
+  - "<white>0 copper"
+############################
+#  Bartender Chat/Handlers
+############################
+#If you want to add another drink event, copy and paste this template and fill in the correct information!
+#You can find the extraeffects at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html
+#############################
+#    on player clicks (drinkname) in bartender_Inventory:
+#    - if <player.money> >= "(amount)" {
+#      - inventory close
+#      - money take quantity:(amount)
+#      - narrate "(amount) <&a>has been taken from your balance"
+#      - give (drinkname)
+#      } else {
+#      - inventory close
+#      - narrate "<&c>You do not have enough money!"
+#      }
+#   on player consumes (drinkname):
+#   - cast (extraeffect) duration:(time) power:(power)
+##############################
+
+
+bartender_inventory_handler:
+  type: world
+  events:
+    on player clicks in bartender_inventory:
+    - if <context.item.material.name> != air:
+      - define price <context.item.flag[price]>
+      - if <proc[inventory_balance_procedure].context[<player>].add[<proc[purse_currency_proc].context[<player>]>]> >= <[price]>:
+        - inventory close
+        - define new_amount <[price].sub[<proc[inventory_balance_procedure].context[<player>]>]>
+        - run take_currency_from_inventory_task def:7
+        - if <[new_amount]> > 0:
+          - run take_purse_currency_task def:<player>|<[new_amount]>
+        - narrate "<[price]> copper has been taken from your balance"
+        - give <context.item> 
+      - else:
+        - inventory close
+        - narrate "<&c>You do not have enough money!"
+   
+
+    # on player clicks in bartender_Inventory:
+    # - determine cancelled
+    on player drags in bartender_inventory:
+    - determine cancelled
+    # on player clicks water_glass in bartender_Inventory:
+    # - give water_glass
+    # - inventory close
+    # on player clicks black_rum in bartender_Inventory:
+    # - if <proc[inventory_balance_procedure].context[<player>].add[<proc[purse_currency_proc].context[<player>]>]> >= 7:
+    #   - inventory close
+    #   - define price 7
+    #   - define new_amount <[price].sub[<proc[inventory_balance_procedure].context[<player>]>]>
+    #   - run take_currency_from_inventory_task def:7
+    #   - if <[new_amount]> > 0:
+    #     - run take_purse_currency_task def:<player>|<[new_amount]>
+    #   - narrate "7 copper has been taken from your balance"
+    #   - give black_rum 
+    # - else:
+    #   - inventory close
+    #   - narrate "<&c>You do not have enough money!"
+
+    # on player consumes black_rum:
+    # - cast confusion duration:10s
+    # - flag <player> drunk expire:10s
+    # - run drunk_player def:<player>
+    # on player clicks whiskey in bartender_Inventory:
+    # - if <proc[inventory_balance_procedure].context[<player>].add[<proc[purse_currency_proc].context[<player>]>]> >= 10:
+    #   - inventory close
+    #   - define price 10
+    #   - define new_amount <[price].sub[<proc[inventory_balance_procedure].context[<player>]>]>
+    #   - run take_currency_from_inventory_task def:10
+    #   - if <[new_amount]> > 0:
+    #     - run take_purse_currency_task def:<player>|<[new_amount]>
+    #   - narrate "10 copper has been taken from your balance"
+    #   - give whiskey
+    # - else:
+    #   - inventory close
+    #   - narrate "<&c>You do not have enough money!"
+  
+    # on player consumes whiskey:
+    # - cast confusion duration:10s
+    # - run drunk_player def:<player>
+    # on player clicks orsinowl_ale in bartender_Inventory:
+    # - if <proc[inventory_balance_procedure].context[<player>].add[<proc[purse_currency_proc].context[<player>]>]> >= 5:
+    #   - inventory close
+    #   - define price 14
+    #   - define new_amount <[price].sub[<proc[inventory_balance_procedure].context[<player>]>]>
+    #   - run take_currency_from_inventory_task def:14
+    #   - if <[new_amount]> > 0:
+    #     - run take_purse_currency_task def:<player>|<[new_amount]>
+    #   - narrate "5 <&a>has been taken from your balance"
+    #   - give orsinowl_ale
+    # - else:
+    #   - inventory close
+    #   - narrate "<&c>You do not have enough money!"
+      
+    # on player consumes orsinowl_ale:
+    # - cast confusion duration:10s
+    # - run drunk_player def:<player>
+    # on player clicks wine in bartender_Inventory:
+    # - if <proc[inventory_balance_procedure].context[<player>].add[<proc[purse_currency_proc].context[<player>]>]> >= 14:
+    #   - inventory close
+    #   - define price 14
+    #   - define new_amount <[price].sub[<proc[inventory_balance_procedure].context[<player>]>]>
+    #   - run take_currency_from_inventory_task def:14
+    #   - if <[new_amount]> > 0:
+    #     - run take_purse_currency_task def:<player>|<[new_amount]>
+    #   - narrate "14 <&a>has been taken from your balance"
+    #   - give wine
+    # - else:
+    #   - inventory close
+    #   - narrate "<&c>You do not have enough money!"
+      
+    # on player consumes wine:
+    # - cast confusion duration:10s
+    # - flag <player> drunk expire:10s
+    # - run drunk_player def:<player>
+    # on player clicks joli_rouge in bartender_Inventory:
+    # - if <proc[inventory_balance_procedure].context[<player>].add[<proc[purse_currency_proc].context[<player>]>]> >= 5:
+    #   - inventory close
+    #   - define price 5
+    #   - define new_amount <[price].sub[<proc[inventory_balance_procedure].context[<player>]>]>
+    #   - run take_currency_from_inventory_task def:5
+    #   - if <[new_amount]> > 0:
+    #     - run take_purse_currency_task def:<player>|<[new_amount]>
+    #   - narrate "5 <&a>has been taken from your balance"
+    #   - give joli_rouge
+    # - else:
+    #   - inventory close
+    #   - narrate "<&c>You do not have enough money!"
+      
+    # on player consumes joli_rouge:
+    # - cast confusion duration:10s
+    # - run drunk_player def:<player>
+    # on player clicks water_melon_soda in bartender_Inventory:
+    # - if <proc[inventory_balance_procedure].context[<player>].add[<proc[purse_currency_proc].context[<player>]>]> >= 3:
+    #   - inventory close
+    #   - define price 3
+    #   - define new_amount <[price].sub[<proc[inventory_balance_procedure].context[<player>]>]>
+    #   - run take_currency_from_inventory_task def:3
+    #   - if <[new_amount]> > 0:
+    #     - run take_purse_currency_task def:<player>|<[new_amount]>
+    #   - narrate "3 <&a>has been taken from your balance"
+    #   - give water_melon_soda
+    # - else:
+    #   - inventory close
+    #   - narrate "<&c>You do not have enough money!"
+      
+    # on player consumes water_melon_soda:
+    # - cast absorption duration:20s power:1
+    
+     
+      
+
+drunk_player:
+  type: task
+  definitions: player
+  script:
+  - define current_charisma <player.flag[skill.skills.charisma.level]>
+  - flag <player> drunk
+  - flag <player> times_drunk:++
+  - flag <player>  skill.skills.perception.level:-:5
+  - flag <player>  skill.skills.willpower.level:-:5
+  - repeat 10:
+    - flag <player> stat.core.stamina.level:-:30
+    - flag <player> skill.skills.charisma.level:+:<util.random.int[2].to[41].add[<[value]>].add[<[current_charisma]>]>
+    - wait 1s
+  - flag <player> skill.skills.willpower.level:+:5
+  - flag <player>  skill.skills.perception.level:+:5
+  - flag <player> skill.skills.charisma.level:<[current_charisma]>
+  - flag <player> drunk:!

@@ -1,0 +1,65 @@
+nutcrackers_helmet:
+  type: item
+  debug: false
+  material: player_head
+  display name:  Nutcracker's Helmet
+  lore:
+  - Let us get crackin
+  - <&color[#24daff]>Stamina Loss Reduction 10%
+  - <&color[#24daff]>Resist Cold Damage 100%
+  mechanisms:
+    # custom_model_data: 7581001
+    skull_skin: f3d770d3-1b3e-485b-bfa9-22b7f0ae7f39|ewogICJ0aW1lc3RhbXAiIDogMTY3MTg1NDEyMDE5NywKICAicHJvZmlsZUlkIiA6ICJmNTgyNGRmNGIwMTU0MDA4OGRhMzUyYTQxODU1MDQ0NCIsCiAgInByb2ZpbGVOYW1lIiA6ICJGb3hHYW1lcjUzOTIiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjQwODlkOTI5YjBiMDJkYzFjNDllODAwMzYyMzZlNGIzZjMzYzI1ZGI0MTE1MGNjMWU0OTExZmViYjMzMjNhOCIKICAgIH0KICB9Cn0=
+    skin_layers: hat
+  flags:
+    defense: 10
+    stat:
+      bonus:
+        hit_point_increase: 0
+        hit_point_regeneration: 0
+        mana_regeneration: 0
+        defense_chance_increase: 0
+        stamina_loss_reduction: .1
+        stamina_increase: 0
+        dexterity_increase: 0
+        strength_increase: 0
+        intelligence_increase: 0
+        stamina_regeneration: 0
+        lower_mana_cost: 0
+        medable: true
+        fire_resist: 0
+        cold_resist: 100
+        poison_resist: 0
+        energy_resist: 0
+    defense_modifier: Defense
+    
+    required_strength: 15
+    item_type: armor
+    set: nutcracker
+    slot_type: head
+
+
+# nutcrackers_helmet_world:
+#   type: world
+#   events:
+#     on player equips nutcrackers_helmet:
+#     - spawn armor_stand[visible=false;flags=<player>_nutcrackers_helmet;equipment=air|air|air|diamond_hoe[custom_model_data=3000104]] save:nutcrackers_helmet
+#     - attach <entry[nutcrackers_helmet].spawned_entity>  to:<player>
+
+#     on player unequips nutcrackers_helmet:
+#     - narrate <player.location.find_entities[armor_stand].within[1].filter[has_flag[<player>_nutcrackers_helmet]]> 
+#     - attach <player.location.find_entities[armor_stand].within[1].filter[has_flag[<player>_nutcrackers_helmet]]>  to:cancel
+
+
+nutcracker_helmet_transmog:
+  type: item
+  material: player_head
+  display name: Nutcrackers Helmet
+  flags:
+    slot_type: head
+  mechanisms:
+    # skin_blob: vgzdipNVCc2rwSFSeYu4PnRHvPJWs4amT9AU28WfZrd2yxb1eLsIbs3zQYq9bKAGsxz2Twmz2M1maeN8Rh6h2u4qxqlIFx2YgMmG2ep5nibySabj4SRrY7c4KOchZ4k+5sShGGr3vMXPDFc9MrdQ1g1KrQY6TlCgDAjIDIaSZP3PtxGodLVQ+Z4BqlE0V/MDuNWUvIjwHicgBR9et/sCzg8WNUHwVMFdstrgP/Cs1H6UjlytY3e8QLnl4VzcYv9dm/n7Cnj0HkdyTSTYpb+vxDTz6EZtVz9sDaVYM/dG3zET8s+5wRpZMe0H3e8sQPWGl24zrnJi3Q5QdxH7/93QoLv2jG9nnX6g7SHwQj6hkwd5AqsW5dPqO2scXHkP7MKI7/BRawdYEq+8IwMml/SpgV8osoJ7vMEARdmucLahUw6SYcYxY8GBFpN5ISsdsRtzHCtsIda654tIAHX5TVwjd7ua5922RaReuphvqPCw6YNx7bHwlECRGDoXXC3CpeLKNKFWNaBF3Osq0kj7tVG44CO/RTTO5MGYRnv8SLbPtamKxuNcyNmml2vbQtKUCJ08pykykX5jEl5AQ8Cd+eF0IbwPOSD4vmMYVRDEH9bIYFAJqx2EdGIYw2qJmjy7sO4SprTYcaFaKC5/Un5OJTD6nDXxBjJhR+SigHeWCeBz6es=
+    skull_skin: f3d770d3-1b3e-485b-bfa9-22b7f0ae7f39|ewogICJ0aW1lc3RhbXAiIDogMTY3MTg1NDEyMDE5NywKICAicHJvZmlsZUlkIiA6ICJmNTgyNGRmNGIwMTU0MDA4OGRhMzUyYTQxODU1MDQ0NCIsCiAgInByb2ZpbGVOYW1lIiA6ICJGb3hHYW1lcjUzOTIiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjQwODlkOTI5YjBiMDJkYzFjNDllODAwMzYyMzZlNGIzZjMzYzI1ZGI0MTE1MGNjMWU0OTExZmViYjMzMjNhOCIKICAgIH0KICB9Cn0=
+    skin_layers: hat
+  lore:
+    - "Let's get crackin."

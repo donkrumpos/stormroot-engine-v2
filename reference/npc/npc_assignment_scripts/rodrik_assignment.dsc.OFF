@@ -1,0 +1,459 @@
+rodrik_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:4
+    interact scripts:
+    - rodrik_interact
+
+    default constants:
+        appearance1: "<npc.name> is of the Raven Clan, but has a different headdress on than the rest of his clan."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+rodrik_data:
+    type: data
+    teach_price: 400
+    knowledge:
+        level: basic
+        teach:
+            special_skill:
+            - block
+
+        lore:
+        - place.bardtown
+        - skill.training_dummy
+        - race.woodland_clan.rat_clan
+
+rodrik_interact:
+    type: interact
+    steps:
+        1:
+            proximity trigger:
+                entry:
+                    script:
+                    - if <player.has_flag[npc.<npc.name>.prox_count].not> || <player.flag[npc.<npc.name>.prox_count]> == 0:
+                        - inject description_inject_task
+                        - if <player.flag[class.type]> == "fighter":
+                            - random:
+                                - narrate "Ahoy, welcome bruv!"
+                                - narrate "Another master at arms I see."
+                                - narrate "Fighters welcome here guv."
+                                - narrate "These towers always welcome another weaponsmaster."
+                                
+                        - else:
+                            - random:
+                                - narrate "We don't really want visitors in the North Tower guv." target:<player>
+                                - narrate "We're not open to the public mate." target:<player>
+                                - narrate "This is a pretty peaceful town, so us guards keep busy playing games of Hazard." target:<player>
+                                
+                    - flag <player> npc.<npc.name>.prox_count:++
+                    - if <player.flag[class.type]> == "fighter":
+                        
+                        - if <player.flag[npc.<npc.name>.prox_count]> >= 2:
+                            - if <util.random.int[0].to[2]> == 2:
+                                - inject description_inject_task
+                                - random:
+                                    - narrate "All Right?"
+                                    - narrate "What about ye? <player.name>"
+                                    - narrate "Welcome back bruv."
+                        
+
+                       
+                exit:
+                    script:
+                    - if <player.flag[class.type]> == "fighter":
+                        - if <util.random.int[0].to[10]> == 5:
+                            - inject description_inject_task
+                            - random:
+                                - narrate "Cheerio!"
+                                - narrate "ta ta mate."
+                                - narrate "Come back any time. . ."
+
+            click trigger:
+                script:
+                - if <player.flag[class.type]> == "fighter" && <util.time_now.duration_since[<player.flag[class.duration]>].in_minutes> > 128:
+
+                    - inject description_inject_task
+                    - if <player.flag[npc.<npc.name>.prox_count]> >= 1:
+                        - narrate "You're back <player.name>."
+                        - wait 2s
+                    - if <player.has_flag[skill.specializations].not> || <player.flag[skill.specializations].size> < 1:
+                        - narrate "A fighter like you could use more training"
+                        - wait 1s
+                        - random:
+                            - if <player.has_flag[skill.specializations.bleed_attack].not> || <player.flag[skill.specializations.bleed_attack.level]> == 0:
+                                - run rodrik_bleed_attack
+                            - if <player.has_flag[skill.specializations.stun].not> || <player.flag[skill.specializations.stune.level]> == 0:
+                                - run rodrik_stun
+                            
+
+
+                - else:
+                    - inject description_inject_task
+                    - random:
+                        - narrate "Eh! so you want to become a fighter?"
+                        - narrate "Heyup, you are looking for martial training?"
+                    - run rodrik_first_question_set
+        2:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/.  Tell me what being a fighter entails.
+                    script:
+                    - inject rodrik_task_01
+                    - zap 1
+                    
+                2:
+                    trigger: <&7>/2/. Yes, the way of martial combat is for me!
+                    script:
+                    - inject rodrik_task_02
+                    - zap 1
+                3:
+                    trigger: <&7>/3/. No, I have other things in mind.
+                    script:
+                    - inject rodrik_task_03
+                    - zap 1
+        3:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/.  What other classes are there?
+                    script:
+                    - inject rodrik_task_04
+                    - zap 1
+                    
+                2:
+                    trigger: <&7>/2/. What weapons can I specialize in?
+                    script:
+                    - inject rodrik_task_05
+                    - zap 1
+        4:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/.  Yes! Let's do this.
+                    script:
+                    - inject rodrik_task_06
+                    - zap 1
+                    
+                2:
+                    trigger: <&7>/2/. Actually I've decided to think about it.
+                    script:
+                    - inject rodrik_task_03
+                    - zap 1
+        5:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/.  Yes, please teach me.
+                    script:
+                    - inject rodrik_task_07
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. How do skill specializations work?
+                    script:
+                    - inject rodrik_task_08
+                    - zap 1
+                    
+                3:
+                    trigger: <&7>/3/. No bleed attack specialization for me.
+                    script:
+                    - inject rodrik_task_09
+                    - zap 1
+        6:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/.  Yes, please teach me.
+                    script:
+                    - inject rodrik_task_10
+                    - zap 1
+                2:
+                    trigger: <&7>/2/. How do skill specializations work?
+                    script:
+                    - inject rodrik_task_11
+                    - zap 1
+                    
+                3:
+                    trigger: <&7>/3/. No stun attack specialization for me.
+                    script:
+                    - inject rodrik_task_12
+                    - zap 1
+              
+
+rodrik_first_question_set:
+    type: task
+    script:
+    - clickable <npc.name>_task_01 save:<npc.name>_clickable_01 until:30s usages:1 for:<player>
+    - clickable <npc.name>_task_02 save:<npc.name>_clickable_02 until:30s usages:1 for:<player>
+    - clickable <npc.name>_task_03 save:<npc.name>_clickable_03 until:30s usages:1 for:<player>
+    - narrate <&nl> targets:<player>
+    - if <player.has_flag[rodrik_explain]> && <player.has_flag[rodrik_classes]> && <player.has_flag[rodrik_weapons]>:
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>1. Tell me what being a fighter entails.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_01].command>]>" target:<player>
+    - else:
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Tell me what being a fighter entails.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_01].command>]>" target:<player>
+    - if <player.has_flag[rodrik_fighter_yes]>:
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>2. Yes, the way of martial combat is for me!<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" target:<player>
+    - else:
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>Yes, the way of martial combat is for me!<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" target:<player>
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>3. <&color[#6fd6cb]>No, I have other things in mind.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_03].command>]>" target:<player>
+    - zap 2 rodrik_interact player:<player> duration:14s
+
+
+rodrik_task_01:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - if <player.has_flag[rodrik_explain]>:
+            - narrate "A fighter is well acquainted with death, both dispensing it, and staring it defiantly in the face." targets:<player>
+        - else:
+            - narrate "A fighter is well-rounded in weapons and shields and usually specializes in one style eventually." targets:<player>
+            - wait 3s
+            - narrate "It is a great profession for those of us who like danger." targets:<player>
+            - wait 3s
+            - narrate "Who knows, maybe someday you can become part of the Bardtown city watch mate!" targets:<player>
+            - flag <player> rodrik_explain
+        - flag <player> suspend_clickable:!
+        - clickable <npc.name>_task_04 save:<npc.name>_clickable_04 until:30s usages:1 for:<player>
+        - clickable <npc.name>_task_05 save:<npc.name>_clickable_05 until:30s usages:1 for:<player>
+        - if <player.has_flag[rodrik_classes]>:
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>1. What other classes are there?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_04].command>]>" target:<player>
+        - else:
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>What other classes are there?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_04].command>]>" target:<player>
+        - if <player.has_flag[rodrik_weapons]>:
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>2. What weapons can I specialize in?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_05].command>]>" target:<player>
+        - else:
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>What weapons can I specialize in?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_05].command>]>" target:<player>
+        - zap 3 rodrik_interact player:<player> duration:14s
+
+rodrik_task_02:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "Wicked!"
+        - wait 2s
+        - narrate "Now are you sure, cuz it's difficult to change classes later." targets:<player>
+        - clickable <npc.name>_task_06 save:<npc.name>_clickable_06 until:30s usages:1 for:<player>
+        - clickable <npc.name>_task_03 save:<npc.name>_clickable_03 until:30s usages:1 for:<player>
+        - if <player.has_flag[rodrik_fighter_yes]>:
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>1. Yes! Let's do this.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_06].command>]>" target:<player>
+        - else:
+            - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes! Let's do this.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_06].command>]>" target:<player>
+       
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>Actually I've decided to think about it.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_03].command>]>" target:<player>
+        - zap 4 rodrik_interact player:<player> duration:14s
+        - flag <player> rodrik_fighter_yes
+        - flag <player> suspend_clickable:!
+
+rodrik_task_03:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - random:
+            - narrate "There are many paths to take guv. Stay safe." targets:<player>
+            - narrate "The Bardtown city watch will have you're back while you're in the city limits. Bye." targets:<player>
+            - narrate "You will find what you want out there. but remember, the guard towers are off limits." targets:<player>
+            - narrate "Sorry I couldn't help you more." targets:<player>
+        - flag <player> suspend_clickable:!
+
+rodrik_task_04:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "There are many out there, but there are a few I know of." targets:<player>
+        - wait 2s
+        - narrate "<&color[#00cb43]>Fighter<&r>, the best one, in my humble opinion." targets:<player>
+        - wait 1s
+        - narrate "<&color[#00cb43]>Mage<&r>, a user of magic and things I don't understand." targets:<player>
+        - wait 1s
+        - narrate "<&color[#00cb43]>Cleric<&r>, one who gets their power from the Gods." targets:<player>
+        - wait 1s
+        - narrate "<&color[#00cb43]>Ranger<&r>, survives on the edges of civilization." targets:<player>
+        - wait 1s
+        - narrate "<&color[#00cb43]>Bard<&r>, uses music, and the arts to do their bidding," targets:<player>
+        - wait 1s
+        - narrate "and <&color[#00cb43]>Rogue<&r>, with the sly skills of sneaking and spying." targets:<player>
+        - wait 3s
+        - narrate "These are all I know about, but I hear there are many more out there." targets:<player>
+        - wait 3s
+        - narrate "You have to seek a master for whichever one you choose, to train you, to get started." targets:<player>
+        - wait 2s
+        - narrate "Like me, for example. I can get you started down the path of a Fighter." targets:<player>
+        - wait 3s
+        - narrate "So. . . Would you like to become a Fighter?" targets:<player>
+        - wait 2s
+        - run rodrik_first_question_set
+        - flag <player> rodrik_classes
+        - flag <player> suspend_clickable:!
+
+rodrik_task_05:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "I am dead chuffed to tell about all the possibilities." targets:<player>
+        - wait 1s
+        - narrate "There are <&color[#00cb43]>swords<&r>, or edged weapons," targets:<player>
+        - wait 1s
+        - narrate "<&color[#00cb43]>maces<&r>, or bludgeoning weapons," targets:<player>
+        - wait 1s
+        - narrate "<&color[#00cb43]>fencing<&r>, or piercing weapons," targets:<player>
+        - wait 1s
+        - narrate "<&color[#00cb43]>wrestling<&r>, or bare hands," targets:<player>
+        - wait 1s 
+        - narrate "<&color[#00cb43]>throwing<&r>, such as thrown darts or knives," targets:<player>
+        - wait 1s
+        - narrate "and <&color[#00cb43]>archery<&r>." targets:<player>
+        - wait 3s
+        - narrate "At least these are the only ones I can think of." targets:<player>
+        - wait 3s
+        - narrate "You can gain in skill in any one of these, just by using that type of weapon." targets:<player>
+        - if <player.has_flag[rodrik_weapons].not>:
+            - if <player.has_flag[skill.skills.arms_lore.level]> && <player.flag[skill.skills.arms_lore.level]||0> < 12:
+                - flag <player> skill.skills.arms_lore.level:+:1
+                - narrate format:game_message "Your arms lore raises by 1. Type <element[/skills].bold> to see your skills." targets:<player>
+            - else if <player.has_flag[skill.skills.arms_lore.level].not>:
+                - flag <player> skill.skills.arms_lore.level:1
+                - narrate format:game_message "Your arms lore raises by 1. Type <element[/skills].bold> to see your skills." targets:<player>
+
+        - flag <player> rodrik_weapons
+        
+        - flag <player> suspend_clickable:!
+
+rodrik_task_06:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "The Gods be loving!" targets:<player>
+        - wait 2s
+        - narrate "Let me teach you something I know." targets:<player>
+        - flag <player> class.type:fighter
+        - flag <player> class.duration:<util.time_now>
+        - narrate format:game_message "You are now the Fighter Class." targets:<player>
+        - wait 1s
+        - narrate "Visit me again, or find my others bruvs in battle, to learn new skills." targets:<player>
+        - flag <player> suspend_clickable:!
+
+rodrik_bleed_attack:
+    type: task
+    script:
+    - narrate "I can teach you the <&color[#00cb43]>Bleed Attack<&r> specialization."
+    - wait 2s
+    - narrate "Bleed Attack does extra damage with edged weapons, called Bleed damage to your target over time." targets:<player>
+    - narrate "Would you like me to teach it to you?" targets:<player>
+    - clickable <npc.name>_task_07 save:<npc.name>_clickable_07 until:30s usages:1 for:<player>
+    - clickable <npc.name>_task_08 save:<npc.name>_clickable_08 until:30s usages:1 for:<player>
+    - clickable <npc.name>_task_09 save:<npc.name>_clickable_09 until:30s usages:1 for:<player>
+    
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>1. What other classes are there?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_04].command>]>" target:<player>
+   
+        
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes, please teach me.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_07].command>]>" target:<player>
+    - if <player.has_flag[rodrik_specializations]>:
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>2. How do skill specializations work?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_06].command>]>" target:<player>
+    - else:
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>How do skill specializations work?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_08].command>]>" target:<player>
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>3. <&color[#6fd6cb]>No bleed attack specialization for me.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_09].command>]>" target:<player>
+    - zap 6 rodrik_interact player:<player> duration:14s
+
+rodrik_stun:
+    type: task
+    script:
+    - narrate "I can teach you the <&color[#00cb43]>Stun<&r> specialization."
+    - wait 2s
+    - narrate "This skill can stun your target." targets:<player>
+    - narrate "Would you like me to teach it to you?" targets:<player>
+    - clickable <npc.name>_task_10 save:<npc.name>_clickable_10 until:30s usages:1 for:<player>
+    - clickable <npc.name>_task_08 save:<npc.name>_clickable_08 until:30s usages:1 for:<player>
+    - clickable <npc.name>_task_12 save:<npc.name>_clickable_12 until:30s usages:1 for:<player>
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Yes, please teach me.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_10].command>]>" target:<player>
+    - if <player.has_flag[rodrik_specializations]>:
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>2. How do skill specializations work?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_08].command>]>" target:<player>
+    - else:
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>How do skill specializations work?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_08].command>]>" target:<player>
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>3. <&color[#6fd6cb]>No stun attack specialization for me.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_12].command>]>" target:<player>
+    - zap 6 rodrik_interact player:<player> duration:14s
+
+rodrik_task_07:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "Great stuff! I can get you started." targets:<player>
+        - flag <player> skill.specializations.bleed_attack.level:+:1
+        - narrate format:game_message "You have learned Bleed Attack specialization." targets:<player>
+        - wait 2s
+        - narrate "but you can improve your Bleed Attack to get even more abilities over time." targets:<player>
+        - narrate format:game_message "You can raise Bleed Attack by spending Skill Points on it in the <element[/specializations].bold> menu."
+        
+        - flag <player> suspend_clickable:!
+
+rodrik_task_10:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "Great stuff! I can get you started." targets:<player>
+        - flag <player> skill.specializations.stun.level:+:1
+        - narrate format:game_message "You have learned Stun Attack specialization." targets:<player>
+        - wait 2s
+        - narrate "but you can improve your Stun Attack to get even more abilities over time." targets:<player>
+        - narrate format:game_message "You can raise Bleed Attack by spending Skill Points on it in the <element[/specializations].bold> menu."
+        
+        - flag <player> suspend_clickable:!
+
+rodrik_task_08:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate "I am glad you asked. They are skills you choose to study that can become more powerful as you practice." targets:<player>
+        - wait 1s
+        - narrate format:game_message "You can raise specialization skills by spending Skill Points on it in the <element[/specializations].bold> menu." targets:<player>
+        - wait 2s
+        - narrate "Some provide an aura around you, some are special moves tied to the weapon you are holding, and others are just amazing abilities." targets:<player>
+        - wait 3s
+        - narrate "Each class gets access to certain skills as it relates to their studies, but other classes can find a way to learn other classes' specializations; it just may be a little more difficult." targets:<player>
+        - wait 4s
+        - narrate "With Bleed Attack for instance, you can only use it when you are holding certain edged weapon, and will be as effective as how much you've practiced." targets:<player>
+        - wait 1s
+        - narrate format:game_message "You hotkey skills to your hotbar with <element[/hotkey bleed_attack].bold>, and because it only works with a successful swordsmanship attack, it will show in your offhand and activate upon a hit." targets:<player>
+        - flag <player> rodrik_specializations 
+        - flag <player> suspend_clickable:!
+
+reset_rodrik:
+    type: task
+    script:
+    - flag <player> npc.rodrik.prox_count:!
+    - flag <player> rodrik_explain:!
+    - flag <player> rodrik_classes:!
+    - flag <player> rodrik_weapons:!
+    - flag <player> rodrik_fighter_yes:!
+    
+    - flag <player> rodrik_specializations:!
+    - flag <player> npc.<npc[89]>.famililiarity:0
+    

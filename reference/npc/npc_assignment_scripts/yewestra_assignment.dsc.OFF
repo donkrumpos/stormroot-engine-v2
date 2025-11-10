@@ -1,0 +1,166 @@
+yewestra_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:7
+    interact scripts:
+    - yewestra_interact
+
+    default constants:
+        appearance1: "YYewestra, slender and cloaked in dawn's hues, bears the grace of a parchment crafter. Her chestnut locks cascade like a waterfall, her hands bear the calluses of a craft mastered in secret, a proud descendant of the Mink Clan."
+        appearance2: "Yewestra moves with the silent grace of a forest sprite, her eyes alight with a wisdom born of centuries past, strands of silver mingling with the dark tendrils of her hair, her fingers stained with the ink of secrets, crafting parchment from the supple skins of the forest's beasts."
+        appearance3: "Yewestra, a guardian of Faewood's mysteries, bore the weight of her lineage with a quiet resolve that belied the storms raging within, her eyes, pools of emerald nestled within the depths of the forest, holding secrets untold, each flicker betraying the depths of her ancient soul, her craft of parchment hiding the whispers of her druidic past."
+        appearance4: "Wrapped in the mantle of her heritage, Yewestra stood as a sentinel against the encroaching darkness, her form shrouded in the whispers of the wind, runes of power dancing across skin kissed by the moon's silver glow, each sigil a testament to the ancient magic coursing through her veins, her connection to the land, once strong, now veiled in the shadows of her parchment craft."
+        appearance5: "Yewestra, bearer of the sacred flame, carries the weight of Faewood's legacy upon her shoulders. Her presence is a beacon of hope amidst encroaching shadows, her eyes holding the secrets of forgotten realms. Within her gaze lie echoes of ancient prophecies, whispered by the wind among the trees. A descendant of the revered Mink Clan, she walks a path veiled in mystery, guided by the spirits of her ancestors. In her hands, she carries parchment, a map to realms unseen and a clue to the epic quest that awaits those brave enough to seek it."
+        has_familiarity: true
+        proximity: true
+        dialog: yewestra_dialog
+
+yewestra_dialog:
+    type: data
+    dialog:
+        1:
+            proximity:
+                1:
+                    flag_required:
+                        flag: npc_proximity
+                    prohibited_flag:
+                        flag: npc.Yewestra.prox_count
+                    narration:
+                        1:
+                            - "Well come right in Newling."
+                        2:
+                            - "Ha ha, well hello there."
+                        3:
+                            - "You can come into my hut."
+            click:
+                # 1:
+                #     statement:
+                #         prohibited_flag:
+                #             flag: npc.Yewestra.prox_count
+                #         narration:
+                #             1:
+                #                 - "Welcome"
+                #                 - "What brings you to this side of Aria?"
+                #                 - "I don't get too many visitors over here."
+                # 2:
+                #     statement:
+                #         required_flag:
+                #             flag:
+                #                 - npc.Yewestra.prox_count
+                #                 - yewstra_parchment
+                #         narration:
+                #             1:
+                #                 - "Hi again."
+                #             2:
+                #                 - "You're back."
+                #             3:
+                #                 - "I try to keep to myself, but a visitor once and awhile is welcome."
+                #             4:
+                #                 - "Oh we all have stories to tell. Sometime I will tell you mine."
+                #             5:
+                #                 - "Have you any sheepskin?"
+                1:
+                    statement:
+                        narration:
+                            - "How may I help you?"
+                    questions:
+                        1:
+                            required_flag:
+                                flag: mythos_initiation_started
+                            flag_given:
+                                flag: yewestra_parchment
+                            prohibited_flag:
+                                flag: yewestra_parchment
+                            item_given:
+                                item: parchment[flag=yewestra_parchment;display=Yewstra's parchment for Gilderstilt]
+                                quantity: 10
+                            narration:
+                                - "Gilderstilt sent me to ask about some parchment"
+                            answer:
+                                narration:
+                                    1:
+                                        - "Gilderstilt my good friend!"
+                                        - "He sent you?! This makes my day."
+                                        - "Here take this for Gilderstilt and send him my best wishes."
+                                        # - "And take some for yourself to work on your inscripting. Gilderstilt or one of his assistants will help teach you if you wish."
+                                        - "If you ever need to make your own parchment, put some sheepskin into your crafting table while holding a skinning knife."
+                                        - "At a later time I should be able to help you with more of your travels in Song Tide."
+                        2:
+                            flag_given: 
+                                flag: yewestra_sheep
+                            narration:
+                                - "I'm just exploring and saw your hut."
+                            answer:
+                                narration:
+                                    1:
+                                        - "For years I haven't seen any souls out this way, except for the occasional gnoll raiding party looking to steal my sheep."
+                                        - "and now the sheep populations out on these islands seem to be dwindling." 
+                                        - "If you see any shepherds with large flocks, please let me know."
+                        3:
+                            flag_given:
+                                flag: yewestra_sheepskin
+                            narration:
+                                - "I've come to inquire about your crafting enterprise"
+                            answer:
+                                narration:
+                                    1:
+                                        - "Ah yes, it is true, I live out here supplying Bardtown and other scribes, some parchment out of sheep."
+                                        - "and the demand is so high I cannot keep up. It makes the best parchment for the scribes to use."
+                                        - "If you can provide me with some sheepskin, I could pay well."
+                        4:
+                            required_flag:
+                                flag: yewestra_sheepskin
+                            flag_given:
+                                flag: yewestra_sheepskin_sold
+                            required_item:
+                                item: sheepskin
+                                # take_item: true
+                                quantity: 1
+                            item_given:
+                                item: silver_coin
+                                quantity: 1
+                            narration:
+                                - "I have some sheepskin for you."
+                            answer:
+                                item_taken:
+                                    item: sheepskin
+                                    quantity: 1
+                                narration:
+                                    - "Thank you for this."
+                        5:
+                            required_flag:
+                                flag: yewestra_sheepskin_sold
+                            flag_given:
+                                flag: yewestra_skinning_knife
+                            prohibited_flag:
+                                flag: yewestra_skinning_knife
+                            narration:
+                                - "How do I get a skinning knife."
+                            answer:
+                                item_given:
+                                    item: skinning_knife
+                                    quantity: 1
+                                narration:
+                                    1:
+                                        - "A skinning_knife can be crafted by a tinker."
+                                        - "Here take mine to get you started."
+                            
+                       
+
+
+
+
+
+reset_yewestra:
+    type: task
+    script:
+    - flag <player> npc.Yewestra.prox_count:!
+    - flag <player> npc.n@83.familiarity.level:!
+    - flag <player> yewestra_sheep:!
+    - flag <player> yewestra_sheepskin:!
+    - flag <player> yewestra_gilderstilt_02:!
+    - flag <player> yewestra_parchment:!

@@ -1,0 +1,53 @@
+vines_task:
+    type: task
+    definitions: attacker|target
+    script:
+    - if <[attacker].has_flag[skill.spells.vines.level].not>:
+        - flag <[attacker]> skill.spells.vines.level:1
+    - define level <[attacker].flag[skill.spells.vines.level]>
+    - define target <[attacker].target.location.find.living_entities.within[2].exclude[<[attacker]>].get[1]>
+    - if <[target]> == null:
+        - narrate "No target was found. because <[target]>"
+        - stop
+    - if <list[cobblestone|*_ore|sandstone|gravel|granite|stone|gravel|sand|red_sand].contains[<[target].location.standing_on.material.name>]>:
+        - narrate "The vines cannot sprout from this location."
+        - stop
+
+    - define target_loc <[target].location>
+    
+    - define frame_0 <item[carrot_on_a_stick].with[custom_model_data=6190013]>
+    - define frame_1 <item[carrot_on_a_stick].with[custom_model_data=6190014]>
+    - define frame_2 <item[carrot_on_a_stick].with[custom_model_data=6190016]>
+    - define frame_3 <item[carrot_on_a_stick].with[custom_model_data=6190017]>
+    - define frame_4 <item[carrot_on_a_stick].with[custom_model_data=6190018]>
+    - define frame_4-2 <item[carrot_on_a_stick].with[custom_model_data=6190019]>
+    - define grow_frame_list <list[<[frame_0]>|<[frame_1]>|<[frame_2]>|<[frame_3]>|<[frame_4]>]>
+    - define main_frame_list <list[<[frame_4]>|<[frame_4-2]>]>
+    - teleport <[target]> <[target_loc]>
+    - foreach <[grow_frame_list]> as:frame:
+        - define entity "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<[frame]>]"
+        - spawn <[entity]> <[target_loc].up[1]> save:vines
+        - wait 5t
+        - remove <entry[vines].spawned_entity>
+    - teleport <[target]> <[target_loc]>
+    - run raise_resist_spells_task def:<[target]>|nature
+    - define repeat_count 10
+    - if <[level]> >= 10:
+        - define repeat_count <element[11].add[<[level].div[10]>]>
+    - repeat <[repeat_count]>:
+        
+        - define entity2 "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<[frame_4-2]>]"
+        - spawn <[entity2]> <[target_loc]> save:vines1
+        - wait 4t
+        - remove <entry[vines1].spawned_entity>
+        - teleport <[target]> <[target_loc].below[<util.random.int[0].to[2]>]>
+        - define entity3 "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<[frame_4]>]"
+        - spawn <[entity3]> <[target_loc].up[1]> save:vines2
+        - wait 5t
+        - remove <entry[vines2].spawned_entity>
+        - define resist_success <proc[natural_skill_check_proc].context[<[target]>|nature_resist]>
+        - if <[resist_success]>:
+            - run raise_resist_spells_task def:<[target]>|nature
+            - teleport <[target]> <[target_loc]>
+            - repeat stop
+    - run spell_damage_task def:vines|<[level]>

@@ -1,0 +1,1443 @@
+spells_skills_data:
+    type: data
+    spells:
+        spark:
+            display_name: "Spark"
+            type: spell
+            circle: mage
+            description: "A small jolt spell."
+            difficulty: 1
+            script: spark_task
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180004
+            particle:
+            icon: L
+            icon_large: K
+            damage_types:
+                energy: 100
+            damage_types:
+                energy: 100
+            cooldown:
+                base: 1
+                per_level: 0.5
+            mana:
+                base: 8
+                per_level: 0.5
+            buildup:
+                base: 1.0
+                per_level: 0.1
+        blossom:
+            display_name: "Blossom"
+            type: spell
+            circle: mage
+            description: "Make things grow where you walk. Has a chance to damage undead."
+            difficulty: 1
+            script: blossom_task
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180002
+            target_type: aura
+            particle:
+            icon: X
+            icon_large: W
+            damage: 
+                base: 1
+                per_level: 1
+            damage_types:
+                nature: 100
+            cooldown:
+                base: 1
+                per_level: 0.5
+            mana:
+                base: 8
+                per_level: 0.5
+            buildup:
+                base: 1.0
+                per_level: 0.1
+        create_food:
+            display_name: "Create Food"
+            type: spell
+            circle: mage
+            description: "Let's you conjure food to eat"
+            difficulty: 1
+            script: create_food_task
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180011
+            particle:
+            icon: L
+            icon_large: K
+            damage: 
+                base: 0
+                per_level: 0
+            damage_types:
+                nature: 100
+            cooldown:
+                base: 1
+                per_level: 0.5
+            mana:
+                base: 8
+                per_level: 0.5
+            buildup:
+                base: 1.0
+                per_level: 0.1
+        shock:
+            display_name: "Shock"
+            type: spell
+            circle: mage
+            description: "When using other energy spells, has a chance to electrocute targets standing in water."
+            difficulty: 5
+            prerequisite: spark
+            bound-item: carrot_on_a_stick
+            custom-model-data: 16811
+            icon: T
+            icon_large: S
+            damage_types:
+                energy: 1
+            cooldown:
+                base: 1
+                per_level: 0.5
+            mana:
+                base: 8
+                per_level: 0.5
+            buildup:
+                base: 1.0
+                per_level: 0.1
+        gust:
+            display_name: "Gust"
+            type: spell
+            circle: mage
+            description: "Conjure a gust of air that pushes your target back."
+            difficulty: 1
+            script: gust_task
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180008
+            icon: V
+            icon_large: U
+            damage: 
+                base: 1
+                per_level: 1
+            damage_types:
+                air: 100
+            cooldown:
+                base: 1
+                per_level: 0.5
+            mana:
+                base: 8
+                per_level: 0.5
+            buildup:
+                base: 1.0
+                per_level: 0.1
+            range:
+                base: 6.0
+                per_level: 1
+        wither:
+            display_name: "Wither"
+            type: spell
+            circle: mage
+            description: "Sucks some life from your target"
+            difficulty: 2
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180009
+            icon: V
+            icon_large: U
+            damage: 
+                base: 1
+                per_level: 1
+            damage_types:
+                death: 100
+            cooldown:
+                base: 1
+                per_level: 0.5
+            mana:
+                base: 8
+                per_level: 0.5
+            buildup:
+                base: 1.0
+                per_level: 0.1
+            range:
+                base: 6.0
+                per_level: 1
+            script: wither_task
+        dust_field:
+            display_name: "Dust Field"
+            type: spell
+            circle: mage
+            description: "Conjure a wall of dust that chokes your target."
+            difficulty: 1
+            script: dust_field_task
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180011
+            icon: V
+            icon_large: U
+            damage: 
+                base: 1
+                per_level: 1
+            damage_types:
+                dirt: 100
+            cooldown:
+                base: 1
+                per_level: 0.5
+            mana:
+                base: 8
+                per_level: 0.5
+            buildup:
+                base: 1.0
+                per_level: 0.1
+            range:
+                base: 16.0
+                per_level: 1
+        quake:
+            display_name: "Quake"
+            type: spell
+            circle: mage
+            description: "Shake the ground beneath your target"
+            difficulty: 50
+            script: quake_task
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180011
+            icon: V
+            icon_large: U
+            damage: 
+                base: 1
+                per_level: 1
+            damage_types:
+                dirt: 100
+            cooldown:
+                base: 60
+                per_level: 0.5
+            mana:
+                base: 50
+                per_level: 0.5
+            buildup:
+                base: 1.0
+                per_level: 0.1
+            range:
+                base: 16.0
+                per_level: 1
+        fire_touch:
+            display_name: "Fire Touch"
+            type: spell
+            circle: mage
+            description: "A small warming spell."
+            difficulty: 1
+            script: fire_touch_task
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180003
+            icon: R
+            icon_large: Q
+            damage_types:
+                fire: 90
+                energy: 10
+            damage: 
+                base: 1
+                per_level: 1
+            cooldown:
+                base: 1
+                per_level: 0.5
+            mana:
+                base: 8
+                per_level: 0.5
+            buildup:
+                base: 1.0
+                per_level: 0.1
+        lightning:
+            display_name: "Lightning"
+            type: spell
+            circle: mage
+            description: "Sends a bolt of lightning from your arms to strike target."
+            difficulty: 2
+            prerequisite: spark
+            script: lightning_task
+            icon: F
+            icon_large: E
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180004
+            damage_types:
+                energy: 100
+            damage: 
+                base: 5
+                per_level: 1
+            cooldown:
+                base: 1
+                per_level: 0.5
+            mana:
+                base: 8
+                per_level: 0.5
+            buildup:
+                base: 1.0
+                per_level: 0.1
+        explosion:
+            display_name: "Explosion"
+            type: spell
+            circle: mage
+            description: "Sends a bolt of explosive energy from your arms to strike target."
+            difficulty: 5
+            prerequisite: spark
+            script: explosion_task
+            icon: F
+            icon_large: E
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180004
+            damage_types:
+                energy: 100
+            damage: 
+                base: 5
+                per_level: 1
+            cooldown:
+                base: 1
+                per_level: 0.5
+            mana:
+                base: 8
+                per_level: 0.5
+            buildup:
+                base: 1.0
+                per_level: 0.1
+        energy_bolt:
+            display_name: "Energy Bolt"
+            type: spell
+            circle: mage
+            description: "Sends a bolt of explosive energy from your arms to strike target."
+            difficulty: 5
+            prerequisite: spark
+            script: energy_bolt_task
+            icon: F
+            icon_large: E
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180004
+            damage_types:
+                energy: 100
+            damage: 
+                base: 5
+                per_level: 1
+            cooldown:
+                base: 1
+                per_level: 0.5
+            mana:
+                base: 8
+                per_level: 0.5
+            buildup:
+                base: 1.0
+                per_level: 0.1
+        blade_spirits:
+            display_name: "Blade Spirits"
+            type: spell
+            circle: mage
+            description: "Summons a spirit of blades to attack your target."
+            difficulty: 15
+            prerequisite: spark
+            script: blade_spirits_task
+            icon: F
+            icon_large: E
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180012
+            damage_types:
+                stone: 100
+            damage: 
+                base: 1
+                per_level: 1
+            cooldown:
+                base: 1
+                per_level: 0.5
+            mana:
+                base: 8
+                per_level: 0.5
+            buildup:
+                base: 1.0
+                per_level: 0.1
+        # spirit_speak:
+        #     display_name: "Spirit Speak"
+        #     type: spell
+        #     description: "Allows you tap into the spirit realm."
+        #     projectile: item=nether_brick[custom_model_data=656526]
+        #     bound-item: nether_brick
+        #     custom-model-data: 656526
+        #     damage_types:
+        #         fire: 90
+        #         energy: 10
+        #     # icon: 3054
+        #     material: FIRE_CHARGE
+        #     particle:
+        #         particle-type: flame
+        #         special-data: 1
+        #         color: 164,225,255
+        #         size: 1.2
+        #         quantity: 10
+        #     damage:
+        #         base: 1-5
+        #         per_level: 1.0
+        #     mana:
+        #         base: 9.0
+        #         per_level: 0.0
+        #     cooldown:
+        #         base: 1.0
+        #         per_level: 0.1
+        #         max: 5.0
+        #         min: 1.0
+        #     buildup:
+        #         base: 2.0
+        #         per_level: 0.1
+        #         min: 1.0
+        #     range:
+        #         base: 5
+        #         per_level: 1
+        #         max: 32
+        #     target_type: linear
+        #     script: spirit_speak_task
+        fire_breath:
+            display_name: "Fire Breath"
+            type: spell
+            circle: mage
+            description: "Breathes a blast of fire at your target."
+            projectile: item=nether_brick[custom_model_data=656526]
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180003
+            difficulty: 100
+            damage_types:
+                fire: 90
+                energy: 10
+            # icon: 3054
+            material: FIRE_CHARGE
+            particle:
+                particle-type: flame
+                special-data: 1
+                color: 164,225,255
+                size: 1.2
+                quantity: 10
+            damage:
+                base: 15
+                per_level: 1.0
+            mana:
+                base: 9.0
+                per_level: 0.0
+            cooldown:
+                base: 1.0
+                per_level: 0.1
+                max: 5.0
+                min: 1.0
+            buildup:
+                base: 2.0
+                per_level: 0.1
+                min: 1.0
+            range:
+                base: 5
+                per_level: 1
+                max: 32
+            target_type: linear
+            script: firebreath_task
+        fireball:
+            display_name: "Fireball"
+            type: spell
+            circle: mage
+            description: "Casts a deadly fireball onto your target."
+            difficulty: 5
+            prerequisite:
+                - firetouch
+            projectile: fireball_entity_item
+            component:
+                delu_spores:
+                    consumable: true
+                    quantity: 1
+                blood_moss:
+                    consumable: true
+                    quantity: 1
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180003
+            damage_types:
+                fire: 90
+                dirt: 10
+            icon: B
+            icon_large: A
+            material: FIRE_CHARGE
+            particle:
+                particle-type: flame
+                special-data: 1
+                color: 164,225,255
+                size: 1.2
+                quantity: 10
+            damage:
+                base: 5
+                per_level: 1
+
+            mana:
+                base: 6
+                per_level: 0.0
+            cooldown:
+                base: 0.0
+                per_level: 0.1
+                max: 5.0
+                min: 0.0
+            buildup:
+                base: 0.0
+                per_level: 0.1
+                min: 0.0
+            range:
+                base: 15
+                per_level: 1
+                max: 32
+            target_type: linear
+            script: fireball_task
+        magic_armor:
+            display_name: "Magic Armor"
+            type: spell
+            circle: mage
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180012
+            difficulty: 1
+            damage_types:
+                stone: 100
+            description: "Provides you some resistance to physical attacks."
+            icon: H
+            icon_large: G
+            cooldown:
+                base: 0
+                per_level: 0
+            buildup:
+                base: 0
+                per_level: 0
+            mana:
+                base: 6
+                per_level: 0
+            target_type: self
+            script: magic_armor_task
+        aquaorbis:
+            display_name: "Aquaorbis"
+            # projectile: item=nether_brick[custom_model_data=656527]
+            circle: mage
+            description: "Casts an orb of water magic at your target."
+            difficulty: 5
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180006
+            range: 32
+            type: spell
+            damage_types:
+                cold: 100
+                fire: 0
+                void: 0
+                life: 0
+                death: 0
+                stone: 0
+                dirt: 0
+                poison: 0
+                day: 0
+                night: 0
+                energy: 0
+                air: 0
+            damage:
+                base: 10
+                per_level: .1
+            projectile: water_entity_item
+            script: aquaorbis_task
+        frostbite:
+            display_name: "Frostbite"
+            circle: mage
+            projectile: item=nether_brick[custom_model_data=656527]
+            description: "Attacks target with a biting frost damage and lowers dexterity."
+            difficulty: 2
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180006
+            type: spell
+            damage_types:
+                cold: 100
+            icon: D
+            icon_large: C
+            material: FIRE_CHARGE
+            skill_color: 94fdff
+            particle:
+                particle-type: flame
+                special-data: 1
+                color: 164,225,255
+                size: 1.2
+                quantity: 10
+            damage:
+                base: 5
+                per_level: 1.0
+            mana:
+                base: 9.0
+                per_level: 0.0
+            cooldown:
+                base: 1.0
+                per_level: 0.1
+                max: 5.0
+                min: 1.0
+            buildup:
+                base: 2.0
+                per_level: 0.1
+                min: 1.0
+            target_type: single
+            script: frostbite_task
+        vines:
+            display_name: "Vines"
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180002
+            type: spell
+            circle: mage
+            difficulty: 10
+            damage_types:
+                nature: 90
+                dirt: 10
+            # icon: 3054
+            material: FIRE_CHARGE
+            particle:
+                particle-type: flame
+                special-data: 1
+                color: 164,225,255
+                size: 1.2
+                quantity: 10
+            damage:
+                base: 1-5
+                per_level: 1.0
+            mana:
+                base: 9.0
+                per_level: 0.0
+            cooldown:
+                base: 1.0
+                per_level: 0.1
+                max: 5.0
+                min: 1.0
+            buildup:
+                base: 2.0
+                per_level: 0.1
+                min: 1.0
+            target_type: single
+            script: vines_task
+        creeping_pain:
+            display_name: "Creeping Pain"
+            type: spell
+            circle: mage
+            description: "Pain creeps through your target's body."
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180014
+            difficulty: 3
+            # icon: 3070
+            range:
+                base: 5
+                per_level: .5
+            cooldown:
+                base: 2
+                per_level: 0.5
+            buildup:
+                base: 1
+                per_level: 0.1
+            mana:
+                base: 10
+                per_level: 0
+            script: creeping_pain_task
+            damage_types:
+                poison: 100
+        pain_spike:
+            display_name: "Pain Spike"
+            type: spell
+            circle: mage
+            description: "Pain strikes through your target's body."
+            difficulty: 2
+            # icon: 3070
+            range:
+                base: 5
+                per_level: .5
+            cooldown:
+                base: 2
+                per_level: 0.5
+            buildup:
+                base: 1
+                per_level: 0.1
+            mana:
+                base: 10
+                per_level: 0
+            script: pain_spike_task
+            damage_types:
+                poison: 100
+        web:
+            display_name: "Web"
+            type: spell
+            circle: mage
+            description: "Casts a web on your target slowing them."
+            difficulty: 1
+            # icon: 3070
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180011
+            range:
+                base: 5
+                per_level: .5
+            damage:
+                base: 1
+            cooldown:
+                base: 2
+                per_level: 0.5
+            buildup:
+                base: 1
+                per_level: 0.1
+            mana:
+                base: 10
+                per_level: 0
+            script: web_task
+            damage_types:
+                dirt: 100
+        quicksand:
+            display_name: "Quicksand"
+            type: spell
+            circle: mage
+            description: "Creates quicksand that your target sinks into."
+            difficulty: 1
+            # icon: 3070
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180011
+            damage:
+                base: 1
+            range:
+                base: 5
+                per_level: .5
+            cooldown:
+                base: 2
+                per_level: 0.5
+            buildup:
+                base: 1
+                per_level: 0.1
+            mana:
+                base: 10
+                per_level: 0
+            script: quicksand_task
+            damage_types:
+                dirt: 100
+        blight:
+            display_name: "Blight"
+            type: spell
+            circle: mage
+            description: "Causes crops to die."
+            difficulty: 5
+            icon: D
+            damage:
+                base: 1
+            range:
+                base: 5
+                per_level: .5
+            cooldown:
+                base: 2
+                per_level: 0.5
+            buildup:
+                base: 1
+                per_level: 0.1
+            mana:
+                base: 10
+                per_level: 0
+            script: blight_task
+            damage_types:
+                death: 100
+        blast_of_light:
+            display_name: "Blast of Light"
+            type: spell
+            circle: mage
+            description: "Blasts target with light."
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180013
+            
+            difficulty: 5
+            icon: D
+            damage:
+                base: 1
+            range:
+                base: 5
+                per_level: .5
+            cooldown:
+                base: 2
+                per_level: 0.5
+            buildup:
+                base: 1
+                per_level: 0.1
+            mana:
+                base: 10
+                per_level: 0
+            script: blast_of_light_task
+            damage_types:
+                star: 100
+        poison_field:
+            display_name: "Poison Field"
+            type: spell
+            circle: mage
+            description: "Creates a field of poison"
+            ound-item: carrot_on_a_stick
+            custom-model-data: 6180014
+            
+            difficulty: 5
+            icon: D
+            damage:
+                base: 1
+            range:
+                base: 16
+                per_level: .5
+            cooldown:
+                base: 2
+                per_level: 0.5
+            buildup:
+                base: 1
+                per_level: 0.1
+            mana:
+                base: 10
+                per_level: 0
+            script: poison_field_task
+            damage_types:
+                poison: 100
+        strangling_fumes:
+            display_name: "Stranging Fumes"
+            type: spell
+            circle: mage
+            description: "Creates a cloud of poison on your target, choking them"
+            ound-item: carrot_on_a_stick
+            custom-model-data: 6180014
+            
+            difficulty: 5
+            icon: D
+            damage:
+                base: 1
+            range:
+                base: 16
+                per_level: .5
+            cooldown:
+                base: 2
+                per_level: 0.5
+            buildup:
+                base: 1
+                per_level: 0.1
+            mana:
+                base: 10
+                per_level: 0
+            script: strangling_fumes_task
+            damage_types:
+                poison: 100
+        
+
+        # IceCone:
+        #     display_name: 'Ice Cone'
+        #     type: spell
+        #     description:
+        #     - Casts a deadly ice cone onto your
+        #     - target, dealing &c{damage} &7damage upon contact
+        #     - and igniting it for &c{ignite} &7seconds.
+        #     - ''
+        #     - Shatters into 3 blazing cold shards which stick
+        #     - to walls and explode 3 seconds later, dealing
+        #     - 33% of the initial spell damage.
+        #     - ''
+        #     - '&e{cooldown}s Cooldown'
+        #     - '&9Costs {mana} {mana_name}'
+        #     damage_types:
+        #         - fire: 0
+        #         - energy: 0
+        #         - cold: 100
+        #         - earth: 0
+        #         - death: 0
+        #         - life: 0
+        #         - moon: 0
+        #         - star: 0
+        #         - void: 0
+        #         - poison: 0
+        #         - air: 0
+        #         - stone: 0
+        #     material: ICE
+        #     particle:
+        #         particle-type: redstone
+        #         special-data: 1
+        #         color: 164,225,255
+        #         size: 1.2
+        #         quantity: 20
+        #     damage:
+        #         base: 5-8
+        #         per_level: 1.0
+        #     ignite:
+        #         base: 2.0
+        #         per_level: 0.1
+        #     mana:
+        #         base: 19.0
+        #         per_level: 0.0
+        #     cooldown:
+        #         base: 9.0
+        #         per_level: 0.1
+        #         max: 5.0
+        #         min: 1.0
+        #     buildup:
+        #         base: 2.0
+        #         per_level: 0.1
+        #         min: 1.0
+        #     range:
+        #         base: 5
+        #         per_level: 1
+        #         max: 16
+        #     target_type: cone
+        #     angle: 180
+        # Icebolt:
+        #     display_name: Icebolt
+        #     description: "Casts a deadly icebolt onto your target."
+        #     element: cold
+        #     material: ICE
+        #     damage:
+        #         base: 5.0
+        #         per_level: 3.0
+        #     buildup:
+        #         base: 2.0
+        #         per_level: 0.1
+        #         min: 1.0
+        #     mana:
+        #         base: 15.0
+        #         per_level: 0
+        #     cooldown:
+        #         base: 9.0
+        #         per_level: 0.1
+        #         max: 5.0
+        #         min: 1.0
+        creeping_frost:
+            display_name: "Creeping Frost"
+            description: "Creates an expanding ring of ice and frost that damages and slows enemies."
+            circle: mage
+            prerequisite:
+                FrostSpike: 6
+            material: ICE
+            difficulty: 6
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180006
+            damage:
+                base: 5.0
+                per_level: 3.0
+            damage_types:
+                cold: 100
+            buildup:
+                base: 2.0
+                per_level: 0.1
+                min: 1.0
+            mana:
+                base: 14.0
+                per_level: 0
+            cooldown:
+                base: 9.0
+                per_level: 0.1
+                max: 5.0
+                min: 1.0
+            range:
+                base: 4
+                per_level: .1
+            target_type: single
+            script: creeping_frost_task
+        weaken:
+            display_name: Weaken
+            description: "Lowers the strength of your target."
+            difficulty: 1
+            circle: mage
+            material: ICE
+            script: weaken_task
+            icon: J
+            icon_large: I
+            damage:
+                base: 5.0i
+                per_level: 3.0
+            mana:
+                base: 8.0
+                per_level: 0
+            cooldown:
+                base: 9.0
+                per_level: 0.1
+                max: 5.0
+                min: 1.0
+            damage_types:
+                stone: 90
+                energy: 10
+        magic_missile:
+            display_name: "Magic Missile"
+            description: "Throws magical energy at your target."
+            circle: mage
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180012
+            icon: N
+            icon_large: M
+            range:
+                base: 6
+                per_level: 1
+            difficulty: 1
+            type: evocation
+            material: ICE
+            # script: weaken_task
+            buildup:
+                base: 1.0
+                per_level: 0.1
+                min: 1.0
+            damage:
+                base: 1.0
+                per_level: 1.0
+            mana:
+                base: 8.0
+                per_level: 0
+            cooldown:
+                base: 1.0
+                per_level: 0.1
+                max: 5.0
+                min: 1.0
+            damage_types:
+                stone: 80
+                energy: 20
+            script: magic_missile_task
+        firestorm:
+            display_name: "Fire Storm"
+            description: "Fire rains down on target"
+            circle: mage
+            difficulty: 11
+            material: FIRECHARGE
+            script: firestorm_task
+            damage:
+                base: 1.0
+                per_level: 1.0
+            mana:
+                base: 15.0
+                per_level: 0
+            cooldown:
+                base: 11.0
+                per_level: 0.1
+                max: 5.0
+                min: 1.0
+            prerequisite:
+                Fireball: 10
+            damage_types:
+                fire: 100
+        frost_spike:
+            display_name: "Frost Spike"
+            description: "Sends a spike of ice onto your target."
+            circle: mage
+            # icon: 3068
+            difficulty: 2
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180006
+            damage_types:
+                cold: 100
+            damage:
+                base: 1
+                per_level: .1
+            mana:
+                base: 15
+                per_level: .1
+            cooldown:
+                base: 1.0
+                per_level: 0.1
+                max: 5.0
+                min: 1.0
+            script: frostspike_task
+        blizzard:
+            display_name: "Blizzard"
+            description: "Cold Damage is given to multiple targets"
+            circle: mage
+            prerequisite:
+                creeping_frost: 10
+            difficulty: 10
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180006
+            damage_types:
+                cold: 100
+            damage:
+                base: 1
+                per_level: .1
+            mana:
+                base: 15
+                per_level: .1
+            cooldown:
+                base: 9.0
+                per_level: 0.1
+                max: 5.0
+                min: 1.0
+            script: blizzard_task
+
+        harm:
+            script: harm_task
+            display_name: Harm
+            description: "Affects the health of the target with cold damage. The closer the target, the more damage."
+            circle: mage
+            # icon: 3069
+            damage_types: 
+                cold: 50
+                death: 20
+                stone: 30
+            target_type: single
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180009
+            difficulty: 1
+            damage_types:
+                death: 100
+            material: ICE
+            damage:
+                base: 1.0
+                per_level: 0.0
+            buildup:
+                base: 3
+                per_level: .5
+            delay:
+                base: 1
+                per-leve: 0
+            mana:
+                base: 10.0
+                per_level: 0
+            cooldown:
+                base: 3.0
+                per_level: 0.1
+                max: 5.0
+                min: 1.0
+            range:
+                base: 32
+                per_level: 0
+            script: harm_task
+        clumsy:
+            script: clumsy_task
+            display_name: Clumsy
+            description: "Reduces your target's dexterity and stamina for a short duration."
+            circle: mage
+            element: stone
+            # icon: 3056
+            difficulty: 1
+            target_type: single
+            material: ICE
+            damage:
+                base: 5.0
+                per_level: 3.0
+            buildup:
+                base: 3
+                per_level: .5
+            delay:
+                base: 1
+                per-leve: 0
+            mana:
+                base: 5.0
+                per_level: 0
+            cooldown:
+                base: 3.0
+                per_level: 0.1
+                max: 5.0
+                min: 1.0
+        feeblemind:
+            display_name: Feeblemind
+            type: spell
+            description: "Lowers the intelligence of your target for a short duration."
+            circle: mage
+            type: spell
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180012
+            material: red_dye
+            difficulty: 1
+            damage_types:
+                - stone 90
+                - energy 10
+            damage:
+                base: 0.0
+                per_level: 0.0
+            buildup:
+                base: 3
+                per_level: .1
+            mana:
+                base: 5.0
+                per_level: 0
+            cooldown:
+                base: 3.0
+                per_level: 0.1
+                max: 5.0
+                min: 1.0
+            script: feeblemind_task
+        heal_party:
+            display_name: 'Heal Party'
+            description: Heals your party for your skill level amount of HP.
+            difficulty: 7
+            cooldown:
+                base: 10
+                per_level: 1
+            buildup:
+                base: 4
+                per_level: 1
+            mana:
+                base: 15
+                per_level: 0
+            target_type: aoe
+            range:
+                base: 5
+                per_level: 1
+            script: healparty_task
+        
+
+        comfort_of_light:
+            display_name: 'Comfort of Light'
+            description: Gives Night Sight to your party for a duration of your level in seconds.
+            difficulty: 5
+            circle: cleric
+            cooldown:
+                base: 2
+                per_level: 1
+            buildup:
+                base: 1
+                per_level: 1
+            mana:
+                base: 10
+                per_level: 0
+            target_type: aoe
+            range:
+                base: 5
+                per_level: 1
+            script: comfortoflight_task
+            material: lantern
+
+        
+
+        cleanse_by_fire:
+            display_name: 'Cleanse By Fire'
+            description: Purify the souls of targets with a burning fire
+            difficulty: 10
+            circle: cleric
+            cooldown::
+                base: 2
+                per_level: 1
+            mana:
+                base: 10
+                per_level: 0
+            target_type: aoe
+            range:
+                base: 5
+                per_level: 1
+            script: cleansebyfire_task
+            material: blaze_powder
+            damage_types:
+                fire: 100
+                energy: 0
+                cold: 0
+                earth: 0
+                death: 0
+                life: 0
+                moon: 0
+                star: 0
+                void: 0
+                poison: 0
+                air: 0
+                stone: 0
+
+        holy_aura:
+            display_name: 'Holy Aura'
+            description: For a duration your melee attacks inflict extra damage
+            difficulty: 11
+            circle: cleric
+            cooldown:
+                base: 3
+                per_level: 1
+            mana:
+                base: 15
+                per_level: 0
+            target_type: self
+            range:
+                base: 5
+                per_level: 1
+            script: holyaura_task
+            material: cookie
+            damage_types:
+                - fire: 0
+                - energy: 100
+                - cold: 0
+                - earth: 0
+                - death: 0
+                - life: 0
+                - moon: 0
+                - star: 0
+                - void: 0
+                - poison: 0
+                - air: 0
+                - stone: 0
+        lullaby:
+            display_name: 'Lullaby'
+            description: "Puts your target to sleep"
+            difficulty: 2
+            circle: bard
+            cooldown:
+                base: 3
+                per_level: 1
+            mana:
+                base: 5
+                per_level: 1
+            target_type: single
+            range:
+                base: 5
+                per_level: 1
+            bindable_to: instrument
+            script: lullaby_task
+            damage_types:
+                - fire: 0
+                - energy: 0
+                - cold: 0
+                - earth: 0
+                - death: 0
+                - life: 0
+                - moon: 100
+                - star: 0
+                - void: 0
+                - poison: 0
+                - air: 0
+                - stone: 0
+        fugue_of_distraction:
+            display_name: "Fugue of Distraction"
+            description: "Creates copies of yourself to confuse the enemy."
+            bindable_to: instrument
+            circle: bard
+            cooldown:
+                base: 3
+                per_level: .2
+            buildup:
+                base: 3
+                per_level: .2
+            mana:
+                base: 11
+                per_level: 1
+            script: fugue_of_distraction_task
+        discord:
+            display_name: "Discord"
+            description: "Has the potential to remove members from a party."
+            bindable_to: instrument
+            circle: bard
+            cooldown:
+                base: 3
+                per_level: .2
+            buildup:
+                base: 3
+                per_level: .2
+            mana:
+                base: 11
+                per_level: 1
+            script: discord_task
+        charm:
+            display_name: "Charm"
+            description: "Lowers the target's willpower and raises your persuasion skill."
+            bindable_to: instrument
+            circle: bard
+            cooldown:
+                base: 3
+                per_level: .2
+            buildup:
+                base: 3
+                per_level: .2
+            mana:
+                base: 11
+                per_level: 1
+            target_type: single
+            range:
+                base: 5
+                per_level: 1
+            script: charm_task
+        disrupt:
+            display_name: "Disrupt"
+            description: "Disrupts the casting of targets around you."
+            bindable_to: instrument
+            circle: bard
+            cooldown:
+                base: 3
+                per_level: .2
+            buildup:
+                base: 3
+                per_level: .2
+            mana:
+                base: 11
+                per_level: 1
+            script: disrupt_task
+        poem_of_resolve:
+            display_name: "Poem of Resolve"
+            description: "Party's willpower, perception and morale goes up for a short duration."
+            bindable_to: instrument
+            circle: bard
+            cooldown:
+                base: 3
+                per_level: .2
+            buildup:
+                base: 3
+                per_level: .2
+            mana:
+                base: 11
+                per_level: 1
+            script: poem_of_resolve_task
+        piper:
+            display_name: "Piper"
+            description: "Attracts non-hostile mobs toward you."
+            bindable_to: instrument
+            circle: bard
+            cooldown:
+                base: 3
+                per_level: .2
+            buildup:
+                base: 3
+                per_level: .2
+            mana:
+                base: 11
+                per_level: 1
+            script: piper_task
+        provocation:
+            display_name: "Provocation"
+            description: "Ability to enrage one being against another."
+            bindable_to: instrument
+            circle: bard
+            cooldown:
+                base: 3
+                per_level: .2
+            buildup:
+                base: 3
+                per_level: .2
+            mana:
+                base: 11
+                per_level: 1
+            # script: provocation_task
+        peacemaking:
+            display_name: "Peacemaking"
+            description: "Removes targets from combat mode."
+            bindable_to: instrument
+            circle: bard
+            cooldown:
+                base: 3
+                per_level: .2
+            buildup:
+                base: 3
+                per_level: .2
+            mana:
+                base: 11
+                per_level: 1
+            script: peacemaking_task
+        netherpull:
+            display_name: "Netherpull"
+            type: spell
+            description: "Casts a deadly fireball onto your target."
+            difficulty: 50
+            prerequisite:
+                - firetouch
+            projectile: fireball_entity_item
+            # component:
+            #     delu_spores:
+            #         consumable: true
+            #         quantity: 1
+            #     blood_moss:
+            #         consumable: true
+            #         quantity: 1
+            bound-item: carrot_on_a_stick
+            custom-model-data: 6180003
+            damage_types:
+                fire: 90
+                dirt: 10
+            icon: B
+            icon_large: A
+            material: FIRE_CHARGE
+            particle:
+                particle-type: flame
+                special-data: 1
+                color: 164,225,255
+                size: 1.2
+                quantity: 10
+            damage:
+                base: 5
+                per_level: 1
+
+            mana:
+                base: 9.0
+                per_level: 0.0
+            cooldown:
+                base: 0.0
+                per_level: 0.1
+                max: 5.0
+                min: 0.0
+            buildup:
+                base: 0.0
+                per_level: 0.1
+                min: 0.0
+            range:
+                base: 15
+                per_level: 1
+                max: 32
+            target_type: linear
+            script: netherpull_task

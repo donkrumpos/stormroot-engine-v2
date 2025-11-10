@@ -1,0 +1,7 @@
+surveyors_tool:
+  type: item
+  material: spyglass
+  display name: Surveyor's Tool 
+  enchantments:
+    - durability: 3
+  

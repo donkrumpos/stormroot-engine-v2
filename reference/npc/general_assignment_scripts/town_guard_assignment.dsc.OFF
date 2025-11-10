@@ -1,0 +1,82 @@
+town_guard_assignment:
+  type: assignment
+  actions:
+    on assignment:
+    - trigger name:click state:true
+    - trigger name:chat state:true
+    - trigger name:proximity state:true radius:9
+  # default constants:
+    
+    
+
+  interact scripts:
+  - town_guard_interact
+
+town_guard_format:
+    type: format
+    format: "<&color[#a19462]>Guard<white><&co> <text>"
+
+town_guard_anger_format:
+    type: format
+    format: "<&color[#FF0000]>Guard<red><&co> <text>"
+  
+town_guard_interact:
+  type: interact
+  steps:
+    1:
+      proximity trigger:
+            entry:
+                script:
+                # if the player's karma is low enough
+                - if <player.flag[reputation.karma.level]> < -999:
+                  #then add them as a target to that guard
+                  # and flag them as a criminal in this town for a duration so that they don't spam the message
+                  - if <player.has_flag[<script[npc_data].data_key[npc.<npc.name>.home_area_name]>_criminal].not>:
+                    - flag <player> <script[npc_data].data_key[npc.<npc.name>.home_area_name]>_criminal duration:5m
+                    - narrate format:town_guard_format "Your type is not welcome here in <script[npc_data].data_key[npc.<npc.name>.home_area_name]>."
+                  
+                - else:
+                  - if <npc.sentinel.targets.contains[uuid:<player.uuid>]>:
+                    - execute as_server "sentinel removetarget uuid:<player.uuid> --id <npc.id>"
+
+                - if <player.has_flag[<script[npc_data].data_key[npc.<npc.name>.home_area_name]>_criminal]>:
+                # this adds player as a guards target if they have a criminal flag even if their karma is not low, in an instance if they just got caught pickpocketing for instance.
+                  - execute as_server "sentinel addtarget uuid:<player.uuid> --id <npc.id>"
+                  - team name:guards_anger add:<npc.name> color:red
+                
+                
+
+            exit:
+              script:
+                - team name:guards_anger remove:<npc.name>
+                
+                    
+                  
+
+
+      click trigger:
+        script:
+        - if <player.has_flag[<script[npc_data].data_key[npc.<npc.name>.home_area_name]>_criminal].not>:
+          - random:
+            - narrate format:town_guard_format "I'm here for your safety."
+            - narrate format:town_guard_format "Grrr..."
+            - narrate format:town_guard_format "Ho Hum"
+            - narrate format:town_guard_format "Halt! Who goes there?"
+            - narrate format:town_guard_format "State your business."
+            - narrate format:town_guard_format "Nothing to see here."
+            - narrate format:town_guard_format "If you don't see my services, than I have done my job."
+        - else:
+          - random:
+            - wait 1s
+            - narrate format:town_guard_anger_format "Leave you criminal!"
+            - wait 1s
+            - narrate format:town_guard_anger_format "Go away to a town that does not appreciate justice!"
+            - wait 1s
+            - narrate format:town_guard_anger_format "You are not welcome here!"
+            - wait 1s
+            - narrate format:town_guard_anger_format "What you have done enrages me!"
+            - wait 1s
+            - narrate format:town_guard_anger_format "You must go far away!"
+            - wait 1s
+       
+

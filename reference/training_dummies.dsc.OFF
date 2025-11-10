@@ -1,0 +1,105 @@
+spawn_training_dummy:
+    type: task
+    script:
+    - spawn "armor_stand[;arms=true;equipment=air|air|air|hay_block]" <player.location> save:training_dummy
+    - flag <entry[training_dummy].spawned_entity> training_dummy
+    - flag <player.location.up[1]> training_dummy_location
+    - flag <player.location.up[2]> training_dummy_location
+    - adjust health <entry[training_dummy].spawned_entity>:100
+    # - attach hay_block to: <entry[training_dummy].spawned_entity> offset:0,0,0
+
+training_dummy_world:
+    type: world
+    debug: false
+    events:
+        on entity_flagged:training_dummy dies:
+        - narrate "<red>OH NOOOO@+!"
+        on player right clicks entity_flagged:training_dummy:
+        - determine cancelled
+        on player damages entity_flagged:training_dummy:
+        - determine passively cancelled
+        - ratelimit <player> 11t
+
+        - animate <context.entity> animation:ARMOR_STAND_HIT
+        - if <util.random.int[0].to[10]> == 10:
+            - narrate "training dummy hit success" targets:<server.match_player[sirbandersnatch]>
+            - define strength <player.flag[skill.attribute.strength.level]>
+            - define dexterity <player.flag[skill.attribute.dexterity.level]>
+            - define strength_random <util.random.decimal[0].to[<player.flag[skill.attribute.strength.level]>]>
+            - define strength_chance <util.random.int[0].to[50]>
+            - if <[strength]> <= 10:
+                - flag <player> skill.attribute.strength.level:++
+                - narrate format:game_message "Your strength raises by some." targets:<player>
+            - if <[strength]> < <[strength_chance]>:
+                - if <[strength]> < 20:
+                    - if <util.random.int[0].to[20]> == 0:
+                        - flag <player> skill.attribute.strength.level:++
+                        - narrate format:game_message "Your strength raises by some." targets:<player>
+                - if <[strength]> < 30:
+                    - if <util.random.int[0].to[30]> == 0:
+                        - flag <player> skill.attribute.strength.level:++
+                        - narrate format:game_message "Your strength raises by some." targets:<player>
+                - if <[strength]> < 40:
+                    - if <util.random.int[0].to[40]> == 0:
+                        - flag <player> skill.attribute.strength.level:++
+                        - narrate format:game_message "Your strength raises by some." targets:<player>
+                - if <util.random.int[0].to[<[strength].mul[<[strength]>]>]> == 100 && <[strength]> < 50:
+                    
+                    - flag <player> skill.attribute.strength.level:++
+                    - narrate format:game_message "Your strength raises by some." targets:<player>
+            - define dexterity_random <util.random.decimal[0].to[<player.flag[skill.attribute.dexterity.level]>]>
+            - define dexterity_chance <util.random.int[0].to[60]>
+            - if <[dexterity]> == 11:
+                - flag <player> skill.attribute.dexterity.level:++
+                - narrate format:game_message "Your dexterity raises by some." targets:<player>
+            - if <[dexterity]> < <[dexterity_chance]>:
+                - if <[dexterity]> < 20:
+                    - if <util.random.int[0].to[20]> == 0:
+                        - flag <player> skill.attribute.dexterity.level:++
+                        - narrate format:game_message "Your dexterity raises by some." targets:<player>
+                - if <[dexterity]> < 30:
+                    - if <util.random.int[0].to[30]> == 0:
+                        - flag <player> skill.attribute.dexterity.level:++
+                        - narrate format:game_message "Your dexterity raises by some." targets:<player>
+                - if <util.random.int[0].to[<[dexterity].mul[<[dexterity]>]>]> == 100 && <[dexterity]> < 50:
+                    - flag <player> skill.attribute.dexterity.level:++
+                    - narrate format:game_message "Your dexterity raises by some." targets:<player>
+            - define type wrestling
+            - define gain_modifier 1
+            - define skill_level 1
+            - define low_skill_bonus 0
+            - define skill_chance <util.random.int[0].to[50]>
+            - if <player.item_in_hand.has_flag[weapon_type]>:
+                - define type <player.item_in_hand.flag_map.get[weapon_type]>
+            
+            - else if <player.item_in_hand.name.contains[_sword]>:
+                - define type sword
+            - else if <player.item_in_hand.material.name> == "bow" && <context.projectile.name> == ARROW:
+                - define type archery
+
+            - define skill_level <player.flag[skill.skills.<[type]>.level]>
+            
+            - if <[skill_level]> < 26:
+                - define low_skill_bonus <util.random.int[1].to[3]>
+            - define skill_random <util.random.decimal[0].to[<[skill_level]>]>
+            
+            
+            - if <[skill_random].add[<[skill_level]>].round_up> < <[skill_chance]>:
+                
+                - define gain_modifier <util.random.decimal[0].to[0.9]>
+                - define gain_modifier <[gain_modifier].add[<[low_skill_bonus]>]>
+                - run raise_natural_skill_task def:<context.damager>|<[type]>|<[gain_modifier]>|0|0|true
+            
+                
+        on projectile hits block:
+        - if <context.location.has_flag[training_dummy]>:
+            - if <context.shooter.location.distance[<context.location>]> > 6:
+                - define type archery
+                - define distance <context.shooter.location.distance[<context.location>]>
+                - define skill_level <player.flag[skill.skills.<[type]>.level]>
+                - define skill_random <util.random.decimal[0].to[<[skill_level]>]>
+                - define skill_chance <util.random.int[0].to[50]>
+                - if <[skill_random].add[<[skill_level]>].add[<[distance]>]> < <[skill_chance]>:
+                    # - narrate "a hit"
+                    - run raise_natural_skill_task def:<player>|<[type]>
+      

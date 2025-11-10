@@ -1,0 +1,118 @@
+magrat_assignment:
+    type: assignment
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+    interact scripts:
+    - magrat_interact
+        
+magrat_interact:
+    type: interact
+    steps:
+        1:
+            click trigger:
+                script:
+                - if <player.has_flag[class_warrior]>:
+                    - engage
+                    - narrate format:npcchat "Welcome Brother."
+                    - narrate format:npcchat "You are on the path to become a great warrior someday."
+                    - disengage
+                - if !<player.has_flag[class_warrior]>:
+                    - if <player.flag[magrat_flag]> <= 1:
+                        - engage
+                        - narrate format:npcchat "Hey mate."
+                        - narrate format:npcchat "If you're new to these Borderlands you need to study in combat."
+                        - wait 5t
+                        - narrate format:npcchat "There are many to choose from but for me the real warriors fight in face-to-face combat."
+                        - wait 5t
+                        - narrate format:npcchat "Would you like me to teach you something of this?"
+                        - narrate "[<&o>Type <&b><&o>Yes<&f><&o> or <&b><&o>No<&7>]"
+                        - execute as_server "mmocore admin exp give <player.name> main 10"
+                        - narrate "<&8>[You have received 10 XP.]"
+                        - disengage
+                        - zap step:2
+                    - else if <player.flag[magrat_flag]> >= 2:
+                        - engage
+                        - narrate format:npcchat "Hey mate."
+                        - narrate format:npcchat "Welcome back."
+                        - narrate format:npcchat "Do you now want to be a warrior?"
+                        - narrate "[<&o>Type <&b><&o>Yes<&f><&o> or <&b><&o>No<&7>]"
+                        - disengage
+                        - zap step:2
+                - flag player magrat_flag:++
+                
+        2:
+            chat trigger:
+                1:
+                    trigger: <&7>/Yes/, I would like to know the way of the warrior.
+                    script:
+                    - engage
+                    - narrate format:npcchat "Very well mate."
+                    - wait 2t
+                    - if <player.flag[magrat_flag]> <= 1:
+                        - narrate format:npcchat "You will need a sword."
+                        - narrate format:npcchat "Here take one of mine."
+                        - wait 1
+                        - give 268
+                        - narrate "<&8>[Magrat gives you a sword]"
+                    # - else
+                      # - narrate format:npcchat "you have my flag."
+                    - narrate format:npcchat "Before ye decide, know that they are many other classes to study out there in the world."
+                    - wait 5t
+                    - narrate format:npcchat "From magic, to religion and many more."
+                    - wait 5t
+                    - narrate format:npcchat "If you want to look into those, then you best search further. I cannot help."
+                    - narrate format:npcchat "Are you sure you want to choose the path of a warrior?"
+                    - narrate "[<&o>Type <&b><&o>Yes<&f><&o> or <&b><&o>No<&7>]"
+                    - disengage
+                    - zap step:3
+                2:
+                    trigger: <&7>/No/, I don't think I'll choose this path.
+                    script:
+                    - engage
+                    - random:
+                        - narrate format:npcchat "I understand mate. This is a tough row to hoe. If you change your mind, come back."
+                        - narrate format:npcchat "Think about it for awhile. I'll be here."
+                        - narrate format:npcchat "It takes a strong soul to choose this path, I understand."
+                        - narrate format:npcchat "Being a warrior is for the hearty of spirit. Come back anytime."
+                    - disengage
+                    - zap step:1
+            click trigger:
+                script:
+                - zap step:1
+        3:
+            chat trigger:
+                1:
+                    trigger: <&7>/Yes/ I am sure
+                    script:
+                    - engage
+                    - narrate format:npcchat "Let me teach you something that I know."
+                    - execute as_server "mmocore admin class <player.name> warrior"
+                    - if !<player.has_flag[class_warrior]>:
+                        - flag player class_warrior
+                    - if <player.has_flag[class_paladin]>:
+                        - flag player class_paladin:!
+                    - if <player.has_flag[class_rogue]>:
+                        - flag player class_rogue:!
+                    - if <player.has_flag[class_drifter]>:
+                        - flag player class_drifter:!
+                    - if <player.has_flag[class_ranger]>:
+                        - flag player class_ranger:!
+                    - if <player.has_flag[class_bard]>:
+                        - flag player class_bard:!
+                    - if <player.has_flag[class_mage]>:
+                        - flag player class_mage:!
+                    - narrate "<&8>[You are now the warrior class]"
+                    - disengage
+                    - zap step:1
+                2:
+                    trigger: <&7>/No/, I don't think I'll choose this path.
+                    script:
+                    - engage
+                    - narrate format:npcchat "I understand mate. This is a tough row to hoe. If you change your mind, come back."
+                    - disengage
+                    - zap 1
+            click trigger:
+                script:
+                - zap step:1

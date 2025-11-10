@@ -1,0 +1,36 @@
+bottle_01:
+  type: item
+  material: player_head
+  display name: Bottle of Whiskey
+  flags:
+    slot_type: hand
+  mechanisms:
+    skull_skin: baabb9f2-1247-4586-a861-d89d24202828|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzQ1MjdkMmUyZTU3Zjk1N2UyOTUxY2Y5NWQ2MDc2MzIyNDg0NzFmYjdlMjY1OTdlODA3NWY4OWQ4ZDk4NzQ3NCJ9fX0=
+
+
+bottle_02:
+  type: item
+  material: player_head
+  display name: Bottle
+  flags:
+    slot_type: hand
+  mechanisms:
+    skull_skin: 6e250d4d-7d29-47a8-b2ef-4ceb7d953847|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGZkMzI2ZDE4ZTNiMjcxMzJkNGQ0ZTdmZDg3ZTNhZGFmZDBhMTRmMzg0NDk3ZjEzZmQ0YzQ5NTY2NjVhMGYxOCJ9fX0=
+
+bottle_03:
+  type: item
+  material: player_head
+  display name: Bottle
+  flags:
+    slot_type: hand
+  mechanisms:
+    skull_skin: 39210cea-fd24-4683-b25b-dec1fb6e12f6|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTJlZWY0ZmJjN2UxNzQ4MDlkNmJmNmI4ODBkM2Y0OGI4NTNlYjZlMzM3NTE3ZDg5Njg2MDc1YWE0NzBlMTNkNiJ9fX0=
+
+bottle_04:
+  type: item
+  material: player_head
+  display name: Mug
+  flags:
+    slot_type: hand
+  mechanisms:
+    skull_skin: b3e56d0e-4494-44d4-a347-fead16f5a9a0|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjJiMGExY2EzOTlmMzVkYzU0NTE5YzRjOTk2Zjk2MjlhNTEwYzQ5OTM4MTUxZjc1OWVjOGYwNzA0MWU3ODU2NiJ9fX0=

@@ -1,0 +1,9 @@
+chiseled_packed_ice:
+  type: item
+  material: player_head
+  display name: Chiseled Packed Ice
+ 
+  mechanisms:
+    skull_skin: 96c3953e-ce98-48ac-978b-dc84508857a4|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTk0MzY3NjNlZTcwNGRlZjFiYzZlODk0ZDFmODUzNTE0MWI0OWM5NTk5NWJhYzU3NjRmMTYzNWM2ZDBkMTEzNiJ9fX0=
+
+

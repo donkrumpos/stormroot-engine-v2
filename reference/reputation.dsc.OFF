@@ -1,0 +1,663 @@
+reputation_command:
+    type: command
+    name: rep
+    script:
+    - narrate "Fame: <proc[get_entity_fame_proc].context[<player>].round>"
+    - narrate "Karma: <proc[get_entity_karma_proc].context[<player>].round>"
+
+set_fame_task:
+    type: task
+    definitions: player|fame
+    script:
+    - ratelimit <player> 1s
+    # - narrate "adding <[fame]> to fame to now be <player.flag[reputation.fame.level].add[<[fame]>]> from <player.flag[reputation.fame.level]>"
+    - if <[player].has_flag[reputation.fame.level]>:
+        - flag <[player]> reputation.fame.level:<[player].flag[reputation.fame.level].add[<[fame]>]>
+        - if <[player].flag[reputation.fame.level]> < 0:
+            # fame cannot go below zero
+            - flag <[player]> reputation.fame.level:0
+    - else:
+        - flag <[player]> reputation.fame.level:0
+
+set_karma_task:
+    type: task
+    definitions: player|karma
+    script:
+    - ratelimit <[player]> 1s
+    - if <[player].has_flag[reputation.karma.level]>:
+        - flag <[player]> reputation.karma.level:+:<[karma]>
+    - else:
+        - flag <[player]> reputation.karma.level:0
+
+get_entity_fame_proc:
+    type: procedure
+    definitions: entity
+    script:
+    - define fame_to_give 0
+    - if <script[fauna_data].data_key[beast].contains[<[entity].name>]>:
+        - define fame_to_give <script[fauna_data].data_key[beast.<[entity].name>.fame]>
+    - else if <[entity].has_flag[reputation.fame.level]>:
+        - define fame_to_give <[entity].flag[reputation.fame.level]>
+    # - determine <[entity].flag[reputation.karma.level]||0>
+    - determine <[fame_to_give]>
+
+get_entity_karma_proc:
+    type: procedure
+    definitions: entity
+    script:
+    - define karma_to_give 0
+    - if <script[fauna_data].data_key[beast].contains[<[entity].name>]>:
+        - define karma_to_give <script[fauna_data].data_key[beast.<[entity].name>.karma]>
+    - else if <[entity].has_flag[reputation.karma.level]>:
+        - define karma_to_give <[entity].flag[reputation.karma.level]>
+    # - determine <[entity].flag[reputation.karma.level]||0>
+    - determine <[karma_to_give]>
+
+give_entity_head:
+    type: task
+    definitions: killer|entity
+    script:
+    - define player_skull player_head[skull_skin=<player.uuid>]
+    - give <[player_skull]> to:<[killer].inventory>
+
+reputation_world:
+    type: world
+    events:
+        on player dies:
+            - define fame_to_lose <player.flag[reputation.fame.level].mul[-.1]>
+            # lower the fame of the killed
+            - run set_fame_task def:<player>|<[fame_to_lose]>
+            # make sure that the fame cannot go below 0
+            - if <proc[get_entity_fame_proc].context[<player>]> < 1:
+                - run set_fame_task def:<player>|0
+            # - if <context.damager.is_player>:
+                
+            # - narrate "lost fame: <[fame_to_lose]>"
+
+        on player kills entity:
+            
+            - define killed <context.entity>
+            - define killer <context.damager>
+            - define karma_to_give 0
+
+            - run set_karma_task def:<[killer]>|<proc[get_entity_karma_proc].context[<[killed]>]>
+            # - if <[killed].is_player.not>:
+            #     - announce <[killed]>
+            - if <[killed].is_player>:
+                - clickable place_bounty_task def:<[killer]>|<[killed]> save:yes_place_bounty_clickable
+            # give the killer the invert of the killed's karma so if the killed is evil, the killer gets good karma
+            # - if <proc[get_entity_karma_proc].context[<[killed]>]> > 0:
+            - run set_karma_task def:<[killer]>|<proc[get_entity_karma_proc].context[<[killed]>]>
+            # give the killer the fame of the killed
+            - if <proc[get_entity_fame_proc].context[<[killed]>]> > 0:
+                - run set_fame_task def:<[killer]>|<proc[get_entity_fame_proc].context[<[killed]>].div[10]>
+            - if <[killed].is_player>:
+                # give the head of the killed to killer
+                - run give_entity_head def:<[killer]>|<[killed]>
+                - narrate "You just killed a player" targets:<[killer]>
+                - define bounty_text "<green>Would you like to place a <red>bounty<&r><green> on <player.name>? (click to submit)"
+                - define bounty_clickable "<white><element[<[bounty_text]>].on_click[<entry[yes_place_bounty_clickable].command>]>"
+                - narrate <[bounty_clickable]>
+            
+        # on player chats:
+        #     - if <player.has_flag[placing_bounty]>:
+        #         - if <context.message.is_integer> > 0:
+        #             - narrate "You have placed <context.message> on <player.flag[placing_bounty]>'s head."
+        #             - flag <[killed]> placing_bounty:!
+
+                
+   
+place_bounty_task:
+    type: task
+    definitions: killer|killed
+    script:
+    - narrate "Enter the amount, in copper, that you wish to place on <[killer].name>'s head."
+    - flag <[killed].as_player> placing_bounty:<[killer].as_player>
+    - narrate "Bounty Amount:"
+
+submit_bounty_task:
+    type: task
+    definitions: killed|killer|amount
+    script:
+    - if <proc[bank_currency_proc].context[<player>]> >= <[amount]>:
+        - run bank_withdrawal_task def:<player>|<[amount]>
+        - flag <[killed].as_player> placing_bounty:!
+    - else:
+        - clickable place_bounty_task def:<[killer]>|<[killed]> save:yes_place_bounty_clickable
+        - narrate "You don't have that much to place this bounty. "
+        - narrate "<green><white><element[Would you like to try again? (click to submit) ].on_click[<entry[yes_place_bounty_clickable].command>]>"
+        - stop
+    - narrate "Placing a bounty of <[amount]> copper from <[killed].as_player.name> on <[killer].as_player.name>"
+    
+    - flag <[killer].as_player> bounty:+:<[amount]>
+
+    - flag <server> bounties:->:<[killer]>
+
+
+reputation_titles_data:
+    type: data
+    title:
+        Trustworthy:
+            fame:
+                high: 1249
+                low: 0
+            karma:
+                high: 32000
+                low: 10000
+        Honest:
+            fame:
+                high: 1249
+                low: 0
+            karma:
+                high: 9999
+                low: 5000
+        Good:
+            fame:
+                high: 1249
+                low: 0
+            karma:
+                high: 4999
+                low: 2500
+        Kind:
+            fame:
+                high: 1249
+                low: 0
+            karma:
+                high: 2499
+                low: 1250
+        Fair:
+            fame:
+                high: 1249
+                low: 0
+            karma:
+                high: 1249
+                low: 625
+        Boring:
+            fame:
+                high: 1249
+                low: 0
+            karma:
+                high: 624
+                low: -624
+        Rude:
+            fame:
+                high: 1249
+                low: 0
+            karma:
+                high: -625
+                low: -1249
+        Unsavory:
+            fame:
+                high: 1249
+                low: 0
+            karma:
+                high: -1250
+                low: -2499
+        Scoundrel:
+            fame:
+                high: 1249
+                low: 0
+            karma:
+                high: -2500
+                low: -4999
+        Despicable:
+            fame:
+                high: 1249
+                low: 0
+            karma:
+                high: -5000
+                low: -9999
+        Outcast:
+            fame:
+                high: 1249
+                low: 0
+            karma:
+                high: -10000
+                low: -32000
+        Estimable:
+            fame:
+                high: 2499
+                low: 1250
+            karma:
+                high: 32000
+                low: 10000
+        Commendable:
+            fame:
+                high: 2499
+                low: 1250
+            karma:
+                high: 9999
+                low: 5000
+        Honorable:
+            fame:
+                high: 2499
+                low: 1250
+            karma:
+                high: 4999
+                low: 2500
+        Respectable:
+            fame:
+                high: 2499
+                low: 1250
+            karma:
+                high: 2499
+                low: 1250
+        Upstanding:
+            fame:
+                high: 2499
+                low: 1250
+            karma:
+                high: 1249
+                low: 625
+        Notable:
+            fame:
+                high: 2499
+                low: 1250
+            karma:
+                high: 624
+                low: -624
+        Disreputable:
+            fame:
+                high: 2499
+                low: 1250
+            karma:
+                high: -625
+                low: -1249
+        Dishonorable:
+            fame:
+                high: 2499
+                low: 1250
+            karma:
+                high: -1250
+                low: -2499
+        Malicious:
+            fame:
+                high: 2499
+                low: 1250
+            karma:
+                high: -2500
+                low: -4999
+        Dastardly:
+            fame:
+                high: 2499
+                low: 1250
+            karma:
+                high: -5000
+                low: -9999
+        Wretched:
+            fame:
+                high: 2499
+                low: 1250
+            karma:
+                high: -10000
+                low: -32000
+        Great:
+            fame:
+                high: 4999
+                low: 2500
+            karma:
+                high: 32000
+                low: 10000
+        Famed:
+            fame:
+                high: 4999
+                low: 2500
+            karma:
+                high: 9999
+                low: 5000
+        Admirable:
+            fame:
+                high: 4999
+                low: 2500
+            karma:
+                high: 4999
+                low: 2500
+        Proper:
+            fame:
+                high: 4999
+                low: 2500
+            karma:
+                high: 2499
+                low: 1250
+        Reputable:
+            fame:
+                high: 4999
+                low: 2500
+            karma:
+                high: 1249
+                low: 625
+        Prominent:
+            fame:
+                high: 4999
+                low: 2500
+            karma:
+                high: 624
+                low: -624
+        Notorious:
+            fame:
+                high: 4999
+                low: 2500
+            karma:
+                high: -625
+                low: -1249
+        Ignoble:
+            fame:
+                high: 4999
+                low: 2500
+            karma:
+                high: -1250
+                low: -2499
+        Vile:
+            fame:
+                high: 4999
+                low: 2500
+            karma:
+                high: -2500
+                low: -4999
+        Wicked:
+            fame:
+                high: 4999
+                low: 2500
+            karma:
+                high: -5000
+                low: -9999
+        Nefarious:
+            fame:
+                high: 4999
+                low: 2500
+            karma:
+                high: -10000
+                low: -32000
+        Glorious:
+            fame:
+                high: 9999
+                low: 5000
+            karma:
+                high: 32000
+                low: 10000
+        Illustrious:
+            fame:
+                high: 9999
+                low: 5000
+            karma:
+                high: 9999
+                low: 5000
+        Noble:
+            fame:
+                high: 9999
+                low: 5000
+            karma:
+                high: 4999
+                low: 2500
+        Eminent:
+            fame:
+                high: 9999
+                low: 5000
+            karma:
+                high: 2499
+                low: 1250
+        Distinguished:
+            fame:
+                high: 9999
+                low: 5000
+            karma:
+                high: 1249
+                low: 625
+        Renowned:
+            fame:
+                high: 9999
+                low: 5000
+            karma:
+                high: 624
+                low: -624
+        Infamous:
+            fame:
+                high: 9999
+                low: 5000
+            karma:
+                high: -625
+                low: -1249
+        Sinister:
+            fame:
+                high: 9999
+                low: 5000
+            karma:
+                high: -1250
+                low: -2499
+        Villainous:
+            fame:
+                high: 9999
+                low: 5000
+            karma:
+                high: -2500
+                low: -4999
+        Evil:
+            fame:
+                high: 9999
+                low: 5000
+            karma:
+                high: -5000
+                low: -9999
+        Dread:
+            fame:
+                high: 9999
+                low: 5000
+            karma:
+                high: -10000
+                low: -32000
+        Glorious Liege:
+            fame:
+                high: 32000
+                low: 10000
+            karma:
+                high: 32000
+                low: 10000
+        Illustrious Liege:
+            fame:
+                high: 32000
+                low: 10000
+            karma:
+                high: 9999
+                low: 5000
+        Noble Liege:
+            fame:
+                high: 32000
+                low: 10000
+            karma:
+                high: 4999
+                low: 2500
+        Eminent Liege:
+            fame:
+                high: 32000
+                low: 10000
+            karma:
+                high: 2499
+                low: 1250
+        Distinguished Liege:
+            fame:
+                high: 32000
+                low: 10000
+            karma:
+                high: 1249
+                low: 625
+        Renowned Liege:
+            fame:
+                high: 32000
+                low: 10000
+            karma:
+                high: 624
+                low: -624
+        Infamous Liege:
+            fame:
+                high: 32000
+                low: 10000
+            karma:
+                high: -625
+                low: -1249
+        Sinister Liege:
+            fame:
+                high: 32000
+                low: 10000
+            karma:
+                high: -1250
+                low: -2499
+        Villainous Liege:
+            fame:
+                high: 32000
+                low: 10000
+            karma:
+                high: -2500
+                low: -4999
+        Evil Liege:
+            fame:
+                high: 32000
+                low: 10000
+            karma:
+                high: -5000
+                low: -9999
+        Dread Liege:
+            fame:
+                high: 32000
+                low: 10000
+            karma:
+                high: -10000
+                low: -32000
+        
+                
+
+get_reputation_title_proc:
+    type: procedure
+    definitions: player
+    script:
+
+    - foreach <script[reputation_titles_data].data_key[title]> as:title:
+        - if <[player].flag[reputation.fame.level]> >=  <[title].get[fame].get[high]>:
+            - foreach next
+        - if <[player].flag[reputation.fame.level]> <  <[title].get[fame].get[low]>:
+            - foreach next
+        - if <[player].flag[reputation.karma.level]> >=  <[title].get[karma].get[high]>:
+            - foreach next
+        - if <[player].flag[reputation.karma.level]> <  <[title].get[karma].get[low]>:
+            - foreach next
+            
+        - determine "<[key]>"
+
+
+# reputation_assignment:
+#   type: assignment
+#   actions:
+#     on assignment:
+#     - trigger name:click state:true
+#     - trigger name:chat state:true
+#     - trigger name:proximity state:true radius:4
+
+#     #by assigning this script, the player gets access to these constants
+#     #and will raise the familiarity and charisma for interacting with npc
+#   default constants:
+#     player_karma: <player.flag[reputation.karma.level]||0>
+#     player_fame: <player.flag[reputation.fame.level]||0>
+#     player_charisma: <player.flag[skill.skills.charisma.level]||0>
+#     player_npc_familiarity: <player.flag[npc.<npc.name>.familiarity.level]>
+#   interact scripts:
+#     - reputation_interact
+
+# reputation_interact:
+#   type: interact
+#   steps:
+#     1:
+#       click trigger:
+#         script:
+#         - run raise_familiary_task delay:3s
+#         #some example tests for different levels:
+        # - if <proc[get_entity_fame_proc].context[<player>]> <= 1:
+        #     - narrate "Never heard of you."
+        # - else if <proc[get_entity_fame_proc].context[<player>]> > 1 && <proc[get_entity_fame_proc].context[<player>]> <= 100:
+        #     - narrate "oh you're that person"
+        # - else if <proc[get_entity_fame_proc].context[<player>]> > 100 && <proc[get_entity_fame_proc].context[<player>]> < 500:
+        #     - narrate "you are getting known around here."
+        # - if <proc[get_entity_karma_proc].context[<player>]> <= -500:
+        #     - narrate "Please don't kill me!."
+        # - else if <proc[get_entity_karma_proc].context[<player>]> > -500 && <proc[get_entity_karma_proc].context[<player>]> <= 0:
+        #     - narrate "You've been naughty"
+        # - else if <proc[get_entity_karma_proc].context[<player>]> >= 1 && <proc[get_entity_karma_proc].context[<player>]> <= 500:
+        #     - narrate "You are a good person"
+        # - if <player.flag[skill.skills.charisma.level]> == 0:
+        #     - narrate "What a poor personality you have."
+        # - else if <player.flag[skill.skills.charisma.level]> > 0 && <player.flag[skill.skills.charisma.level]> <= 500:
+        #     - narrate "Oh how cool you are!. "
+        # - else if <player.flag[skill.skills.charisma.level]> > 500:
+        #     - narrate "Will you marry my daughter. "
+        # - if <player.flag[npc.<npc>.familiarity.level]> == 0:
+        #     - narrate "who are you?"
+        # - else if <player.flag[npc.<npc>.familiarity.level]> > 0 && <player.flag[npc.<npc>.familiarity.level]> <= 500:
+        #     - narrate "I know you."
+        # - else if <player.flag[npc.<npc>.familiarity.level]> > 500:
+        #     - narrate "We are best buds."
+
+
+raise_familiary_task:
+    type: task
+    script:
+    - wait 3t
+    #every time the player interacts with an npc they increase their familiarity with them which can change the outcome of things.
+    #this is ratelimited, so the more they click the npc the longer it takes to raise
+    - ratelimit <player> <player.flag[npc.<npc.name>.familiarity.level]||1>s
+    
+    - flag <player> npc.<npc.name>.familiarity.level:++
+    - if <util.random.int[0].to[2]> > 1:
+        #there is a 50% change to also raise charisma
+        - wait 5s
+        - run raise_natural_skill_task def:<player>|charisma|0|0
+
+bounties_command:
+    type: command
+    name: bounties
+    script:
+    - define bounty_list <list>
+    - define bounties ""
+    
+    - foreach <server.flag[bounties]> as:bounty:
+        - if <[bounty_list].contains[<[bounty]>]>:
+            - foreach next
+        - else:
+            - define bounty_list:->:<[bounty]>
+    - foreach <[bounty_list]> as:bounty:
+        - clickable claim_bounty_task def:<player>|<[bounty]>|<[bounty].flag[bounty]> save:claim_bounty_<[bounty]>_task_clickable
+        # - define skill_clickable <element[<[skill_text]>].on_click[<entry[<[skill].get[display_name]>_skill_menu_generator_clickable].command>]>
+        - if <[bounty]> != <player>:
+            - if <player.inventory.contains[<item[player_head[skull_skin=<[bounty].uuid>]]>]>:
+                # - narrate "You have it!"
+                - define bounties "<[bounties]><&hover[Click to claim this bounty.]><element[<&color[#ffe5a3]><[bounty].name>: <&color[#f4e542]><[bounty].flag[bounty]><&nl>].on_click[<entry[claim_bounty_<[bounty]>_task_clickable].command>]><&end_hover>"
+            - else:
+                - define bounties "<[bounties]><&hover[You cannot claim this bounty without the head.]><&color[#b8b8b8]><[bounty].name>: <&color[#d0d1d2]><[bounty].flag[bounty]><&end_hover><&nl>"
+
+        - else:
+            - define bounties "<[bounties]><&hover[This is you.<&nl>You cannot claim a bounty on yourself.]><&color[#b8b8b8]><[bounty].name>: <&color[#d0d1d2]><[bounty].flag[bounty]><&end_hover><&nl>"
+            
+    - define header "<bold><&color[#3d2a08]><&font[adventurer]><element[<&sp>].repeat[8]>Bounties<&nl><&r>"
+    - define book_texture <&chr[3040]>
+    - define book_textures "<white><&chr[F821]><&chr[F829]><&chr[F829]><[book_texture]><&chr[F801]><[book_texture]><&chr[F801]><[book_texture]><&nl>"
+    - adjust <player> show_book:natural_skills_gui_book[book_pages=<[book_textures]><[header]><[bounties]>]
+
+
+claim_bounty_task:
+    type: task
+    definitions: claimer|bounty|amount
+    script:
+    - if <[claimer]> == <[bounty]>:
+        - narrate "You cannot claim a bounty on yourself."
+    - if <[claimer].inventory.contains[<item[player_head[skull_skin=<[bounty].uuid>]]>]>:
+        - define skull_slot <[claimer].inventory.find[<item[player_head[skull_skin=<[bounty].uuid>]]>]>
+        - inventory set o:air slot:<[skull_slot]>
+        # - take item:<item[player_head[skull_skin=<[bounty].uuid>]]> from:<[claimer].inventory>
+        - run give_player_currency_task def:<[claimer]>|<[amount]>
+        - foreach <server.flag[bounties]> as:this_bounty:
+            - if <[this_bounty]> == <[bounty]>:
+                - flag server bounties:<-:<[bounty]>
+        - flag <[bounty]> bounty:!
+        - if <proc[get_entity_karma_proc].context[<[bounty]>]> < 0:
+            - run set_karma_task def:<[claimer]>|<proc[get_entity_karma_proc].context[<[bounty]>].abs]>
+        - run set_fame_task def:<[claimer]>|<proc[get_entity_fame_proc].context[<[bounty]>].div[10].max[100]>
+        - narrate "You have claimed the bounty on <[bounty].name>"
+    
+

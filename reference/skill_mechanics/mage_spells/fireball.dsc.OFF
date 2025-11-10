@@ -1,0 +1,76 @@
+fireball_task:
+    type: task
+    debug: true
+    definitions: attacker|defender
+    script:
+    - if <player.target.is_living>:
+        - playsound <player.location> sound:steamfront:spells.fireball2 custom sound_category:players
+    - if <script[spells_skills_data].data_key[spells.fireball].keys.contains[projectile]>:
+        # - define as "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|fireball_entity_item]"
+        - define projectile <script[spells_skills_data].data_key[spells.fireball.projectile]>
+        - shoot <entity[snowball].with[item=fireball_entity_item]> origin:<[attacker].eye_location.forward[3]> speed:1 no_rotate shooter:<[attacker]> script:fireball_projectile_task save:fireball
+        - repeat 30:
+            - define location <entry[fireball].shot_entity.location>
+            # - if <[location].>:
+            - if <[location].x.exists> && <[location].find.living_entities.within[1].size> > 0:
+                - run spell_damage_task def:fireball|<[location].find.living_entities.within[1].first>|<[attacker]>
+
+    # - foreach <[attacker].eye_location.points_between[<[attacker].cursor_on>]> as:point:
+            - run fire_particle_task def:<[location]>
+            - wait 1t
+            - run fire_particle_task def:<[location]>
+                # - playeffect effect:redstone  at:<[location]> special_data:1|255,133,0 visibility:100 quantity:100 offset:0
+            # - playeffect effect:redstone  at:<[point].right[1]> special_data:1|255,133,0 visibility:100 quantity:<[loop_index].mul[2]> offset:0
+            # - playeffect effect:redstone  at:<[point].up[1]> special_data:1|255,133,0 visibility:10 quantity:300 offset:0
+            # - playeffect effect:redstone  at:<[point].up[2]> special_data:1|255,133,0 visibility:10 quantity:200 offset:0
+            # - playeffect effect:redstone  at:<[point].up[3]> special_data:1|255,133,0 visibility:10 quantity:100 offset:0
+            # - playeffect effect:redstone  at:<[point].right[1].backward[1]> special_data:1|40,40,40 visibility:10 quantity:<[loop_index]>
+        # - playeffect <player.location> effect:flame data:1 quantity:0 offset:<player.location.direction.vector>
+        # - playeffect <player.location> effect:flame data:2 quantity:0 offset:<entry[fireball].shot_entity.location.backward[<[value]>].direction.vector>
+        # - remove <entry[fireball].shot_entity>
+     
+
+
+        # - repeat <player.flag[skill.attribute.intelligence.level].mul[2]> as:value2:
+        #         - narrate <[value]>
+        #         - define location <[value2].mul[0.5]>
+                
+        #         - define location2 <[location].relative[0,1,<[value1].add[1]>]>
+        #         - playeffect effect:REDSTONE special_data:5|BLUE at:<[location2]> quantity:20 offet:0.1
+        #         # - run damagetask def:<[1]>|<[location2].find_entities.within[0.5]>|<player>|blast
+        #         - if <[location2].material> != m@air:
+        #             - flag player casting:!
+        #             - determine cancelled
+        #         - wait 0.05s
+        # - define location <player.location>
+        # - repeat 30 as:value:
+        #         - define value1 <[value].mul[0.5]>
+        #         - define location2 <[location].relative[0,1,<[value1].add[1]>]>
+        #         - playeffect effect:REDSTONE special_data:1|ORANGE at:<[location2]> quantity:50 offet:0.01 data:1
+        #         - hurt <[location2].find_entities.within[0.5]> <player.flag[firelevel].mul[2]> source:<player> cause:ENTITY_SWEEP_ATTACK
+        #         - if <[location2].material> != m@air:
+        #             - flag player casting:!
+        #             - determine cancelled
+        #         - wait 0.05s
+fire_particle_task:
+    type: task
+    definitions: location
+    script:
+    # - wait 2t
+    - playeffect effect:redstone  at:<[location]> special_data:1|255,133,0 visibility:100 quantity:100 offset:0.2
+    - playeffect effect:redstone  at:<[location]> special_data:1|210,130,0 visibility:100 quantity:50 offset:0.1
+    - playeffect effect:smoke_normal  at:<[location]>  visibility:100 quantity:10 offset:0,0.5,0
+
+fireball_projectile_task:
+    type: task
+    script:
+    - define level <player.flag[skill.spells.fireball.level].add[<player.flag[skill.skills.magery.level]||10>]||10>
+    # - foreach <[hit_entities]> as:entity:
+        
+    - playsound <player>|<[entity].location> sound:steamfront:spells.firetouch2 custom sound_category:players
+    - if <[hit_entities].is_empty.not>:
+        - run spell_damage_task def:fireball|<[hit_entities].first>|<player>
+       
+    - if <[level]> > <util.random.int[0].to[100]>:
+        - foreach <[hit_entities]> as:entity:
+            - burn <[entity]> 2s

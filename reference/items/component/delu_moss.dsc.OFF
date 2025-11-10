@@ -1,0 +1,7 @@
+delu_moss:
+  type: item
+  material: bowl
+  display name: Delu Moss
+  mechanisms:
+    custom_model_data: 2110003
+    

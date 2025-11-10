@@ -1,0 +1,36 @@
+stomper_task:
+    type: task
+    script:
+    # - adjust <[this_mob]> melee_attack:<player>
+    - attack <[this_mob]> target:<player>
+    
+
+stomper_world:
+    type: world
+    events:
+        on mob dies:
+        - if <context.entity.location.find_players_within[18].size> > 0:
+            - if <script[fauna_data].data_key[beast].contains[<context.entity.name>]> && <script[fauna_data].data_key[beast.<context.entity.name>].contains[difficulty]>:
+                - run drop_scroll def:<context.entity.location>|<script[fauna_data].data_key[beast.<context.entity.name>.difficulty]>
+                # - announce "<light_purple><context.entity.location>|<script[fauna_data].data_key[beast.<context.entity.name>.difficulty]>"
+            - if <script[fauna_data].data_key[beast].contains[<context.entity.name>]> && <script[fauna_data].data_key[beast.<context.entity.name>].contains[coin_drop]>:
+                - drop copper_coin quantity:<script[fauna_data].data_key[beast.<context.entity.name>.coin_drop]> <context.entity.location>
+        on stomper dies:
+        - determine NO_DROPS
+        on stomper damaged by fire:
+        - hurt <context.damage> <context.entity>
+        # - run spell_damage_task def:frostbite|<player>|<[this_mob]>
+        # - determine cancelled
+        on player damages stomper:
+        - attack <context.entity> target:<player>
+        - wait 10t
+        - repeat <util.random.int[3].to[7]>:
+            - push <context.entity> destination:<player.eye_location>
+            - if <util.random.int[1].to[5]> == 1:
+                - run spell_damage_task def:frostbite|<player>|<[this_mob]>
+            - wait <util.random.int[7].to[15]>t
+        - push <context.entity> destination:<player.eye_location>
+        # - title "title:<&font[steamfront:gui_nav]><&chr[3112]>" stay:1s fade_in:1t fade_out:1t targets:<player>
+        - wait 10s
+        - attack <context.entity> target:<player>
+        

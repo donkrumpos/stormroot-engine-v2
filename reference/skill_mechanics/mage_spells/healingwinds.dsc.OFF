@@ -1,0 +1,30 @@
+healingwindstask:
+  type: task
+  script:
+  - if !<player.has_flag[casting]>:
+    - repeat 5 as:value:
+        - define location <player.location.round_up.relative[0.5,0.5,0.5].with_pitch[0].with_yaw[90]>
+        - define healing <player.flag[waterlevel].mul[5]>
+        - heal <[location].find_entities.within[5]> <<[healing].add[4]>
+        - flag player gemcolor:AQUA
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[1.75,0,1.75]> quantity:2 data:0 offset:0.01
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[-1.75,0,1.75]> quantity:2 data:0 offset:0.01
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[1.75,0,-1.75]> quantity:2 data:0 offset:0.01
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[-1.75,0,-1.75]> quantity:2 data:0 offset:0.01
+
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[-2.5,0,0]> quantity:2 data:0 offset:0.01
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[2.5,0,0]> quantity:2 data:0 offset:0.01
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[0,0,2.5]> quantity:2 data:0 offset:0.01
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[0,0,-2.5]> quantity:2 data:0 offset:0.01
+
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[2.25,0,1]> quantity:2 data:0 offset:0.01
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[-2.25,0,1]> quantity:2 data:0 offset:0.01
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[2.25,0,-1]> quantity:2 data:0 offset:0.01
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[-2.25,0,-1]> quantity:2 data:0 offset:0.01
+   
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[-1,0,-2.25]> quantity:2 data:0 offset:0.01
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[1,0,2.25]> quantity:2 data:0 offset:0.01
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[1,0,-2.25]> quantity:2 data:0 offset:0.01
+        - playeffect effect:REDSTONE special_data:5|<player.flag[gemcolor]> at:<[location].relative[-1,0,2.25]> quantity:2 data:0 offset:0.01
+        - flag player firecooldown:1 expire:4s
+        - wait 5s

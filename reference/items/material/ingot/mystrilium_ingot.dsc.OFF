@@ -1,0 +1,13 @@
+mystrilium_ingot:
+  type: item
+  debug: true
+  material: iron_ingot
+  rarity: 1
+  display name: Mystrilium Ingot
+  mechanisms:
+    custom_model_data: 2710404
+  recipes:
+    1:
+      type: furnace
+      input: mystrilium_ore
+      cook_time: 5t

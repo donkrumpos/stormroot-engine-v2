@@ -1,0 +1,7 @@
+armor:
+  type: item
+  material: armor_stand
+  display name: ""
+  mechanisms:
+    custom_model_data: 33022010
+    

@@ -1,0 +1,33 @@
+spark_task:
+    type: task
+    definitions: attacker|target|do_damage
+    script:
+    - define target <player.target>
+    - if <[target].location.distance[<[attacker].location>]> > 2:
+        - narrate "This spell requires you to be close to your target."
+        - stop
+    - define level <[attacker].flag[skill.spell.spark.level]>
+    - if <[target].is_living>:
+        - playsound <player.location> sound:steamfront:spells.spark custom sound_category:players
+        - if <[target].is_player>:
+            - repeat 5:
+                - title "title:<&font[steamfront:font]><&chr[3416]>" targets:<[target]> stay:2t fade_in:0s fade_out:0s
+                - wait 2t
+       
+    
+    
+    - fakeitem <item[carrot_on_a_stick].with[custom_model_data=6190005;display=Spark]> slot:<player.held_item_slot> duration:3s
+    - if <[target]> != <player>:
+        - push <[target]> destination:<[target].location.up[2]> 
+        - if <[do_damage]>:
+            - run spell_damage_task def:spark|<[target]>|<player>
+    - repeat 3:
+        - playeffect effect:flash at:<player.location> quantity:3
+        # - showfake light <player.location> duration:5t
+        - wait 7t 
+    - if <[target].is_player>:
+        - repeat 4:
+            - title "title:<&font[steamfront:font]><&chr[3416]>" targets:<[target]> stay:2t fade_in:0s fade_out:0s
+            - wait 3t
+    - if <[attacker].has_flag[skill.spells.shock.level]> && <[attacker].flag[skill.spells.shock.level]> > 0:
+        - run shock_task def:<[attacker]>|<[do_damage]>

@@ -1,0 +1,6 @@
+circle_part4:
+    type: task
+    script:
+    - define locations <util.list_numbers_to[360].filter[mod[5].equals[0]].parse_tag[<player.location.add[<location[2,<[parse_value].div[1000].add[0.03]>,0].rotate_around_y[<[parse_value].to_radians>]>]>]>
+    - repeat 1000:
+        - playeffect effect:redstone special_data:0.4|aqua at:<[locations]> offset:0 targets:<player>

@@ -1,0 +1,37 @@
+thread_cyan:
+  type: item
+  material: player_head
+  display name: Cyan Thread
+
+  mechanisms:
+    skull_skin: c6124fe7-c8ac-482f-4293-aae69cddecd6|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk4NWNkMjJlNjI4OTc4MzQ5NDNlZDVkNGQxZmEwZDlhOGIxM2I5ZWVmZWY1NmY1MzE0MTllM2IxMTc0NmMifX19
+
+
+
+
+thread_light_blue:
+  type: item
+  material: player_head
+  display name: Light Blue Thread
+
+  mechanisms:
+    skull_skin: a320de9c-3858-2547-7189-cff7b4150f29|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmUxZjQ5MDFhYjc4ZmQxNjk5NmM0ZjgzMjgxMmE5M2RiZjI1ZTVkNDI4ODdlOWRkYTgzODQ3ODIxZWQ1OTcifX19
+
+
+thread_pink:
+  type: item
+  material: player_head
+  display name: Pink Thread
+
+  mechanisms:
+    skull_skin: c45b84f6-ecc2-f9fc-fcff-c3b3780cc9c7|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjM2NzZmMzYyYjM5MTQwODljMzkxN2U2YjJiODJhZTg0Zjk5MWNlMzMyMjljMWIyYjUyZTNhYzMyMmVjIn19fQ==
+
+
+thread_black:
+  type: item
+  material: player_head
+  display name: Black Thread
+
+  mechanisms:
+    skull_skin: d5a50e40-1878-78a4-fbe4-661b48256007|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWQzMTY2OGQxMTYzOTdmYTdiY2JlODk0NGQ1MWQyMjkwOWUzYjgwYzlkM2RkZTE5ZmY0ODZmZGRmZTA2ZCJ9fX0=
+

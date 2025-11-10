@@ -1,0 +1,32 @@
+scimitar:
+  type: item
+  debug: false
+  material: iron_sword
+  display name: Scimitar
+  
+  lore:
+  - An elegent weapon
+  - for a more sophisticated time.
+  
+  
+  flags:
+    weapon_type: sword
+    craftable: true
+    rarity: 19
+    required_strength: 10
+    price: 35
+    required-level: 13.0
+    material_qty: 8
+  mechanisms:
+    custom_model_data: 7104
+    nbt:
+    - swing_speed_increase/0
+    - hit_chance_increase/0
+    - weapon_speed/70
+    - weapon_damage/4-30
+    - luck/0
+    - two_handed/false
+    - fire_damage/0
+    - cold_damage/0
+    - poison_damage/0
+    - energy_damage/0

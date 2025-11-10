@@ -1,0 +1,36 @@
+morning_star:
+  type: item
+  debug: false
+  material: stick
+  display name: Morning Star
+  material_qty: 8
+  lore:
+  - An elegent weapon
+  - for a more sophisticated time.
+  flags:
+    price: 35
+    rarity: 19
+    required_strength: 35
+    weapon_type: mace
+    craftable: true
+    two_handed: false
+    weapon_speed: 70
+    weapon_damage_max: 15
+    weapon_damage_min: 9
+    stat:
+      bonus:
+        attack_speed_increase: 0
+        hit_chance_increase: 0
+        luck: 0
+        damage: 5
+        fire_damage: 0
+        cold_damage: 0
+        poison_damage: 0
+        energy_damage: 0
+    # slayer:
+    #   - undead
+    current_durability: 355
+    maximum_durability: 355
+  mechanisms:
+    custom_model_data: 7202701
+   

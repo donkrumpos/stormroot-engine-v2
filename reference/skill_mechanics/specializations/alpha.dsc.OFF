@@ -1,0 +1,25 @@
+alpha_task:
+    type: task
+    script:
+    - define beast_lore <player.flag[skill.natural.beast_lore_level]>
+    - define persuasion <player.flag[skill.natural.persuasion_level]>
+    - define level <player.flag[skill.alpha.level]>
+    - define target <player.location.find.living_entities.within[8].filter[is_monster].filter[target.is[=].to[<player>]]>
+    - define mob_army <player.location.find.living_entities.within[16].filter[is_mob].filter[is_monster.not]>
+    - run raise_natural_skill_task def:<player>|beast_lore
+    - run raise_natural_skill_task def:<player>|persuasion
+    - if <[mob_army].is_empty>:
+        - narrate "There are no animals around to help you."
+        - stop
+    - if <[target].is_empty>:
+        - narrate "Nothing is hostile for you."
+        - stop
+    - if <proc[natural_skill_check_proc].context[<player>|beast_lore|<[persuasion].add[<[level]>].round_down>]>:
+        - wait 1s
+        - define target <[target].get[1]>
+        - foreach <[mob_army]> as:mob:
+            - if <[loop_index]> == <[level].add[2]>:
+                - stop
+            - attack <[mob]> target:<[target]>
+    - else:
+        - narrate "Alpha skill failed."

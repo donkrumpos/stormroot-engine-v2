@@ -1,0 +1,93 @@
+pewter_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:4
+    interact scripts:
+    - pewter_interact
+
+    default constants:
+        appearance1: "<npc.name>'lives in the wild but seems mysterious."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+
+
+pewter_interact:
+    type: interact
+    steps:
+        1:
+            proximity trigger:
+                entry:
+                    script:
+                    - execute as_server "npc skin --url https://minesk.in/0c62a543255949b0950811ed1dc3486f --id <npc.id>".
+                    - if <player.has_flag[krizzdo_launched]> && <player.has_flag[pewter_asks_01].not>:
+                        - wait 3s
+                        - inject description_inject_task
+                        - narrate "Wow that was quite an new entrance!" targets:<player>
+                        - wait 3s
+                        - narrate "Welcome to Bardtown. You must have quite the abilities to drop in like that." targets:<player>
+                        - wait 3s
+                        - narrate "I am <gold>Pewter<&r> and I can help you find your way around here." targets:<player>
+                        - wait 3s
+                        - narrate "Here, take this." targets:<player>
+                        - give sword_of_the_noob player:<player>
+                        - give apple quantity:16 player:<player>
+                        - give bread quantity:24 player:<player>
+                        - wait 2s
+                        - narrate "I lugged my cart all the way up the hill to peddle my wares, mostly metal trinkets, so I met a lot of people right away." targets:<player>
+                        - flag <player> pewter_asks_01
+                        - wait 2s
+                        - narrate "You should go see, Bertaire just down the stairs as she can help you store you extra items." targets:<player>
+                        - wait 3s
+                        - narrate "At the end of this street and down the stairs is one of the Bard Guilds; there are many here, but talking to them can teach you a lot." targets:<player>
+                        - wait 4s
+                        - narrate "I'll be around to help more." targets:<player>
+                        - define random <element[20].add[<util.random.int[1].to[6]>]>
+                        - flag <player> pewter_reward_timer expire:<[random]>h
+                        # - flag <player> krizzdo_launched:!
+
+        
+            click trigger:
+                script:
+                - ratelimit 5s <player>
+                - inject description_inject_task
+                - if <player.has_flag[krizzdo_launched]>:
+                    
+                    - narrate "Hello again."
+                    - wait 2s
+                    # - narrate "I can give you more, if you help me with one thing." targets:<player>
+                - else:
+                    - narrate "Hi, I am <gold>Pewter<&r>."
+                - if <player.has_flag[pewter_reward_timer].not>:
+                    - narrate "I can help you out."
+                    - give apple quantity:8 player:<player>
+                    - give bread quantity:12 player:<player>
+                    - if <util.random.int[1].to[20]> == 20:
+                        - give golden_apple player:<player>
+                    - define random <element[20].add[<util.random.int[1].to[6]>]>
+                    # - narrate <[random]>
+                    - flag <player> pewter_reward_timer expire:<[random]>h
+
+        # 2:
+        #     chat trigger:
+        #         1:
+        #             trigger: <&7>/1/. /Yes/, where am I?
+        #             script:
+        #             - inject pewter_help_1_task
+                    
+        #         2:
+        #             trigger: <&7>/2/. /What/ is the /Song Tide/ /archipelago/?
+        #             script:
+        #             script:
+        #             - inject pewter_help_2_task
+        #             # 
+        #             # - narrate format:npcchat "I trust you will be well."
+        #             # 
+        #             # - zap 1
+       

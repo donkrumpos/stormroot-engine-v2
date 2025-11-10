@@ -1,0 +1,7 @@
+mask_comedy:
+  type: item
+  material: golden_hoe
+  display name: Comedy Mask
+  mechanisms:
+    custom_model_data: 81702501
+

@@ -1,0 +1,15 @@
+mugstool_stew:
+  type: item
+  material: rabbit_stew
+  display name: Mugstool Stew
+  mechanisms:
+    custom_model_data: 2260002
+  recipes:
+    1: 
+      type: shaped
+      input: 
+      - mugstool|mugstool|mugstool
+      - mugstool|bowl|mugstool
+      - mugstool|mugstool|mugstool
+      
+    

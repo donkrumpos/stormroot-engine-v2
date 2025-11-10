@@ -1,0 +1,26 @@
+tilly_hod:
+    type: entity
+    # display_name: "Tilly Hod"
+    entity_type: villager
+    # mechanisms:
+        
+    flags:
+        custom_beast: true
+        karma: 30
+        fame: 30
+        biome: swamp
+        rarity: 1
+        level: 4
+        eligible_block_spawn: grass_block
+        custom_model_data: 1656553
+        script: tilly_hod_task
+        drops:
+            blood_moss:
+                quantity: 1
+                chance: .1
+           
+        xp: 11
+        coin_drop:
+            copper: 
+                quantity: 1
+                chance: .5

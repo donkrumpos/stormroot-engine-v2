@@ -1,0 +1,13 @@
+dark_iron_ingot:
+  type: item
+  debug: true
+  material: iron_ingot
+  rarity: 1
+  display name: Dark Iron Ingot
+  mechanisms:
+    custom_model_data: 2710402
+  recipes:
+    1:
+      type: furnace
+      input: dark_iron_ore
+      cook_time: 2t

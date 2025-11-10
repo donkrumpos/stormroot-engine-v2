@@ -1,0 +1,7 @@
+blood_moss:
+  type: item
+  material: bowl
+  display name: Blood Moss
+  mechanisms:
+    custom_model_data: 2110007
+    

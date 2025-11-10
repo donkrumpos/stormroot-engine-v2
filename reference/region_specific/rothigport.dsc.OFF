@@ -1,0 +1,128 @@
+# rothigport_world:
+#     type: world
+#     debug: false
+#     events:
+    
+     
+      
+        # on player enters ring_of_promises_lost_area:
+        # - if <player.location.find_entities[armor_stand].within[9].filter[has_flag[ring_of_promises_armor_stand]].is_empty>:
+        #     - if <player.has_flag[penny_ring_of_promises]>:
+        #         - run spawn_ring_of_promises
+
+        # on player exits ring_of_promises_lost_area:
+        # - remove <player.location.find_entities[armor_stand].within[9].filter[has_flag[ring_of_promises_armor_stand]]>
+        # on player dies in:songtide:
+        # - title "title:<red>You Died"
+        # - teleport <context.entity> spawn_rothigport
+        # - determine cancelled
+
+        # # on delta time hourly:
+        # # - run bell_sound_task
+        
+        # on player right clicks entity_flagged:ring_of_promises_lost_spawnpoint:
+        # - determine passively cancelled
+        # - ratelimit <player> 4t
+        # - if <player.has_flag[penny_ring_of_promises]>:
+        #     - narrate "You found a ring!"
+        #     - give ring_of_promises
+        #     - flag <player> penny_ring_of_promises:!
+        #     - flag <player> penny_ring_of_promises_found
+        #     - adjust <player> oxygen:15s
+        # - else:
+        #     - narrate format:game_message "You cannot seem to unlodge the ring."
+        
+        # on player clicks iron_block in:rothigport_bell_area:
+        # - run bell_sound_task
+        # on player right clicks armor_stand:
+        # - if <context.entity.flag[training_dummy]>:
+        #     - determine cancelled
+        
+
+
+# spawn_ring_of_promises:
+#   type: task
+#   script:
+#   - define ring_of_promises "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|ring_of_promises]"
+#   - spawn <[ring_of_promises]> ring_of_promises_lost_spawnpoint  save:ring_of_promises_spawned
+#   - flag <entry[ring_of_promises_spawned].spawned_entity> ring_of_promises_armor_stand
+#   - flag <entry[ring_of_promises_spawned].spawned_entity.location>  ring_of_promises_lost
+
+  
+
+
+# bell_sound_task:
+#     type: task
+#     debug: false
+#     script:
+#     - foreach <cuboid[rothigport].players> as:player:
+#         - define distance <[player].location.points_between[rothigport_bell].size>
+#         - define volume <element[8].div[<[distance]>].min[1]>
+        
+#         # - playsound <[player]> sound:steamfront:rothigport.rothigport_bell custom sound_category:ambient volume:<[volume]>
+#         - playsound <[player]> sound:BLOCK_BELL_USE volume:<[volume]> pitch:.5
+
+
+
+spawn_badger_clan:
+    type: task
+    script:
+    - spawn villager <player.location> save:this_badger
+    - invisible <entry[this_badger].spawned_entity> state:true
+
+    - spawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<item[nether_brick].with[custom_model_data=656537]>]>]" <entry[this_badger].spawned_entity.location> save:badger_model
+    - flag <entry[this_toad].spawned_entity> badger_villager
+    - attach <entry[badger_model].spawned_entity> to:<entry[this_badger].spawned_entity>
+
+
+
+
+spawn_toad_clan:
+    type: task
+    script:
+    - spawn villager <player.location> save:this_toad
+    - invisible <entry[this_toad].spawned_entity> state:true
+
+    - spawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<item[nether_brick].with[custom_model_data=656538]>]>]" <entry[this_toad].spawned_entity.location> save:toad_model
+    - flag <entry[this_toad].spawned_entity> toad_villager
+    - attach <entry[toad_model].spawned_entity> to:<entry[this_toad].spawned_entity>
+
+
+villager_click_world:
+    type: world
+    events:
+        on player right clicks entity_flagged:toad_villager:
+        - ratelimit <player> 1t
+        - narrate "HI!"
+
+
+raise_drawbridge_up_task:
+    type: task
+    script: 
+    - if <schematic[rothigport_drawbridge].exists.not>:
+        - ~schematic load name:rothigport_drawbridge
+        - wait 1t
+    - ~schematic paste name:rothigport_drawbridge rothigport_drawbrige_spot
+
+lower_drawbridge_down_task:
+    type: task
+    script:
+    - if <schematic[rothigport_drawbridge_down].exists.not>:
+        - ~schematic load name:rothigport_drawbridge_down
+        - wait 1t
+ 
+    - ~schematic paste name:rothigport_drawbridge_down rothigport_drawbrige_spot
+
+
+map_test:
+    type: task
+    script:
+    - map new:songtide image:boat_128.png save:map
+    - give filled_map[map=<entry[map].created_map>]
+
+match_map:
+  type: map
+  objects:
+    1:
+      type: image
+      image: match.png

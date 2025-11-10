@@ -1,0 +1,59 @@
+ore_scamper:
+    type: entity
+    # display_name: "Ore Scamper"
+    entity_type: ocelot
+    # mechanisms:
+    flags:
+        karma: 30
+        fame: 30
+        biome: forest
+        rarity: 1
+        level: 3
+        eligible_block_spawn: grass_block
+        
+        script: ore_scamper_task
+        drops:
+            steeleaf:
+                quantity: 1
+                chance: .1
+            dandelion:
+                quantity: 1
+                chance: .5
+            delu_moss:
+                quantity: 1
+                chance: .1
+            dull_copper_ore:
+                quantity: 1
+                chance: 1
+            dark_iron_ore:
+                quantity: 1
+                chance: .5
+            pyrzinium_ore:
+                quantity: 1
+                chance: .05
+            mystrilium_ore:
+                quantity: 1
+                chance: .005
+            turgite_ore:
+                quantity: 1
+                chance: .0005
+            arondite_ore:
+                quantity: 1
+                chance: .00005
+            ogralt_ore:
+                quantity: 1
+                chance: .000005
+            glalium_ore:
+                quantity: 1
+                chance: .0000005
+            arcanithril_ore:
+                quantity: 1
+                chance: .00000005
+
+        xp: 11
+        coin_drop:
+            copper: 
+                quantity: 1
+                chance: .5
+        custom_beast: true
+        custom_model_data: 1656550

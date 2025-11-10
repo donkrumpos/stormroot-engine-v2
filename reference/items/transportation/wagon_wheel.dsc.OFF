@@ -1,0 +1,18 @@
+wagon_wheel:
+  type: item
+  material: diamond_hoe
+  display name: Wagon Wheel
+  mechanisms:
+    custom_model_data: 2110002
+
+
+wagon_wheel_h:
+  type: item
+  material: diamond_hoe
+  display name: Wagon Wheel
+  mechanisms:
+    custom_model_data: 2930103
+
+    
+
+

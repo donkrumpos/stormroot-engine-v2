@@ -1,0 +1,29 @@
+blizzard_task:
+  type: task
+  definitions: attacker|defender
+  script:
+  - if <[attacker].has_flag[skill.spells.blizzard.level].not>:
+    - flag <[attacker]> skill.spells.blizzard.level:1
+  - define level <[attacker].flag[skill.spells.blizzard.level]>
+  - define area <[attacker].location.find_blocks[!air].within[3]>
+  - foreach <[area]> as:block:
+    - showfake <[block]> snow_block duration:7s
+    - shoot snowball origin:<[block].relative[0,10,0]> destination:<[block]>
+    - playeffect effect:snowflake at:<[block]> quantity:<[level].mul[4]> offset:3,3,3
+    - if <[block].find.living_entities.within[1].exclude[<[attacker]>].any>:
+      - define target <[block].find.living_entities.within[1].exclude[<[attacker]>].first>
+      - run spell_damage_task def:blizzard|<[target]>|<[attacker]>
+      
+      - repeat 2:
+        - shoot snowball origin:<[block].relative[0,10,0]> destination:<[target].location>
+        - wait 5t
+  - repeat <[level].mul[15]>:
+    - wait <util.random.int[1].to[10]>t
+    - define location <[attacker].location.add[<location[0,1,2].rotate_around_y[<[value].div[10]>]>]>
+    - playeffect effect:snowflake at:<[location]> quantity:<[value].mul[20]> offset:2,3,2
+    - if <[location].find.living_entities.within[<[level]>].exclude[<[attacker]>].any>:
+        - define entity <[location].find.living_entities.within[<[level]>].exclude[<[attacker]>].first>
+        - showfake ice <[entity].location.up[1]> duration:2s
+        - run freeze_target_task def:<[entity]>|<[level]>
+        - showfake ice <[entity].location> duration:2s players:<server.online_players>
+        - run spell_damage_task def:blizzard|<[entity]>|<[attacker]>|<[level].div[10].max[0]>

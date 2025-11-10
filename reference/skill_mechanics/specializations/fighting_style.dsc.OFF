@@ -1,0 +1,25 @@
+fighting_style_proc:
+    type: procedure
+    definitions: weapon_type
+    script:
+    - define return_value 0
+    - definemap skill_list:
+        sword: <player.flag[skill.skills.sword.level]>
+        mace:   <player.flag[skill.skills.mace.level]>
+        archery:   <player.flag[skill.skills.archery.level]>
+        wrestling:   <player.flag[skill.skills.wrestling.level]>
+        throwing:   <player.flag[skill.skills.throwing.level]>
+        fencing:   <player.flag[skill.skills.fencing.level]>
+    # - define skill_list <list[<[swords]>|<[mace]>|<[archery]>|<[wrestling]>|<[throwing]>|<[fencing]>]>
+    # - define highest_number <[skill_list].highest]>
+    # - define highest_skill <[skill_list].find[<[skill_list].highest>]>
+    # - define skill_name <[skill_list].get[<[highest_skill]>]>
+    - define best_skill <[skill_list].sort_by_value.keys.last>
+    - define best_skill_value <[skill_list].sort_by_value.values.last>
+    - define totals <[skill_list].values.sum>
+    - define difference <[totals].sub[<[best_skill_value]>]>
+    # - narrate "<[best_skill_value]> > <[difference]> <&nl> <[best_skill]> == <[weapon_type]>"
+    - if <[best_skill_value]> > <[difference]>:
+        - if <[best_skill]> == <[weapon_type]>:
+            - define return_value true
+    - determine <[difference]>

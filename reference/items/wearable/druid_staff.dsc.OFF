@@ -1,0 +1,7 @@
+druid_staff:
+  type: item
+  material: leather_horse_armor
+  display name: ""
+  mechanisms:
+    custom_model_data: 33022003
+    

@@ -1,0 +1,20 @@
+stomper:
+    type: entity
+    # display_name: "Stomper"
+    entity_type: polar_bear
+    # mechanisms:
+    data:
+        karma: 30
+        fame: 30
+        biome: snowy_plains
+        rarity: 20
+        level: 20
+        eligible_block_spawn: ice
+        custom_model_data: 1656549
+        script: stomper_task
+        drops:
+            water_shard:
+                quantity: 1
+                chance: .1
+    flags:
+        custom_beast: true

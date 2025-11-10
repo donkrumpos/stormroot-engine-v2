@@ -1,0 +1,10 @@
+bandage:
+  type: item
+  material: bowl
+  display name: Bandage
+  mechanisms:
+    custom_model_data: 2110017
+  flags:
+    price: 5
+    rarity: 1
+    

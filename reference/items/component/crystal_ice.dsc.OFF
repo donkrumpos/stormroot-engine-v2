@@ -1,0 +1,7 @@
+crystal_ice:
+  type: item
+  material: amethyst_shard
+  display name: Crystal Ice
+  mechanisms:
+    custom_model_data: 2180003
+    

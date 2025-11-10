@@ -1,0 +1,27 @@
+healparty_task:
+    type: task
+    definitions: caster|target|level
+    debug: true
+    script:
+    # - narrate working
+    - if <[caster].has_flag[party]>:
+        # - define party_flag <[caster].flag[party]>
+        - define level <[caster].flag[skill.spells.healparty.level]>
+        # - narrate <server.online_players_flagged[party]>
+        - foreach <server.online_players_flagged[party].exclude[<[caster]>]> as:target:
+            - if <[loop_index]> < <[level]>:
+                - if <[target].flag[party]||null> == <player.flag[party]>:
+                    - if <[target].location.distance[<[caster].location>].round_down> <= <[level]>:
+                        - narrate something
+                        - if <[target].health> < <[target].health_max>:
+                            - narrate "<[target]>: <[target].health> / <[target].health_max>"
+                            - heal <[level]> <[target]>
+                            - narrate "Healing <[target]> <[level]> points."
+            #                 # - narrate <[level]>
+                        - else:
+                            - narrate "All possible targets are at full health."
+            - else:
+                - stop
+                                    
+    - else:
+        - narrate "You have to be in a party to cast this."

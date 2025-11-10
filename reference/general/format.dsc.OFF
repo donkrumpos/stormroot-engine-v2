@@ -1,0 +1,57 @@
+npcquestchat:
+    type: format
+    format: "<blue><npc.name> <gray>says to you<&co> <green><text>"
+    
+helperchat:
+  type: format
+  format: "<&b><npc.name><&f> <&b>-> <red>you<&co> <text>"
+  #format: "<blue><npc.name><&f> <blue>-> <blue>you<&co> <green><text>"
+
+mistforborl_chat:
+  type: format
+
+  format: "<element[<text>].color_gradient[from=#92a3e8;to=#0000FF;style=hsb]>"
+
+# npcchat:
+#   type: format
+#   format: "<blue><npc.name><&f> <blue>-> <blue>you<&co> <&A><&O><text>"
+npcchat:
+  type: format
+  format: <&color[#FFFFFF]><&dq><[text]><&dq><&nl>
+  # format: "<&color[#a19462]><npc.name><white><&co>-><&b>you<&co> <white> <text>"
+npcquestion:
+  type: format
+  format: <&color[#6fd6cb]><[text]><&nl>
+npcchat_secondline:
+  type: format
+  format: " <white> <text>"
+npc_desc_chat:
+  type: format
+  format: "<&color[#ababab]><italic><text><&r>"
+game_message:
+  type: format
+  format: "<&color[#888888]><italic>[ <[text]> ]<&r>"
+
+npcwhisper:
+  type: format
+      # - narrate "<&font[steamfront:comicbook4]> <element[<&hover[<&color[#ababab]>Get a physical description of <bold><npc.name><&r>]><&8><&color[#6993e2]><npc.name><&8><&end_hover>].on_click[<entry[description_task_clickable].command>]> <&color[#596c8e]><&font[steamfront:comicbook4]>says: <&r>"
+
+  format: "<&color[#596c8e]><&font[steamfront:comicbook4]><npc.name> whispers: <&r><&nl> <&color[#999999]><[text]>"
+playeroptions:
+  type: format
+  format: "<blue><npc.name><&f> <blue>whispers -> <blue>you<&co> <green><text>"
+lore_message:
+  type: format
+  format: "<&8><&O><text>"
+random_chat_verb:
+  type: procedure
+  script:
+    - random:
+        - determine mutters
+        - determine whispers
+        - determine exclaims
+        - determine says
+        - determine comments
+        - determine states
+        - determine declares
+    

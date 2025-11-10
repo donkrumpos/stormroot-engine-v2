@@ -1,0 +1,97 @@
+fetch_command:
+    type: command
+    name: fetch
+    usage: /fetch
+    script:
+        - if <player.has_flag[skill.fetch.level]>:
+            # - narrate "fetchdifficulty: <player.flag[skill.fetch.level]>"
+            - if <player.has_flag[will_fetch]>:
+                - narrate "Fetching off."
+                - flag player will_fetch:!
+            - else:
+                - flag player will_fetch
+                - narrate "Fetching on."
+
+
+fetch_task:
+    type: task
+    debug: true
+    defintions: player
+    script:
+    # - narrate <player>
+    - if <player.has_flag[skill.fetch.level]>:
+        - define level <player.flag[skill.fetch.level]>
+        # - narrate "level: <[level]>"
+        # - narrate <el@10.div[<[level].max[2]>]>
+        - flag player sprinting duration:<element[10].sub[<[level]>]>s
+        - flag <player> stat.stamina_level:-:<element[10].sub[<[level]>]>
+        - wait <element[10].div[<[level].max[2]>].round_down>s
+        - foreach  <[location].find.entities.within[<[level].min[8]>].exclude[<[location].find.living_entities.within[<[level]>]>]> as:entity:
+            
+            - if <[loop_index]> <= <[level]>:
+                - if <[entity].experience||0> > 0:
+                    - give xp quantity:<[entity].experience>
+                - remove <[entity]>
+                - if <[entity].item.contains[i@]>:
+                    - narrate "item: <[entity].item>"
+                - give <[entity].item> to:<player.inventory||null>
+                
+                - if <[level]> > 50:
+                    - if <util.random.int[0].to[100]> < <[level]>:
+                        - if <util.random.int[0].to[100]> < <[49]>:
+                            - give arrow to:<player.inventory||null>
+                    
+            - else:
+                - stop
+                
+
+
+# bow_world:
+#     type: world
+#     debug: true
+#     events:
+#         # on player right clicks entity with:flint_and_steel:
+        #     - if <player.item_in_hand.has_custom_model_data> && <player.item_in_hand.custom_model_data> == "56412":
+                
+        #         - run spell_task def:spark|player|<context.entity>
+
+
+                   
+
+        
+  
+
+        # on player right clicks with bow:
+        # # - if <player.has_flag[sniping]>:
+        # #     - narrate "second click"
+        # #     - flag <player> sniping:!
+        # #     - adjust <player> spectate:<player>
+        # #     - title "title:" stay:1s fade_in:0t fade_out:0t targets:<player>
+        # # # - wait 1s 
+        # # - else:
+        # #     - narrate "first click"
+        # #     - flag <player> sniping
+        # #     - execute as_op "sniper" 
+        # # on player shoots bow:
+        # # - narrate "force: <context.force>"
+        
+        # # - shoot arrow origin:<player> speed:4 destination:<player.cursor_on> shooter:<player> save:shot_arrow no_rotate script:sniper2_task
+        # # - attach <entry[rider].spawned_entity> to:<entry[shot_arrow].shot_entity>
+        
+        # # - adjust <player> spectate:<entry[rider].spawned_entity>
+        # # # - wait 5s
+        
+        # # # - remove <entry[rider].spawned_entity>
+        
+
+        # # # - determine arrow[potion_effects=Levitation,0,100,false,false,false]
+        # - if <player.has_flag[will_fetch]>:
+        #     - if <player.has_flag[skill.fetch.level]>:
+        #         - define level <player.flag[skill.fetch.level]>
+        #         # - narrate <[level]>
+        #         - shoot arrow script:fetch_task origin:<player> speed:2 destination:<player.item_cursor_on> def:<player> save:fetch_arrow
+        #         - if <[level]> > 10:
+        #             - narrate ""
+        #             # - adjust <entry[fetch_arrow].shot_entity> hide_from_players
+        #         - else:
+        #             - determine cancelled

@@ -1,0 +1,15 @@
+GoodDenizzleGoingToHeaven:
+    type: task
+    debug: false
+    script:
+        - define HaloColor <color[255,255,0]>
+        - while <player.has_flag[GoodDenizzle]> && <player.is_online>:
+            - define Pitch <player.location.pitch.to_radians>
+            - define Yaw <player.location.yaw.mul[-1].to_radians>
+            - define Loc <player.eye_location.below[0.2]>
+            - define Angle <location[0,0.6,0.25].rotate_around_y[<[Loop_Index].to_radians.mul[<element[10].add[72]>]>].rotate_around_x[<[Pitch]>].rotate_around_y[<[Yaw]>]>
+            - playeffect effect:redstone at:<[Loc].add[<[Angle]>]> offset:0 special_data:0.5|<color[255,255,0]>
+            - if <[Value].mod[4]> == 0:
+                - wait 1t
+        - flag player GoodDenizzle:!
+        - narrate "<&c>Your Halo disapears!"

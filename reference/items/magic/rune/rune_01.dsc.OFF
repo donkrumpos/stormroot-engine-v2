@@ -1,0 +1,12 @@
+rune_01:
+  type: item
+  debug: false
+  material: paper
+  display name:  Rune
+  lore:
+  - A spell stone
+  flags:
+    craftable: true
+  mechanisms:
+    custom_model_data: 62000403
+    

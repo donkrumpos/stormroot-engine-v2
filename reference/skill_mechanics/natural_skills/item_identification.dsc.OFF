@@ -1,0 +1,64 @@
+item_identification_command:
+    type: command
+    name: id
+    script:
+    - if <player.target.npc> && <player.item_in_hand.material.name> == AIR:
+      - run description_task def:<player.target>
+    - if <player.target.is_player> && <player.item_in_hand.material.name> == AIR:
+      - define target <player.target>
+      - define range <[target].location.distance[<player.location>]>
+      - define perception_skill <player.flag[skill.skills.perception.level]>
+      - if  <proc[natural_skill_check_proc].context[<player>|perception|<proc[attribute_skill_check_proc].context[<player>|intelligence].sub[<[range]>]||0>]>:
+        - define highest_skill <[target].flag[skill.skills.<proc[highest_skill_proc].context[<[target]>]>.level].div[25]>
+        - define last_skill_title <script[skill_levels_data].data_key[level].keys.size>
+        # - define skill_level <[target].flag[skill.skills.<[highest_skill]>.level>
+        # - narrate <red><[skill_level]>
+        - define skill_level <script[skill_levels_data].data_key[level].keys.get[<[highest_skill].round_up>].min[<[last_skill_title]>]>
+        - define skill_level_title <script[skill_levels_data].data_key[level.<[skill_level]>.title]>
+            
+        # - narrate <[skill_level_title]>
+        - narrate "This is The <proc[get_reputation_title_proc].context[<[target]>]> <player.target.name> <[skill_level_title]> <proc[get_title_from_skill].context[<player.target>]> "
+      - else:
+        - narrate "You can't tell much about this being."
+      - if <[perception_skill]> < <[target].flag[skill.skills.perception.level]>:
+        - if <proc[natural_skill_check_proc].context[<[target]>|perception|<[range].mul[-1]>]>:
+          - if <[target].flag[skill.skills.perception.level]> > <element[75].add[<[range]>]>:
+            - narrate "You are trying to be identified by <player.name>" targets:<[target]>
+          - else:
+            - narrate "You are trying to be identified by someone." targets:<[target]>
+      - stop
+
+    - else if <player.item_in_hand.material.name> != AIR:
+      - run item_identification_task
+
+item_identification_task:
+    type: task
+    script:
+    - if <util.random.int[0].to[10]> == 3:
+        - run raise_natural_skill_task def:<player>|item_identification|0|0
+    - define item <player.item_in_hand>
+    - if <[item].has_flag[bound]>:
+        - narrate "Magical!"
+        - stop
+    - if <[item].script.exists.not> :
+
+        - narrate "This is <[item].material.name.replace[_].with[<&sp>]>"
+        - stop 
+    - define identification_success <proc[natural_skill_check_proc].context[<player>|item_identification|<proc[attribute_skill_check_proc].context[<player>|intelligence]||0>]>
+    - if <[identification_success].not>:
+
+        - narrate "You failed to identify the item."
+        - stop
+    - narrate "You succeeded in identifying the item"
+    - define skill_level <player.flag[skill.skills.item_identification.level]>
+    - if <[item].material.name> != air:
+        - inventory flag slot:<player.held_item_slot> identified_by:->:<player>
+        - define lore <proc[lore_builder].context[<[item]>|<player.held_item_slot>|<player>]>
+        - wait 1t
+        - inventory flag slot:<player.held_item_slot> identified_as.<player>.<util.random_uuid>:<[lore]>
+        - inventory adjust slot:<player.held_item_slot> "lore:<[lore]>"
+      
+        # - narrate  "That is a <player.item_in_hand>"
+    - else:
+        - narrate <player.cursor_on.material.name.replace[_].with[<&sp>]>
+    

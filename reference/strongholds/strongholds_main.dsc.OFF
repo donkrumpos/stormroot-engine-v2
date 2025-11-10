@@ -1,0 +1,843 @@
+claim_task:
+  type: task
+  definitions: claimer|name
+  script:
+  - define chunks_amount 0
+  - define chunk_limit <proc[get_stronghold_total_time_proc].context[<[claimer]>]>
+  - if <player.location.areas.any>:
+    - if <[claimer].has_flag[stronghold.chunks]> && <[claimer].flag[stronghold.chunks].contains[<player.location.chunk>]>:
+      - narrate "This area is already in your Stronghold. Choose another." targets:<player>
+    - else:
+      - narrate "This area is already claimed." targets:<player>
+    - stop
+  - if <[claimer].has_flag[stronghold.chunks].not>:
+  # this is their first claim
+    
+    - if <[name].size> == 0:
+      - narrate format:game_message "You must provide a name for your Stronghold."
+      - narrate format:game_message "enter <element[/claim <Your Stronghold Name> ].bold>"
+      - stop
+    - else if <server.players_flagged[stronghold].filter[flag[stronghold.name].is[==].to[<[name]>]].any>:
+      #check to see if the name is taken
+      - narrate "There is already a Stronghold named <[name]>. Choose another." targets:<player>
+      - stop
+    - if <[chunks_amount]> >= <[chunk_limit]>:
+      - narrate "Your Stronghold already has its limit of plots. Spend more time in the world to increase."
+      - stop
+    - define name <[name].first>
+    - flag <[claimer]> stronghold.name:<[name]>
+    #keep a list of all the strongholds
+    - flag server strongholds.<[claimer]>.location:<player.location>
+    - flag <[claimer]> stronghold.level:1
+    - flag <[claimer]> stronghold.locations.home:<player.location>
+    - note <player.location.chunk.cuboid> as:<[claimer]>_claims
+    - flag <cuboid[<player.location.chunk>]> home
+    - title "title:<gold><&font[steamfront:title_font]><element[<[name]>].bold> <&r>" "subtitle:<&color[#9fbb6a]>Estd. 24140 januul, The Third Age" targets:<player>
+  - define chunks_amount <[claimer].flag[stronghold.chunks].size>
+  - if <[claimer].has_flag[stronghold.chunks]> && <[claimer].flag[stronghold.chunks].contains_any[<list[<player.location.chunk.add[1,0]>|<player.location.chunk.add[-1,0]>|<player.location.chunk.add[0,1]>|<player.location.chunk.add[0,-1]>]>].not>:
+    - narrate "You need to be adjacent to another plot of your Stronghold to claim more." targets:<player>
+    - stop
+  # - narrate "<[chunks_amount]> should be greater or equal than  <[chunk_limit]>"
+  - if <[chunks_amount]> >= <[chunk_limit]>:
+      - narrate "Your Stronghold already has its limit of plots. Spend more time in the world to increase."
+      - stop
+  # the rest is for first and consecutive claims
+  - flag <[claimer]> stronghold.chunks:->:<player.location.chunk>
+  - wait 1t
+  - note <player.location.chunk.cuboid> as:<player.location.chunk>
+  - if <cuboid[<[claimer]>_claims].list_members.contains[<player.location.chunk>].not>:
+    - adjust <cuboid[<[claimer]>_claims]> add_member:<cuboid[<player.location.chunk>]>
+  # - flag <player.location.chunk.cuboid> owned_by:<player>
+  - flag <cuboid[<player.location.chunk>]> no_pvp
+  - flag <cuboid[<player.location.chunk>]> no_build
+  - flag <cuboid[<player.location.chunk>]> builders:<[claimer]>
+  - flag <cuboid[<player.location.chunk>]> owned_by:<[claimer]>
+  - narrate "<green>Claiming this spot as <element[<[claimer].flag[stronghold.name]>].bold> for <[claimer].name>"
+  - narrate format:game_message "Use <element[/sh map].bold> to see your territories" targets:<player>
+  
+  - if <[chunk_limit].sub[<[chunks_amount]>]> > 0:
+    - narrate format:game_message "You can claim <[chunk_limit].sub[<[chunks_amount]>]> more areas." targets:<player>
+  # - else:
+    # - narrate format:game_message "You cannot claim any more areas for awhile." targets:<player>
+  
+  
+claim_command:
+  type: command
+  name: claim
+  description: Claim a plot
+  debug: true
+  usage: /claim
+  script:
+  - if <player.has_flag[member_of_stronghold]>:
+    - if <player.flag[member_of_stronghold.role]> == mayor:
+      - run claim_task def:<player.flag[member_of_stronghold.owner]>
+    - else:
+      - narrate "You can only claim if you are Mayor or the Founder."
+  - else:
+    - run claim_task def:<player>|<context.args>
+  
+
+
+unclaim_chunk_task:
+  type: task
+  definitions: chunk|unclaimer
+  script:
+  - define owner <player>
+  - if <[unclaimer].length||0> < 1:
+    - if <player.has_flag[stronghold]> || <player.flag[member_of_stronghold.role].contains[Mayor]>:
+      - if <player.has_flag[member_of_stronghold.owner]>:
+        - define owner <player.flag[member_of_stronghold.owner].as_player>
+  - else:
+    - define owner <[unclaimer]>
+  - narrate <[chunk]>
+  - if <[owner].flag[stronghold.chunks].contains[<[chunk]>]>:
+    - flag <[owner]> stronghold.chunks:<-:<[chunk]>
+    - note remove as:<[chunk]>
+    #this removes the members
+    - if <cuboid[<[owner]>_claims].list_members.contains[<[chunk]>]>:
+      - define index <cuboid[<[owner]>_claims].list_members.find[<[chunk]>]>
+      - adjust <cuboid[<[owner]>_claims]> remove_member:<[index]>
+  - else:
+    - narrate "<red>You don't own this chunk."
+
+unclaim_command:
+  type: command
+  name: unclaim
+  description: testing
+  usage: /unclaim
+  script:
+  - if <player.has_flag[stronghold]> || <player.flag[member_of_stronghold.role].contains[Mayor]>:
+    - define owner <player>
+    - if <player.has_flag[member_of_stronghold.owner]>:
+      - define owner <player.flag[member_of_stronghold.owner].as_player>
+    - if <[owner].flag[stronghold.chunks].contains[<player.location.chunk>]>:
+      - if <player.location.chunk> == <[owner].flag[stronghold.chunks].get[1]>:
+        - narrate "You cannot unclaim your home plot. Do <green>/sh disband<&r> to unclaim all your plots"
+        - stop
+      - define values <map.with[claimedChunks].as[<[owner].flag[stronghold.chunks]>].with[chunkToUnclaim].as[<player.location.chunk>]>
+      - if <proc[validate_chunk_unclaim].context[<[values]>]>:
+        - run unclaim_chunk_task def:<player.location.chunk>
+      - else:
+        - narrate "<red>You cannot unclaim this plot as it would leave another plot abandoned."
+    - else:
+      - narrate "You are not the owner of this plot, therefore you cannot unclaim it."
+
+stronghold_disband_task:
+  type: task
+  definitions: player
+  script:
+  - foreach <[player].flag[stronghold.chunks]> as:chunk:
+    # - execute as_op "rg remove <[player].flag[stronghold]>_<[value]>"
+    - note remove as:<[chunk]>
+    - narrate "removing <[chunk]>"
+  - note remove as:<player>_claims
+  - if <[player].has_flag[stronghold.members]>:
+    - foreach <[player].flag[stronghold.members]> as:member:
+      - flag <[member]> member_of_stronghold:!
+      # - flag <[member]> stronghold_role:!
+      - flag <[member]> stronghold_chat:!
+    - flag <[player]> stronghold.members:!
+  - if <[player].has_flag[stronghold_structures]>:
+    - foreach <[player].flag[stronghold_structures]> as:structure:
+      - narrate <[structure].as_map.get[name]>
+      - flag <[player]> stronghold_<[structure].as_map.get[name]>:!
+      - modifyblock <cuboid[<[player].name>_<[structure].as_map.get[name]>].blocks[bell]> air
+      - modifyblock <cuboid[<[player].name>_<[structure].as_map.get[name]>].blocks[water]> air
+      - foreach <cuboid[<[player].name>_<[structure].as_map.get[name]>].blocks.filter[material.name.is[!=].to[air]]> as:block:
+        - define random <util.random.int[1].to[100]>
+        - if <[random]> < 70:
+          - modifyblock <[block]> gravel
+        - else if <[random]> > 70 && <[random]> < 80:
+          - modifyblock <[block]> sand
+        - else if <[random]> > 80:
+          - modifyblock <[block]> air
+
+      - note remove as:<[player].name>_<[structure].as_map.get[name]>
+      
+      - flag player <[player].name>_<[structure].as_map.get[name]>:!
+      # - execute as_op "rg remove <[player].name>_<[structure].as_map.get[name]>"
+  - note remove as:<[player]>_claims
+  - flag <[player]> stronghold:!
+  - narrate "Your stronghold is relinquished."
+
+stronghold_pvp_task:
+  type: task
+  script:
+  - define pvp false
+  - if <player.has_flag[stronghold.chunks]> || <player.flag[member_of_stronghold.role]> == mayor:
+    - foreach <player.flag[stronghold.chunks]> as:chunk:
+      - if <cuboid[<[chunk]>].has_flag[no_pvp]>:
+        - flag <cuboid[<[chunk]>]> no_pvp:!
+        - define pvp true
+      - else:  
+        - flag <cuboid[<[chunk]>]> no_pvp
+        - define pvp false
+    - if <[pvp]>:
+      - narrate "Pvp is now allowed in your stronghold."
+    - else:
+        - narrate "Pvp is now banned in your stronghold."
+
+stronghold_command:
+    type: command
+    name: stronghold
+    usage: stronghold
+    aliases:
+    - sh
+    - strongholds
+    tab completions:
+      1: <tern[<player.has_flag[stronghold]>].pass[disband].fail[]>|<tern[<player.flag[member_of_stronghold.role].is[==].to[mayor]>].pass[invite].fail[]>|<tern[<player.has_flag[stronghold.chunks]>].pass[invite].fail[]>|map|members|stats|<tern[<player.has_flag[member_of_stronghold]>].pass[leave].fail[]>|build|<tern[<player.has_flag[stronghold.structures]>].pass[structures].fail[]>
+    tab complete:
+      # - determine <proc[test_proc].context[<context.source_type>]>
+      - determine <proc[stronghold_commands_tab_complete].context[<context.raw_args>]>
+    description: Opens the GUI to see strongholds
+    script:
+    - if <context.args.size> > 0:
+      - choose <context.args.get[1]>:
+        - case disband:
+          - if <player.has_flag[stronghold]>:
+            - run stronghold_disband_task def:<player>
+          - else:
+            - narrate "You don't have any plots to unclaim."
+        - case stats:
+          - run stronghold_stats_task
+        - case pvp:
+          - run stronghold_pvp_task 
+        - case members:
+          
+          - run stronghold_manage_members
+        - case home:
+          - run stronghold_home_task
+        - case invite:
+          - if <player.has_flag[stronghold]>:
+            - define founder <player>
+          - if <player.flag[member_of_stronghold.role]> == mayor:
+            - define founder <player.flag[member_of_stronghold.owner]>
+          - run stronghold_manage_members.invite.extend def:<[founder]>|<context.args.get[2]>
+        - case leave:
+          - run stronghold_manage_members.remove def:<player.flag[member_of_stronghold.owner]>|<player>
+        - case kick:
+          - if <player.has_flag[stronghold]>:
+            - define founder <player>
+          - if <player.flag[member_of_stronghold.role]> == mayor || <player.flag[member_of_stronghold.role]> == reeve:
+            - define founder <player.flag[member_of_stronghold.owner]>
+          - else:
+            - narrate game_message "You don't have permission to kick a member." targets:<player>
+            - stop
+          - if <context.args.get[2].exists.not>:
+            - narrate format:game_message "You must provide a Stronghold member to remove." targets:<player>
+            - stop
+          - if <server.match_player[<context.args.get[2]>].exists.not>:
+            - narrate format:game_message "There is no member called <context.args.get[2]>." targets:<player>
+            - stop
+          - define member <server.match_player[<context.args.get[2]>]>
+          - run stronghold_manage_members.remove def:<[founder]>|<[member]>
+          # - narrate "sending <server.match_player[<context.args.get[2]>].uuid>  !!!!!!!!!!!!!!!"
+              # - narrate "Provide a player to join their stronghold"
+        - case chat:
+          - run stronghold_chat_task
+        - case map:
+          - run stronghold_map_task
+        - case build:
+          - define founder <player>
+          - if <player.has_flag[stronghold.chunks]>:
+            - define founder <player>
+          - else if <player.flag[member_of_stronghold.role]> == mayor:
+            - define founder <player.flag[member_of_stronghold.owner]>
+          - else:
+            - narrate "You don't have the right to build in this Stronghold."
+            - stop
+          - if <[founder].flag[stronghold.chunks].contains[<player.location.chunk>].not>:
+            - narrate "You can only build in your Stronghold."
+            - stop
+          - run build_gui def:<[founder]>
+        - case structures:
+          - define founder <player>
+          - if <player.has_flag[member_of_stronghold]> && <player.flag[member_of_stronghold.role]> == mayor:
+            - define founder <player.flag[member_of_stronghold.owner]>
+          - else if <player.has_flag[stronghold.structures]> && <player.flag[stronghold.structures].size> > 0:
+            - define founder <player>
+          - else:
+            - narrate "You don't have any structures to view."
+            - stop
+          - run show_structures def:<[founder]>
+
+        - default:
+          - narrate "No such command."
+    - else:
+      - narrate "Provide an additional argument such a /sh map /sh invite /sh leave"
+
+
+
+
+stronghold_chat_tasK:
+  type: task
+  script:
+  - if <player.has_flag[member_of_stronghold]> || <player.has_flag[stronghold]>:
+    - if <player.has_flag[stronghold_chat]>:
+      - flag player stronghold_chat:!
+      - narrate "<green>You have disabled Stronghold chat"
+    - else:
+      - flag <player> stronghold_chat
+      - narrate "<green>You have enabled Stronghold chat"
+  - else:
+    - narrate "You need to be in a Stronghold to use Stronghold chat."
+          
+     
+
+stronghold_manage_members:
+  type: task
+  definitions: founder|member
+  script:
+  - define members <list>
+  - define header "No members in "
+  - define founder <player>
+  - define remove_icon "<red><&chr[2715]><&sp>"
+  - define remove_text "Remove"
+  - define player_online ""
+  - define member_color "<gray>"
+  - define role_text ""
+  - if <player.has_flag[stronghold.chunks]>:
+    - define founder <player>
+  - else if <player.flag[member_of_stronghold.role]> == mayor || <player.flag[member_of_stronghold.role]> == reeve:
+    #only founder, mayor and reeve can edit or remove members
+    - define founder <player.flag[member_of_stronghold.owner]>
+  - else:
+    - narrate "You need to have a Stronghold."
+    - stop
+  - if <[founder].flag[stronghold.members].exists.not> || <[founder].flag[stronghold.members].size> < 1:
+    - narrate "You don't have any members yet. Use /invite to get some." targets:<player>
+    - stop
+  - foreach <[founder].flag[stronghold.members]> as:member:
+    - if <[member]> == <player>:
+      #don't show yourself
+      - foreach next
+    - define player_online <ternary[<[member].is_online>].pass[<&2><[member].as_player.name>].fail[<gray><[member].as_player.name>]>
+    - clickable stronghold_manage_members.remove def:<[founder]>|<[member]> save:remove_member_clickable_<[loop_index]> until:90s usages:1 for:<player>
+    - clickable stronghold_manage_members.modify.menu def:<[founder]>|<[member]> save:modify_member_clickable_<[loop_index]> until:90s usages:1 for:<player>
+    - clickable assign_stronghold_role_task def:<[member]>|initiate save:remove_role_clickable
+    - if <[member].is_online>:
+      - define member_color "<&color[#83ff97]>"
+    - else:
+      - define member_color "<gray>"
+    
+    - if <player.has_flag[stronghold]> || <player.flag[member_of_stronghold.role]> == mayor || <player.flag[member_of_stronghold.role]> == reeve:
+      - define member_role <[member].flag[member_of_stronghold.role].to_titlecase>
+      - if <[member]> == <player>:
+        - define remove_text  "Leave <[founder].flag[stronghold_name]>"
+        - if <[member].flag[member_of_stronghold.role]> != initiate:
+          - define role_text "<&nl><&l>Current role:<&r> <&hover[<red>Remove Role]><element[<[member_role]>].on_click[<entry[remove_role_clickable].command>]><&end_hover><&nl>"
+        - else:
+          - define role_text "<&nl><&l>Current role:<&r> <[member_role]>"
+        
+      - else:
+        - define remove_text "Remove <[member].name>"
+      - define remove_icon "<element[<red><&chr[2715]><&sp>].on_click[<entry[remove_member_clickable_<[loop_index]>].command>]>"
+      - if <player.has_flag[stronghold]> || <player.flag[member_of_stronghold.role]> == mayor:
+        - define edit_member "<&hover[Edit <[member].name>]><element[<[member_color]><[member].name>].on_click[<entry[modify_member_clickable_<[loop_index]>].command>]><&end_hover>"
+      - else:
+        - define edit_member "<[member_color]><[member].name>"
+    - else:
+      - if <[member]> == <player>:
+        
+        - define remove_text "Leave <[founder].flag[stronghold.name]>"
+        - define color <black>
+        - if <[member].flag[member_of_stronghold.role]> != initiate:
+          - define role_text "<&nl><&l>Current role:<&r> <&hover[<red>Remove Role]><element[<[member_role]>].on_click[<entry[remove_role_clickable].command>]><&end_hover><&nl>"
+        - else:
+          - define role_text "<&nl><&l>Current role:<&r> <[member_role]>"
+        - define remove_icon "<element[<red><&chr[2715]><&sp>].on_click[<entry[remove_member_clickable_<[loop_index]>].command>]>"
+      - else:
+        - define remove_icon ""
+      - define edit_member "<[member_color]><[member].name>"
+    - define remove_icon "<&hover[<[remove_text]>]><[remove_icon]><&end_hover>"
+    - define members <[members].insert[<[remove_icon]><[edit_member]>].at[<[members].size>]>
+  - if <[members].is_empty> && ( <player.flag[member_of_stronghold.role]> == reeve || <player.flag[member_of_stronghold.role]> == mayor ):
+    - define header "No members in <[founder].flag[stronghold.name]> except for you."
+    - define members <empty>
+  - else if <[members].is_empty>:
+    - define header "No members in <[founder].flag[stronghold.name]>"
+    
+    - define members <empty>
+  - else:
+    - define header "Members of <[founder].flag[stronghold.name]><black><[role_text]>"
+    - define members <[members].separated_by[<&nl>]>
+  # - define members "<black>Founder: <[founder].as_player.name><&nl><[members]>"
+  - adjust <player> show_book:stronghold_modify_member_gui_book[book_pages=<[header]><&sp><&sp>----------------<&nl><[members]>]
+  invite:
+  # - narrate "this is invite root"
+    extend:
+    - if <[founder].has_flag[stronghold.chunks].not> || <[founder].flag[stronghold.chunks].is_empty>:
+      - narrate "You don't have a stronghold to invite anyone to." targets:<player>
+      - stop
+    - if <server.match_player[<[member]>].exists.not>:
+      - narrate "No one with that name exists."  targets:<player>
+      - stop
+    - define member <[member].as_player>
+    - if <[member]> == <player>:
+      - narrate "You cannot invite yourself." targets:<[founder]>
+      - stop
+    - if <[member].has_flag[stronghold.chunks]>:
+      - narrate "<[member].name> already has their own Stronghold. Ask them to disband their plots in order to join yours." targets:<player>
+      - stop
+    - if <[member].has_flag[member_of_stronghold]>:
+      - if <[member].flag[member_of_stronghold.owner]> == <[founder]>:
+        - narrate "<[member].name> is already in your Stronghold."
+      - else:
+        - narrate "<[member].name> is already a member of a stronghold. Ask them to leave their Stronghold." targets:<player>
+      - stop
+      #passed the checks proceed to asking
+    - clickable stronghold_manage_members.invite.accept def:<[founder]>|<[member]> save:add_stronghold_member_clickable until:30s usages:1 for:<[member]>
+    - clickable stronghold_manage_members.invite.decline def:<[founder]>|<[member]> save:decline_stronghold_member_clickable until:30s usages:1 for:<[member]>
+    - narrate "<[founder].name> is asking for you to become a member his their Stronghold, '<[founder].flag[stronghold.name]>'." targets:<[member]>
+    - narrate "Would you like to" targets:<[member]>
+    - narrate format:game_message "An invitation has been sent to <[member].name>" targets:<[founder]>
+    - narrate  "<element[<&hover[Click to accept invitation.]><&8><&lb><&color[#00cb43]><&sp><&sp> <&B>Accept<&8><&sp><&sp><&rb><&end_hover>].on_click[<entry[add_stronghold_member_clickable].command>]>" targets:<[member]>
+    - narrate  "<element[<&hover[Click to decline invitation.]><&8><&lb><&color[#00cb43]><&sp><&sp> <&B>Decline<&8><&sp><&sp><&rb><&end_hover>].on_click[<entry[decline_stronghold_member_clickable].command>]>" targets:<[member]>
+    accept:
+    - define mayor <[founder].target.flag[stronghold.members].filter[flag[member_of_stronghold.role].equals[mayor]]>
+    - narrate format:game_message "<[member].name> has accepted your invitation to join <[founder].flag[stronghold.name]>, now assign them a role. use <element[/sh members].bold> to manage your members." targets:<[founder]>|<[mayor]>
+    - flag <[member]> member_of_stronghold.owner:<[founder]>
+    - flag <[founder]> stronghold.members:->:<[member]>
+    - flag <[member]> member_of_stronghold.role:initiate
+    - flag <[member]> member_of_stronghold.join_time:<util.time_now>
+    - define or_mayor <empty>
+    - if <player.target.flag[stronghold.members].filter[flag[member_of_stronghold.role].equals[mayor]].any>
+      - define or_mayor "or <player.target.flag[stronghold.members].filter[flag[member_of_stronghold.role].equals[mayor]].first>"
+      - narrate "==---->  <[or_mayor]>"
+    # <player.target.flag[stronghold.members].filter[flag[member_of_stronghold.role].equals[mayor]]>
+    - narrate format:game_message "You are now part of <[founder].flag[stronghold.name]>. Ask <[founder].name> <[or_mayor]> to assign you a role." targets:<[member]>
+    decline:
+    # - flag <player> suspend_clickable
+    - narrate "<[member].name> declines your invitation to join your Stronghold." targets:<[founder]>
+    # - wait 5s
+  remove:
+  - if <player.has_flag[member_of_stronghold].not> && <player.has_flag[stronghold].not>:
+    - narrate format:game_message "You are not a member of a Stronghold from which to leave."
+    - stop
+  - if <[member].flag[member_of_stronghold.role]> == mayor && <player> != <[founder]> && <player.flag[member_of_stronghold.role]> != mayor:
+    - narrate format:game_message "<[member].name> is the mayor of this Stronghold. You cannot remove them." 
+    - stop
+  - flag <[member]> member_of_stronghold:!
+  - flag <[founder]> stronghold.members:<-:<[member]>
+  # - define current_chunks <[founder].flag[stronghold.chunks].size>
+  # gets the cfounderrrent max chunks for the stronghold
+  - foreach <[founder].flag[stronghold.chunks].reverse> as:chunk:
+    - define old_chunk_limit <proc[get_stronghold_total_time_proc].context[<[founder]>]>
+    
+    # - wait 10t
+    - if <[founder].flag[stronghold.chunks].size> > <[old_chunk_limit]>:
+      - run unclaim_chunk_task def:<[chunk]>|<[founder]>
+      
+    - else:
+      - foreach next
+  
+  - flag <[member]> stronghold_chat:!
+  - narrate "<[member].name> is removed from your stronghold." targets:<player>
+  - narrate "You have been removed from your stronghold." targets:<[member]>
+  - narrate "<[member].name> has left the Stronghold." targets:<server.players_flagged[member_of_stronghold].filter[flag[member_of_stronghold].is[==].to[<[member].flag[member_of_stronghold]>]]> targets:<player>
+  - if <[founder].flag[stronghold.members].size> < 1:
+    - flag <[founder]> stronghold.members:!
+  - if <player.has_flag[member_of_stronghold]> == mayor || <player.has_flag[member_of_stronghold]> == reeve || <player.has_flag[stronghold.members]>:
+    - run stronghold_manage_members
+
+  modify:
+    menu:
+    - define edit_member_text ""
+    - define remove_role ""
+    - define member_role initiate
+    - clickable assign_stronghold_role_task def:<[member]>|initiate save:remove_role_clickable
+    - define back_btn "<&hover[Return to member list]><&click[/sh members]><&0> <&chr[25C0]> <&end_click><&end_hover>"
+    - define edit_member_text "<[back_btn]><&0>Editing <[member].name><&nl>-------------------<&nl>"
+    - if <[member].has_flag[member_of_stronghold.role]>:
+      - define member_role <element[<[member].flag[member_of_stronghold.role].to_titlecase>].bold>
+    - if <[member].flag[member_of_stronghold.role]> != initiate:
+      - define remove_role "<red>Remove Role"
+    - define edit_member_text "<[edit_member_text]><black>Current role: <&hover[<[remove_role]>]><element[<[member_role]>].on_click[<entry[remove_role_clickable].command>]><&end_hover>"
+    - define edit_member_text "<[edit_member_text]><&nl><black>Contributing <proc[player_chunk_amount_proc].context[<[member]>]> plot<ternary[<proc[player_chunk_amount_proc].context[<[member]>].is[=].to[1]>].pass[ ].fail[s]>"
+    # - define edit_member_text "<[edit_member_text]><&nl>Available roles:<&nl><[king_role]><&chr[2022]> Reeve <&nl><&chr[2022]> Builder"
+    - define available_roles ""
+    - if <player.has_flag[stronghold.chunks]> || <player.flag[member_of_stronghold.role]> == mayor:
+      - define available_roles "<&nl><black>Available roles:<&nl>"
+      - foreach <script[stronghold_roles_data].data_key[roles]> as:role:
+        - if <[member].flag[member_of_stronghold.role]> == <[key]>:
+          - foreach next
+        # - if <[member].flag[member_of_stronghold.role]> == mayor:
+        #   - if <[role].get[display_name]> == "Mayor": 
+        #       - foreach next
+        # - narrate "def:<[member]>|<[role].get[display_name]>]><&chr[2022]><&sp><[role].get[display_name]>"
+        - clickable stronghold_manage_members.modify.role def:<[founder]>|<[member]>|<[key]> save:assign_role_clickable_<[loop_index]>
+        - define available_roles "<[available_roles]><&hover[<[role].get[description]>]><element[<&color[#0000FF]><&chr[2022]><&sp><[role].get[display_name]>].on_click[<entry[assign_role_clickable_<[loop_index]>].command>]><&end_hover><&nl>"
+
+    - define edit_member_text "<[edit_member_text]><[available_roles]>"
+    - adjust <player> show_book:stronghold_modify_member_gui_book[book_pages=<[edit_member_text]>]
+    role:
+    # - if <player.has_flag[stronghold.chunks]> || <player.flag[member_of_stronghold.role]> == mayor
+    - if <[3]> == mayor || <[3]> == builder:
+      - run modify_build_permission def:<[founder]>|<[member]>|give
+    - else:
+      - run modify_build_permission def:<[founder]>|<[member]>|remove
+    - if <[founder].flag[stronghold.members].filter[flag[member_of_stronghold.role].is[==].to[mayor]]>:
+          # remove role of current mayor as there can be only one.
+      - define old_mayor <[founder].flag[stronghold.members].filter[flag[member_of_stronghold.role].is[==].to[mayor]].get[1]>
+      - flag <[old_mayor]> member_of_stronghold.role:initiate
+      - run modify_build_permission def:<[founder]>|<[old_mayor]>|remove
+      - narrate format:game_message "Removing Mayor role from <[old_mayor]>. There can be only one." targets:<[founder]>
+    - flag <[member]> member_of_stronghold.role:<[3]>
+    - run stronghold_manage_members.modify.menu def:<[founder]>|<[member]>
+
+modify_build_permission:
+  type: task
+  definitions: founder|member|direction
+  script:
+  - foreach <[founder].flag[stronghold.chunks]> as:chunk:
+    - if <[direction]> == give:
+      - if <cuboid[<[chunk]>].flag[builders].contains[<[member]>].not>:
+        - flag <cuboid[<[chunk]>]> builders:->:<[member]>
+    - else:
+      - if <cuboid[<[chunk]>].flag[builders].contains[<[member]>]>:
+        - flag <cuboid[<[chunk]>]> builders:<-:<[member]>
+
+stronghold_home_task:
+  type: task
+  script:
+  - if <player.has_flag[stronghold.locations.home]>:
+    - teleport <player> <player.flag[stronghold.locations.home]>
+    - narrate <player.flag[stronghold.locations.home].chunk.cuboid.spawnable_blocks>
+    - narrate format:game_message "You have been wisked back to your home." targets:<player>
+  - else if <player.has_flag[member_of_stronghold]>:
+    - if <proc[member_stronghold_time_proc].context[<player>]> >= 2 && <player.flag[member_of_stronghold.role]> == mayor:
+      - teleport <player> <player.flag[member_of_stronghold.owner].flag[stronghold.locations.home]>
+    - else:
+      - narrate "You can't go to the Stronghold home yet."
+    - if <proc[member_stronghold_time_proc].context[<player>]> >= 4 && ( <player.flag[member_of_stronghold.role]> == reeve || <player.flag[member_of_stronghold.role]> == reeve ):
+      - teleport <player> <player.flag[member_of_stronghold.owner].flag[stronghold.locations.home]>
+    - else:
+      - narrate "You can't go to the Stronghold home yet."
+    - if <proc[member_stronghold_time_proc].context[<player>]> >= 10 && ( <player.flag[member_of_stronghold.role]> == initate:
+      - teleport <player> <player.flag[member_of_stronghold.owner].flag[stronghold.locations.home]>
+    - else:
+      - narrate "You can't go to the Stronghold home yet."
+    
+   
+  - else:
+    - narrate format:game_message  "You no longer have a home to go to. Do /claim in a unclaimed area." targets:<player>
+
+stronghold_stats_task:
+  type: task
+  script:
+  - define founder <player>
+  - if <player.has_flag[stronghold.chunks].not> && <player.flag[member_of_stronghold.role]> != mayor:
+      - narrate "You need a Stronghold to use this command."
+      - stop
+  - if <player.flag[member_of_stronghold.role]> == mayor:
+    - define founder <player.flag[member_of_stronghold.owner]>
+  # - else: 
+  #   - narrate "Only he Founder of the Stronghold can use this command. Ask them for permission." targets:<player>
+  #   - stop
+      # - define founder <player.flag[member_of_stronghold].as_player>
+  - define stats <proc[stronghold_stats_proc].context[<[founder]>]>
+  - adjust <player> show_book:stronghold_stats_gui_book[book_pages=<[stats]>]
+
+
+remove_stronghold_member_chunks_task:
+  type: task
+  definitions: chunk_owner
+  script:
+  # - execute as_op "rg remove <[chunk_owner].flag[stronghold_name]>_<[loop_index]>"
+  - note remove as:stronghold_<[chunk_owner].name>_<[chunk_owner].flag[stronghold]>_<[count]>
+
+assign_stronghold_role_task:
+  type: task
+  debug: true
+  definitions: member|role
+  script:
+  - narrate "<red>!! This is running !!!"
+  - if <[member].has_flag[member_of_stronghold]>:
+    - define founder <[member].flag[member_of_stronghold.owner].as_player>
+    - define find_role_data <script[stronghold_roles_data].data_key[roles.<[role]>]>
+    - define limit <[find_role_data].get[limit]>
+    # - if <[role]> == mayor 
+    - foreach <[founder].flag[stronghold.chunks]> as:chunk:
+      # reset role for member on each chunk in Stronghold
+      # - flag <[member]> stronghold_role:initiate
+      - if <[role]> == mayor:
+      #   - narrate "Changing mayor from <[founder].flag[stronghold.members].filter[flag[stronghold_role].is[==].to[Mayor]].> to <[member].as_player.name>."
+        - if <[founder].flag[stronghold.members].filter[flag[stronghold_role].is[==].to[mayor]]>:
+          # remove role of current mayor as there can be only one.
+          - flag <[founder].flag[stronghold.members].filter[flag[stronghold_role].is[==].to[mayor]].get[1]> stronghold_role:initiate
+        - flag <[member].as_player> stronghold_role:Mayor
+    - flag <[member].as_player> member_of_stronghold.role:<[role]>
+    
+add_player_time_command:
+  type: command
+  name: addtime
+  script:
+  - if <context.args.size> > 0:
+        - if <player.has_permission[admin]>:
+          - if <context.args.get[1].as_list.is_empty.not>:
+              - define target <server.match_offline_player[<context.args.get[1]>]||null>
+              - if <context.args.get[2].as_list.is_empty.not>:
+                  - if <context.args.get[2].is_integer>:
+
+                    - narrate "Giving <[target].name> <context.args.get[2].round> extra Real World Days of time played."
+                    - flag <[target]> time_played_modifier:<context.args.get[2].round>
+                  - else:
+                      - narrate "Provide a valid number."
+              - else:
+                  - narrate "Provide how many Real World Days of extra play time you would like to give to <[target].name>"
+          - else:
+              - narrate "Provide a player to give Real World Days of extra play time to."
+        - else:
+            - narrate "You need permission to issue this command."
+ 
+
+
+stronghold_roles_data:
+  type: data
+  roles:
+    mayor:
+      display_name: "Mayor"
+      title: "Mayor"
+      description: "Gives all perms"
+      limit: 1
+      required_level: 2
+      # perms: 
+      #   add_member:
+      #   remove_member:
+      #   modify_member:
+      #   rent_plot:
+      #   lease_plot:
+      #   claim_plots:
+    reeve:
+      display_name: "Reeve"
+      title: "Reeve"
+      description: "Manages naughty members"
+      limit: -1
+      required_level: 2
+      # perms: 
+      #   remove_member:
+      #   mute_member:
+      #   ban_member:
+    builder:
+      display_name: "Builder"
+      title: "Builder"
+      description: "Manages the building plan"
+      limit: -1
+      required_level: 2
+   
+    initiate:
+      display_name: "Initiate"
+      title: "Initiate"
+      description: "First level member"
+      limit: -1
+      required_level: 1
+      
+
+
+villager_world:
+    type: world
+    debug: true
+    events:
+      
+        # on villager breeds:
+        # - announce <context.breeder.location>
+        # - announce "is breeding"
+        on villager changes profession:
+        - define chunk <context.entity.location.chunk>
+        - if <server.players_flagged[stronghold.chunks].filter[flag[stronghold.chunks].is[==].to[<[chunk]>]].is_empty.not>:
+          # - define stronghold_owner <server.players_flagged[stronghold.chunks].filter[flag[stronghold.chunks].contains[<[chunk]>]]>
+          - define stronghold_owner <server.players_flagged[stronghold.chunks].filter[flag[stronghold.chunks].is[==].to[<[chunk]>]].get[1]>
+          - announce "villager happiness from trading: <[stronghold_owner].flag[villager_happiness]>"
+          - announce "profession: <context.profession> in <[stronghold_owner].as_player.name>'s stronghold'"
+        on villager acquires trade:
+        # - announce "trade <context.trade>"
+        - define chunk <context.entity.location.chunk>
+        # - narrate "acquires trade"
+        - if <server.players_flagged[stronghold.chunks].filter[flag[stronghold.chunks].is[==].to[<[chunk]>]].is_empty.not>:
+          # - define stronghold_owner <server.players_flagged[stronghold.chunks].filter[flag[stronghold.chunks].contains[<[chunk]>]]>
+          - define stronghold_owner <server.players_flagged[stronghold.chunks].filter[flag[stronghold.chunks].is[==].to[<[chunk]>]].get[1]>
+          # - announce "villager happiness from trading: <[stronghold_owner].flag[villager_happiness]>"
+        on villager dies:
+        - define chunk <context.entity.location.chunk>
+        # - announce <server.players_flagged[stronghold.chunks].filter[flag[stronghold.chunks].is[==].to[<[chunk]>]]>
+        - if <server.players_flagged[stronghold.chunks].filter[flag[stronghold.chunks].is[==].to[<[chunk]>]].is_empty.not>:
+          # - define stronghold_owner <server.players_flagged[stronghold.chunks].filter[flag[stronghold.chunks].contains[<[chunk]>]]>
+          - define stronghold_owner <server.players_flagged[stronghold.chunks].filter[flag[stronghold.chunks].is[==].to[<[chunk]>]].get[1]>
+          - announce "villager happiness: <[stronghold_owner].flag[villager_happiness]>"
+        # on villager replenishes trade:
+        # - announce "trade: <context.trade>"
+ 
+hire_npc_gui:
+  type: task
+  script:
+  - define npcs <list>
+  - foreach  <script[hired_npcs].data_key[npc]> as:npc:
+    - clickable hire_npc_task def:<[key]> save:hire_npc_clickable_<[loop_index]>
+    - define npc_text "<&hover[<[key]>]><element[<[key]>].on_click[<entry[hire_npc_clickable_<[loop_index]>].command>]><&end_hover><&nl>"
+    - define npcs <[npcs].insert[<[npc_text]>].at[<[loop_index]>]>
+  # - narrate <[npcs]>
+  - adjust <player> show_book:stronghold_stats_gui_book[book_pages=<[npcs].separated_by[<&nl>]>]
+
+  # - create player <script[hired_npcs].data_key[npc.guard.display_name]> <player.location> trait:sentinel save:npc
+  # - define npc <entry[npc].created_npc>
+  # - adjust <[npc]> skin:<script[hired_npcs].yaml_key[npc.guard.skin]>
+  # - adjust <[npc]> speed:<script[hired_npcs].yaml_key[npc.guard.speed]>
+  # - execute as_server "sentinel addtarget players --id <[npc].id>" silent
+  # - execute as_server "sentinel squad <player.flag[stronghold_name]>_guard --id <[npc].id>" silent
+  # - flag player stronghold_guards:->:<[npc].id>
+  # - foreach <player.flag[stronghold.members]> as:member:
+  #   - execute as_server "sentinel addignore player:<[member].as_player.name> --id <[npc].id>"
+
+hire_npc_task:
+  type: task
+  definitions: npc
+  script:
+  - narrate <[npc]>
+  - create player <script[hired_npcs].data_key[npc.<[npc]>.display_name]> <player.location> trait:sentinel save:npc
+  - define npc <entry[npc].created_npc>
+  - adjust <[npc]> skin:<script[hired_npcs].data_key[npc.<[npc]>.skin]>
+  - adjust <[npc]> speed:<script[hired_npcs].data_key[npc.<[npc]>.speed]>
+  # - execute as_server "sentinel addtarget players --id <[npc].id>" silent
+  # - execute as_server "sentinel squad <player.flag[stronghold_name]>_guard --id <[npc].id>" silent
+  # - flag player stronghold_guards:->:<[npc].id>
+  # - foreach <player.flag[stronghold.members]> as:member:
+  #   - execute as_server "sentinel addignore player:<[member].as_player.name> --id <[npc].id>"
+
+
+
+stronghold_world:
+  type: world
+  events:
+    # on spider enters area_flagged:home:
+    # - narrate haah
+    # - if <context.entity>
+    # - if <context.entity.is_mob>:
+    #   - narrate <context.area>
+    # on player right clicks block with:surveyors_tool:
+    # - narrate "survey"
+    # - adjust <player> show_book:structure_details_book
+    on player left clicks !air with:surveyors_tool:
+    - determine cancelled
+    on player left clicks air with:surveyors_tool:
+    - ratelimit <player> 2s
+    - run highlight_chunk_task
+    
+   
+  
+    # - run claim_task def:<player>
+    # on player exits cuboid:
+    # - if <context.from.has_flag[owned_by]>:
+    #   - narrate "leaving one you own"
+    # - if <player.item_in_hand.script.name> == surveyers_tool:
+    #   - if <context.from.has_flag[owned_by]> && <context.from.flag[owned_by]> == <player> && <context.to.has_flag[owned_by].not>:
+    # on player exits cuboid:
+    # - if <player.item_in_hand.script.name> == surveyors_tool:
+    #   - if <context.from.areas.first.has_flag[owned_by]> && <context.to.areas.first.has_flag[owned_by].not>:
+    #     - narrate format:game_message "This area is unclaimed."
+    # on player enters cuboid:
+    # - if <player.item_in_hand.script.name> == surveyors_tool:
+    #   - if <context.area.has_flag[owned_by]>:
+    #     - if <context.area.flag[owned_by]> == <player>:
+    #       - narrate format:game_message "You own this area."
+    #     - else:
+    #       - narrate format:game_message "This area is owned by somebody else."
+      
+     
+    on player right clicks oak_sign in:*:
+    - if <context.location.note_name.starts_with[stronghold_rent_sign]>:
+      - if <player.has_flag[stronghold]> || <player.flag[stronghold_role].contains[Mayor]>:
+          - define landlord <player>
+          - if <player.has_flag[member_of_stronghold.owner]>:
+            - define landlord <player.flag[member_of_stronghold.owner].as_player>
+          - if <[landlord].flag[stronghold.chunks].contains[<player.location.chunk>]>:
+            - if <[landlord].flag[stronghold_rentable_chunks].contains[<player.location.chunk>]>:
+              # - clickable unrent_task def:<[member]> save:unrent_clickable
+              - narrate "You are the owner. Would you like to [Edit] or [Remove] this rent?"
+      - else:
+        - narrate "This plot is rentable. Would you like to rent it for"
+
+    on player clicks block in:* with:builders_tool:
+    - if <player.has_flag[stronghold_structures]>:
+      - foreach <player.flag[stronghold_structures]> as:structure:
+        # - narrate "loop: <[structure].as_map.get[name]>"
+        # - narrate "clicking in <context.location.cuboids.filter[contains_text[structure]].after[<player.name>_structure_].before[|]>"
+
+        # - narrate "clicking in <context.location.cuboids.filter[contains[<player.name>_structure_]].after[<player.name>_structure_].before[]>"
+        - if <[structure].as_map.get[name]> == <context.location.cuboids.filter[contains_text[structure]].after[<player.name>_structure_].before[|]>:
+          
+          - narrate "created:  <[structure].as_map.get[created_time]> "
+
+          - narrate "age:  <util.time_now.duration_since[<[structure].as_map.get[created_time]>].div[3600000]> "
+
+    - else:
+      - narrate "This is not one of your structures."
+    # - narrate <player.flag[stronghold_structures].as_map.filter[get[name]]>
+
+    - define structure <context.location.cuboids.filter[contains[<player.name>_structure_]].after[<player.name>_structure_].before[]>
+    # - narrate "structure: <[structure]>"
+    # - if <player.has_flag[structure_<[structure]>]>:
+    #   - narrate "has the structure"
+    # - if <context.location.cuboids.filter[contains[<player.name.to_lowercase>_structure]]>:
+      # - narrate "yes <context.location.cuboids.after[structure_]>"
+    
+      # - if  <[structure].as_map.get[name]> ==  <context.location.cuboids.after[<player.name>_]>
+    # #     - narrate truuuuu
+    # # - if <context.location.cuboids.filter[contains[<player.flag[stronghold_structures].as_map.values>]]||null> != null:
+    #   # - narrate <context.location.cuboids.after[<player.name>_]>
+    #   - define structure <context.location.cuboids.after[<player.name>_]>
+    #   # - if <[structure].contains[<player.flag[stronghold_structures].as_map.get[name]>]>:
+    #   #   - narrate "yes <[structure]>"
+    #   # - narrate <[structure]>
+    #   - define structure_script <script[structures_data].data_key[structures.<[structure]>]>
+    #   - define structure_name "Examining <[structure]>"
+    #   - define structure_cost "Cost: <[structure_script].get[cost]>"
+    #   - define structure_width "Width: <schematic[<[structure]>].width>"
+    #   - define structure_length "Length: <schematic[<[structure]>].length>"
+    #   - define structure_height "Height: <schematic[<[structure]>].height>"
+    #   # - define structure_age <player.flag[stronghold_structures]>
+     
+    #   - define structure_info <[structure_name]><&nl><[structure_cost]><&nl><[structure_width]><&nl><[structure_length]><&nl><[structure_height]>
+    #   - adjust <player> show_book:i@structure_details_book[book_pages=<[structure_info]>]
+
+    # - else:
+    #   - narrate "None of your structures are found here."
+
+    
+      
+      # - announce NOTE
+      # - narrate <player.location.cuboids.filter[note_name.advanced_matches[<player.name>_]]>
+      # - narrate <player.location.cuboids>
+    # - narrate <player.location.cuboids.filter[contains[<player.flag[stronghold_structures]>]].after[_].before[|]>
+      # - narrate <player.flag[stronghold_structures]>
+
+
+
+stronghold_modify_member_gui_book:
+    type: book
+    title: Stronghold Stats
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - <&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]>
+
+stronghold_stats_gui_book:
+    type: book
+    title: Stronghold Stats
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - <&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]>
+
+
+
+stronghold.members_gui_book:
+    type: book
+    title: Stronghold Members
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - <&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]>
+

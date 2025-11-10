@@ -1,0 +1,7 @@
+tailor_shears:
+  type: item
+  material: golden_hoe
+  display name: Pan 
+  mechanisms:
+    custom_model_data: 82224101
+  

@@ -1,0 +1,7 @@
+sewing_kit:
+  type: item
+  material: paper
+  display name: Sewing Kit
+  mechanisms:
+    custom_model_data: 62001415
+  

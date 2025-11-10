@@ -1,0 +1,13 @@
+arcanithril_ingot:
+  type: item
+  debug: true
+  material: iron_ingot
+  rarity: 1
+  display name: Arcanithril Ingot
+  mechanisms:
+    custom_model_data: 2710409
+  recipes:
+    1:
+      type: furnace
+      input: arcanithril_ore
+      cook_time: 10t

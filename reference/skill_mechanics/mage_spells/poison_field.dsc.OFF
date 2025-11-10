@@ -1,0 +1,38 @@
+poison_field_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    # - define attacker <player>
+    - if <[attacker].has_flag[skill.spells.poison_field.level].not>:
+        - flag <[attacker]> skill.spells.poison_field.level:1
+        - define level 1
+    - define level <[attacker].flag[skill.spells.poison_field.level]>
+    # - define level 10
+    - define targets <[attacker].cursor_on.find_blocks[!air].within[<[level]>]>
+    - define blighted_blocks <list>
+    - foreach <[targets]> as:target:
+        # - wait 1t
+        - if <[level]> > 12:
+            - if <[target].material.name> == farmland && <util.random.int[0].to[1]> == 0:
+                - define blighted_blocks <[blighted_blocks].insert[<[target]>].at[<[blighted_blocks].size>]>
+            
+        - playeffect effect:crit_magic at:<[target]> quantity:30
+        - playeffect effect:composter at:<[target]> quantity:30
+        # - if <[target].material.is_solid>:
+        #     - showfake mycelium <[target]> players:<server.online_players> duration:<[level]>
+        # - if <[target].material.is_transparent>:
+        #     - showfake dead_bush <[target]> players:<server.online_players> duration:<[level]>
+        - if <util.random.int[0].to[<[level]>]> == 1:
+            - foreach next
+        - if <[target].find.living_entities.within[1].exclude[<[attacker]>].any>:
+            # - hurt 1 <[target].find.living_entities.within[1].exclude[<player>]>
+            - define entity <[target].find.living_entities.within[1].exclude[<[attacker]>].first>
+            # - if <[entity].has_flag[stat.status.debuff.poison].not>:
+            
+            - flag <[entity]> stat.status.debuff.poison
+            - run poison_task def:true|<[attacker]>|<[entity]>|<util.random.int[0].to[<[level].div[2].max[1]>]>
+            - cast poison <[entity]>
+    - if <[blighted_blocks].size> > 0:
+        - foreach <[blighted_blocks]> as:block:
+            - wait <util.random.int[7].to[16]>t
+            - modifyblock <[block]> dirt 

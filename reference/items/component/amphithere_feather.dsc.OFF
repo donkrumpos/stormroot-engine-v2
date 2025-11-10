@@ -1,0 +1,9 @@
+amphithere_feather:
+  type: item
+  material: dried_kelp
+  display name: Amphithere Feather
+  mechanisms:
+    custom_model_data: 81017523
+  flags:
+    custom_model_data: 81017523
+    

@@ -1,0 +1,303 @@
+stronghold_map_task:
+  type: task
+  definitions: founder
+  script:
+  # - narrate <green><player.flag[member_of_stronghold.role]>
+  - if <player.has_flag[stronghold]>:
+    - define stronghold_player <player>
+  - else if <player.flag[member_of_stronghold.role]> == initiate:
+    - narrate format:game_message "You must be a role other than Initiate to see your Stronghold map."
+    - stop
+  - else if <player.has_flag[member_of_stronghold.owner]> && <player.flag[member_of_stronghold.role]> != initiate:
+    - define stronghold_player <player.flag[member_of_stronghold.owner].as_player>
+  
+  - else:
+    - narrate format:game_message "You don't have Stronghold."
+    - stop
+
+  # map display definitions
+  - define cells_per_row 19
+  - define rows_per_map 12
+  
+  # map will either be centered on player's home stronghold chunk, or the player's position
+  # if the player does not have a stronghold
+  - define map_center_chunk <player.location.chunk>
+  - if <[stronghold_player].has_flag[stronghold.chunks]>:
+    # this is their home plot
+    - define map_center_chunk <[stronghold_player].flag[stronghold.chunks].get[1].as_chunk>
+
+  # map_min_z = map_center_z - (rows_per_map / 2)
+  - define map_min_z <[map_center_chunk].z.sub[<[rows_per_map].div_int[2]>]>
+  - define map_max_z <[map_min_z].add[<[rows_per_map]>].sub[1]>
+  - define map_min_x <[map_center_chunk].x.sub[<[cells_per_row].div_int[2]>]>
+  - define map_max_x <[map_min_x].add[<[cells_per_row]>].sub[1]>
+
+  # - define stronghold_player <player>
+
+  # create our skeleton MapTag to define the bounds of the map
+  # map_grid will be a 2-dimensional MapTag, with row keys representing z and col keys representing x
+  - define map_grid <proc[build_2d_map].context[<[map_min_x]>|<[map_min_z]>|<[cells_per_row]>|<[rows_per_map]>]>
+
+  # map cell is a MapTag that contains the following keys
+  # - type:
+  #     "other" - another player's stronghold chunk
+  #     "mine"  - this player's stronghold chunk
+  #     "home"  - this player's home stronghold chunk
+  # - other_player_name - other player's name that owns the stronghold chunk
+  # - villager_count - this player's stronghold chunk's villager count
+  # - overlay:
+  #     "player" - player's location
+  #     "???"    - future use
+  # get other players' territories
+  - foreach <server.players_flagged[stronghold].exclude[<player>]> as:other_player:
+    - if <[other_player].has_flag[stronghold.members]> && <[other_player].flag[stronghold.members].contains[<player>]>:
+        # this player is a member of other player's stronghold
+        - define stronghold_player <player.flag[member_of_stronghold.owner].as_player>
+
+    - if <[other_player].flag[stronghold.chunks].is_empty.not>:
+      - if !<[other_player].has_flag[stronghold.members]> || !<[other_player].flag[stronghold.members].contains[<player>]>:
+        # other player has stronghold chunks and this player is not a member of other player's stronghold
+        - foreach <[other_player].flag[stronghold.chunks]> as:chunk:
+          # verify chunk is on the map
+          - define chunk <[chunk].as_chunk>
+          - if <[chunk].x> >= <[map_min_x]> && <[chunk].x> <= <[map_max_x]> && <[chunk].z> >= <[map_min_z]> && <[chunk].z> <= <[map_max_z]>:
+            - define cell <[map_grid].get[<[chunk].z>].get[<[chunk].x>]>
+            # add "type" and "other_player_name" keys to cell
+            - define cell <[cell].with[type].as[other].with[other_player_name].as[<[other_player].name>]>
+            - define map_grid <proc[put_map_cell].context[<map.with[map].as[<[map_grid]>].with[x].as[<[chunk].x>].with[z].as[<[chunk].z>].with[cell].as[<[cell]>]>]>
+  # get the current player's territories
+  - if <[stronghold_player].has_flag[stronghold.chunks]>:
+    - foreach <[stronghold_player].flag[stronghold.chunks]> as:chunk:
+      - define chunk <[chunk].as_chunk>
+      # verify chunk is on the map
+      - if <[chunk].x> >= <[map_min_x]> && <[chunk].x> <= <[map_max_x]> && <[chunk].z> >= <[map_min_z]> && <[chunk].z> <= <[map_max_z]>:
+        - define cell <[map_grid].get[<[chunk].z>].get[<[chunk].x>]>
+        # add "type" and "villager_count" keys to cell
+        - define cell <[cell].with[type].as[mine]>
+        - if <[chunk]> == <[map_center_chunk]>:
+          # mark this as "home"
+          - define cell <[cell].with[type].as[home]>
+        - define cell <[cell].with[villager_count].as[<[chunk].entities[villager].size>]>
+        - define map_grid <proc[put_map_cell].context[<map.with[map].as[<[map_grid]>].with[x].as[<[chunk].x>].with[z].as[<[chunk].z>].with[cell].as[<[cell]>]>]>
+  # mark player location (if using other overlays for the map, this one should happen last, to make it override others)
+  - define chunk <player.location.chunk>
+  # verify chunk is on the map
+  - if <[chunk].x> >= <[map_min_x]> && <[chunk].x> <= <[map_max_x]> && <[chunk].z> >= <[map_min_z]> && <[chunk].z> <= <[map_max_z]>:
+    - define cell <[map_grid].get[<[chunk].z>].get[<[chunk].x>]>
+    # add "overlay" key to cell
+    - define cell <[cell].with[overlay].as[player]>
+    - define map_grid <proc[put_map_cell].context[<map.with[map].as[<[map_grid]>].with[x].as[<[chunk].x>].with[z].as[<[chunk].z>].with[cell].as[<[cell]>]>]>
+  - define map <proc[compile_map].context[<[map_grid]>]>
+  - adjust <player> show_book:<[map]>
+
+validate_chunk_unclaim:
+  type: procedure
+  definitions: values
+  # values: claimedChunks, chunkToUnclaim
+  script:
+    # return true if "claimedChunks" are contiguous after "chunkToUnclaim" is removed
+    - define adjacents <proc[get_adjacents].context[<map.with[from].as[<[values].get[claimedChunks]>].with[start].as[<[values].get[chunkToUnclaim]>]>]>
+    - if <[adjacents].size> < 2:
+      - determine true
+    - else:
+      - define available <[values].get[claimedChunks]>
+      - define available:<-:<[values].get[chunkToUnclaim]>
+
+      - foreach <[adjacents]> as:chunk:
+        - if <[loop_index]> == <[adjacents].size>:
+          # skip the last iteration and return true
+          - determine true
+        - define chunk2 <[adjacents].get[<[loop_index].add[1]>]>
+        - define testChunks <[available]>
+        - define findValues <map.with[start].as[<[chunk]>].with[end].as[<[chunk2]>].with[available].as[<[testChunks]>]>
+        - if !<proc[find_path].context[<[findValues]>]>:
+          - determine false
+      - determine true
+
+get_adjacents:
+  type: procedure
+  definitions: values
+  # values: from, start
+  script:
+    # return the chunks in "from" that are adjacent to "start"
+    - define from <[values].get[from]>
+    - define start <[values].get[start]>
+
+    - define result <list[]>
+
+    - define adjacents <list[<[start].add[1,0]>|<[start].add[0,1]>|<[start].add[-1,0]>|<[start].add[0,-1]>]>
+    - foreach <[adjacents]> as:chunk:
+      - if <[from].contains[<[chunk]>]>:
+        #add chunk to "result"
+        - define result:->:<[chunk]>
+    - determine <[result]>
+
+find_path:
+  type: procedure
+  definitions: values
+  # values: start, end, available
+  script:
+    # this is the recursive function, will return true if there's a path from "start" to "end" using "available"
+    - define adjacents <proc[get_adjacents].context[<map.with[from].as[<[values].get[available]>].with[start].as[<[values].get[start]>]>]>
+
+    - if <[adjacents].contains[<[values].get[end]>]>:
+      - determine true
+    - else:
+      - define available <[values].get[available]>
+        # empty
+      - foreach <[adjacents]> as:adj:
+        # remove our starting point first, so that it doesn't get tested again in the next iteration
+        - define available:<-:<[adj]>
+        # recursively call ourself until we find a path, or we fall out and return false after the last iteration
+        - if <proc[find_path].context[<map.with[start].as[<[adj]>].with[end].as[<[values].get[end]>].with[available].as[<[available]>]>]>:
+          - determine true
+    - determine false
+
+
+valid_claim_command:
+  name: valid
+  type: command
+  script:
+  - flag player non_valid_chunk:<player.flag[stronghold.chunks].exclude[<player.location.chunk>]>
+  # - run unclaim_valid_chunk_proc def:<player.location.chunk>
+  
+unclaim_valid_chunk_proc:
+  type: task
+  definitions: chunk
+  script:
+  - if <player.flag[non_valid_chunk].is_empty.not>:
+    - flag player non_valid_chunk:--
+    - run unclaim_valid_chunk_proc
+  
+find_adjacent_chunks_proc:
+  type: procedure
+  definitions: chunk
+  script:
+  - define <[chunk].add[1,0].contains_any[<list[<[owner].location.chunk.add[2,0]>|<[owner].location.chunk.add[1,1]>|<[owner].location.chunk.add[1,-1]>]>]>
+
+
+stronghold_map_gui_book:
+    type: book
+    title: Stronghold Map
+    author: <player.name>
+    signed: true
+    debug: true
+    text:
+    - <&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]><&chr[25A1]>
+
+
+#
+# Creates a book that represents the stronghold map
+#
+compile_map:
+  type: procedure
+  definitions: map
+  debug: false
+  script:
+    - define founder <player>
+    - if <player.has_flag[member_of_stronghold]> && <player.flag[member_of_stronghold.role]> != initiate:
+      - define founder <player.flag[member_of_stronghold.owner]>
+    - else if <player.has_flag[stronghold]> && <player.flag[stronghold.chunks].size> > 0:
+      - define founder <player>
+    - define bullet  <&font[steamfront:sh_map]><&color[#c9af81]><&chr[2022]>
+    # tile definitions - tile names should look like: <base_tile>[_<overlay>]
+    - define default <&font[steamfront:sh_map]><&chr[3058]><&r>
+    - define default_player <white><&font[steamfront:sh_map]><&chr[3061]><&r>
+    # player's home stronghold location
+    - define home <white><&font[steamfront:sh_map]><&chr[3060]><&r>
+    - define home_player <white><&font[steamfront:sh_map]><&chr[3059]><&r>
+    # player's stronghold location
+    - define mine <white><&font[steamfront:sh_map]><&chr[3062]><&r>
+    - define mine_player <white><&font[steamfront:sh_map]><&chr[3063]><&r>
+    # other player's stronghold location
+    - define other <white><&font[steamfront:sh_map]><&chr[3065]><&r>
+    - define other_player <white><&font[steamfront:sh_map]><&chr[3064]><&r>
+
+    - define book_text <&r>
+    - define book_textures <white><&font[steamfront:font]><&chr[F828]><&chr[F829]><&chr[F829]><&chr[3057]><&chr[3057]><&chr[F801]><&chr[3057]><&nl>
+    - define title "<bold><&font[steamfront:font]><&color[<color[61,42,8]>]>Stronghold Map<&nl>"
+
+    # overlay bullets - names should look like: <overlay>_bullet
+    - define player_bullet "<[bullet]> Your location"
+    - define other_bullet "<[bullet]> Other player"
+
+    # other bullets
+    - define your_home_bullet "<[bullet]> Your home plot"
+    - define other_plot_bullet "<[bullet]> An Other's Territory"
+
+    - foreach <[map]> as:row:
+      - foreach <[row]> as:cell:
+        - define villagers_bullet "<[bullet]> <[cell].get[villager_count]||0> villagers present."
+        - define own_plot_text "<[bullet]> One of your plots"
+        - define tilename default
+        - define hover ""
+
+        - if <[cell].contains[type]>:
+          - define tilename <[cell].get[type]>
+          # set any hover text
+          - choose <[cell].get[type]>:
+            - case other:
+              - define hover <[other_plot_bullet]>
+  
+            - case mine:
+              - define hover "<[own_plot_text]> ( out of <[founder].flag[stronghold.chunks].size> )<&nl><[villagers_bullet]>"
+            - case home:
+              - define hover <[your_home_bullet]><&nl><[villagers_bullet]>
+
+        - if <[cell].contains[overlay]>:
+          - define tilename <[tilename]>_<[cell].get[overlay]>
+          # adjust the hover with the overlay text
+          - if <[hover]> != "":
+            - define hover <&nl><[hover]>
+          - define hover <definition[<[cell].get[overlay]>_bullet]><[hover]>
+
+        - define cell_text <definition[<[tilename]>]>
+        - if <[hover]> != "":
+          - define cell_text <&hover[<[hover]>]><[cell_text]><&end_hover>
+
+        - define book_text <[book_text]><[cell_text]>
+
+    - define book_text <[book_textures]><[title]><[book_text]>
+    - determine stronghold_map_gui_book[book_pages=<[book_text]>]
+
+#
+# Create a skeleton MapTag to define the bounds of the map
+#   the result is a map of rows, each row is a map of cells
+#   the rows key will be the chunk's z position
+#   the cells key will be the chunk's x position
+#
+build_2d_map:
+  type: procedure
+  definitions: x|z|width|height
+  debug: false
+  script:
+    # here we're going to create our skeleton MapTag to define the bounds of the map
+    - define 2d_map <map[]>
+    #create the rows
+    - repeat <[height]> as:row:
+      - define cell_z <[z].add[<[row]>].sub[1]>
+      #create the cells within the row
+      - define map_row <map[]>
+      - repeat <[width]> as:col:
+        - define cell_x <[x].add[<[col]>].sub[1]>
+        - define cell_map <map.with[x].as[<[cell_x]>].with[z].as[<[cell_z]>]>
+        - define map_row <[map_row].with[<[cell_x]>].as[<[cell_map]>]>
+      - define 2d_map <[2d_map].with[<[cell_z]>].as[<[map_row]>]>
+
+    - determine <[2d_map]>
+
+#
+# Puts the cell into the map at the x/z coordinates
+#
+put_map_cell:
+  type: procedure
+  definitions: values
+  #values: map,x,z,cell
+  debug: false
+  script:
+    - define map <[values].get[map]>
+    - define x <[values].get[x]>
+    - define z <[values].get[z]>
+    - define cell <[values].get[cell]>
+    - define map <[map].with[<[z]>].as[<[map].get[<[z]>].with[<[x]>].as[<[cell]>]>]>
+    - determine <[map]>

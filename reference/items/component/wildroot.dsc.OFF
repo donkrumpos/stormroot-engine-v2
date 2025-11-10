@@ -1,0 +1,7 @@
+wildroot:
+  type: item
+  material: bowl
+  display name: Wildroot
+  mechanisms:
+    custom_model_data: 2110004
+    

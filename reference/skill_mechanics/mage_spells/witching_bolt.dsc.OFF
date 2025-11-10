@@ -1,0 +1,23 @@
+witchingbolt:
+  type: task
+  script:
+  - create armor_stand <player.location.relative[0,0,3]> "<gold>" save:witchingbolt
+  - adjust <entry[witchingbolt].created_npc> gravity:false
+  - invisible <entry[witchingbolt].created_npc> true
+  - equip <entry[witchingbolt].created_npc> head:coal_block
+  - repeat 300:
+    - wait 5t
+    - define test <player.location.yaw>
+    - teleport <entry[witchingbolt].created_npc> <entry[witchingbolt].created_npc.location.with_yaw[<[test]>]>
+    - if !<player.is_sneaking>:
+      - teleport <entry[witchingbolt].created_npc> <entry[witchingbolt].created_npc.location.relative[0,0.25,1]>
+    - if <player.is_sneaking>:
+      - teleport <entry[witchingbolt].created_npc> <entry[witchingbolt].created_npc.location.relative[0,-0.25,-1]>
+    - playeffect effect:REDSTONE special_data:2|black at:<entry[witchingbolt].created_npc.location> quantity:50 data:1 offset:0.5
+    - foreach <entry[witchingbolt].created_npc.location.find_entities.within[2]> as:target:
+        - if ( <[target]> != <player> && <[target]> != <entry[witchingbolt].created_npc> ) && ( <[target]> != [target] && <[target]> != entry[witchingbolt].created_npc.location.find_entities.within[2] ):
+          - run damage_task def:<[target]>|<player>|necrotic|10
+          - flag <entry[witchingbolt].created_npc> damage:+:1
+          - if <entry[witchingbolt].created_npc.flag[damage]> >= 5:
+            - remove <entry[witchingbolt].created_npc>
+  - remove <entry[witchingbolt].created_npc>

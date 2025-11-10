@@ -1,0 +1,49 @@
+frostbite_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    - foreach <[attacker].location.up[2].points_between[<[attacker].cursor_on>]> as:point:
+        - playeffect effect:redstone  at:<[point]> special_data:1|169,212,255 visibility:10 quantity:<[loop_index].mul[11]>
+        # - narrate <[point].find.living_entities.within[1]>
+        - if <[point].find.living_entities.within[1].exclude[<[attacker]>].any>:
+            - run spell_damage_task def:frostbite|<[point].find.living_entities.within[1].exclude[<[attacker]>].first>|<[attacker]>
+            # - narrate <[point].find.living_entities.within[1].exclude[<[attacker]>].first>
+    - shoot snowball origin:<player> speed:1 shooter:<player> script:frostbite_projectile_task save:frostbite
+        # - playeffect <player.location> effect:flame data:1 quantity:0 offset:<player.location.direction.vector>
+        # - playeffect <player.location> effect:flame data:2 quantity:0 offset:<entry[fireball].shot_entity.location.backward[<[value]>].direction.vector>
+        
+    - define level <[attacker].flag[skill.spells.frostbite.level].add[<[attacker].flag[skill.skills.magery_level]||10>]||10>
+
+frostbite_projectile_task:
+    type: task
+    script:
+    - if <[attacker].has_flag[skill.spells.frostbite.level].not>:
+        - flag <[attacker]> skill.spells.frostbite.level:1
+    - define level <[attacker].flag[skill.spells.frostbite.level].add[<[attacker].flag[skill.skills.magery.level]||10>]||10>
+    
+    - foreach <[hit_entities]> as:entity:
+        - run spell_damage_task def:frostbite|<[entity]>|<[attacker]>
+    - if <[level]> > <util.random.int[0].to[2]>:
+        - foreach <[hit_entities]> as:entity:
+            - define target_loc <[entity].location>
+            - if <[entity].has_flag[skill.attribute.dexterity.level]>:
+                - flag <[entity]> skill.attribute.dexterity.level>:-:<[level].min[10]>
+            - playeffect effect:redstone  at:<[target_loc]> special_data:1|169,212,255 visibility:10 quantity:32>
+            - modifyblock <[target_loc]> packed_ice
+            - modifyblock <[target_loc].right[1]> packed_ice
+            - modifyblock <[target_loc].left[1]> packed_ice
+            - modifyblock <[target_loc].up[1]> packed_ice
+            - showfake ice <[entity].location.forward[1].up[2]> duration:5s players:<server.online_players>
+          
+
+            # - cast slow d:4
+            - define original_walk_speed <[entity].walk_speed>
+            - adjust <[entity]> walk_speed:-1
+            - wait 60t
+            - adjust <[entity]> walk_speed:<[original_walk_speed]>
+            - modifyblock <[target_loc]> air
+            - modifyblock <[target_loc].up[1]> air
+            - modifyblock <[target_loc].right[1]> air
+            - modifyblock <[target_loc].left[1]> air
+            - if <[entity].has_flag[skill.attribute.dexterity.level]>:
+                - flag <[entity]> skill.attribute.dexterity.level>:+:<[level].min[10]>

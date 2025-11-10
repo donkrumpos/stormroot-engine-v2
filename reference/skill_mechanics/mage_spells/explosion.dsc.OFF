@@ -1,0 +1,29 @@
+explosion_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    # - define attacker <player>
+    - define defender <[attacker].target>
+    - if <[attacker].has_flag[skill.spells.explosion.level].not>:
+        - flag <player> skill.spells.explosion.level:1
+        - define level 1
+    
+    - define level <[attacker].flag[skill.spells.explosion.level]>
+    - foreach <[attacker].location.up[1].points_between[<[defender].location>]> as:point:
+        - playeffect effect:explosion_large at:<[point]> visibility:100 quantity:<[loop_index]>
+        - wait 2t
+    - wait 3s
+    - define resist_success <proc[natural_skill_check_proc].context[<[defender]>|energy_resist]>
+    - if <[resist_success].not>:
+        - repeat <util.random.int[1].to[<[level]>]>:
+            - run spell_damage_task def:explosion|<[defender]>
+            - playeffect effect:explosion_huge at:<[defender].location> visibility:100 quantity:10 offset:1,1,1
+            - wait 1t
+    - else:
+        - if <util.random.int[0].to[2]> == 2:
+            - run raise_resist_spells_task def:<[defender]>|energy
+    - wait 1s
+    - explode <[defender].location>
+        
+    
+    

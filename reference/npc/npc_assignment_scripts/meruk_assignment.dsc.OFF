@@ -1,0 +1,668 @@
+meruk_world:
+    type: world
+    debug: true
+    events:
+        on player_flagged:meruk_talk_01 exits meruk_cave_talk_01:
+        - if <player.has_flag[meruk_cave_talk].not>:
+            - narrate "<&color[#6993e2]><&font[steamfront:comicbook4]>Meruk<&color[#596c8e]><&font[steamfront:comicbook4]> says: <&r>" targets:<player>
+            - narrate "Make sure to come back to talk to me when you get famous!"
+            - flag <player> meruk_cave_talk
+
+meruk_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:5
+    interact scripts:
+    - meruk_interact
+
+    default constants:
+        appearance1: "<npc.name>'lives in the wild but seems mysterious."
+        appearance2: "Meruk possesses a sturdy and robust physique, characteristic of the Badger Clan."
+        appearance3: "His weathered features reflect a life spent amidst the elements, with a strong jawline and furrowed brow."
+        appearance4: "Meruk's attire is adorned with patterns inspired by the flora and fauna of Deluvia, reflecting his reverence for nature."
+        appearance5: "Meruk, with his sturdy build and auburn hair cascading like the autumn leaves, possesses an aura of ancient wisdom, his piercing amber eyes holding faint glimmers of arcane symbols that dance like whispers of forgotten prophecies, hinting at a destiny entwined with the very balance of Deluvia itself, waiting to be unraveled by those with the courage to seek the truth."
+        appearance6: "Despite his seemingly mortal form, there are whispers among those who dare to delve into the depths of ancient lore that Meruk bears a faint, ethereal glow emanating from within, hinting at a connection to forces beyond mortal comprehension, shrouded in mystery and obscured by the veil of time."
+        skin: https://minesk.in/2fac6da1db9f4e51a3bedca5d3c839ee
+        personality: meruk_personality
+
+meruk_interact:
+    type: interact
+    steps:
+        1:
+            proximity trigger:
+                entry:
+                    script:
+                    - if <player.has_flag[meruk_come_back]>:
+                        - flag <player> meruk_come_back:!
+                    - if <player.has_flag[meruk_leave]>:
+                        - flag <player> meruk_come_back
+                    - if <player.has_flag[suspend_clickable].not>:
+                        - run meruk_prox_task
+                        
+                exit:
+                    script:
+                    - if <player.has_flag[npc.<npc.name>.prox_count].not> || <player.flag[npc.<npc.name>.prox_count]> < 2:
+                        - if <player.has_flag[meruk_leave].not> && <player.has_flag[meruk_complete]>:
+                            - wait 2s
+                            - inject description_inject_task
+                            - narrate "Wait! Come back. I haven't got a chance to properly meet you." targets:<player>
+                            - flag <player> meruk_leave
+                            - wait 4s
+                            - if <player.has_flag[meruk_come_back].not>:
+                                - inject description_inject_task
+                                - narrate "Take your time and be careful going down the mountain." targets:<player>
+
+            click trigger:
+                script:
+                - inject description_inject_task
+                - random:
+                    - narrate "I am happy to have this company as of late." targets:<player>
+                    - narrate "This is a harsh world. Ask questions to get acquainted." targets:<player>
+                    - narrate "I can help you with what I know." targets:<player>
+                    - narrate "I hope this information can help you find your place here in the world." targets:<player>
+                    - narrate "I have, but little information, but others out there can help with more." targets:<player>
+                    - narrate "You ask good questions stranger" targets:<player>
+                    - narrate "Band together with other travelers to gain protection in this dangerous world." targets:<player>
+                - if <player.flag[npc.<npc.name>.familiarity.level]> > 3 && <player.flag[npc.<npc.name>.familiarity.level]> < 6:
+                    - narrate "It is always a pleasure to talk to you <player.name>" targets:<player>
+                    - narrate "You are kind to talk to an old soul <player.name>" targets:<player>
+                    - repeat 1:
+                        - narrate "<player.name>! You always have the best questions." targets:<player>
+                        - narrate "You will do well out there among the perils." targets:<player>
+                    - narrate "I hope I am doing well answering your questions <player.name>." targets:<player>
+                    - narrate "If I don't answer all your questions <player.name>, others out there can." targets:<player>
+                    - narrate "I hope I am doing well answering your questions <player.name>." targets:<player>
+                - if <player.flag[npc.<npc.name>.familiarity.level]> >= 6 && <player.flag[npc.<npc.name>.familiarity.level]> <= 10:
+                    - random:
+                        - narrate "If you're worried about what to do, go down to Bardtown." targets:<player>
+                        - narrate "I Meruk, am one of 12 Sages. They are out there for you to seek answers from." targets:<player>
+                        - narrate "Later, whether you choose magic, steel weapons, or wilderness skills, I hope you help the helpless." targets:<player>
+                        - narrate "There are many specialties to choose from, such as mage, ranger, and bard. Soon you can decide which." targets:<player>
+                        - repeat 1:
+                            - narrate "Most of us are the Anthoran race, which include the Badger Clan, Otter Clan, Sparrow Clan, among many others." targets:<player>
+                            - narrate "Walk the world and you will figure out which you are soon." targets:<player>
+                        - narrate "I come from a time before mortals sought greed and overconsumption." targets:<player>
+                        - narrate "The Anthorans seeks balance, or at least they are meant to. You might be another race too, which is fine. We all get along." targets:<player>
+                        - narrate "Song Tide, this realm you are currently in, is relatively peaceful. We hope no outside powers disturb that." targets:<player>
+                - if <player.flag[npc.<npc.name>.familiarity.level]> > 10:
+                    - narrate "<player.name> you will find your way." targets:<player>
+
+                - run meruk_first_convo
+        2:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. Where am I?
+                    hide trigger message: true
+                    script:
+                    - inject meruk_task_01
+                    - zap 1
+                    
+                2:
+                    trigger: <&7>/2/. /Who/ are you?
+                    script:
+                    - inject <npc.name>_task_02
+                    - zap 1
+
+                3:
+                    trigger: <&7>/3/. I'll come back later. On to the adventure!
+                    script:
+                    - inject <npc.name>_task_03
+                    - zap 1
+        3:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. Why would you think I am a sign?
+                    hide trigger message: true
+                    script:
+                    - inject meruk_task_04
+                    - zap 1
+                    
+                2:
+                    trigger: <&7>/2/. Tell me more about Bardtown.
+                    script:
+                    - inject <npc.name>_task_05
+                    - zap 1
+
+                3:
+                    trigger: <&7>/3/. Tell me more about Song Tide.
+                    script:
+                    - inject <npc.name>_task_06
+                    - zap 1
+                4:
+                    trigger: <&7>/4/. Tell me more about The /Long Sea/.
+                    script:
+                    - inject <npc.name>_task_07
+                    - zap 1
+                5:
+                    trigger: <&7>/5/. I'm done talking now. I'm going to head down the path to Bardtown.
+                    script:
+                    - inject <npc.name>_task_03
+                    - zap 1
+        4:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/. What is /Druvvenrog/?
+                    script:
+                    - inject meruk_task_08
+                    - zap 1
+                    
+                2:
+                    trigger: <&7>/2/. What /brought/ you here.
+                    script:
+                    - inject <npc.name>_task_09
+                    - zap 1
+
+                3:
+                    trigger: <&7>/3/. Interesting. I'm /done/ now.
+                    script:
+                    - inject <npc.name>_task_03
+                    - zap 1
+
+meruk_prox_task:
+    type: task
+    script:
+    - execute as_server "npc skin --url <npc.constant[skin]> --id <npc.id>"
+    - if <player.has_flag[npc.<npc.name>.prox_count].not> || <player.flag[npc.<npc.name>.prox_count]> == 0:
+        - inject description_inject_task
+        - random:
+            - repeat 1:
+                - narrate "Well met stranger!" targets:<player>
+                - wait 1s
+                - narrate "What be thy tide?" targets:<player>
+            - repeat 1:
+                - narrate "Greetings newcomer" targets:<player>
+                - wait 1s
+                - narrate "How now?" targets:<player>
+            - repeat 1:
+                - narrate "Ah so you've arrived." targets:<player>
+                - wait 1s
+                - narrate "What shall I call you? Hero, Mortal? Traveler?" targets:<player>
+        - wait 2s
+        - narrate "<&color[#3ca91a]>Deluvia<&r>, our world, has been springing up new beings and some of them arrive here to me." targets:<player>
+        - run meruk_first_convo
+    - else if <player.flag[npc.<npc.name>.prox_count]> > 1 && <player.flag[npc.<npc.name>.prox_count]> < 3:
+        - inject description_inject_task
+        - narrate "Welcome back to my humble abode." targets:<player>
+    - else if <player.flag[npc.<npc.name>.prox_count]> > 4:
+        - if <player.has_flag[suspend_clickable].not>:
+            - ratelimit <player> <util.random.int[24].to[64]>s
+            - inject description_inject_task
+            - random:
+                - narrate "Greetings again <player.name>." targets:<player>
+                - narrate "A wish for good health <player.name>." targets:<player>
+                - narrate "Back again <player.name>?" targets:<player>
+                - narrate "What travels have you made thus far <player.name>?" targets:<player>
+                - narrate "The Gods bring you back to me <player.name>." targets:<player>
+                - narrate "Pleased you are still among the living <player.name>." targets:<player>
+                - narrate "Any new adventures to tell of <player.name>?" targets:<player>
+                - narrate "Have you been to Bardtown yet <player.name>?" targets:<player>
+    
+    - flag <player> npc.<npc.name>.prox_count:++
+    - flag <player> meruk_talk_01
+
+meruk_first_convo:
+    type: task
+    script:
+    - clickable <npc.name>_task_01 save:<npc.name>_clickable_01 until:15s usages:1 for:<player>
+    - clickable <npc.name>_task_02 save:<npc.name>_clickable_02 until:15s usages:1 for:<player>
+    - clickable <npc.name>_task_03 save:<npc.name>_clickable_03 until:15s usages:1 for:<player>
+    - narrate "<&nl>" targets:<player>
+    - if <player.has_flag[meruk_where]> && <player.has_flag[meruk_bardtown]> && <player.has_flag[meruk_songtide]> && <player.has_flag[meruk_longsea]>:
+        - narrate  "<element[<&hover[You've already asked this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>1. Where am I?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_01].command>]>" target:<player>
+    - else:
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Where am I?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_01].command>]>" target:<player>
+    - if <player.has_flag[meruk_who]> && <player.has_flag[meruk_druvvenrog]> && <player.has_flag[meruk_origin]>:
+        - narrate  "<element[<&hover[You've already asked this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>2. Who are you?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" target:<player>
+    - else:
+        - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>Who are you?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_02].command>]>" target:<player>
+    - narrate  "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>3. <&color[#6fd6cb]>I'll come back later. On to the adventure!<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_03].command>]>" target:<player>
+    - narrate "<&nl>" targets:<player>
+    - zap 2 meruk_interact player:<player> duration:14s
+
+        
+meruk_task_01:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - ratelimit <player> 14s
+        - inject description_inject_task
+        - if <player.has_flag[meruk_where]> && <player.has_flag[meruk_sign]> && <player.has_flag[meruk_bardtown]> && <player.has_flag[meruk_songtide]> && <player.has_flag[meruk_longsea]>:
+            - narrate "I cannot tell you anymore about society for now, as I grow weary."
+        - else:
+            - if <player.has_flag[meruk_where]> || <player.has_flag[meruk_sign]> || <player.has_flag[meruk_bardtown]> || <player.has_flag[meruk_songtide]> || <player.has_flag[meruk_longsea]>:
+                - narrate "I can tell you more about this land." targets:<player>
+            - else:
+                - narrate "You are in Deluvia, a harsh world; and it has gotten harsher in recent times." targets:<player>
+                - wait 3s
+                - narrate "and it is no wonder that Deluvia has conjured you here to this spot in the world, the cave in which I hide, watching <&color[#3ca91a]>Bardtown<&r>, that town down the path; and I wait for a sign." targets:<player>
+                - wait 3s
+                - narrate "Are you this sign?" targets:<player>
+                - wait 3s
+                - narrate "Pardon the rhetorical question." targets:<player>
+                - wait 4s
+                - narrate "More specifically, you are outside <&color[#3ca91a]>Bardtown<&r>, a city in the realm of <&color[#3ca91a]>Song Tide<&r>, a grouping of islands in The Long Sea."
+        - wait 2s
+        - run meruk_question_set_01
+        - flag <player> meruk_where
+        - flag <player> suspend_clickable:!
+
+meruk_question_set_01:
+    type: task
+    script:
+    - clickable <npc.name>_task_04 save:<npc.name>_clickable_04 until:15s usages:1 for:<player>
+    - clickable <npc.name>_task_05 save:<npc.name>_clickable_05 until:15s usages:1 for:<player>
+    - clickable <npc.name>_task_06 save:<npc.name>_clickable_06 until:15s usages:1 for:<player>
+    - clickable <npc.name>_task_07 save:<npc.name>_clickable_07 until:15s usages:1 for:<player>
+    - clickable <npc.name>_task_03 save:<npc.name>_clickable_03 until:15s usages:1 for:<player>
+    - narrate "<&nl>" targets:<player>
+    - if <player.has_flag[meruk_sign]>:
+        - narrate "<element[<&hover[You've already asked this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>1. Why would you think I am a sign?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_04].command>]>" target:<player>
+    - else:
+        - narrate "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>Why would you think I am a sign?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_04].command>]>" target:<player>
+    - if <player.has_flag[meruk_bardtown]>:
+        - narrate "<element[<&hover[You've already asked this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>2. Tell me more about Bardtown.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_05].command>]>" target:<player>
+    - else:
+        - narrate "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>Tell me more about Bardtown.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_05].command>]>" target:<player>
+    - if <player.has_flag[meruk_songtide]>:
+        - narrate "<element[<&hover[You've already asked this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>3. Tell me more about Song Tide.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_06].command>]>" target:<player>
+    - else:
+        - narrate "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>3. <&color[#6fd6cb]>Tell me more about Song Tide.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_06].command>]>" target:<player>
+    - if <player.has_flag[meruk_longsea]>:
+        - narrate "<element[<&hover[You've already asked this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>4. Tell me more about The Long Sea.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_07].command>]>" target:<player>
+    - else:
+        - narrate "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>4. <&color[#6fd6cb]>Tell me more about The Long Sea.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_07].command>]>" target:<player>
+    - narrate "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>5. <&color[#6fd6cb]>I'm done talking now. I'm going to head down the path to Bardtown.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_03].command>]>" target:<player>
+    - narrate "<&nl>" targets:<player>
+    - zap 3 meruk_interact player:<player> duration:14s
+
+meruk_task_02:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap 1
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - if <player.has_flag[meruk_who]>:
+            - narrate "Sure I can tell you again." targets:<player>
+            - wait 3s
+            - narrate "I am <&color[#82b1f2]>Meruk<&r>, the sage of scholars and Keeper of the Deluvic Bardsong, an ancient tome chronicling our land." targets:<player>
+
+        - else:
+            - narrate "Oh how rude of me, let me not get ahead of myself." targets:<player>
+            - wait 3s
+            - narrate "I am <&color[#82b1f2]>Meruk<&r>, the sage of scholars and Keeper of the Deluvic Bardsong, an ancient tome chronicling our land." targets:<player>
+            - wait 3s
+            - narrate "All twelve of us original elder sages are recluse now, yet, some of us remain close enough to civilization to chronicle what storms are to come upon the beings of Deluvia." targets:<player>
+            - wait 4s
+            - narrate "What is a scholar doing living in a cave you ask?" targets:<player>
+            - wait 3s
+            - narrate "Ha ha ha. Fair enough." targets:<player>
+            - wait 3s
+            - narrate "All of us sages, have used our specialities to their height at one point or another during this Age of Kings," targets:<player>
+            - wait 3s
+            - narrate "but things are not always safe for us after the <&color[#f5e700]>Great War<&r> between the gods and the mortals," targets:<player>
+            - wait 3s
+            - narrate "and we found new occupations in dank locations; but I do still, however, keep my books." targets:<player>
+            - wait 3s
+            - narrate "I have written extensively about <&color[#3ca91a]>Bardtown<&r> and <&color[#3ca91a]>Song Tide<&r> lately." targets:<player>
+            - wait 2s
+            - narrate "<&color[#3ca91a]>Songtide<&r> being this realm, far away from the powerful civilizations, and <&color[#3ca91a]>Bardtown<&r> being one of its major towns." targets:<player>
+            - wait 3s
+            - narrate "I brought my family here after living in <&color[#3ca91a]>Druvvenrog<&r> as one of their top scholars. " targets:<player>
+        - wait 2s
+        - narrate <&nl> targets:<player>
+        - clickable <npc.name>_task_08 save:<npc.name>_clickable_08 until:30s usages:1 for:<player>
+        - clickable <npc.name>_task_09 save:<npc.name>_clickable_09 until:30s usages:1 for:<player>
+        - clickable <npc.name>_task_03 save:<npc.name>_clickable_03 until:30s usages:1 for:<player>
+        - if <player.has_flag[meruk_druvvenrog]>:
+            - narrate "<element[<&hover[You've already asked this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>1. What is Druvvenrog?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_08].command>]>" target:<player>
+        - else:
+            - narrate "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>1. <&color[#6fd6cb]>What is Druvvenrog?<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_08].command>]>" target:<player>
+        - if <player.has_flag[meruk_origin]>:
+            - narrate "<element[<&hover[You've already asked this to <npc.name>.]><&color[#545454]><&lb><&color[#888888]><&sp><&sp>2. What brought you here.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_09].command>]>" target:<player>
+        - else:
+            - narrate "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>2. <&color[#6fd6cb]>What brought you here.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_09].command>]>" target:<player>
+        - narrate "<element[<&hover[Click to say this to <npc.name>.]><&color[#545454]><&lb><&color[#00cb43]><&sp><&sp><&color[#fbfb54]>3. <&color[#6fd6cb]>Interesting. I'm done now.<&color[#545454]><&rb><&end_hover>].on_click[<entry[<npc.name>_clickable_03].command>]>" target:<player>
+        - flag <player> suspend_clickable:!
+        - narrate "<&nl>" targets:<player>
+        - flag <player> meruk_who
+        - zap 4 meruk_interact player:<player> duration:14s
+
+meruk_task_03:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - zap 1
+        - inject description_inject_task
+        - random:
+            - narrate "I can see you're antsy to get out of this cave." targets:<player>
+            - narrate "There is a plethora to explore out there, so it is good to get started." targets:<player>
+            - narrate "Maybe you will find other other 11 of my brethern out there. Best luck." targets:<player>
+            - narrate "May the Gods be with you." targets:<player>
+            - narrate "Remember. . . A Storm is Coming." targets:<player>
+            - narrate "Stay safe traveler." targets:<player>
+            - narrate "You'll do fine out there. Learn all you can." targets:<player>
+            - narrate "It is a big cold world out there so keep guard." targets:<player>
+            - narrate "Fare thee well mortal." targets:<player>
+            - narrate "Talk to your fellow Deluvians for more advice. Goodbye." targets:<player>
+            - narrate "Parting is such sweet sorrow." targets:<player>
+            - narrate "My necessaries are embark'd: farewell." targets:<player>
+            - narrate "Adieu! I have too grieved a heart that you take a tedious leave." targets:<player>
+            - narrate "And whether we shall meet again I know not." targets:<player>
+            - narrate "This acquaintance and parting was well made." targets:<player>
+            - narrate "Let the adventure begin!" targets:<player>
+        - wait 2s
+        - narrate "Watch your step down the mountain" targets:<player>
+        - flag <player> meruk_complete
+        - flag <player> suspend_clickable:!
+
+meruk_task_04:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - zap 1
+        - inject description_inject_task
+        - narrate "Deluvia has been springing up new mortals like yourself here and other locations" targets:<player>
+        - wait 2s
+        - narrate "and there must be some special meaning." targets:<player>
+        - wait 2s
+        - narrate "If you can find the reason why, please come back and let me know." targets:<player>
+        - flag <player> meruk_sign
+        - flag <player> suspend_clickable:!
+
+meruk_task_05:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - zap 1
+        - if <player.has_flag[meruk_bardtown]>:
+            - narrate "I shall tell you again."  targets:<player>
+        - else:
+            - narrate "Ah Bardtown, City of Harmony, the enclave of poets and musicians!" targets:<player>
+        - wait 2s
+        - narrate "It is a friendly town to visitors." targets:<player>
+        - spawn "armor_stand[is_small=false;invulnerable=false;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|air]" bardtown_chunkload save:meruk_first_look
+        - adjust <player> gamemode:spectator
+
+        - teleport <player> bardtown_chunkload
+        - teleport <entry[meruk_first_look].spawned_entity> bardtown_chunkload
+
+        - wait 2s
+        - adjust <player> spectate:<entry[meruk_first_look].spawned_entity>
+        - rotate <entry[meruk_first_look].spawned_entity> duration:10s frequency:1t yaw:1
+        - narrate "My son and I met the bards in this town during travels and felt right at home with their preservation of lore and chronicling the ages," targets:<player>
+        - wait 3s
+        - narrate "and love of music and magic." targets:<player>
+        - wait 6s
+        - foreach <location[bardtown_chunkload].points_between[<location[bardtown_banker_location]>]> as:point:
+            - teleport <entry[meruk_first_look].spawned_entity> <[point]>
+            - look <entry[meruk_first_look].spawned_entity> bertaire_location
+            - wait 1t
+        - narrate "There you will find the Bank of Deluvia, a good place to start and to store your goods. You will find these in many of the towns across our land." targets:<player>
+        - wait 4s
+        - foreach <location[bardtown_banker_location].points_between[bardtown_cutscene_midpoint_01]> as:point2:
+            - teleport <entry[meruk_first_look].spawned_entity> <[point2]>
+            - look <entry[meruk_first_look].spawned_entity> bertaire_location
+            - wait 1t
+        - foreach <location[bardtown_cutscene_midpoint_01].points_between[bardtown_cutscene_midpoint_02]> as:point3:
+            - teleport <entry[meruk_first_look].spawned_entity> <[point3]>
+            - wait 1t
+            - look <entry[meruk_first_look].spawned_entity> gilderstilt_location
+        
+        - foreach <location[bardtown_cutscene_midpoint_02].points_between[bardtown_guildhall_location]> as:point4:
+            - teleport <entry[meruk_first_look].spawned_entity> <[point4]>
+            - wait 1t
+            - look <entry[meruk_first_look].spawned_entity> gilderstilt_location
+        - wait 2s
+        - narrate "And this is one of the many Bardic Guild Halls." targets:<player>
+        - wait 2s
+        - narrate "If you want to become a Bard, talking to <&color[#82b1f2]>Gilderstilt<&r> is a good start." targets:<player>
+        - wait 3s
+        - narrate "You will find out a lot more just by going down the mountain path and visiting the city." targets:<player>
+        - teleport <player> meruk_player_start
+        - adjust <player> gamemode:adventure
+        - adjust <player> spectate:<player>
+        - wait 10t
+        - remove <entry[meruk_first_look].spawned_entity>
+        - if <player.has_flag[meruk_bardtown].not>:
+            - flag <player> meruk_bardtown
+        - flag <player> suspend_clickable:!
+
+
+meruk_task_06:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - zap 1
+        - if <player.has_flag[meruk_songtide]>:
+            - narrate "I can tell you about this again." targets:<player>
+        - else:
+            - narrate "Ah, Song Tide, islands of the wailing winds and whirling waters." targets:<player>
+        - wait 2s
+        - narrate "We are on one of the many islands of the archipelago of Song Tide." targets:<player>
+        - wait 2s
+        - narrate "You should explore them all as each one has some magical journey, or brave adventure." targets:<player>
+        - wait 2s
+        - narrate "Especially now that all the pilgrims and refugees are seeking havens from the Central Kingdoms." targets:<player>
+        - if <player.has_flag[meruk_songtide].not>:
+            - flag <player> meruk_songtide
+        - flag <player> suspend_clickable:!
+
+meruk_task_07:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - zap 1
+        - if <player.has_flag[meruk_longsea]>:
+            - narrate "I can see why you would like to hear this repeated." targets:<player>
+        - else:
+            - narrate "The Long Sea, treacherous and vast." targets:<player>
+        - wait 2s
+        - narrate "You must cross parts of it to get to other civilizations, the Outlands, or back to the Central Kingdoms." targets:<player>
+        - wait 2s
+        - narrate "and maybe, most importantly, to settle your own stronghold." targets:<player>
+        - wait 2s
+        - narrate "There are other adventurers sailing about, and monsters swimming for their prey. Don't let their prey be you." targets:<player>
+        - wait 2s
+        - if <player.has_flag[meruk_boat].not>:
+            - narrate "Here take another boat. You'll need it." targets:<player>
+            - give oak_boat
+            - flag <player> meruk_boat
+        - if <player.has_flag[meruk_longsea].not>:
+            - flag <player> meruk_longsea
+        - flag <player> suspend_clickable:!
+        
+
+meruk_task_08:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - zap 1
+        - if <player.has_flag[meruk_druvvenrog]>:
+            - narrate "Aye, this bears repeating." targets:<player>
+        - else:
+            - narrate "The Dismal Druvvenrog Domain." targets:<player>
+        - wait 2s
+        - narrate "Where I had once built my career as a chronicler, when the Gogs, their leaders, were accepting of such things." targets:<player>
+        - wait 3s
+        - narrate "The Druvs and Venrogs though mortals too, made things hostile there for those of us seeking truth and understanding of the <&color[#f5e700]>Great Severing<&r>." targets:<player>
+        - wait 3s
+        - narrate "Their cities grew fast and they grew greedy and arrogant" targets:<player>
+        - wait 2s
+        - narrate "Now Druvvenrog wishes to extinguish magic and the religion of the Old Gods from all of Deluvia." targets:<player>
+        - wait 3s
+        - narrate "I'm afraid the threats them and from the Outer Sea will put an end to this town and of Song Tide Archipelago eventually." targets:<player>
+        - wait 4s
+        - narrate "I still sneak back into <&color[#3ca91a]>Druvvenrog<&r>, to visit their libraries and to watch a skiffrunner race once and awhile," targets:<player>
+        - wait 2s
+        - narrate "but as time goes on, this dark hole in a rock is all I have left." targets:<player>
+        - wait 2s
+        - if <player.has_flag[meruk_druvvenrog].not>:
+            - flag <player> meruk_druvvenrog
+        - flag <player> suspend_clickable:!
+
+meruk_task_09:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - flag <player> suspend_clickable
+        - zap 1
+        - if <player.has_flag[meruk_origin]>:
+            - narrate "I am flattered you want to know this again." targets:<player>
+        - else:
+            - narrate "The details of my life are quite inconsequential... very well, where do I begin?" targets:<player>
+        - wait 2s
+        - narrate "Mine is the origin of the sages, and when they begin, I begin and so does the Age of Mortals." targets<player>
+        - wait 2s
+        - narrate "and when we took up our dominion on Deluvia an era of magic set about." targets:<player>
+        - wait 4s 
+        - if <player.has_flag[skill.spells.firetouch.level].not>:
+            - narrate "Oh Magic you say?" targets:<player>
+            - wait 3s
+            - narrate "Yes I dabble in magic as well." targets:<player>
+            - animate <npc> animation:arm_swing
+            - wait 4t
+            - playeffect effect:FIREWORKS_SPARK at:meruk_location target:<player> visibility:100 quantity:375 
+            - repeat 16:
+                - playeffect effect:flame quantity:10 at:<location[meruk_location].up[1.5].right[.25]> offset:0.0,0.1,0 target:<player>
+            # - playeffect effect:flame at:<[main_npc].up[1]> visibility:500 quantity:10 offset:0.0 target:<player>
+                - wait 4t
+            - animate <npc> animation:arm_swing
+            - narrate "I am by no means as powerful as the Four Arch Mages which watch over Song Tide and keep a veil of protection warding off evil." targets:<player>
+            - wait 4s
+            - narrate "In fact, building is even protected by their spells and pioneers must travel out among <&color[#3ca91a]>The Long Sea<&r> to find their own area to build the next stronghold or empire." targets:<player>
+        - else:
+            - narrate "Magic is what protects this land from building and pioneers must travel out among <&color[#3ca91a]>The Long Sea<&r> to find their own area to build the next stronghold or empire." targets:<player>
+        - wait 4s
+        - narrate "Seek out my fellow Deluvians down the path in <&color[#3ca91a]>Bardtown<&r> and in the islands outside of it and they can offer you help." targets:<player>
+        - wait 4s
+        - narrate "You will find out who you are in time." targets:<player>
+        - wait 2s
+        - narrate "Also be wary of certain ones of them, as more nefarious being come and lurk to steal and harm." targets:<player>
+        - wait 2s
+        - narrate "I have bent your ear enough and I will see you again soon, I am sure." targets:<player>
+        - wait 4s
+        - if <player.has_flag[skill.spells.firetouch.level].not>:
+            - narrate  "<gray><italic>You say:<&r>  <&B>First can you teach me that fancy fire touch spell?" targets:<player>
+            - wait 2
+            - narrate "Yes, indeed, spells can be useful. Talk to more mages out there in the world to learn more." targets:<player>
+            - wait 2s
+            - narrate "There now you know something of this. " targets:<player>
+            - flag <player> skill.spells.firetouch.level:1
+            - playsound <player> sound:ENTITY_PLAYER_LEVELUP volume:0.5 pitch:0.8
+            - narrate format:game_message "You have learned the <&color[#92acb2]>fire touch<&r><&color[#888888]><italic> spell" targets:<player>
+            - narrate format:game_message "Type <element[/spells].bold> to see your spells." targets:<player>
+        - else:
+            - if <player.has_flag[meruk_origin].not>:
+                - narrate "There is nothing else I can teach you at this time."
+    
+        - if  <player.has_flag[meruk_origin].not>:
+            - flag <player> meruk_origin
+        - flag <player> suspend_clickable:!
+
+
+reset_meruk:
+    type: task
+    script:
+    - flag <player> meruk_where:!
+    - flag <player> meruk_bardtown:!
+    - flag <player> meruk_songtide:!
+    - flag <player> meruk_longsea:!
+    - flag <player> meruk_druvvenrog:!
+    - flag <player> meruk_origin:!
+    - flag <player> meruk_who:!
+    - flag <player> meruk_sign:!
+    - flag <player> meruk_boat:!
+    - flag <player> meruk_talk_01:!
+    - flag <player> meruk_cave_talk:!
+    - flag <player> meruk_leave:!
+    - flag <player> meruk_come_back:!
+    - flag <player> npc.Meruk.prox_count:!
+
+meruk_personality:
+    type: data
+    character_data:
+        temperament: "reflective"
+        mannerisms:
+            contemplative_stance: "Meruk often adopts a contemplative stance, gazing into the horizon or lost in thought, pondering the mysteries of Deluvia and his role in its fate."
+            gentle_movements: "His movements are characterized by grace and gentleness, reflecting a reverence for life and nature."
+            focused_demeanor: "When engaged in conversation or magical studies, Meruk maintains a focused demeanor, demonstrating his commitment to understanding the ancient lore and guiding mortals."
+            careful_speech: "Meruk's speech is measured and deliberate, conveying deep insights and wisdom. He chooses his words carefully, seeking to inspire and enlighten those around him."
+            tender_handling_of_nature_magic: "When practicing nature magic, Meruk handles each spell with tender care and reverence, recognizing the interconnectedness of all living things and the balance they bring to Deluvia."
+            occasional_displays_of_determination: "In moments of challenge or adversity, Meruk may exhibit displays of determination, showcasing his unwavering resolve to protect Deluvia and its inhabitants."
+            nostalgic_expressions: "Meruk's expressions may occasionally betray a sense of nostalgia, particularly when reminiscing about the Age of Sages or reflecting on the beauty of the natural world."
+        hometown: Bardtown
+        woodland_clan: "Meruk hails from the Badger Clan, a woodland tribe known for their resilience and steadfast protection of their territory within Deluvia's forests."
+
+        educational_background: "Wizardry, Arcane Studies, and Nature Magic"
+        intelligence: "High; possesses deep understanding of magic, ancient lore, and the natural world"
+        self-esteem: "Moderate; influenced by past experiences and the cataclysmic events that shaped Deluvia"
+        hobbies: "Collecting rare herbs, studying ancient texts and scrolls, mentoring young mages"
+        skills_talents: "Mastery of arcane and nature magic, crafting powerful spells, preserving ancient knowledge"
+        loves: "Deluvia's natural beauty, the promise of restoration and balance, guiding mortals on their journey"
+        morals_virtues: "Wisdom, compassion, reverence for nature, loyalty to Deluvia and its inhabitants"
+        phobias_fears: "The resurgence of chaos, the abuse of magic, the loss of Deluvia's natural harmony"
+        angered_by: "Injustice, exploitation of natural resources, disregard for Deluvia's balance"
+        pet_peeves: "Disrespect for ancient traditions, ignorance of nature's wisdom and magic"
+        obsessed_with: "Preserving Deluvia's natural order, guiding mortals towards harmony and balance"
+        routines: "Daily meditation in nature, studying ancient texts in Bardtown's archives, mentoring young mages"
+        bad_habits: "Occasionally becomes too lost in nostalgia, tends to be overly cautious in decision-making"
+        desires: "To restore balance to Deluvia, to safeguard its natural wonders, to guide mortals towards enlightenment"
+        flaws: "Tends to be overly sentimental, can be stubborn and resistant to change"
+        quirks: "Has a collection of rare herbs and enchanted artifacts, often tells stories of Deluvia's past"
+        favorite_sayings: "In the dance of magic and nature, balance is the key to harmony."
+        disabilities: "None known"
+        secrets: "The full extent of his involvement in preserving Deluvia's natural balance"
+        regrets: "Not being able to prevent the cataclysm that befell Deluvia, the loss of its natural harmony"
+        accomplishments: "Mastery of powerful spells, preservation of ancient knowledge, guidance of young mages"
+        memories: "The beauty of Deluvia's landscapes, the wisdom of ancient sages, the cataclysmic events that shaped his destiny"
+        physical_strengths: "Meruk possesses agility and endurance, honed by his connection to nature and magic."
+        physical_weaknesses: "His mortal form is susceptible to physical exhaustion, limiting his endurance in prolonged activities."
+        intellectual_strengths: "Meruk's mind is a repository of ancient knowledge and wisdom, enriched by his deep connection to magic and nature."
+        intellectual_weaknesses: "His insatiable curiosity can sometimes lead him down paths of distraction, diverting his focus from the present."
+        interpersonal_strengths: "Meruk's empathy and compassion forge bonds of trust and understanding, fostering harmonious relationships with mortals and magical beings alike."
+        interpersonal_weaknesses: "At times, his introverted nature may lead to periods of isolation, hindering his connections with others."
+        physical_abilities: "He possesses keen senses and reflexes, honed by his connection to nature and his mastery of arcane magic."
+        magical_abilities: "The magic flows through Meruk's veins like the rivers of Deluvia, enabling him to weave spells of awe and wonder, and to commune with the natural world."
+        physical_illnesses_conditions: "His mortal form is susceptible to ailments, requiring careful attention and care."
+        mental_illnesses_conditions: "The weight of lost memories and the burden of Deluvia's fate can cast shadows upon his mind, yet he strives to find light amidst the darkness."
+        languages_known: "Meruk is fluent in the language of nature, as well as the ancient tongues spoken by the sages and scholars of Deluvia."
+        preferred_communication_methods: "He prefers direct and meaningful communication, often engaging in deep conversations that explore the mysteries of magic and nature."
+        accent: "Meruk's speech carries themelodic cadence of the natural world, infused with echoes of ancient wisdom and mystical power."
+        style_and_pacing_of_speech: "His speech is characterized by its rhythmic flow and contemplative pacing, reflecting his deep connection to the natural rhythms of Deluvia."
+        pitch: "Meruk's voice resonates with a soothing tone, capable of calming even the most restless of spirits and instilling a sense of serenity."
+        laughter: "Meruk's laughter is warm and melodious, echoing through the air like the song of the forest, bringing joy to those around him."
+        smile: "His smile is gentle and genuine, radiating a sense of inner peace and contentment."
+        use_of_gestures: "He employs subtle gestures to convey his thoughts and emotions, adding depth and nuance to his communication."
+        facial_expressions: "Meruk's facial expressions are expressive yet understated, conveying a wealth of emotion with a single glance."
+        verbal_expressions: "His verbal expressions are poetic and evocative, painting vivid images with the brushstrokes of his words, invoking the magic and wonder of Deluvia's natural world."
+        birth_date: "Meruk's birth is shrouded in the mists of ancient history, marked by the dawn of Deluvia herself and the emergence of the 12 Sages from the Omphalos."
+        place_of_birth: "He was born amidst the swirling mists of the Omphalos, the mystical center of Deluvia's creation, where the elements of magic and nature intertwined to give birth to the world."
+        key_family_members: "Meruk's lineage traces back to the ancient sages who walked the lands of Deluvia in its earliest days, guiding mortals towards enlightenment and harmony with the natural world."
+        notable_events_milestones: "One of the notable events in Meruk's life was his discovery of the power of nature magic, which awakened his connection to the natural world and set him on the path of becoming a guardian of Deluvia's balance. Another milestone was his decision to mentor young mages and guide them towards a deeper understanding of magic and its role in the world."
+        criminal_record: "Meruk has never been associated with any criminal activity. His devotion to preserving Deluvia's balance and guiding mortals towards enlightenment has always guided his actions."
+        affiliations: "Meruk is affiliated with the Circle of Balance, a sacred order dedicated to preserving the natural harmony of Deluvia and guiding mortals towards enlightenment."
+        skeletons_in_the_closet: "While Meruk is respected and admired by many, there are whispers of a mysterious incident during his youth, shrouded in secrecy and speculation. Some say it involved a forbidden spell, while others claim it was a vision of a future yet to unfold. Whatever the truth may be, Meruk guards this secret closely, fearing the consequences of its revelation."
+        character_archetype: "Meruk embodies the archetype of the wise sage and guardian of nature, drawing upon ancient wisdom and mystical power to guide mortals towards enlightenment and harmony with the natural world."
+        character_arc: "Meruk's character arc follows a journey of self-discovery and redemption, as he grapples with the weight of Deluvia's fate and strives to restore balance to the world. Along the way, he must confront dark forces and overcome formidable challenges, all while staying true to his values and guiding principles."
+        core_values: "At the core of Meruk's being are the values of wisdom, compassion, reverence for nature, and a deep sense of duty to Deluvia and its inhabitants."
+        internal_conflicts: "Meruk wrestles with the burden of Deluvia's fate and the uncertainty of his own role in shaping its destiny. He must confront his own doubts and fears, all while staying true to his values and guiding principles."
+        external_conflicts: "Externally, Meruk faces adversaries who seek to disrupt the balance of Deluvia and unleash chaos upon the world. He must confront dark forces and overcome formidable challenges, all while staying true to his values and guiding principles."
+        goals: "Meruk's primary goal is to restore balance to Deluvia and safeguard its natural wonders for future generations. He seeks to guide mortals towards enlightenment and harmony with the natural world, all while confronting the dark forces that threaten to disrupt the world's balance."
+        motivations: "Meruk is motivated by a deep sense of duty to Deluvia and its inhabitants, as well as a burning desire to restore balance to the world and preserve its natural wonders for future generations."
+        epiphanies: "Throughout his journey, Meruk experiences moments of profound revelation, where he gains insight into the nature of magic, the interconnectedness of all things, and the true meaning of his role as a guardian of Deluvia's balance."
+        significant_events_plot_points: "From his discovery of nature magic to his decision to mentor young mages, Meruk's path is marked by significant events and plot points that shape his destiny and the fate of Deluvia."
+        knowledge_of_how_to_use_scrolls: "Meruk possesses a deep understanding of how to harness the power of magical scrolls, transcribing ancient spells and weaving them into the fabric of Deluvia's natural world."
+       

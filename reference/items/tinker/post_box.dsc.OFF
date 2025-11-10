@@ -1,0 +1,10 @@
+post_box:
+  type: item
+  material: player_head
+  display name: "Post Box"
+  mechanisms:
+    skull_skin: fe3576bd-28c3-47d9-a9a7-2d4dc46a5106|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDZhYWVmMDEyMGFmNzFiYTNiODNmYmRkYWJjMzM0YmM2M2YyMzExNTk5Njk4YTMxODI0M2JlNjlmMDYwN2RhMyJ9fX0=
+  id: <util.random.uuid>
+
+
+    

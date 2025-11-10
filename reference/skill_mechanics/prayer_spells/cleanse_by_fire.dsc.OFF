@@ -1,0 +1,17 @@
+cleansebyfire_task:
+    type: task
+    definitions: caster
+    debug: true
+    script:
+    - define level <[caster].flag[skill.spells.cleansebyfire.level]>
+    - if <[caster].has_flag[party]>:
+        - define party_flag <[caster].flag[party]>
+       
+        # - narrate <server.online_players_flagged[party]>
+    - foreach  <[caster].location.find.living_entities.within[<[level]>].exclude[<[caster]>]> as:target:
+        - if !<[target].has_flag[party].contains[<[party_flag]>]>:
+            - if <[target].has_flag[reputation.karma.level]> && <[target].flag[reputation.karma.level]> < 0:
+                - define karma_damage <[target].flag[reputation.karma.level].div[10].abs.max[1]>
+                - define damage <util.random.int[1].to[<[karma_damage]>].add[<[caster].flag[reputation.karma].div[50].round_up>]>
+                - hurt <[target]> <[damage]>
+                - burn <[target]> duration:<util.random.int[1].to[<[level]>]>s

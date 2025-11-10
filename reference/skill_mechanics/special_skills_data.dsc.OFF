@@ -1,0 +1,189 @@
+specializations_skills_data:
+    type: data
+    specializations:
+        stun:
+            display_name: Stun
+            description: Stun your opponent
+            type: queued
+            weapon_type: wrestling
+            script: stun_task
+        block:
+            display_name: Block
+            description: Block a blow, or missile assailing you
+            type: queued
+            script: block_skill_task
+        fetch:
+            display_name: Fetch
+            description: Fetches entities on the ground
+            material: crossbow
+        sworn_enemy:
+            display_name: Foe Slayer
+            description: You gain expertise in enemy type, dealing more damage.
+        tracking:
+            display_name: Tracking
+            description: Your ability to sense and follow your quarry
+        feather_fall:
+            display_name: Feather Fall
+            description: You can fall with less damage
+
+        fighting_style:
+            display_name: "Fighting Style"
+            description: "Gives you a bonus for your highest martial skill."
+        
+        armor_pierce:
+            display_name: 'Armor Pierce'
+            description: "Pierces your target's armor"
+            weapon_type: archery
+            type: queued
+            script: armor_pierce_task
+        
+        slash:
+            display_name: 'Slash'
+            description: "Deals an arc of damage using the edge of your weapon."
+            script: slash_task
+            type: active
+            
+        armor_ignore:
+            display_name: 'Armor Ignore'
+            description: "Attacks your target as though it didn't have armor"
+            type: queued
+            custom_model_data: 81016102
+            script: armor_ignore_task
+        rage:
+            display_name: Rage
+            description: "You go into a fury of rage and do more damage"
+            type: aura
+            script: rage_task
+
+        unarmored_defense:
+            display_name: "Unarmored Defense"
+            description: "If not wearing armor, can gain some protection through your toughness in rage."
+            type: aura
+
+        crushing_blow:
+            display_name: "Crushing Blow"
+            description: "Deals more damage with a mace, and lowers target's stamina."
+            weapon_type: mace
+            type: queued
+            script: crushing_blow_task
+
+        concussion_blow:
+            display_name: "Concussion Blow"
+            weapon_type: mace
+            type: queued
+            description: "Deals extra damage against head armor and intelligence."
+            script: concussion_blow_task
+
+        shadow_strike:
+            display_name: "Shadow Strike"
+            weapon_type: fencing
+            type: active
+            description: 
+                - "Pierce your target while hidden."
+            script: shadow_strike_task
+        
+        double_strike:
+            display_name: "Double Strike"
+            weapon_type: any
+            type: queued
+            description: "Strike your target twice in a row."
+            script: double_strike_task
+
+        disarm:
+            display_name: "Disarm"
+            description: "Disarms your opponent for a short duration."
+            weapon_type: any
+            type: queued
+            script: disarm_task
+            custom_model_data: 81016101
+
+        dodge:
+            display_name: 'Dodge'
+            description: "Moves out of the way of your attacker"
+            script: dodge_task
+                        
+        parry:
+            display_name: 'Parry'
+            description: "Blocks attacker with shield"
+            
+        charge:
+            display_name: 'Charge'
+            description: "Rush to target dealing extra damage"
+            type: action
+            script: charge_task
+
+        second_wind:
+            display_name: "Second Wind"
+            description: "Your stamina regeneration is increased for a duration."
+            type: aura
+            script: second_wind_task
+            
+
+        infectious_strike:
+            display_name: 'Infectious Strike'
+            description: "A cut that will spread in your target as an infection if not healed."
+            type: queued
+            script: infectious_strike_task
+
+        bleed_attack:
+            display_name: "Bleed Attack"
+            description: "Causes Bleed damage for a duration after an edged weapon attack."
+            weapon_type: sword
+            type: queued
+            script: bleed_attack_task
+
+        poisoning:
+            display_name: Poisoning
+            decription: "Your ability to poison daggers or potions."
+
+        back_stab:
+            display_name: "Back Stab"
+            description: "Stabs your target in the back for extra damage. Ignores Armor"
+            type: queued
+            script: backstab_task
+            
+        snoop:
+            display_name: "Snoop"
+            description: "Allows you to peek into another's backpack."
+            script: snoop_task
+
+        steal:
+            display_name: "Steal"
+            description: "Allows you to steal items in another's backpack."
+            script: steal_task
+        
+        bark_shield:
+            display_name: "Bark Shield"
+            description: "If close to trees, can construct a shield out of bark to use."
+            script: barkshield_task
+        veterinary:
+            display_name: "Veterinary"
+            description: "Allows you to heal and resurrect pets."
+            script: veterinary_task
+        incognito:
+            display_name: "Incognito"
+            description: "Your nameplate and display name in chat will appear blank for a short period."
+        disguise:
+            display_name: "Disguise"
+            description: "You take on the appearance of another player for a short duration."
+        hide:
+            display_name: "Hide"
+            description: "You learn to make yourself invisible."
+        stealth:
+            display_name: "Stealth"
+            description: "Allows you to move unnoticed."
+        lockpicking:
+            display_name: "Lockpicking"
+            description: "Allows you to pick locked chests and doors."
+        detect_hidden:
+            display_name: "Detect Hidden"
+            description: "Allows you to find players who are hiding."
+        wolf_worm:
+            display_name: "Wolf Form"
+            description: "You gain the abilities of the wolf."
+        tranquilize:
+            display_name: "Tranquilizer"
+            description: "You shoot an arrow that puts a target to sleep."
+        taming:
+            display_name: "Taming"
+            description: "Ability to tame a beast to be your pet."

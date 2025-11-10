@@ -1,0 +1,34 @@
+strangling_fumes_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    # - define attacker <player>
+    - if <[attacker].has_flag[skill.spells.strangling_fumes.level].not>:
+        - flag <[attacker]> skill.spells.strangling_fumes.level:1
+        - define level 1
+    - define level <[attacker].flag[skill.spells.strangling_fumes.level]>
+    # - define level 10
+    - define targets <[attacker].cursor_on.find_blocks[!air].within[<[level]>]>
+    - foreach <[targets]> as:target:
+        - if <[target].find.living_entities.within[1].exclude[<[attacker]>].any>:
+            # - hurt 1 <[target].find.living_entities.within[1].exclude[<player>]>
+            - define entity <[target].find.living_entities.within[1].exclude[<[attacker]>].first>
+            - repeat 2:
+                - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<item[carrot_on_a_stick].with[custom_model_data=6180014]>]" <[entity].location> save:fumes
+                - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<item[carrot_on_a_stick].with[custom_model_data=6180009]>]" <[entity].location> save:fumes2
+                - repeat 3:
+                    - animate <[entity]> animation:hurt
+                    - adjust <[entity]> oxygen:2s
+                    - wait 8t
+                - spawn "armor_stand[is_small=false;invulnerable=true;visible=false;arms=true;gravity=false;marker=true;collidable=true;equipment=air|air|air|<item[carrot_on_a_stick].with[custom_model_data=6180009]>]" <[entity].location> save:fumes3
+                - run spell_damage_task def:strangling_fumes|<[entity]>
+                - playeffect effect:crit_magic at:<[entity].location> quantity:3 offset:1
+                - playeffect effect:composter at:<[entity].location> quantity:3 offset:1
+                - playeffect effect:smoke at:<[entity].location.down[1]> quantity:3 offset:1
+                - animate <[entity]> animation:hurt
+                - remove <entry[fumes].spawned_entity>
+                - remove <entry[fumes2].spawned_entity>
+                - wait 10t
+                - remove <entry[fumes3].spawned_entity>
+   
+  

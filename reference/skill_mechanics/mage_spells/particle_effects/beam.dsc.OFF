@@ -1,0 +1,4 @@
+beam_task:
+    type: task
+    script:
+    - playeffect effect:crit at:<player.location.points_between[<player.target.location>].distance[0.1]> quantity:2000 offset:0 visibility:300

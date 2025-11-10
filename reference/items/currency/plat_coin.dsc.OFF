@@ -1,0 +1,8 @@
+plat_coin:
+  type: item
+  debug: true
+  material: iron_ingot
+  rarity: 1
+  display name: Platinum Coin
+  mechanisms:
+    custom_model_data: 2710005

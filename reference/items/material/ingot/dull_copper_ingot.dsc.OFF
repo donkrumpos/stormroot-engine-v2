@@ -1,0 +1,13 @@
+dull_copper_ingot:
+  type: item
+  debug: true
+  material: iron_ingot
+  rarity: 1
+  display name: Dull Copper Ingot
+  mechanisms:
+    custom_model_data: 2710401
+  recipes:
+    1:
+      type: furnace
+      input: dull_copper_ore
+      cook_time: 1t

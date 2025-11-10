@@ -1,0 +1,552 @@
+fauna_data:
+    type: data
+    debug: false
+    beast:
+        zombie:
+            karma: 10
+            fame: 10
+            difficulty: 3
+            coin_drop: 1
+            magic: 0
+        silverfish:
+            karma: 10
+            fame: 10
+            difficulty: 3
+            coin_drop: 1
+            magic: 0
+        slime:
+            karma: 11
+            fame: 11
+            difficulty: 3
+            coin_drop: 1
+            magic: 0
+        spider:
+            karma: 15
+            fame: 15
+            difficulty: 4
+            coin_drop: 1
+            magic: 0
+        creeper:
+            karma: 15
+            fame: 15
+            difficulty: 3
+            coin_drop: 1
+            magic: 0
+        skeleton:
+            karma: 20
+            fame: 20
+            difficulty: 4
+            coin_drop: 1
+            magic: 0
+        witch:
+            karma: 25
+            fame: 30
+            difficulty: 6
+            coin_drop: 1
+            magic: 2
+        wither_skeleton:
+            karma: 40
+            fame: 50
+            difficulty: 6
+            coin_drop: 2
+            magic: 3
+        zombified_piglin:
+            karma: 45
+            fame: 55
+            difficulty: 7
+            coin_drop: 2
+        ghast:
+            karma: 50
+            fame: 60
+            difficulty: 8
+            coin_drop: 2
+            magic: 1
+        enderman:
+            karma: 50
+            fame: 60
+            difficulty: 8
+            coin_drop: 2
+            magic: 1
+        blaze:
+            karma: 50
+            fame: 60
+            difficulty: 8
+            coin_drop: 2
+            magic: 3
+        vindicator:
+            karma: 60
+            fame: 65
+            difficulty: 9
+            coin_drop: 3
+        elder_guardian:
+            karma: 70
+            fame: 80
+            difficulty: 10
+            coin_drop: 4
+            magic: 4
+        evoker:
+            karma: 70
+            fame: 80
+            difficulty: 10
+            coin_drop: 4
+            magic: 4
+        piglin_brute:
+            karma: 75
+            fame: 85
+            difficulty: 10
+            coin_drop: 4
+        ravager:
+            karma: 85
+            fame: 100
+            difficulty: 11
+            coin_drop: 10
+        wither:
+            karma: 100
+            fame: 120
+            difficulty: 13
+            coin_drop: 20
+            magic: 5
+        enderdragon:
+            karma: 150
+            fame: 200
+            difficulty: 15
+            coin_drop: 30
+        warden:
+            karma: 175
+            fame: 220
+            difficulty: 16
+            coin_drop: 35
+            magic: 6
+        Chicken:
+            display_name: "Chicken"
+            taming_difficulty: 10
+            wild_starting_abilities:
+                - Peck
+            hostile: false
+            slots: 1
+            submission: false
+            attributes:
+                strength:
+                    min: 10
+                    max: 30
+            mountable: false
+            karma: 0
+            fame: 0
+        Turtle:
+            karma: -30
+            fame: 0
+            
+        Horse:
+            display_name: "Horse"
+            taming_difficulty: 30
+            wild_starting_abilities:
+                - Gallop
+            hostile: false
+            slots: 1
+            submission: false
+            mountable: true
+            bonding_difficulty: 1
+            food_sources: 
+                - carrot
+                - sugar
+            karma: -5
+            fame: 0
+        Ocelot:
+            display_name: "Ocelot"
+            taming_difficulty: 30
+            wild_starting_abilities:
+                - Chase
+            hostile: false
+            slots: 1
+            submission: false
+        Wolf:
+            display_name: "Wolf"
+            taming_difficulty: 30
+            wild_starting_abilities:
+                - Howl
+            hostile: false
+            slots: 1
+            submission: false
+        
+monster_data:
+    type: data
+    debug: false
+    monster:
+        stomper:
+            custom_model_data: 1656549
+            fame: 20
+            karma: 30
+        gazer:
+            hurt_custom_model_data: 1656547
+            fame: 40
+            karma: 30
+        wraith_twin:
+            display_name: "Wraith"
+            entity_type: bee
+            collidable: false
+            custom_name: Wraith
+            custom_name_visible: true
+            custom_model_data: 656535
+            hurt_custom_model_data: 656536
+        wraith:
+            display_name: "Wraith"
+            entity_type: bee
+            collidable: false
+            custom_name: Wraith
+            custom_name_visible: true
+            custom_model_data: 656531
+            hurt_custom_model_data: 656531
+            intelligence: 40-50
+            strength: 210-240
+            visible: true
+            invulnerable: false
+            health: 20-30
+            has_ai: true
+            color: red
+            fame: 10
+            karma: 10
+       
+            eligible_block_spawn:
+        
+            elevation: 60-80
+            max_spawn_light_level: 12
+            worlds:
+            - songtide
+            aggro: hostile
+            rarity: 5
+            undead: false
+            xp: 6
+            coin_drop:
+                copper: 1
+            drops:
+                iron_ingot:
+                    amount: 1
+                    chance: .5
+                iron_sword:
+                    amount: 1
+                    chance: .2
+                gold_ingot:
+                    amount: 1
+                    chance: .05
+                bow:
+                    amount: 1
+                    chance: .1
+                leather_chestplate:
+                    amount: 1
+                    chance: .1
+                leather_helmet:
+                    amount: 1
+                    chance: .1
+        skeleton:
+            display_name: "Skeleton"
+            entity_type: vindicator
+            collidable: false
+            custom_name: Skeleton
+            custom_name_visible: true
+            custom_model_data: 656532
+            hurt_custom_model_data: 656532
+            intelligence: 40-50
+            strength: 210-240
+            visible: true
+            invulnerable: false
+            health: 20-30
+            has_ai: true
+            color: red
+            fame: 10
+            karma: 10
+       
+            eligible_block_spawn:
+        
+            elevation: 60-80
+            max_spawn_light_level: 12
+            worlds:
+            - songtide
+            aggro: hostile
+            rarity: 5
+            undead: false
+            xp: 6
+            coin_drop:
+                copper: 1
+            drops:
+                iron_ingot:
+                    amount: 1
+                    chance: .5
+                iron_sword:
+                    amount: 1
+                    chance: .2
+                gold_ingot:
+                    amount: 1
+                    chance: .05
+                bow:
+                    amount: 1
+                    chance: .1
+                leather_chestplate:
+                    amount: 1
+                    chance: .1
+                leather_helmet:
+                    amount: 1
+                    chance: .1
+        
+        gnoll:
+            display_name: "Gnoll"
+            entity_type: vindicator
+            collidable: false
+            custom_name: Kobold
+            custom_name_visible: true
+            custom_model_data: 656520
+            hurt_custom_model_data: 656528
+            intelligence: 40-50
+            strength: 210-240
+            visible: true
+            invulnerable: false
+            health: 20-30
+            has_ai: true
+            color: red
+            fame: 10
+            karma: 10
+            biome:
+            - beach
+            - ocean
+            - river
+            - forest
+            eligible_block_spawn:
+            - stone
+            - cobblestone
+            - sand
+            - grass
+            elevation: 60-80
+            max_spawn_light_level: 12
+            worlds:
+            - songtide
+            aggro: hostile
+            rarity: 5
+            undead: false
+            xp: 6
+            coin_drop:
+                copper: 1
+            drops:
+                iron_ingot:
+                    amount: 1
+                    chance: .5
+                iron_sword:
+                    amount: 1
+                    chance: .2
+                gold_ingot:
+                    amount: 1
+                    chance: .05
+                bow:
+                    amount: 1
+                    chance: .1
+                leather_chestplate:
+                    amount: 1
+                    chance: .1
+                leather_helmet:
+                    amount: 1
+                    chance: .1
+        kobold:
+            display_name: "Kobold"
+            entity_type: vindicator
+            collidable: false
+            custom_name: Kobold
+            custom_name_visible: true
+            custom_model_data: 656510
+            hurt_custom_model_data: 656518
+            intelligence: 40-50
+            strength: 210-240
+            visible: true
+            invulnerable: false
+            health: 20-30
+            has_ai: true
+            color: red
+            fame: 10
+            karma: 10
+            biome:
+            - beach
+            - ocean
+            - river
+            - forest
+            eligible_block_spawn:
+            - stone
+            - cobblestone
+            - sand
+            - grass
+            elevation: 60-80
+            max_spawn_light_level: 12
+            worlds:
+            - songtide
+            aggro: hostile
+            rarity: 5
+            undead: false
+            xp: 6
+            coin_drop:
+                copper: 1
+            drops:
+                iron_ingot:
+                    amount: 1
+                    chance: .5
+                iron_sword:
+                    amount: 1
+                    chance: .2
+                gold_ingot:
+                    amount: 1
+                    chance: .05
+                bow:
+                    amount: 1
+                    chance: .1
+                leather_chestplate:
+                    amount: 1
+                    chance: .1
+                leather_helmet:
+                    amount: 1
+                    chance: .1
+        goblin:
+            display_name: "goblin"
+            entity_type: vindicator
+            collidable: false
+            custom_name: goblin
+            custom_name_visible: true
+            custom_model_data: 656500
+            hurt_custom_model_data: 656508
+            intelligence: 40-50
+            strength: 210-240
+            visible: true
+            invulnerable: false
+            health: 20
+            has_ai: true
+            color: red
+            fame: 10
+            karma: 10
+            biome:
+                - beach
+                - ocean
+                - river
+                - forest
+            eligible_block_spawn:
+                - stone
+                - cobblestone
+                - sand
+                - grass
+            elevation: 60-80
+            max_spawn_light_level: 12
+            worlds:
+                - songtide
+            aggro: hostile
+            rarity: 10
+            undead: false
+            xp: 11
+            coin_drop:
+                silver: 1
+            drops:
+                iron_ingot:
+                    amount: 1
+                    chance: .5
+                iron_sword:
+                    amount: 1
+                    chance: .2
+                gold_ingot:
+                    amount: 1
+                    chance: .05
+                bow:
+                    amount: 1
+                    chance: .1
+                leather_chestplate:
+                    amount: 1
+                    chance: .1
+                leather_helmet:
+                    amount: 1
+                    chance: .1
+
+gazer:
+    type: entity
+    display_name: "Gazer"
+    entity_type: bee
+    mechanisms:
+        custom_model_data: 656544
+
+
+
+
+
+# arctox:
+#     type: entity
+#     # display_name: "Arctox"
+#     entity_type: ravager
+#     # mechanisms:
+#     data:
+#         karma: 30
+#         fame: 30
+#         elevation: 110
+#         biome: snowy_plains
+#         rarity: 50
+#         eligible_block_spawn: snow
+#         custom_model_data: 1656554
+#         # script: arctox_task
+#         drops:
+#             crystal_ice:
+#                 amount: 3
+#                 chance: .2
+           
+#         xp: 11
+#         coin_drop:
+#             copper: 
+#                 amount: 1
+#                 chance: .5
+#     flags:
+#         custom_beast: true
+
+
+
+
+
+
+
+cordyceps_maggot_1:
+  type: entity
+  entity_type: silverfish
+  flags: 
+    custom_beast: true
+
+  mechanisms:
+    collidable: true
+    custom_name_visible: false
+    custom_model_data: 656541
+    speed: 0.01
+    max_health: 30
+    health: 30
+
+
+
+slog_beast:
+  type: entity
+  entity_type: rabbit
+  flags: 
+    custom_beast: true
+  mechanisms:
+    collidable: true
+    custom_name_visible: false
+    custom_model_data: 656542
+    speed: 0.01
+    color: THE_KILLER_BUNNY
+    max_health: 30
+    health: 30
+#   custom:
+
+draggleflap:
+  type: entity
+  entity_type: phantom
+  data:
+    drops:
+        - lingering_potion_of_draggleflap_luck|1|.1
+        - blue_dye
+        - glow_berries
+    karma: -10
+    fame: -10
+    xp: 15
+  flags: 
+    custom_beast: true
+  mechanisms:
+    collidable: true
+    custom_model_data: 656543
+    max_health: 40
+    health: 40
+#   custom:

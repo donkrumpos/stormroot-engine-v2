@@ -1,0 +1,60 @@
+region_data:
+    type: data
+    debug: false
+    region:
+        albus:
+            title: "Albus' Cave"
+            subtitle: "the hermit"
+            display_title: false
+            criminal_tolerance: -999
+            mob_spawning: deny
+            guarded: false
+            economy_level: 1
+            economy_category_demand: food
+            economy_cateogory_supply: 3
+            economy_consistency: 5
+            npcs: 
+                - Albus
+        valley_of_the_moon:
+            title: "Valley of the Moon"
+            subtitle: "Sanctuary of the Faefolk"
+            display_title: true
+        rothigport_inner:
+            title: Rothigport
+            subtitle: "City of Sailors"
+            display_title: true
+            economy_level: 1
+            economy_category_demand: food
+            economy_cateogory_supply: 
+            economy_consistency: 5
+        bardtown_inner:
+            title: Bardtown
+            subtitle: "City of Harmony"
+            display_title: true
+            economy_level: 1
+            economy_category_demand: food
+            economy_cateogory_supply: 3
+            economy_consistency: 5
+        runesbrook_inner:
+            display_title: true
+            title: Runesbrook
+            subtitle: "Gateway to Chantwood"
+        gwelftshire_greater:
+            display_title: true
+            title: "Gweftshire"
+            subtitle: "Heart of Faewood"
+        rothigport_crypts:
+            display_title: true
+            title: "Rothcrest Crypts"
+            subtitle: "The resting place of Rothigport's Gilded Families"
+        rothigport:
+            description: "Song Tide’s the largest city and a hub of commerce for this area. Where is it located? Located in north central Song Tide. Home to sailors, fisherman, and a nascent shipbuilding industry. There is a disparity between the rich and poor. Magic is welcome here, but some industrialists are recently becoming skeptical of magery in favor of commerce. Located Northwest of Bardtown. Located West of Runesbrook. Located North of Buccaneers Den. Located East of Hawk Finster Hollow. Rothigport is the major market town in the northern Song Tide Archipelago  Though Song Tide itself is as old as the Age of Man, Rothigport was founded about 500 januul ago. It was built on water by people who saw the water as a defense and ally. Rothigport, being one of the first seafarering people in Deluvia, built the town out in the harbor so the warring kingdoms at the time had no successful way to raid this floating town. It was first a dock where fisherman would come to trade hooks, nets and other equipment in the northern harbor of Goylsmuth Bay. It slowly grew over the next few hundred years as each fisherman would build a new shanty next to the last and the town cobbled together more huts and storage for their fishing industry.  This village has grown into a small city with a trading network that is now vast in Song Tide. There are marauders and pirates who have also threatened the waters, but the pirates also do well with the trade of the town and play nice when they come to town most times. Rothigport is known as a pirate’s haven. The growth spurt of seedy taverns worries the old generation. For adventurers, they go to these locales to hear the stories and perhaps find where the next adventure awaits. There are many monsters who lurk in the archipelago but they keep to their own areas and rarely get close to Rothigport. The exception might be the kraken, Regnareeg, who frequents the waters just north of Rothigport.Because of the monsters, treasure and other adventures in Song Tide, many adventurers come to Rothigport to get provisions and hear the local rumors."
+        bardtown:
+            description: "The city of Harmony, it is located on the eastern side of The Song Tide and facing facing The Long Sea. Many famous bards and scribes live atop this hillside island town. Bardtown is a festive town which seems to have a party somewhere in the town every night. Often the amphitheatre is the center of activity, where people gather when there is not a performance. There is also a nice garden at the top tier where bards mingle with other socialites of the town. The Greater Songtide Symphony also performs here on a regular schedule, which  that includes members from many towns across the Song Tide and beyond. Krizzdo and is wonderwagon are often found outside the city limits on the beach as he is no longer allowed in town for the fires and havoc he’s caused. He comes back once a moontick or and some of the citizens that want to remain in contact will go down to see him. Bardtown is the City of Harmony. And the City of Sandstone. It seeks harmony and balance in all things. It wishes to keep all the elements of Deluvia in balance with each other and not let any virtue outweigh another. Bardtown is the second largest town in Song Tide and is considered the home of the bards. (although bards are in every town and in the countryside as well) It is spread across two islands Cantos and Westerisle and is a town of allure and festiveness, including the amphitheater where aspiring actors and musicians can perform. Some of the most prestigious Bards in Deluvia live here. They reside in their cottages to stay close to their fans and accolytes and get inspired writing and composing by the seaside and once in a while, performing at the famous amphitheatre."
+        risdonis_shop:
+            description: 
+                basic: "Risdonis Valkor's shop occupies a narrow, dimly lit space nestled in a nondescript corner in the heart of Bardtown. Its weathered sign bears the simple inscription 'Valkor's Arms & Equipment', the letters faded with time and exposure to the elements. Inside, the air is heavy with the scent of metal and oil, and the shelves are lined with an assortment of weapons and gear, each bearing the mark of Valkor's craftsmanship. Despite its humble surroundings, there is an air of quiet dignity about Valkor's shop. The walls are adorned with faded banners and mementos from his days as a master-at-arms, serving as a silent testament to his storied past. Customers come and go, their voices hushed as they browse Valkor's wares, respectful of the man behind the counter whose gaze betrays a lifetime of experience and wisdom. Valkor takes pride in the quality of his work, each weapon meticulously crafted to his exacting standards. From swords and shields to crossbows and spears, his shop offers a modest yet diverse selection of arms and equipment for those in need of protection or seeking to hone their skills in combat. Despite the passage of time, Valkor's craftsmanship remains unparalleled, a testament to his dedication to his craft. Valkor's clientele is as varied as the weapons he sells. Adventurers seeking to outfit themselves for a journey into the unknown, mercenaries looking to upgrade their gear, and even the occasional noble seeking a discreet purchase—all find their way to Valkor's shop. Though his prices may be modest, Valkor's reputation for honesty and integrity ensures a steady stream of customers who value his expertise and discretion. Amidst the hustle and bustle of Bardtown, Risdonis Valkor stands as a quiet and steadfast presence behind the counter of his shop. Though his days of leading troops into battle may be behind him, his resolve remains unshaken, his commitment to serving others undiminished. Behind his weathered exterior lies a wealth of knowledge and experience, a reminder that even in the most unlikely of places, heroes can still be found."
+                advanced: "Hidden within the folds of an ancient tapestry, hanging proudly upon the wall behind Risdoni's weathered counter, lies a cryptic clue to a long-forgotten secret. Woven with threads of celestial blue and shimmering silver, the tapestry depicts a celestial map of the night sky, its intricate patterns a testament to the craftsmanship of its maker. Amidst the twinkling stars and swirling nebulae, keen eyes may discern faintly engraved symbols, concealed within the tapestry's elaborate design. These symbols, though subtle, hold the key to unlocking a mystery—a clue to the whereabouts of a hidden chest, buried deep beneath the earth. To the untrained observer, the symbols may seem little more than decorative embellishments, lost amidst the celestial splendor. But to those with the wisdom to decipher their meaning, they reveal a hidden truth—a path to untold riches and ancient artifacts. Legend speaks of a celestial event, a rare alignment of the stars known only to those initiated in the secrets of celestial navigation. And it is upon this event that the tapestry's true purpose is revealed—a guide to unlocking the location of the hidden chest, and the treasures that lie within. So it is that the tapestry serves as both a clue and a challenge, a tantalizing glimpse into the mysteries of the cosmos. And as the stars wheel overhead and the celestial dance unfolds, the key to unlocking Risdoni's secret awaits those brave enough to follow the path laid out before them."
+        ardran_shop:
+            description:
+                basic: "Nestled within the bustling streets of Bardtown, Ardran's Scroll and Quill Emporium stands as a beacon of arcane craftsmanship and scholarly pursuit. The shop's facade, adorned with intricate carvings depicting mythical creatures and ancient runes, draws the eye of passersby, hinting at the wonders that lie within. Upon entering, visitors are greeted by the heady scent of aged parchment and the soft glow of enchanted lanterns, casting a warm ambiance over the shelves lined with meticulously crafted scrolls and tomes. The air hums with the faint crackle of magic, as Ardran himself, clad in robes of deep azure, attends to his work behind a polished oak counter. Customers browse an array of arcane supplies, from rare spell scrolls adorned with shimmering glyphs to handcrafted quills fashioned from the feathers of mythical beasts. Each item exudes an air of mystique, bearing the mark of Ardran's meticulous craftsmanship and profound knowledge of the arcane arts. Scholars, mages, and adventurers alike flock to the shop, drawn by the promise of ancient wisdom and the allure of unlocking the secrets of magic within its hallowed halls."

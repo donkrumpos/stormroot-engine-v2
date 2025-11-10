@@ -1,0 +1,37 @@
+ray_light_task:
+    type: task
+    debug: true
+    definitions: attacker|defender
+    script:
+    - if <player.target.is_living>:
+        - playsound <player.location> sound:steamfront:spells.aquaorbis2 custom sound_category:players
+    - if <script[spells_skills_data].data_key[spells.aquaorbis].keys.contains[projectile]>:
+        - define projectile <script[spells_skills_data].data_key[spells.aquaorbis.projectile]>
+        - shoot <entity[snowball].with[item=water_entity_item]> origin:<[attacker].eye_location.forward[3]> speed:1 no_rotate shooter:<[attacker]> script:light_projectile_task save:aquaorbis
+        - repeat 10:
+            - define location <entry[aquaorbis].shot_entity.location>
+            - if <[location].x.exists> && <[location].find.living_entities.within[1].size> > 0:
+                - run spell_damage_task def:aquaorbis|<[location].find.living_entities.within[1].first>|<[attacker]>
+#                - showfake water <[location]> duration:1s players:<server.online_players>
+
+            - run light_particle_task def:<[location]>
+            - wait 1t
+         
+light_particle_task:
+    type: task
+    definitions: location
+    script:
+    - playeffect effect:end_rod  at:<[location]> special_data:1|0,133,255 visibility:10 quantity:10 offset:0.1
+    - playeffect effect:end_rod  at:<[location]> special_data:1|0,130,210 visibility:10 quantity:5 offset:0.1
+    - playeffect effect:end_rod  at:<[location]>  visibility:100 quantity:100 offset:0.1
+light_projectile_task:
+    type: task
+    script:
+    - define level <player.flag[skill.spells.aquaorbis.level].add[<player.flag[skill.skills.magery.level]||10>]||10>
+#    - playsound <player>|<[entity].location> sound:steamfront:spells.firetouch2 custom sound_category:players
+    - if <[hit_entities].is_empty.not>:
+        - run spell_damage_task def:aquaorbis|<[hit_entities].first>|<player>
+    - if <[level]> > <util.random.int[0].to[100]>:
+        - foreach <[hit_entities]> as:entity:
+#            - showfake water <[entity].location> duration:2s players:<server.online_players>
+            - adjust <[entity]> oxygen:0s

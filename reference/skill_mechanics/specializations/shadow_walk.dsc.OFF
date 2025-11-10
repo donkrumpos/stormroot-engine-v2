@@ -1,0 +1,51 @@
+shadowwalk_command:
+    type: command
+    name: shadowwalk
+    script:
+    - if <player.flag[skill.shadowwalk.level]||0> >= 1:
+        - if <player.has_flag[shadow_walking]>:
+            - narrate "Shadow Walk off"
+            - flag <player> shadow_walking:!
+            # - flag <player> shadowwalk_bonus:!
+        - else:
+            - narrate "Shadow Walk on"
+            - flag <player> shadow_walking
+            # - flag <player> shadowwalk_bonus
+            - run shadowwalk_task
+    - else:
+        - narrate "You don't have the Shadow Walk skill"
+    
+
+# shadowwalk_world:
+#     type: world
+#     subpaths:
+#         reset:
+#         - flag <player> current_dexterity:-:10
+#         - flag <player> current_intelligence:-:10
+#         update:
+#         - if <player.flag[skill.shadowwalk.level]||0> >= 1:
+#             - if <player.has_flag[shadow_walking]>:
+#                 - if <player.location.light> <= <element[1].add[<player.flag[skill.shadowwalk.level]>].max[3]>:
+#                     - flag <player> stat.stamina_level:-:<element[5].sub[<player.flag[skill.shadowwalk.level].div[10]>].max[1]>
+#                     - if <player.flag[status_effects].contains_text[<white><&chr[3112]>].not>:
+#                         - flag <player> status_effects:->:<element[<white><&chr[3112]>]>
+#                     - if <player.has_flag[shadowwalk_buff_set].not>:
+#                         - flag <player> current_dexterity:+:10
+#                         - flag <player> current_intelligence:+:10
+#                         - flag <player> shadowwalk_buff_set
+#                 - else:
+#                     - if <player.has_flag[shadowwalk_buff_set]>:
+#                         - flag <player> status_effects:<-:<element[<white><&chr[3112]>]>
+#                         - flag <player> shadowwalk_buff_set:!
+#                         - inject locally subpaths.reset
+                        
+
+#             - else:
+#                 - stop
+    # events:
+    #     after player steps on block:
+    #     - inject locally subpaths.update
+    #     on player quits:
+    #     - if <player.has_flag[shadowwalk_buff_set]>:
+    #         - flag <player> shadowwalk_buff_set:!
+    #         - inject locally subpaths.reset

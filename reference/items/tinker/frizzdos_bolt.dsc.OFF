@@ -1,0 +1,8 @@
+krizzdos_bolt:
+  type: item
+  material: iron_ingot
+  display name: Krizzdos Bolt
+  mechanisms:
+    custom_model_data: 2710201
+
+    

@@ -1,0 +1,6 @@
+rotate_task:
+    type: task
+    script:
+    - repeat 100:
+        - playeffect effect:flame at:<player.location.add[<location[0,1,0].rotate_around_x[<[loop_index].mul[2]>]>]>
+        # - wait 1t

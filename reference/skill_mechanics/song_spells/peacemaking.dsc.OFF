@@ -1,0 +1,19 @@
+peacemaking_task:
+    type: task
+    script:
+    - if !<player.has_flag[skill.peacemaking.level]> ||  <player.has_flag[skill.peacemaking.level]> < 1:
+        - narrate "You need to have a peacemaking skill upgraded to at least 1."
+        - stop
+    - if !<player.item_in_hand.script.data_key[item_type].contains[instrument]>:
+        - narrate "You need an instrument in your hand to cast this spell"
+        - stop
+    - foreach <player.location.find.entities.within[16]> as:entity:
+        - if <[entity].is_living.not>:
+            - foreach next
+        - if <[entity].target||null> != "null":
+            
+            - attack <[entity]> cancel
+        - if <[entity].has_flag[attacking]>:
+            - execute as_op "sentinel forgive --id <[entity]>"
+            - flag <[entity]> attacking:!
+            # - narrate "<[entity]> has target of <[entity].sentinel.targets>"

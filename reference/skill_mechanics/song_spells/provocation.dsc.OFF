@@ -1,0 +1,35 @@
+provocation_task:
+    type: task
+    definitions: first_target|second_target
+    subtasks:
+    script:
+    - define first_target <empty>
+    # - if !<player.has_flag[skill.provocation.level]>:
+    #     - narrate "You need to have a provocation skill upgraded to at least 1."
+    #     - stop
+    # - if !<player.item_in_hand.script.data_key[item_type].contains[instrument]>:
+    #     - narrate "You need an instrument in your hand to cast this spell"
+    #     - stop
+    # - if !<player.has_flag[provoking]>:
+    #     - flag <player> provoking
+    #     - define first_target <player.target>
+    #     - if <[first_target].is_mob.not>:
+    #     - inject locally subpaths.first_target 
+    
+    # - if <player.has_flag[waiting_for_provoke]>:
+    #     - narrate "you targeted <[provoked].name>"
+    #     - if <[provoked].is_mob.no>:
+    #     - inject locally subpaths.target
+    # - else:
+    #     - define provoked <player.target>:
+    #         - narrate "You need to select an animal or monster as a target first."
+    #         - stop
+            
+    #     - narrate "This <[provoked].name> will be provoked. Now select your target."
+    #     - flag player waiting_for_provoke
+   
+    subpaths:
+        first_target:
+        - attack <[provoked]> target:<[second_target]>
+        - narrate "<[provoked].name> attacks <[second_target].name>"
+        - flag player waiting_for_provoke:!

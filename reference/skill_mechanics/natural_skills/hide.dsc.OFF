@@ -1,0 +1,93 @@
+hidden_world:
+    type: world
+    debug: false
+    events:
+        on player walks:
+        - if <player.has_flag[hidden]>:
+            - ratelimit <player> 10t
+            - sneak <player> stop
+            - adjust <player> show_to_players
+            - narrate "<red>You are no longer hidden." targets:<player>
+            - flag <player> hidden:!
+        on player starts sneaking:
+        # if player has hidden flag toggled on, the sneak will try to use their hide skill
+        - if <player.has_flag[attempt_hidden]>:
+            - if <proc[armor_weight_test_proc].context[<player>]>:
+                - narrate  format:game_message  "Your armor is too heavy for you to hide."
+                - stop
+            - foreach <player.location.find_players_within[8]> as:entry:
+                - if <[entry]> == <player>:
+                    - foreach next
+                - if <[entry].target> == <player>:
+                    - if <[entry].flag[skill.skills.perception.level].add[175].round_up||1> > <player.flag[skill.skills.hiding.level].round_down>:
+                        - narrate  format:game_message  "You cannot hide so easily with another being around." targets:<player>
+                        - stop
+                - if <[entry].cursor_on.find_players_within[8].contains[<player>]>:
+                    - narrate <[entry].cursor_on.find_players_within[8].contains[<player>]>
+                    - if <[entry].flag[skill.skills.perception.level].add[85].round_up||1> > <player.flag[skill.skills.hiding.level].round_down>:
+                        - narrate  format:game_message  "You cannot hide so easily with another being around." targets:<player>
+                        - stop
+            # to determine hide difficulty flatness of the chunk is considered
+            - define flatness <player.location.chunk.is_flat[6]>
+            
+            # light level is considered
+            - define light_level <player.location.light>
+            # player's dex is considered
+            - define random_dex <util.random.int[1].to[<proc[attribute_skill_check_proc].context[<player>|dexterity]||0>].div[9].round_up>
+            
+            # how many solid blocks are around the player are considered
+            - define air_blocks <player.location.up[1].find.blocks[air].within[1].size>
+            # a number to beat from calculations
+            - define target_number <[random_dex].sub[<[light_level]>].sub[<[air_blocks]>].sub[<player.location.find_players_within[8].size>]>
+            # hiding algorithm using all the above numbers
+            # - define flatness <player.location.chunk.is_flat[<element[6].add[<player.location.light>].add[<util.random.int[1].to[<player.flag[current_dexterity]>]>].add[<player.location.find.blocks[air].within[2].size>]>]>
+            # a timer until they can hide again
+            - if <player.has_flag[hidden_timer]>:
+                - narrate format:game_message "You cannot hide again so soon"
+                - stop
+            - if <[target_number]> >= 1 && <[flatness].not>:
+                # sets the hiding timer
+                - flag player hidden_timer duration:2s
+                # this mech actually hides the player
+                - adjust <player> hide_from_players
+                - narrate  format:game_message  "You have successfully hidden."
+                # flag the player as hidden for other mechanics (such as some AOF spells not to affect them)
+                - if <player.has_flag[hidden].not>:
+                    - flag <player> hidden
+                # a timer for how long they can hide based on their hiding level
+                - wait <player.flag[skill.skills.hiding.level].add[10]>s
+                
+                - if <player.has_flag[hidden]>:
+                    # when the timer runs out and they are still trying to hide, unhide them
+                    - if <player.has_flag[hidden_timer].not>:
+                        # stop the player from sneaking (the hide key)
+                        - sneak <player> stop
+                        - adjust <player> show_to_players
+                        - narrate "<red>You are no longer hidden."
+                        - flag <player> hidden:!
+            - else:
+                - narrate format:game_message "You fail to hide." targets:<player>
+            - define random_max 8
+            - if <util.random.int[0].to[<[random_max]>]> == <[random_max]>:
+                - run raise_natural_skill_task def:<player>|hiding|0|0
+       
+        on player stops sneaking:
+        # stops the player from hiding
+        - if <player.has_flag[hidden]>:
+            - adjust <player> show_to_players
+            - flag <player> hidden:!
+            - narrate "<red>You are no longer hidden."
+
+hide_toggle_command:
+    type: command
+    name: hide
+    script:
+    - if <player.has_flag[skill.skills.hiding].not>:
+        - flag <player> skill.skills.hiding.level:1
+    
+    - if <player.has_flag[attempt_hidden]>:
+        - flag <player> attempt_hidden:!
+        - narrate  format:game_message "Hiding toggled off."
+    - else:
+        - flag <player> attempt_hidden
+        - narrate  format:game_message  "Hiding toggled on."

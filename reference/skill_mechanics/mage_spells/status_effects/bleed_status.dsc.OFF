@@ -1,0 +1,19 @@
+bleed_task:
+    type: task
+    definitions: target|amount
+    script:
+    - repeat <[amount]>:
+        - if <[target].has_flag[bleeding]>:
+            - wait <util.random.int[1].to[20]>s
+            - hurt 1 <[target]>
+            - title "title:<white><&chr[3111]>" stay:5t fade_in:1t fade_out:1t targets:<[target]>
+        - else:
+            - stop
+    - if <[target].has_flag[bleeding]>:
+        - flag <[target]> bleeding:!
+
+
+red_task:
+    type: task
+    script:
+    - title "title:<white><&font[steamfront:gui_nav]><&chr[3111]>" stay:10s fade_in:0t fade_out:0t targets:<player>

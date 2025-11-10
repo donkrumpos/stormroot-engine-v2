@@ -1,0 +1,475 @@
+magprithimo_assignment:
+    type: assignment
+    speed: 1t
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:4
+        
+        # on exit proximity:
+        # - disengage
+
+    interact scripts:
+    - magprithimo_interact
+    default constants:
+        appearance1: "<npc.name>' has dark silky feathers and an intense gaze."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+magprithimo_data:
+    type: data
+    teach_price: 400
+    knowledge:
+        level: intermediate
+        teach:
+            spell:
+            - gust
+            - magic_armor
+            - dust_field
+            - wither
+        lore:
+        - place.songtide
+        - skill.magic
+        - race.woodland_clan.raven_clan
+
+magprithimo_interact:
+    type: interact
+    steps:
+        default:
+            proximity trigger:
+                entry:
+                    script:
+                    - execute as_server "npc skin --url https://minesk.in/2fdd0f3498274f278e193be5b789679d --id <npc.id>"
+                    - if <player.has_flag[npc.magprithimo_first_prox].not>:
+                        - playsound <player> sound:steamfront:npcs.mags_caw custom sound_category:players
+                        - inject description_inject_task
+                        - narrate format:npcchat "Cawwm. Come into my study."
+                        - flag <player> npc.magprithimo_first_prox
+                       
+                        
+            click trigger:
+                script:
+                # - if <npc.engaged[<player>].not>:
+                #     - engage
+                - run npc_first_conversation
+                - stop
+                - inject description_inject_task
+                - if <player.flag[npc.<npc>.familiarity.level]||0> <= 1:
+                    - if <proc[get_player_scores_proc].context[<player>]> < 12:
+                        - narrate format:npcchat "Aha I saw you enter Rothigport recently,"
+                    - else:
+                        - narrate format:npcchat "Aha I saw you enter Rothigport awhile ago,"
+                
+                    - wait 1s
+                    - narrate format:npcchat "I'd hope you come and pay me a visit <player.name>."
+                - else:
+                    - narrate format:npcchat "Welcome back <player.name>"
+
+                - if <player.flag[class.type]> == "mage":
+                    # - if <player.has_flag[magprithimo_mage_yes]>:
+                        # - narrate format:npcchat "You've come back for more."
+                        # - wait 10t
+                        # - narrate format:npcchat "There is not much I can teach you for right now, but come back later"
+                        #     # TODO make second level conversation here
+                    # - else:
+                    - if <player.flag[npc.<npc>.familiarity.level]||0> > 5:
+                        - narrate format:npcchat "You're on your way to becoming a powerful mage <player.name>"
+                    - else:
+                        - narrate format:npcchat "A fellow mage I sense."
+                    - wait 10t
+                    - if <player.has_flag[skill.spells.gust.level]>:
+                        - narrate format:npcchat "There is not much I can teach you for right now, but come back later"
+                        # TODO make second level conversation here
+                    - else:
+                        - narrate format:npcchat "Can I teach you a spell you might not know?"
+                        - clickable magprithimo_learn_spell_task save:magprithimo_learn_spell_task_clickable until:10s for:<player> usages:1
+                        - clickable magprithimo_mage_no_learn_spell_task save:magprithimo_mage_no_learn_spell_task_clickable until:10s for:<player> usages:1
+                        - wait 1s
+                        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B> Yes, Please teach me the spell.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_learn_spell_task_clickable].command>]>"
+                        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B> No I'll learn other spells elsewhere.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_mage_no_learn_spell_task_clickable].command>]>"
+                        - zap magprithimo_7 duration:20s
+
+                - else if <player.flag[npc.<npc>.familiarity.level]||0> <= 10:
+                    - wait 1s
+                    - narrate format:npcchat "Do you want to know about.
+                    - clickable magprithimo_magic_1_task save:magprithimo_magic_1_task_clickable until:10s for:<player> usages:1
+                    - clickable magprithimo_raven_1_task save:magprithimo_raven_1_task_clickable until:10s for:<player> usages:1
+                    - wait 1s
+                    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Learning about Magic.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_magic_1_task_clickable].command>]>"
+                    - if <player.has_flag[lore.race.raven].not>:
+                        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>The Raven Clan.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_raven_1_task_clickable].command>]>"
+                
+                    - zap magprithimo_first duration:30s
+                - else:
+                    - narrate format:npcchat "I can't teach you any more."
+        magprithimo_first:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, Learning about Magic.
+                    script:
+                    - run magprithimo_magic_1_task
+                2:
+                    trigger: <&7>/2/, The Raven Clan.
+                    script:
+                    - run magprithimo_raven_1_task
+        magprithimo_2:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, /Yes/, I have come to prosecute in the name of the Central Kingdoms.
+                    script:
+                    - run magprithimo_magic_purge_1_task
+                2:
+                    trigger: <&7>/2/, /No/, I am just curious to learn more about being a mage.
+                    script:
+                    - run magprithimo_magic_2_task
+        magprithimo_3:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, I would like to learn more about Nax Hollum the Arch Mage.
+                    script:
+                    - run magprithimo_nax_hollum_task
+                2:
+                    trigger: <&7>/2/, I would like to learn more about becoming a mage.
+                    script:
+                    - run magprithimo_magic_3_task
+        magprithimo_4:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, /No/, tell me more about the 12 Circles of Magic.
+                    script:
+                    - run magprithimo_12_circles_task
+                2:
+                    trigger: <&7>/2/, /Yes/ thank you, I am done.
+                    script:
+                    - run magprithimo_done_task
+        magprithimo_5:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, the Arcanic /Inquisition/.
+                    script:
+                    - run magprithimo_arcanic_inquisition_task
+                2:
+                    trigger: <&7>/2/, Still yet becoming a /mage/.
+                    script:
+                    - run magprithimo_magic_4_task
+                3:
+                    trigger: <&7>/3/, I'm tired of talking.
+                    script: 
+                    - run magprithimo_done_task
+        magprithimo_6:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, I want to become a mage!.
+                    script:
+                    - run magprithimo_mage_yes_task
+                2:
+                    trigger: <&7>/2/, /No/, I'm going to go think about it.
+                    script:
+                    - run magprithimo_mage_no_task
+        magprithimo_7:
+            chat trigger:
+                1:
+                    trigger: <&7>/1/, /Yes/, Please teach me my first spell.
+                    script:
+                    - run magprithimo_learn_spell_task
+                2:
+                    trigger: <&7>/2/, /No/ I'll learn other spells elsewhere.
+                    script:
+                    - run magprithimo_mage_no_learn_spell_task
+
+magprithimo_magic_1_task:
+    type: task
+    script:
+    - if <player.has_flag[lore.magprithimo.magic_1]>:
+        - run magprithimo_magic_2_task
+    - else: 
+        - inject description_inject_task
+        - narrate format:npcchat "Magic is fairly common here in the Song Tide,"
+        - wait 10t
+        - narrate format:npcchat "So you've come to the right place;"
+        - wait 10t
+    
+        - if <player.has_flag[lore.magic.purge].not>:
+            - narrate format:npcchat "though there are those, who wish to extinguish it from all of Deluvia."
+            - wait 10t
+            - narrate format:npcchat "You are not one of those, are you?"
+            - clickable magprithimo_magic_purge_1_task save:magprithimo_magic_purge_1_task_clickable until:10s for:<player> usages:1
+            - clickable magprithimo_magic_2_task save:magprithimo_magic_2_task_clickable until:10s for:<player> usages:1
+            - wait 1s
+            - if <player.has_flag[lore.magic.purge].not>:
+                - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B>Yes, I have come to prosecute in the name of the Central Kingdoms.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_help_1_2_task_clickable].command>]>"
+            
+            - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B>No, I am just curious to learn more about being a mage.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_magic_2_task_clickable].command>]>"
+
+            - zap magprithimo_2 magprithimo_interact duration:20s
+        - flag <player> lore.magprithimo.magic_1
+        - else:
+            - run magprithimo_magic_2_task
+
+
+magprithimo_raven_1_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "The Twelve Anthoran Tribes are like one big family for we all came out of the Omphalos"
+    - wait 10t
+    - narrate format:npcchat "or so the tales are told to all the children of the Song Tide Islands".
+    - wait 10t
+    - narrate format:npcchat "There are Twelve and the Raven Clan is one. Perhaps you will meet more out there."
+    - wait 10t
+    - narrate format:npcchat "Us Raven Clan have a proclivity toward magic, and we are not all unkind as others might say."
+    - zap default duration:20s
+        
+
+magprithimo_magic_purge_1_task:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap default
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - playsound <player> sound:steamfront:npcs.mags_caw custom sound_category:players
+        - narrate format:npcchat "Hark! This is not good. Not good at all."
+        - wait 10t
+        - narrate format:npcchat "Though we in Rothigport try to be accepting at all, I feel this news will get you run out of town and even the whole Archipelago."
+        - wait 10t
+        - narrate format:npcchat "You best leave back to the Central Kingdoms, or head to the Outlands!"
+        - flag <player> lore.magic.purge.level:++
+        - zap default magprithimo_interact duration:20s
+        - flag <player> suspend_clickable:!
+
+magprithimo_magic_2_task:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap default
+        - flag <player> suspend_clickable
+        - if <player.flag[lore.magprithimo.magic_2]> > 2:
+            - run magprithimo_magic_3_task
+        - else:
+            - inject description_inject_task
+            - if <player.has_flag[lore.magic.purge].not>:
+                - narrate format:npcchat "Oh good, just trying to keep our realm safe.."
+                - wait 10t
+            - narrate format:npcchat "There are many mages across Song Tide that can teach you more about magic, I am but one."
+            - wait 10t
+            - narrate format:npcchat "Most live alone, or with a few apprentices, out in the countryside."
+            - wait 10t
+            - narrate format:npcchat "I am a protégé of Nax Hollum, the nearest archmage. He has taught me everything I know."
+            - clickable magprithimo_nax_hollum_task save:magprithimo_nax_hollum_task_clickable until:30s for:<player> usages:1
+            - clickable magprithimo_magic_3_task save:magprithimo_magic_3_task_clickable until:30s for:<player> usages:1
+            - narrate format:npcchat "Would you like to know more about"
+            - flag <player> lore.magic.purge.level:++
+            
+            # - wait 1s
+            - if <player.has_flag[lore.magic.nax_hollum].not>:
+                - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B> Nax Hollum the Arch Mage.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_nax_hollum_task_clickable].command>]>"
+            - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B> Becoming a mage.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_magic_3_task_clickable].command>]>"
+            - flag <player> lore.magprithimo.magic_2:++
+            - zap magprithimo_3 duration:20s
+            - flag <player> suspend_clickable:!
+    
+magprithimo_nax_hollum_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "Nax is the most powerful mage that I know, in this area of Song Tide. We think that he casts an aura of protection over Rothigport that repels the Inquisitors that wish to purge us of magic."
+    - wait 10t
+    - narrate format:npcchat "If that is true or not, he spends his time in his tower up above Rothigport studying the arcane arts, mostly aeromancy, the magic of the Winds."
+    - wait 10t
+    - flag <player> lore.magic.nax_hollum
+    - narrate format:npcchat "Do you know of the 12 circles of magic?"
+    - clickable magprithimo_12_circles_task save:magprithimo_12_circles_task_clickable until:10s for:<player> usages:1
+    - clickable magprithimo_done_task save:magprithimo_done_task_clickable until:10s for:<player> usages:1
+    - wait 1s
+    - if <player.has_flag[lore.magic.elements].not>:
+        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B> No, tell me more about the 12 Circles of Magic.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_12_circles_task_clickable].command>]>"
+    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B> Yes thank you, I am done.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_done_task_clickable].command>]>"
+    - zap magprithimo_4 duration:20s
+
+magprithimo_magic_3_task:
+    type: task
+    script:
+    - if <player.flag[lore.magprithimo.magic_3]> > 3:
+        - run magprithimo_magic_4_task
+    - else:
+        - inject description_inject_task
+        - narrate format:npcchat "You can only choose one major area of study which will give you specializations in that class,"
+        - wait 10t
+        - narrate format:npcchat "So you must choose wisely. You can always come back to me to pick the Mage Class."
+        - wait 10t
+        - narrate format:npcchat "In my opinion, mages have the potential to be the most powerful, but it takes patience."
+        - wait 10t
+        - narrate format:npcchat "You start slow, learn the basics, but after awhile, you will see that you will not have a foe that can defeat you."
+        - wait 10t
+        - narrate format:npcchat "But if you get too powerful and well known, then the Arcanic Inquisition, the hunters of mages might take notice."
+        - wait 10t
+        - narrate format:npcchat "Do you want to know more about"
+        - clickable magprithimo_arcanic_inquisition_task save:magprithimo_arcanic_inquisition_task_clickable until:30s for:<player> usages:1
+        - clickable magprithimo_magic_4_task save:magprithimo_magic_4_task_clickable until:30s for:<player> usages:1
+        - clickable magprithimo_done_task save:magprithimo_done_task_clickable until:30s for:<player> usages:1
+        - wait 1s
+        - if <player.has_flag[lore.magic.purge].not> || <player.flag[lore.magic.purge.level]> < 2: 
+            - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B> the Arcanic Inquisition.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_arcanic_inquisition_task_clickable].command>]>"
+        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B> still yet becoming a mage.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_magic_4_task_clickable].command>]>"
+        - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>3. <&B> I am tired of talking.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_done_task_clickable].command>]>"
+        - flag <player> lore.magprithimo.magic_3:++
+        - zap magprithimo_5 duration:30s
+  
+
+magprithimo_arcanic_inquisition_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "Well I shan't tell to much since I don't know you well, but I feel like we are all in eventual danger"
+    - wait 10t
+    - narrate format:npcchat "It was after the Great War scarred our land and the powers that be were shook up that the Central Kingdoms decided they were better off without magic."
+    - wait 10t
+    - narrate format:npcchat "and it was not long after that, a new leader decided to outlaw all magic. Soon thereafter he decided that all mages left in their realm must be tried and executed."
+    - wait 10t
+    - narrate format:npcchat "Thank the Gods that many left and came out here."
+    - wait 10t
+    - narrate format:npcchat  "Will the purge come way out here? I don't know, but there are rumblings that spies, assassins and Inquisitioners lurk, so we must all be on our talons and ready!"
+    - flag <player> magic.purge.level:++
+    - zap default duration:20s
+
+magprithimo_magic_4_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "ah yes, so would you like me to start you down the long path of becoming a mage?"
+    - clickable magprithimo_mage_yes_task save:magprithimo_mage_yes_task_clickable until:10s for:<player> usages:1
+    - clickable magprithimo_mage_no_task save:magprithimo_mage_no_task_clickable until:10s for:<player> usages:1
+    - wait 1s
+    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B> Yes, I want to become a mage!<&8><&rb><&end_hover>].on_click[<entry[magprithimo_mage_yes_task_clickable].command>]>"
+    - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B> No I'm going to think about it.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_mage_no_task_clickable].command>]>"
+    - zap magprithimo_6 duration:20s
+
+magprithimo_mage_yes_task:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap default
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - if <player.has_flag[class.type]> && <player.flag[class.type]> != "Classless":
+            - narrate format:game_message "Well you already professed a class, so I cannot teach you this."
+            - zap default
+            - stop
+        - playeffect effect:enchantment_table at:<player.target.location> quantity:200 offset:.5,1,.5
+        - narrate format:npcchat "It is excellent to have you among us."
+        - flag <player> class.type:mage
+        - flag <player> magprithimo_mage_yes
+        # TODO play level up type sound
+        - narrate format:game_message "You are now the mage class."
+        - wait 10t
+        - give xp quantity:100
+        - narrate format:game_message "You have received 100 XP."
+        - wait 2s
+        - if <player.has_flag[skill.spells.gust.level].not>
+            - narrate format:npcchat "Now would you like me to teach you your first spell?"
+            - clickable magprithimo_learn_spell_task save:magprithimo_learn_spell_task_clickable until:10s for:<player> usages:1
+            - clickable magprithimo_mage_no_learn_spell_task save:magprithimo_mage_no_learn_spell_task_clickable until:10s for:<player> usages:1
+            - wait 1s
+            - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>1. <&B> Yes, Please teach me my first spell.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_learn_spell_task_clickable].command>]>"
+            - narrate  "<element[<&hover[Click to find out more from <npc.name>.]><&8><&lb><&color[#00cb43]><&sp><&sp><&E>2. <&B> No I'll learn other spells elsewhere.<&8><&rb><&end_hover>].on_click[<entry[magprithimo_mage_no_learn_spell_task_clickable].command>]>"
+            - zap magprithimo_7 duration:20s
+        - else:
+            - zap default
+        - flag <player> suspend_clickable:!
+
+
+magprithimo_12_circles_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "Magic spells obtain their power from the world of Deluvia herself, each from the twelve aspects"
+    - wait 10t
+    - narrate format:npcchat "Fire, Stone/Ore, Water/Ice, Dirt, Death, Star/Light, Moon/Night, Nature/Life, Aether/Chaos, Poison, Storms/Energy, and Wind/Air"
+    - wait 1s
+    - narrate format:npcchat "You can specialize any in one of them, or generalize in all of them."
+    - wait 10t
+    - narrate format:npcchat "Being a student of Nax, I am also a student of Wind, but fear I get too distracted by the social life here in Rothigport."
+    - wait 10t
+    - narrate format:npcchat "However, you can find out much more about the 12 Circles of Magic in your travels about Deluvia."
+    - flag <player> lore.magic.elements
+    - zap default duration:20s
+
+magprithimo_learn_spell_task:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap default
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate format:npcchat "Caw Caw! This is exciting. Most mages aren't this emotional. Sorry."
+        - wait 10t
+        - narrate format:npcchat "Here is a basic cantrip spell I call <italic>Gust<&r>."
+        - flag <player> skill.spells.gust.level:+:1
+        - narrate format:npcchat "Here I will put it in your spellbook."
+        - flag player stat.points.spell_points.level:++
+        - narrate format:game_message "You have received a Spell Point."
+        - wait 10t
+        - narrate format:npcchat "You can open your spellbook to see the spells you currently know. "
+        - narrate format:game_message "type /spells"
+        - wait 1s
+        - narrate format:npcchat "If you have the magical energy, you can study and get better at them."
+        - narrate format:game_message "If you have a skill point, you can click on the spell to upgrade it"
+        - zap default duration:20s
+        - flag <player> suspend_clickable:!
+
+
+
+magprithimo_done_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - narrate format:npcchat "Come back again <player.name>."
+    - wait 10t
+    - narrate format:npcchat "Us Crow, never forget a face."
+    - zap default duration:20s
+
+magprithimo_mage_no_task:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap default
+        - flag <player> suspend_clickable
+        - inject description_inject_task
+        - narrate format:npcchat "Even though we need arcanists now more than ever, there are many paths to take."
+        - zap default duration:20s
+        - flag <player> suspend_clickable:!
+
+magprithimo_mage_no_learn_spell_task:
+    type: task
+    script:
+    - if <player.has_flag[suspend_clickable].not>:
+        - zap default
+        - flag <player> suspend_clickable
+        - if <player.flag[magprithimo_mage_no_learn_spell]||0> < 2:
+            - flag <player> magprithimo_mage_no_learn_spell:++
+            - inject description_inject_task
+            - narrate format:npcchat "It is true that you can learn thousands of spells out there."
+            - wait 10t
+            - narrate format:npcchat "Come back later if you ever need to learn more."
+        - else:
+            - narrate format:npcchat "Fine go learn spells elsewhere!"
+        - zap default duration:20s
+        - flag <player> suspend_clickable:!
+
+# map_test_task:
+#     type: task
+#     script:
+#     - map new:custom_map image:https://steamfront.net/images/blue1.png reset save:custom_map
+#     - give filled_map[map=<entry[custom_map].created_map>]
+
+    
+# custom_map:
+#   type: map
+#   objects:
+#     1:
+#       type: image
+#       image: https://steamfront.net/images/blue1.png

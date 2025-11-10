@@ -1,0 +1,7 @@
+garlic:
+  type: item
+  material: bowl
+  display name: Garlic
+  mechanisms:
+    custom_model_data: 2110006
+    

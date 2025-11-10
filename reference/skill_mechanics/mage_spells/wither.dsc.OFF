@@ -1,0 +1,29 @@
+wither_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    - if <[attacker].has_flag[skill.spells.wither.level].not>:
+        - flag <[attacker]> skill.spells.wither.level:1
+        - define level 1
+    - define level <[attacker].flag[skill.spells.wither.level]>
+    - define targets <[attacker].location.find_blocks[!air].within[<[level]>]>
+    - if <[attacker].has_flag[casting_wither]>:
+        - stop
+    - flag <[attacker]> casting_wither expire:<element[19].sub[<[level]>].max[1]>
+    - foreach <[targets]> as:target:
+        # - wait 1t
+        - playeffect effect:crit_magic at:<[target]> quantity:30
+        - if <[target].material.is_solid>:
+            - showfake mycelium <[target]> players:<server.online_players> duration:<[level]>
+        - if <[target].material.is_transparent>:
+            - showfake dead_bush <[target]> players:<server.online_players> duration:<[level]>
+        - if <[target].find.living_entities.within[1].exclude[<[attacker]>].any>:
+            # - hurt 1 <[target].find.living_entities.within[1].exclude[<player>]>
+            - if <[target].find.living_entities.within[1].exclude[<[attacker]>].first.has_flag[undead]>:
+                - heal <[level]> <[target].find.living_entities.within[1].exclude[<[attacker]>].first>
+            - else:
+                - run spell_damage_task def:wither|<[target].find.living_entities.within[1].exclude[<[attacker]>].first>|<[attacker]>
+            - repeat <[level]>:
+                - wait 1t
+                - playeffect effect:crit_magic offset:0,1,0 at:<[target].find.living_entities.within[1].exclude[<[attacker]>].first.location> quantity:30
+    

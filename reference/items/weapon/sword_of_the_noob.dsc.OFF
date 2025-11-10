@@ -1,0 +1,31 @@
+sword_of_the_noob:
+  type: item
+  debug: false
+  material: stick
+  display name: Sword of the Noob
+  lore:
+  - You need a chance.
+  flags:
+    stat:
+      bonus:
+        luck: 100
+        two_handed: false
+        fire_damage: 0
+        cold_damage: 0
+        poison_damage: 0
+        energy_damage: 0
+        swing_speed_increase: 0
+        hit_chance_increase: 50
+        saturation: 1
+    required_strength: 10
+    weapon_type: sword
+    craftable: false
+    blessed: true
+    weapon_speed: 40
+    weapon_damage_min: 5
+    weapon-damage_max: 6  
+  
+  mechanisms:
+    custom_model_data: 7100000
+
+

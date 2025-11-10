@@ -1,0 +1,21 @@
+weaken_task:
+    type: task
+    debug: true
+    definitions: attacker|defender
+    script:
+    - if <[attacker].has_flag[skill.spells.weaken.level].not>:
+        - flag <[attacker]> skill.spells.weaken.level:1
+    - define resist <[defender].flag[skill.skills.stone_resistance.level]>
+    - if <util.random.int[1].to[100]> != 100:
+        # gives attacker always a 1% chance of success
+        - if <util.random.int[1].to[100]> < <[resist]>:
+            - narrate "The target has resisted your magic." targets:<[attacker]>
+            - stop
+    - run raise_resist_spells_task def:<[defender]>|stone
+    - adjust <[defender]> max_health:<[defender].health_max.sub[<[attacker].flag[skill.spellsweaken.level]>]>
+    - flag <[defender]> skill.attribute.strength.level:-:<[attacker].flag[skill.weaken.level]>
+    - repeat <[attacker].flag[skill.spells.weaken.level]>:
+        - wait 1s
+    - flag <[defender]> skill.attribute.strength.level:+:<[attacker].flag[skill.spells.weaken.level]>
+    - adjust <[defender]> max_health:<[defender].health_max.add[<[attacker].flag[skill.spells.weaken.level]>]>
+    - cast weakness duration:<[attacker].flag[skill.spells.weaken.level]>s

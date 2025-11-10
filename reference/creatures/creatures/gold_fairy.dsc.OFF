@@ -1,0 +1,19 @@
+gold_fairy:
+    type: entity
+    entity_type: villager
+        
+    flags:
+        karma: 30
+        fame: 30
+        # biome: forest
+        rarity: 1
+        eligible_block_spawn: air
+        
+        health: 2048
+        xp: 11
+        coin_drop:
+            copper: 
+                quantity: 1
+                chance: .5
+        custom_beast: true
+        custom_model_data: 1656567

@@ -1,0 +1,7 @@
+ahrim_weed:
+  type: item
+  material: bowl
+  display name: Ahrim Weed
+  mechanisms:
+    custom_model_data: 2110021
+    

@@ -1,0 +1,38 @@
+dargred_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:9
+    interact scripts:
+    - dargred_interact
+
+    default constants:
+        appearance1: "<npc.name>'lives in the wild but seems mysterious."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+
+
+dargred_interact:
+    type: interact
+    steps:
+        1:
+            click trigger:
+                script:
+                - inject description_inject_task
+                - if <player.flag[npc.<npc>.familiarity.level]||0> <= 1:
+                    - random:
+                        - narrate "Has Saggris lost his mind? Wait until Prigtoon finds out he is ferring people to his family's tomb southwest of here."
+                        - narrate "Get to Saggris' ferry, southwest of here before Prigtoon puts a stop to it."
+                - else:
+                    - random:
+                        - narrate "Is Saggris still ferrying people to the island? If I have time, I want to see."
+                        - narrate "The ferryman is nuts if he is offering rides for free to the non-dockworkers union members."
+                        - narrate "I've been meaning to make it to that island too, but it also creeps me out."
+                        - narrate "That ferry used to only before the Prigtoon workers. I guess Saggis doesn't care anymore."
+                        - narrate "If you follow this dock around, cross the bridge, and then go straight for a block or so, and then veer left, you will find him."

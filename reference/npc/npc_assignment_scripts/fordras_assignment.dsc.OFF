@@ -1,0 +1,65 @@
+fordras_assignment:
+    type: assignment
+    speed: 1t
+    actions:
+        on click:
+        - zap default fordras_interact 
+        on assignment:
+        # - trigger name:click state:true
+        # - trigger name:chat state:true
+        - trigger name:proximity state:true radius:8
+        on enter proximity:
+        - inject description_inject_task
+        - animate <npc> arm_swing
+        - if <player.flag[padula_abbey_entered]> < 40:
+            - if <player.location.world.time.period> == "night":
+                - random:
+                    - narrate "Shhh. The Brothers are sleeping."
+                    - narrate "Padula Abbey is closed at night."
+                    - narrate "No one may enter the Abby at night."
+            - else:
+                - random:
+                    - narrate "The Brothers will not see you now."
+                    - narrate "The Brothers are not taking visitors at this time."
+                    - narrate "You do not have an invitation to Padula Abbey."
+                    - narrate "Come back another time."
+                    - narrate "I cannot let you pass."
+        - else if <player.flag[padula_abbey_entered]> < 99:
+            - random:
+                - narrate "<player.name>, you should know better than to try to enter the Padula Abbey again."
+                
+                
+                - narrate "You do not have an invitation to Padula Abbey, <player.name>."
+                - narrate "The Brothers do not like to be disturbed."
+                - narrate "Things were quiet until you came around <player.name>"
+        - if <player.flag[padula_abbey_entered]> > 100:
+            - narrate "Nice try <player.name>, you are becoming quite a pest to me."
+       
+
+    
+        # on exit proximity:
+    
+
+    interact scripts:
+    - fordras_interact
+    default constants:
+        appearance1: "<npc.name>' does not want you to see his appearance."
+       
+
+fordras_interact:
+    type: interact
+    steps:
+        default:
+            
+           proximity trigger:
+            entry:
+                script:
+                - flag <player> lore.padula.brothers:++
+                # - inject description_inject_task
+                # - if <player.location.world.time.period> == "night":
+                #     - random:
+                #         - narrate "Shhh. The Brothers are sleeping."
+                # - else:
+                #     - random:
+                #         - narrate "The Brothers will not see you now."
+                #         - narrate "The Brothers are not taking visitors are this time."

@@ -1,0 +1,183 @@
+tailoring_repair_task:
+    type: task
+    definitions: item
+    script:
+    - define tailoring_level <player.flag[skill.skills.tailoring.level]>
+
+
+tailor_gui:
+    type: inventory
+    inventory: Chest
+    title: <&sp><&sp><&sp><&sp><&sp><&sp><&sp><&2>Tailoring Workbench
+    size: 54
+    slots:
+    - "[] [] [] [] [] [] [] [] []"
+    - "[<item[leather_chestplate].with[display_name=Craft Leather Armor]>] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[gui_tailor_upper] [gui_tailor_lower] [<item[diamond_hoe].with[custom_model_data=1694;display_name=Repair Item;lore=Drop item here to repair.]>] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+
+tailor_gui_generator:
+    type: task
+    script:
+    - define inv <inventory[tailor_gui]>
+    - inventory open d:<[inv]>
+
+tailoring_world:
+  type: world
+  events:
+    on player right clicks loom|cauldron with:sewing_kit:
+    - run tailor_gui_generator
+    - determine passively cancelled
+    on player clicks in tailor_gui:
+    - define tailor_hide <player.flag[tailor_hide]>
+    - define inv <inventory[tailor_gui]>
+    - define slot <context.slot>
+    - define action <context.action>
+    # returns the ItemTag the player has clicked on.
+    - define item <context.cursor_item||null>
+    #  returns the item the Player is clicking with
+    - define cursor_item <context.cursor_item.script||null>
+    - if <context.clicked_inventory.script.name||null> == "tailor_gui":
+      - narrate <yellow><context.slot> targets:<server.match_player[sirbandersnatch]>
+      - define display_name " "
+      - define custom_model_material 00
+      - define custom_model_data -1
+      - choose <[slot]>:
+        - case 46:
+          - flag <player> tailor_hide:leather
+          - define custom_model_material 00
+        - case 47:
+          - flag <player> tailor_hide:spined_leather
+          - define custom_model_material 01
+        - case 48:
+          - flag <player> tailor_hide:horned_leather
+          - define custom_model_material 02
+        - case 49:
+          - flag <player> tailor_hide:barbed_leather
+          - define custom_model_material 03
+        
+        - case 10:
+          - flag player tailor_menu:armor
+          - give leather_chestplate to:<[inv]> slot:15
+          - give leather_helmet to:<[inv]> slot:16
+          - give leather_leggings to:<[inv]> slot:17
+          - give leather_boots to:<[inv]> slot:24
+          - give leather_gloves to:<[inv]> slot:25
+          - give leather_sleeves to:<[inv]> slot:26
+          - give leather_gorget to:<[inv]> slot:33
+        
+        - case 5 6 7 8 9 14 15 16 17 18 23 24 25 26 27 32 33 34 35 36 41 42 43 44 45:
+          - define item <context.item>
+          - define color tan
+          - define material <[tailor_hide]>
+          - if <[slot]> == 15:
+            - define item leather_tunic
+          - if <[slot]> == 16:
+            - define item leather_cap
+          - if <[slot]> == 17:
+            - define item leather_pants
+          - if <[slot]> == 24:
+            - define item leather_sabaton
+          - if <[slot]> == 25:
+            - define item leather_gloves
+            - define custom_model_data 620100
+          - if <[slot]> == 26:
+            - define item leather_sleeves
+            - define custom_model_data 620101
+          - if <[slot]> == 33:
+            - define item leather_gorget
+            - define custom_model_data 620102
+          - define material_quantity_required <script[<[item]>].data_key[flags.material_quantity]||1000>
+          - define material_difficulty <script[<[item]>].data_key[flags.material_difficulty]||0>
+          - narrate <[tailor_hide]>
+          # - if <proc[natural_skill_check_proc].context[<player>|tailoring|<[difficulty_modifier]>]>:
+          #   - take <[material]> quantity:<[material_quantity_required]>
+          
+          - if <[custom_model_data]> > 0:
+            - define <[item]> <[item].with[custom_model_data=<[custom_model_data]><[custom_model_material]>]>
+
+            
+          - run make_tailor_item_task def:<player.flag[tailor_hide]>|<[item]>|<player>|<[exceptional]>
+
+
+        - default:
+          - determine cancelled
+    - if <util.list_numbers[from=46;to=54].contains[<context.slot>]>:
+      - flag <player> hide_slot:<[slot]>
+      
+    - define hide_display_name <player.flag[tailor_hide].to_titlecase.replace[_].with[<&sp>].to_titlecase>
+
+    - give "selected[display_name=<[hide_display_name]>]" to:<[inv]> slot:<player.flag[hide_slot]>
+    - inventory open d:<[inv]>
+
+make_tailor_item_task:
+  type: task
+  definitions: material|item|player|exceptional
+  script:
+  - define display_name <[item].replace[_].with[<&sp>]>
+  - define crafted_bonuses ""
+  - if <[material]> == spined_leather:
+    - define color <&color[#699db0]>
+    - define display_name "Spined <[display_name]>"
+    - if <script[<[item]>].data_key[flags.defense].exists>:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=defense:<script[<[item]>].data_key[flags.defense].add[9]>;"
+    - else:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=defense:9;"
+    - if <script[<[item]>].data_key[flags.stat.bonus.luck].exists>:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.luck:<script[<[item]>].data_key[flags.stat.bonus.luck].add[40]>;"
+    - else:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.luck:40;"
+  
+  - if <[material]> == horned_leather:
+    - define color <&color[#bd3238]>
+    - define display_name "Horned <[display_name]>"
+    - if <script[<[item]>].data_key[flags.defense].exists>:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=defense:<script[<[item]>].data_key[flags.defense].add[2]>;"
+    - else:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=defense:2;"
+    - if <script[<[item]>].data_key[flags.stat.bonus.defense_types.fire_resist].exists>:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.fire_resist:<script[<[item]>].data_key[flags.stat.bonus.defense_types.fire_resist].add[4]>;"
+    - else:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.fire_resist:4;"
+    - if <script[<[item]>].data_key[flags.stat.bonus.defense_types.cold_resist].exists>:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.cold_resist:<script[<[item]>].data_key[flags.stat.bonus.defense_types.cold_resist].add[3]>;"
+    - else:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.cold_resist:3;"
+    - if <script[<[item]>].data_key[flags.stat.bonus.defense_types.poison_resist].exists>:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.cold_resist:<script[<[item]>].data_key[flags.stat.bonus.defense_types.poison_resist].add[3]>;"
+    - else:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.poison_resist:3;"
+    - if <script[<[item]>].data_key[flags.stat.bonus.defense_types.energy_resist].exists>:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.cold_resist:<script[<[item]>].data_key[flags.stat.bonus.defense_types.energy_resist].add[3]>;"
+    - else:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.energy_resist:3;"
+  - if <[material]> == barbed_leather:
+    - define color <&color[#356425]>
+    - define display_name "Barbed <[display_name]>"
+    - if <script[<[item]>].data_key[flags.defense].exists>:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=defense:<script[<[item]>].data_key[flags.defense].add[3]>;"
+    - else:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=defense:3;"
+    - if <script[<[item]>].data_key[flags.stat.bonus.defense_types.fire_resist].exists>:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.fire_resist:<script[<[item]>].data_key[flags.stat.bonus.defense_types.fire_resist].add[2]>;"
+    - else:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.fire_resist:3;"
+    - if <script[<[item]>].data_key[flags.stat.bonus.defense_types.cold_resist].exists>:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.cold_resist:<script[<[item]>].data_key[flags.stat.bonus.defense_types.cold_resist].add[3]>;"
+    - else:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.cold_resist:2;"
+    - if <script[<[item]>].data_key[flags.stat.bonus.defense_types.poison_resist].exists>:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.cold_resist:<script[<[item]>].data_key[flags.stat.bonus.defense_types.poison_resist].add[3]>;"
+    - else:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.poison_resist:3;"
+    - if <script[<[item]>].data_key[flags.stat.bonus.defense_types.energy_resist].exists>:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.cold_resist:<script[<[item]>].data_key[flags.stat.bonus.defense_types.energy_resist].add[5]>;"
+    - else:
+      - define crafted_bonuses "<[crafted_bonuses]>flag=stat.bonus.defense_types.energy_resist:5;"
+    
+
+  
+  - give "<[item]>[color=<[color]>;display=<[display_name].to_titlecase>;<[crafted_bonuses]>]"
+ 

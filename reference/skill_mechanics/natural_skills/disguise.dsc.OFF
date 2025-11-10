@@ -1,0 +1,67 @@
+disguise_command:
+    type: command
+    name: disguise
+    script:
+    - if <player.has_flag[skill.skills.disguise].not>:
+        - flag <player> skill.skills.disguise.level:1
+    - wait 1s
+    - narrate format:game_message "You start to apply a disguise" targets:<player>
+    - define disguise <context.args.get[1]||null>
+    - define disguise_skill <player.flag[skill.skills.disguise.level]>
+    - wait <element[100].sub[<[disguise_skill].round_up.div[10]>].min[11]>s
+    - define disguise_success <proc[natural_skill_check_proc].context[<player>|disguise|<[anatomy]>]>
+    - define charisma_modifier <player.flag[skill.skills.charisma.level].round_up||0>
+    - if <[disguise_success]>:
+        - if <[disguise]> != "null":
+            - narrate "you provided a name <[disguise]>"
+            - if <server.match_offline_player[<[disguise]>]||null> != "null":
+                - narrate "You are now disuised as <[disguise]>."
+                - adjust <player> skin:<[disguise]>
+                - adjust <player> name:<[disguise]>
+                - define duration_max <util.random.int[3].to[11]>
+                - define disguise_duration <player.flag[skill.skills.disguise.level].add[<[duration_max]>].round_up.add[<[charisma_modifier]>]>
+                - narrate <[disguise_duration]>
+                - wait 5s
+                - adjust <player> skin:<player.name>
+                - adjust <player> name:<player.name>
+                - narrate "Your disguise has worn off."
+            # - else if <server.npcs.parse[name].contains[<[disguise]>]>:
+            #     - narrate "You are now disuised as <[disguise]>."
+            #     - narrate "we need <server.npcs.filter[nickname.is[==].to[<[disguise]>]].get[1]>"
+            #     - narrate "their skin is <server.npcs.filter[nickname.is[==].to[<[disguise]>]].get[1].constant[skin]>"
+               
+            - else:
+                - narrate "No such being."
+        - else:
+            - define random_disguise <server.players.random.name>
+            - narrate "You are now disguised as some being."
+            - adjust <player> skin:<[random_disguise]>
+            - adjust <player> name:<[random_disguise]>
+            - define duration_max <util.random.int[3].to[11]>
+            - define disguise_duration <player.flag[skill.skills.disguise.level].add[<[duration_max]>].round_up.add[<[charisma_modifier]>]>
+            - narrate "waiting <[disguise_duration]> seconds"
+            - wait <[disguise_duration]>s
+            - adjust <player> skin:<player.name>
+            - adjust <player> name:<player.name>
+            - narrate "Your disguise has worn off."
+        
+    - else:
+        - narrate format:game_message "You fail at disguising yourself."
+    - define random_max 8
+    - if <util.random.int[0].to[<[random_max]>]> == <[random_max]>:
+        - run raise_natural_skill_task def:<player>|disguise|0|0
+                        
+
+
+impersonation_bonus:
+    type: task
+    definitions: npc
+    script:
+    - if <player.flag[npc].contains[<[npc]>]>:
+        # - narrate <[key]>
+        - narrate <player.flag[npc.<[npc]>.familiarity.level]>
+    # - define npc_list
+    # - foreach <player.flag[npc]> as:npc:
+    #     - if <player.flag[npc.<[key]>.familiarity.level]> > 1:
+    #         - define npc_list:->:<player.flag[npc.<[key]>.familiarity.level]>
+    # - determine <[npc_list]>

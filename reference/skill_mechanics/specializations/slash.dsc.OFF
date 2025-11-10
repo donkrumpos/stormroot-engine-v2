@@ -1,0 +1,17 @@
+slash_task:
+    type: task
+    definitions: damager|damage|target
+    script:
+    - if <player.has_flag[skill.specializations.slash]> && <player.flag[skill.specializations.slash.level]> > 0:
+        - if <player.item_in_hand.has_flag[item_type]> && <player.item_in_hand.flag[item_type]> == sword:
+            - define slash_skill <player.flag[skill.specializations.slash.level]||0>
+            - if <[target].location.find_entities.within[2]> > 1 && <[slash_skill]> > 1:
+                - playeffect effect:sweep_attack at:<[damager].location>
+            - repeat <[slash_skill]>:
+                - if <player.location.forward[1].left[<[loop_index]>].find_entities.within[1].any>:
+                    - foreach <player.location.forward[1].left[<[loop_index]>].find_entities.within[1]> as:slash_target:
+                        - hurt <util.random.int[1].to[[<slash_skill>]]> <[slash_target]>
+                        - wait 14t
+            - if <[target].location.find_entities.within[2]> > 1 && <[slash_skill]> > 1:
+                - narrate format:game_message "You have slashed some extra targets!" targets:<[damager]>
+                    # - hurt <player.location.forward[1].left[<[loop_index]>]>

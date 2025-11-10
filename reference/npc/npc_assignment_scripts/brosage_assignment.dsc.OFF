@@ -1,0 +1,65 @@
+brosage_assignment:
+    type: assignment
+    speed: 1t
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:2
+        # on enter proximity:
+        # - narrate "ho hum" 
+        # on exit proximity:
+        # - disengage
+   
+
+
+    interact scripts:
+    - brosage_interact
+    default constants:
+        appearance1: "<npc.name>' has fine kept beard and seems cheery to meet you."
+        appearance2: "He has an odd stare that seems to look past you and he mumbles gibberish once and awhile."
+        appearance3: "You sense that <npc.name> has been out on this island far too long and it is affecting his mental and social abilities."
+        appearance4: "You feel as though <npc.name> is much more important than his lowly appearance."
+        appearance5: "Even though <npc.name> has been malnourished and sometimes speaks nonsense, you realize he was once a great man, which comes through in his keen eyes, and occassional educated speech."
+
+
+brosage_interact:
+    type: interact
+    steps:
+        default:
+            proximity trigger:
+                entry:
+                    script:
+                    - flag <player> brosage_anksor_convo:++
+                    - if <player.flag[brosage_anksor_convo]> < 2:
+                        - inject description_inject_task 
+                        - narrate "Hey <npc[154].name>, have you seen Rosage's new discovery?"
+                    
+                    # - inject description_inject_task
+                    # - narrate "Hey Anksor, have you heard about"
+                    # - narrate "and then"
+                    # - narrate <npc[154].name>
+                        - wait 3s
+                        - run description_inject_task def:<npc[154]>
+                        - narrate "Aye <npc.name>. It's collected the interest of Nax Hollum the archmage"
+                        - narrate "and made him Nax's newest understudy."
+                        - wait 3s
+                        - inject description_inject_task 
+                        - narrate "Indeed to the jealousy of all the upcoming spellcasters out there."
+                        - wait 3s
+                        - narrate "but do we need to worry about his findings? And are they even true?"
+                        - wait 4s
+                        - run description_inject_task def:<npc[154]>
+                        - narrate "I don't know <npc.name>. I don't know. Someone should ask him."
+
+                    - else:
+                        - wait 1s
+                        - look  <npc[154]>  <player.eye_location>
+                        - look  <npc>  <player.eye_location>
+                        - wait 5s
+                        - look  <npc[154]>  <npc.eye_location> 
+                        - look  <npc>  <npc[154].eye_location>
+                # exit:
+                #     script:
+                #     - inject description_inject_task def:
+                #     - narrate buhbye

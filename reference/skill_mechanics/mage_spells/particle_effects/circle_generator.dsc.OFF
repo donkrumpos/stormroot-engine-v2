@@ -1,0 +1,17 @@
+CircleGenerator:
+    type: task
+    definitions: center|radius|stepsize|effect|delay
+    script:
+        - define stepsize <[stepsize]||0.1>
+        - define loc <location[<[radius]||1>,0,0]>
+        - define stepmul <[stepsize].to_radians>
+        - define points <util.list_numbers_to[<element[360].div[<[stepsize]>]>]>
+        # - define points <[points].parse_tag[<[loc].rotate_around_x[<[parse_value].mul[<[stepmul]>]>].rotate_around_y[<player.location.yaw.to_radians>].add[<[center]>]>]>
+        - define points <[points].parse_tag[<[center].add[<[loc].rotate_around_y[<[parse_value].mul[<[stepmul]>]>]>]>]>
+
+        - if <[delay]||0> != 0:
+            - foreach <[points]> as:point:
+                - playeffect effect:<[effect]||flame> at:<[point]> offset:0 quantity:2
+                - wait <[delay]>
+        - else:
+            - playeffect at:<[points]> effect:<[effect]||flame> offset:0 quantity:2

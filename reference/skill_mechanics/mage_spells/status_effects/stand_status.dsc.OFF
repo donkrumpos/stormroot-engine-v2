@@ -1,0 +1,9 @@
+stand_task:
+    type: task
+    script:
+    - define target <player.target.location.find.living_entities.within[2].exclude[<player>].get[1]||null>
+    - narrate <[target].location.standing_on.material.name>
+    - if <list[brown_mushroom_block].contains[<[target].location.standing_on.material.name>].not>:
+        - narrate "The roots cannot sprout from this location."
+    - else:
+        - narrate "okay to go"

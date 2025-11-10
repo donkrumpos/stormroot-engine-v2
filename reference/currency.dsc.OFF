@@ -1,0 +1,416 @@
+balance_command:
+  type: command
+  usage: /balance
+  name: balance
+  script:
+  # - run organize_coin_task
+  - wait 1t
+  - narrate "Purse balance: <proc[purse_currency_proc].context[<player>]>"
+  - narrate "Bank balance: <proc[bank_currency_proc].context[<player>]>"
+
+player_riches_task:
+  type: task
+  script:
+  #this was going to be to find the richest player
+  - foreach <server.players> as:player:
+    - narrate "<[player].name>  has <proc[bank_currency_proc].context[<[player]>]>"
+
+give_player_currency_task:
+# this is used if a vendor needs to give money when the player sells something
+  type: task
+  definitions: recipient|amount
+  script:
+  # - if <player.inventory.contains_item[purse]>:
+  #   - if <player.has_flag[purse]>:
+  
+  - if <[amount]> >= 1000:
+    - define plat_change <[amount].div[1000].round_down>
+    - if <player.inventory.empty_slots> > 0:
+      - give plat_coin[quantity=<[plat_change]>]
+    - else if <player.inventory.contains_item[purse]> && <player.has_flag[purse]>:
+      - if <player.flag[purse_inventory].size> < <inventory[purse_inv].size>:
+        - flag <player> purse_inventory:->:plat_coin[quantity=<[plat_change]>]
+      - else:
+        - narrate "The coin was put into your bank."
+        - flag <[recipient]> bank_inventory:->:<item[plat_coin].with[quantity=<[plat_change]>]>
+    - define amount <[amount].sub[<[plat_change].mul[1000]>]>
+  - if <[amount]> >= 100:
+    - define gold_change <[amount].div[100].round_down>
+    - if <player.inventory.empty_slots> > 0:
+      - give gold_coin[quantity=<[gold_change]>]
+    - else if <player.inventory.contains_item[purse]> && <player.has_flag[purse]>:
+      - if <player.flag[purse_inventory].size> < <inventory[purse_inv].size>:
+        - flag <player> purse_inventory:->:gold_coin[quantity=<[gold_change]>]
+      - else:
+        - narrate "The coin was put into your bank."
+        - flag <[recipient]> bank_inventory:->:<item[gold_coin].with[quantity=<[gold_change]>]>
+  - if <[amount]> >= 10:
+    - define silver_change <[amount].div[10].round_down>
+    - if <player.inventory.empty_slots> > 0:
+      - give silver_coin[quantity=<[silver_change]>]
+    - else if <player.inventory.contains_item[purse]> && <player.has_flag[purse]>:
+      - if <player.flag[purse_inventory].size> < <inventory[purse_inv].size>:
+        - flag <player> purse_inventory:->:silver_coin[quantity=<[silver_change]>]
+      - else:
+        - narrate "The coin was put into your bank."
+        - flag <[recipient]> bank_inventory:->:<item[silver_coin].with[quantity=<[silverchange]>]>
+  - if <[amount]> >= 1:
+    
+    - define copper_change <[amount]>
+    - if <player.inventory.empty_slots> > 0:
+      
+      - give copper_coin[quantity=<[copper_change]>]
+      - narrate "<blue><[recipient]>  <gold><[amount]>"
+    - else if <player.inventory.contains_item[purse]> && <player.has_flag[purse]>:
+      - if <player.flag[purse_inventory].size> < <inventory[purse_inv].size>:
+        - flag <player> purse_inventory:->:copper_coin[quantity=<[copper_change]>]
+      - else:
+        - narrate "The coin was put into your bank."
+        - flag <[recipient]> bank_inventory:->:<item[copper_coin].with[quantity=<[copper_change]>]>
+
+
+
+bank_currency_proc:
+  type: procedure
+  definitions: player
+  script:
+  - define bank_balance 0
+  - foreach <player.flag[bank_inventory]> as:bank_item:
+    - if <[bank_item].material.name> != "air":
+      - if <[bank_item].script.name> == "copper_coin":
+        - define bank_balance:+:<[bank_item].quantity>
+      - if <[bank_item].script.name> == "silver_coin":
+        - define bank_balance:+:<[bank_item].quantity.mul[10]>
+      - if <[bank_item].script.name> == "gold_coin":
+        - define bank_balance:+:<[bank_item].quantity.mul[100]>
+      - if <[bank_item].script.name> == "plat_coin":
+        - define bank_balance:+:<[bank_item].quantity.mul[1000]>
+  - determine <[bank_balance]>
+
+
+take_from_inventory_then_bank:
+  type: task
+  definitions: player|price
+  script:
+  - if <proc[inventory_balance_procedure].context[<[player]>].add[<proc[purse_currency_proc].context[<[player]>]>].add[<proc[bank_currency_proc].context[<[player]>]>]> < <[price]>:
+    - narrate  "You don't seem to have enough coin."
+    - stop
+    
+  - else:
+    - define new_amount <[price].sub[<proc[inventory_balance_procedure].context[<[player]>]>]>
+    - run take_currency_from_inventory_task def:<[price]>
+    - narrate format:gamemessage "Some coin has been taken from your inventory"
+    - if <[new_amount]> > 0:
+      - run take_purse_currency_task def:<[player]>|<[new_amount]>
+      - narrate format:gamemessage "some coin taken from your purse"
+    - if <[new_amount]> > 0:
+      - narrate format:gamemessage "some coin taken from your inventory"
+      - run bank_withdrawal_task def:<[player]>|<[new_amount]>
+    
+
+
+bank_withdrawal_task:
+  type: task
+  definitions: player|amount
+  script:
+  # this allows players to pay from their bank account
+  - define bank_balance <proc[bank_currency_proc].context[<player>]>
+  - define change <[bank_balance].sub[<[amount]>]>
+  
+  - if <[change]> > 0:
+    - foreach <player.flag[bank_inventory]> as:bank_item:
+      - if <[bank_item].material.name> != "air":
+        - if <[bank_item].script.name> == "copper_coin":
+          - flag <player> bank_inventory:<-:<[bank_item]>
+        - if <[bank_item].script.name> == "silver_coin":
+          - flag <player> bank_inventory:<-:<[bank_item]>
+        - if <[bank_item].script.name> == "gold_coin":
+          - flag <player> bank_inventory:<-:<[bank_item]>
+        - if <[bank_item].script.name> == "plat_coin":
+          - flag <player> bank_inventory:<-:<[bank_item]>
+
+    - if <[change]> >= 1000:
+      - define plat_change <[change].div[1000].round_down>
+      - flag <player> bank_inventory:->:<item[plat_coin].with[quantity=<[plat_change]>]>
+      - define change <[change].sub[<[plat_change].mul[1000]>]>
+    - if <[change]> >= 100:
+      - define gold_change <[change].div[100].round_down>
+      # - narrate "adding <[gold_change]> gold back in"
+      - flag <player> bank_inventory:->:<item[gold_coin].with[quantity=<[gold_change]>]>
+      - define change <[change].sub[<[gold_change].mul[100]>]>
+    - if <[change]> >= 10:
+      - define silver_change <[change].div[10].round_down>
+      # - narrate "adding <[silver_change]> silver back in"
+      - flag <player> bank_inventory:->:<item[silver_coin].with[quantity=<[silver_change]>]>
+      - define change <[change].sub[<[silver_change].mul[10]>]>
+    - if <[change]> >= 1:
+      - define copper_change <[change]>
+      # - narrate "adding <[copper_change]> copper back in"
+      - flag <player> bank_inventory:->:<item[copper_coin].with[quantity=<[copper_change]>]>
+  - else:
+      - narrate "You don't have enough in your bank account to pay this"
+
+inventory_balance_procedure:
+  type: procedure
+  definitions: player
+  script:
+  - define inventory_balance <player.inventory.quantity[copper_coin].add[<player.inventory.quantity[silver_coin].mul[10]>].add[<player.inventory.quantity[gold_coin].mul[100]>].add[<player.inventory.quantity[plat_coin].mul[1000]>]>
+  - determine <[inventory_balance]>
+
+take_currency_from_inventory_task:
+  type: task
+  definitions: amount
+  script:
+  - define balance <proc[inventory_balance_procedure].context[<player>]>
+  # - if <[balance]> >= <[amount]>:
+  - take item:plat_coin quantity:<player.inventory.quantity[plat_coin]>
+  - take item:gold_coin quantity:<player.inventory.quantity[gold_coin]>
+  - take item:silver_coin quantity:<player.inventory.quantity[silver_coin]>
+  - take item:copper_coin quantity:<player.inventory.quantity[copper_coin]>
+  
+  - define change <[balance].sub[<[amount]>]>
+  # - narrate "We own you <[change]> back"
+  - if <[change]> >= 1000:
+    - define plat_change <[change].div[1000].round_down>
+    - give plat_coin quantity:<[plat_change]>
+    - define change <[change].sub[<[plat_change].mul[1000]>]>
+  - if <[change]> >= 100:
+    - define gold_change <[change].div[100].round_down>
+    - give gold_coin quantity:<[gold_change]>
+    - define change <[change].sub[<[gold_change].mul[100]>]>
+  - if <[change]> >= 10:
+    - define silver_change <[change].div[10].round_down>
+    - give silver_coin quantity:<[silver_change]>
+    - define change <[change].sub[<[silver_change].mul[10]>]>
+  - if <[change]> >= 1:
+    - define copper_change <[change]>
+    - give copper_coin quantity:<[copper_change]>
+  # - else:
+  #   - narrate "You don't have enough coin."
+
+ 
+ 
+
+take_purse_currency_task:
+  type: task
+  definitions: player|amount|bank
+  debug: true
+  script:
+  # - run organize_coin_task
+  - define balance <proc[purse_currency_proc].context[<player>]>
+  
+  - if <[amount]> > <[balance]>:
+    - narrate "<&color[#f45600]>You need <[amount].sub[<[balance]>]> more coin."
+    - stop
+  - else:
+    - define change <[balance].sub[<[amount]>]>
+    - flag <player> purse_copper_coin:0
+    - flag <player> purse_silver_coin:0
+    - flag <player> purse_gold_coin:0
+    - flag <player> purse_plat_coin:0 
+    
+    - if <[change]> > 0:
+      - if <[change]> >= 1000:
+        - define plat_change <[change].div[1000].round_down>
+        - flag <player> purse_plat_coin:<[plat_change]>
+        - define change <[change].sub[<[plat_change].mul[1000]>]>
+      - if <[change]> >= 100:
+        - define gold_change <[change].div[100].round_down>
+        - flag <player> purse_gold_coin:<[gold_change]> to:<inventory[purse_inv]>
+        - define change <[change].sub[<[gold_change].mul[100]>]>
+      - if <[change]> >= 10:
+        - define silver_change <[change].div[10].round_down>
+        - flag <player> purse_silver_coin:<[silver_change]> to:<inventory[purse_inv]>
+        - define change <[change].sub[<[silver_change].mul[10]>]>
+      - if <[change]> >= 1:
+        - define copper_change <[change]>
+        # - narrate "copper change: <[copper_change]>"
+        - flag <player> purse_copper_coin:<[copper_change]> to:<inventory[purse_inv]>
+
+purse_currency_proc:
+  type: procedure
+  definitions: player
+  script:
+  - define purse_balance 0
+  - foreach <player.flag[purse_inventory]> as:purse_item:
+    - if <[purse_item].material.name> != "air":
+      - if <[purse_item].script.name> == "copper_coin":
+        - define purse_balance:+:<[purse_item].quantity>
+      - if <[purse_item].script.name> == "silver_coin":
+        - define purse_balance:+:<[purse_item].quantity.mul[10]>
+      - if <[purse_item].script.name> == "gold_coin":
+        - define purse_balance:+:<[purse_item].quantity.mul[100]>
+      - if <[purse_item].script.name> == "plat_coin":
+        - define purse_balance:+:<[purse_item].quantity.mul[1000]>
+  - determine <[purse_balance]>
+  # - define copper <[player].flag[purse_copper_coin]||0>
+  # - define silver <[player].flag[purse_silver_coin]||0>
+  # - define gold <[player].flag[purse_gold_coin]||0>
+  # - define plat <[player].flag[purse_plat_coin]||0>
+  # # - if <[player].inventory.contains[copper_coin]>:
+  # #   - define copper <[copper].add[<[player].inventory.quantity[copper_coin]>]>
+  # # - if <[player].inventory.contains[silver_coin]>:
+  # #   - define silver <[silver].add[<[player].inventory.quantity[silver_coin]>]>
+  # # - if <[player].inventory.contains[gold_coin]>:
+  # #   - define gold <[gold].add[<[player].inventory.quantity[gold_coin]>]>
+  # # - if <[player].inventory.contains[plat_coin]>:
+  # #   - define plat <[plat].add[<[player].inventory.quantity[plat_coin]>]>
+    
+
+  # - define silver <[silver].mul[10]>
+  # - define gold <[gold].mul[100]>
+  # - define plat <[plat].mul[1000]>
+
+  # - define total <[copper].add[<[silver]>].add[<[gold]>].add[<[plat]>]>
+
+  # - determine <[total]>
+      
+
+purse_command:
+  type: command
+  name: purse
+  script:
+  - if <player.inventory.contains_item[purse]>:
+    - if <player.has_flag[purse]>:
+      - run open_purse_task
+    - else:
+      - narrate "This purse is not yours and will not work." targets:<player>
+  - else:
+    - narrate "You don't have purse to open." targets:<player>
+
+
+open_purse_task:
+  type: task
+  script:
+  - define inv <inventory[purse_inv]>
+  - foreach <player.flag[purse_inventory]> as:purse_item:
+    - give <[purse_item]> to:<[inv]> slot:<[loop_index]>
+  - inventory open d:<[inv]>
+
+
+# purse_command:
+#   type: command
+#   debug: true
+#   name: purse
+#   script:
+#   - define inv <inventory[purse_inv]>
+#   - define plat_amount <player.flag[purse_plat_coin]||0>
+#   - define gold_amount <player.flag[purse_gold_coin]||0>
+#   - define silver_amount <player.flag[purse_silver_coin]||0>
+#   - define copper_amount <player.flag[purse_copper_coin]||0>
+#   - give plat_coin quantity:<[plat_amount]> to:<[inv]> slot:45
+#   - give gold_coin quantity:<[gold_amount]> to:<[inv]> slot:24
+#   - give silver_coin quantity:<[silver_amount]> to:<[inv]> slot:19
+#   - give copper_coin quantity:<[copper_amount]> to:<[inv]> slot:1
+#   - inventory open d:<[inv]>
+
+purse_inv:
+    type: inventory
+    inventory: Chest
+    title: "<&sp><&sp><&sp><&sp><&sp><&sp><&sp><&2>Purse | <proc[purse_currency_proc].context[<player>]>"
+    size: 54
+    slots:
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    
+
+currency_world:
+  type: world
+  events:
+    on player clicks in bank_inv:
+    - if <context.clicked_inventory.script.name||null> == "bank_inv":
+      - if <context.cursor_item.material.name> != "air" && <context.action> == "PLACE_ALL":
+          - flag <player> bank_inventory:->:<context.cursor_item>
+          # - narrate "Adding <context.cursor_item>"
+      # - narrate "all items <player.flag[bank_inventory]>"
+      - if <context.item.material.name> != "air" && <context.action> == "PICKUP_ALL":
+        - flag <player> bank_inventory:<-:<context.item>
+    on player clicks in purse_inv:
+    # - narrate <context.action>
+    - if <context.action> == PLACE_ALL:
+      - if <list[copper_coin|silver_coin|gold_coin|plat_coin].contains[<context.cursor_item.script.name>]>:
+        - flag <player> purse_inventory:->:<context.cursor_item>
+    # - if <context.clicked_inventory.script.name||null> == "purse_inv":
+    #   - if <context.cursor_item.material.name> != "air" && <context.action.contains[PLACE_]>:
+    #     - if <context.clicked_inventory> != <player.inventory>:
+    #       - flag <player> purse_inventory:->:<context.cursor_item>
+    #       - narrate "Adding <context.cursor_item>" 
+    #   # - narrate "all items <player.flag[bank_inventory]>"
+    #   - if <context.item.material.name> != "air" && <context.action.contains[PICKUP_]>:
+    #     - if <context.clicked_inventory> != <player.inventory>:
+    #       - flag <player> purse_inventory:<-:<context.item>
+    #       # - narrate "Removing <context.item>"
+    # - if <context.item.script.name> == copper_coin || <context.item.script.name> == silver_coin || <context.item.script.name> == gold_coin || <context.item.script.name> == plat_coin:
+    #   - narrate ""
+    # - else if <context.cursor_item.script.name> == copper_coin || <context.item.script.name> == silver_coin || <context.item.script.name> == gold_coin || <context.item.script.name> == plat_coin:
+    #   - narrate ""
+      - else:
+        - narrate "You can move only coin into this purse"
+        - determine cancelled
+    
+
+
+
+    on player closes purse_inv:
+    - flag <player> purse_inventory:<context.inventory.list_contents>
+
+    on player closes bank_inv:
+    - flag <player> bank_inventory:<context.inventory.list_contents>
+
+
+
+bank_command:
+  type: command
+  name: bank
+  script:
+  - if <player.has_flag[bank_proximity]>:
+    - run open_bank_task
+  - else:
+    - narrate "You need to be by a bank in order to deposit or withdraw."
+
+open_bank_task:
+  type: task
+  script:
+  - define inv <inventory[bank_inv]>
+  - foreach <player.flag[bank_inventory]> as:bank_item:
+    - give <[bank_item]> to:<[inv]> slot:<[loop_index]>
+  - inventory open d:<[inv]>
+
+
+bank_inv:
+    type: inventory
+    inventory: Chest
+    title: <&sp><&sp><&sp><&sp><&sp><&sp><&sp><&2>Bank | <proc[bank_currency_proc].context[<player>]>
+    size: 54
+    slots:
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+    - "[] [] [] [] [] [] [] [] []"
+
+
+# organize_coin_task:
+#   type: task
+#   script:
+#   - if <player.inventory.contains[plat_coin]>:
+#     - flag <player> purse_plat_coin:+:<player.inventory.quantity[plat_coin]>
+#     - take <item[plat_coin]> quantity:<player.inventory.quantity[plat_coin]> from:<player.inventory>
+#   - if <player.inventory.contains[gold_coin]>:
+#     - flag <player> purse_gold_coin:+:<player.inventory.quantity[gold_coin]>
+#     - take <item[gold_coin]> quantity:<player.inventory.quantity[gold_coin]> from:<player.inventory>
+#   - if <player.inventory.contains[silver_coin]>:
+#     - flag <player> purse_silver_coin:+:<player.inventory.quantity[silver_coin]>
+#     - take <item[silver_coin]> quantity:<player.inventory.quantity[silver_coin]> from:<player.inventory>
+#   - if <player.inventory.contains[copper_coin]>:
+#     - flag <player> purse_copper_coin:+:<player.inventory.quantity[copper_coin]>
+#     - take <item[copper_coin]> quantity:<player.inventory.quantity[copper_coin]> from:<player.inventory>
+    
+
+
+

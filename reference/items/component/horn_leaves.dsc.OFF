@@ -1,0 +1,7 @@
+horn_leaves:
+  type: item
+  material: bowl
+  display name: Horn Leaves
+  mechanisms:
+    custom_model_data: 2110027
+    

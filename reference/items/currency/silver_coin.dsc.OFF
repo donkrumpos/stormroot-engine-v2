@@ -1,0 +1,8 @@
+silver_coin:
+  type: item
+  debug: true
+  material: iron_ingot
+  rarity: 1
+  display name: Silver Coin
+  mechanisms:
+    custom_model_data: 2710003

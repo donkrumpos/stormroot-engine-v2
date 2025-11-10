@@ -1,0 +1,37 @@
+pagney_assignment:
+  type: assignment
+  actions:
+    on assignment:
+    - trigger name:click state:true
+    - trigger name:chat state:true
+  # default constants:
+    # chat_color: "<script[color_data2].data_key[npc_chat_name]><npc.name> <&color[<color[64,70,77]>]>says: <script[color_data2].data_key[npc_chat]> "
+
+    
+
+  interact scripts:
+  - pagney_interact
+
+pagney_data:
+  type: data
+  willingness:
+    
+# color_data2:
+#   type: data
+#   npc_chat_name: <&color[<color[106,116,128]>]>
+#   npc_chat: <&color[<color[173,189,208]>]>
+#   money: <&color[<color[229,128,50]>]>
+#   location: <&color[<color[2,143,12]>]>
+#   character: <&color[<color[173,189,208]>]>
+  
+pagney_interact:
+  type: interact
+  steps:
+    1:
+      click trigger:
+        script:
+        - narrate "<npc.name>: <&color[<color[173,189,208]>]>Oh good someone's here to save us."
+        - if <player.has_flag[party]>:
+          - narrate "<&color[<color[173,189,208]>]>You and your party should head into town, up this path. Speak with <&color[<color[222,255,37]>]>Athelal<&color[<color[173,189,208]>]>, the herbalist."
+        - else:
+          - narrate "<&color[<color[173,189,208]>]>Please head into town, up this path. Speak with <&color[<color[222,255,37]>]>Athelal<&color[<color[173,189,208]>]>, the herbalist."

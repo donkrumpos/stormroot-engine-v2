@@ -1,0 +1,58 @@
+banker_assignment:
+  type: assignment
+  debug: true
+  
+  actions:
+    on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:4
+   
+  interact scripts:
+    - banker_interact
+
+banker_interact:
+  type: interact
+  steps:
+    1:
+        proximity trigger:
+            entry:
+                script:
+                - flag <player> bank_proximity
+                #if the banker npc has another script, dont open bank box. That script will zap to this scripts step 2
+                - if <npc.scripts.size> <= 1:
+                    - zap 2
+            exit:
+                script:
+                - flag <player> bank_proximity:!
+        click trigger:
+            script:
+            - if <npc.scripts.size> <= 1:
+                - zap 2
+    2:
+        click trigger:
+            script:
+            - run open_bank_box_task
+
+open_bank_box_task:
+    type: task
+    script:
+    - inject description_inject_task
+    - if <player.has_flag[first_bank].not>:
+        - narrate "Hello, thank you for opening a bank account here at the Bank of Deluvia."
+        - narrate "Here is a silver coin to reward you for your patronage."
+        - give silver_coin quantity:1
+        - narrate  "You can access your account at any bank across Deluvia by chatting 'bank' or clicking on the banker."
+        - flag <player> first_bank
+        - wait 3s
+    - else if <player.flag[npc.<npc.name>.familiarity.level]> > 6:
+        - narrate "Welcome back <player.name>."
+    - else:
+        - narrate "Hail traveler."
+        - define bank_branch <element[]>
+        - if <script[npc_data].data_key[npc].contains[<npc.name>]>:
+            - if <script[npc_data].data_key[npc.<npc.name>].contains[home_area_name]>:
+                - define bank_branch " <script[npc_data].data_key[npc.<npc.name>.home_area_name]> branch"
+        - narrate "Welcome to the<[bank_branch]> Bank of Deluvia"
+    - run open_bank_task
+    - zap 1 banker_interact player:<player>

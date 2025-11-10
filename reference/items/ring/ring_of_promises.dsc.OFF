@@ -1,0 +1,16 @@
+ring_of_promises:
+  type: item
+  material: iron_ingot
+  display name: Ring of Promises
+  flags:
+    slot-type: ring
+  mechanisms:
+    custom_model_data: 2710102
+    gravity: true
+  # enchantments:
+  #   - mending:1
+  lore:
+    - "an inscription reads 'A promise for a lifetime' "
+
+
+

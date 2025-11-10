@@ -1,0 +1,7 @@
+cash_register:
+  type: item
+  material: player_head
+  display name: Cash Register
+  mechanisms:
+    skull_skin: 541da340-4de1-400d-aee8-317f232ca7bf|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmM0ODJlM2I1YzdkNmZiNmIwMDFkZTBlM2JiZmEwOWQyODE3YTY5OGNhYTZlMzNlYjI3NmFlYTA4MTA0NDFmNiJ9fX0=
+

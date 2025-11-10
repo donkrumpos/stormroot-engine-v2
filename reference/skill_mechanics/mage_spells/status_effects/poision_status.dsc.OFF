@@ -1,0 +1,25 @@
+poison_task:
+    type: task
+    
+    definitions: target|amount
+    script:
+    - title "title:<white><&chr[3115]>" stay:1s fade_in:5t fade_out:5t targets:<[target]>
+    - repeat <[amount]>:
+        - if <[target].has_flag[poisoned]>:
+            - wait <util.random.int[1].to[20]>s
+            - hurt 1 <[target]>
+        - else:
+            - stop
+    - if <[target].has_flag[poisoned]>:
+        - flag <[target]> poisoned:!
+
+# poison_status_task:
+#     type: task
+#     script:
+#     subpaths:
+#         on:
+#             - narrate on
+#             - flag <player> status_effects:->:<element[<white><&chr[3113]>]>
+#         off:
+#             - narrate off
+#             - flag <player> status_effects:<-:<element[<white><&chr[3113]>]>

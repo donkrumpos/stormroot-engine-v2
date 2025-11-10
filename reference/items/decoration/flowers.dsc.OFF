@@ -1,0 +1,32 @@
+flower_01:
+  type: item
+  material: player_head
+  display name: Flower
+  mechanisms:
+    skull_skin: 541da340-4de1-400d-aee8-317f232ca7bf|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTJiMmFiMTRmZGVhOThjZDEyZmZkYTk1NTg0ZTJjYzNhY2NlYmZlOTE5ZGZjMjc4Y2RkNzA0YWQ0ODM1YjFjYiJ9fX0=
+
+flower_02:
+  type: item
+  material: player_head
+  display name: Flower
+  mechanisms:
+    skull_skin: 65100b75-7cb4-47e1-b2ed-21d9e73d4e54|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzA1ZWE0ODU1MzNlNGZmMTkyYzcyZWUzMmI2ZThjMDcwN2E4NTFjZWExYzg0OTEyNDk2ZjVhMDNlOGNjNWY0NSJ9fX0=
+
+
+flower_03:
+  type: item
+  material: player_head
+  display name: Flower
+  mechanisms:
+    skull_skin: c85739c8-cca7-41c1-855b-cacae28b4ef2|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTBiOWJhYzA1ZTJiNTJlNDEzM2QwZDM0YTAyOTI1ZmEyY2Y5YzFjZjc2YzdjZTcwOTY0Yjk2NGZmN2UyZmY1YiJ9fX0=
+
+
+
+flower_04:
+  type: item
+  material: player_head
+  display name: Flower
+  mechanisms:
+    skull_skin: 14a5d0e6-d750-416f-aa25-3f145044fac4|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmM2ZjRjZmRlMmM1YjZmODg0MzJlNjQxMTVjNmU4ZDc4MjBhNjJhNzQwN2NjZjI0NzM5ZDRlNzlhY2ZmN2RlNiJ9fX0=
+
+

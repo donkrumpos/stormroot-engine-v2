@@ -1,0 +1,81 @@
+parttask:
+    type: task
+    script:
+    - define t <util.pi.div[4]>
+    - define loc <player.location>
+    
+    - while <[t].is[LESS].than[20]>:
+        - define t:+:<util.pi.mul[0.1]>
+        - define theta 0
+        - while <[theta].is[OR_LESS].than[<util.pi.mul[2]>]>:
+            - define theta:+:<util.pi.div[32]>
+            - define x <[t].mul[<[theta].cos>]>
+            - define y <util.e.power[<[t].mul[-0.1]>].mul[2].mul[<[t].sin>].add[1.5]>
+            - define z <[t].mul[<[theta].sin>]>
+            # - narrate "player t is <[t]>, theta is <[theta]>"
+            - playeffect effect:flame at:<[loc].add[<[x]>,<[y]>,<[z]>]> offset:0 quantity:2
+            # - wait 1t
+
+
+fib_spiral2:
+    type: procedure
+    definitions: samples|size
+    debug: false
+    script:
+        - define result <list>
+        - define phi 2.39996322972865218630359635653
+        - define inc <[samples].sub[1]>
+        - repeat <[samples]> as:i:
+            
+            - define i:--
+            - define y <element[1].sub[<[i].div[<[inc]>].mul[2]>]>
+            - define radius <element[1].sub[<[y].mul[<[y]>]>].sqrt>
+            - define theta <[phi].mul[<[i]>]>
+            - define loc <location[<[theta].cos.mul[<[radius]>]>,<[y]>,<[theta].sin.mul[<[radius]>]>,world].mul[<[size]>]>
+            - define result <[result].include[<[loc]>]>
+        - determine <[result]>
+
+fib_task2:
+    type: task
+    debug: false
+    script:
+        - define spiral_list <proc[fib_spiral2].context[500|5]>
+        - playeffect effect:flame at:<[spiral_list].parse[add[<player.eye_location>]]> offset:0 targets:<player>
+
+testeq1:
+    type: task
+    debug: false
+    Script:
+        - define t <util.pi.div[4]>
+        - define loc <player.location>
+        - while <[t].is[LESS].than[20]>:
+            - define t:+:<util.pi.mul[0.1]>
+            - define theta 0
+            - while <[theta].is[OR_LESS].than[<util.pi.mul[2]>]> && <player.has_flag[testeq1]>:
+                - define theta:+:<util.pi.div[32]>
+                - define x <[t].mul[<[theta].cos>]>
+                - define y <util.e.power[<[t].mul[-0.1]>].mul[2].mul[<[t].sin>].add[1.5]>
+                - define z <[t].mul[<[theta].sin>]>
+                # - narrate "player t is <[t]>, theta is <[theta]>"
+                - playeffect effect:flame at:<[loc].add[<[x]>,<[y]>,<[z]>]> offset:0 quantity:2
+                - wait 1t
+
+ov_kiriko_kunaiparticle:
+    type: task
+    debug: true
+    script:
+        - define hand_pos <player.eye_location.below[0.2].right[0.2]>
+        - define hit <[hand_pos].ray_trace[entities=*;ignore=<player>;fluids=true;nonsolids=true;return=precise;default=air;range=80].above[0.2].right[0.4]||null>
+        - if <[hit]> != null:
+            - foreach <[hand_pos].points_between[<[hit]>].distance[0.9]> as:point:
+                - playeffect effect:redstone offset:0 special_data:0.5|#33ffff at:<[point]>
+                - if <[loop_index].mod[4]> == 0:
+                    - wait 1t
+            - define target <[hit].find_entities[!item].within[0.1].exclude[<player>].if_null[null]>
+            - if <[target].any.if_null[false]>:
+                - narrate <[target]>
+                - narrate <[hand_pos]>
+                - narrate <item[ov_kiriko_kunai]>
+                - define damage <proc[ov_damage_task].context[<[target]>|<[hand_pos]>|<item[ov_kiriko_kunai]>]>
+                - hurt <[damage]> <[target]> source:<player>
+

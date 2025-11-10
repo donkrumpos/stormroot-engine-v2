@@ -1,0 +1,156 @@
+merkti_prigtoon_assignment:
+    type: assignment
+    debug: false
+    actions:
+        on assignment:
+        - trigger name:click state:true
+        - trigger name:chat state:true
+        - trigger name:proximity state:true radius:4
+
+    default constants:
+        appearance1: "<npc.name> is an older man with graying hair and a deeply lined face, evidence of years spent in hard work and recent worries."
+        appearance2: "<npc.name>'s eyes, though weary, still hold a glimmer of hope."
+        appearance3: "<npc.name> pours you a glass of strong, locally brewed ale before beginning his tale."
+        appearance4: "Merkti's speech is measured and deliberate, reflecting the weight of his concerns."
+        appearance5: "The room is filled with the smell of saltwater and the low hum of conversations among guild members."
+        sell: <list[scroll_01[display=Gust Scroll;flag=bound_spell:gust;flag=price:50]|scroll_01[display=Magic Armor Scroll;flag=bound_spell:magic_armor;flag=price:50]|scroll_01[display=Aquaorbis Scroll;flag=bound_spell:aquaorbis;flag=price:70]|scroll_blank[flag=price:10]]>
+        buy: <list[iron_sword|<item[scroll_01]>]>
+        dialog: merkti_prigtoon_dialog
+        personality: merkti_prigtoon_personality
+
+merkti_prigtoon_personality:
+    type: data
+    character_data:
+        temperament: "desperate and hopeful"
+        mannerisms:
+            nervous_glance: "Merkti often glances nervously around the room, as if expecting bad news."
+            thoughtful_sigh: "He frequently sighs thoughtfully, reflecting his deep concern for his daughter."
+            cautious_speech: "Merkti's speech is careful and measured, revealing his cautious nature."
+            hopeful_gaze: "His eyes often show a glimmer of hope, despite his worries."
+        hometown: Rothigport
+        educational_background: "Entrepreneurship and Fishing Trade"
+        intelligence: "Moderate; possesses a shrewd understanding of trade and politics"
+        self-esteem: "Low; influenced by the loss of his daughter and the damage to his reputation"
+        hobbies: "Managing the Fisherman’s Guild, overseeing trade, searching for his daughter"
+        skills_talents: "Negotiation, leadership, financial management"
+        loves: "His daughter Phanasma, the success of Rothigport, the prosperity of his guild"
+        morals_virtues: "Family loyalty, determination, resourcefulness"
+        phobias_fears: "Never finding his daughter, the decline of his guild"
+        angered_by: "Injustice, betrayal, disregard for family"
+        pet_peeves: "Laziness, inefficiency, disrespect for tradition"
+        obsessed_with: "Finding Phanasma, maintaining his family's honor"
+        routines: "Daily meetings with guild members, overseeing trade operations, searching for clues about his daughter"
+        bad_habits: "Overworking himself, becoming too focused on his daughter's disappearance"
+        desires: "To find Phanasma, to restore his family's honor, to see Rothigport prosper"
+        flaws: "Stubbornness, tendency to isolate himself"
+        quirks: "Always carries a small locket with Phanasma’s picture, often found talking to himself when deep in thought"
+        favorite_sayings: "Family is everything."
+        disabilities: "None known"
+        secrets: "The full extent of his desperation to find Phanasma"
+        regrets: "Not protecting Phanasma better"
+        accomplishments: "Building a successful fishing trade, becoming Syndic of the Fisherman’s Guild"
+        memories: "Happy times with Phanasma, the growth of Rothigport"
+        physical_strengths: "Sturdy build from years of physical labor"
+        physical_weaknesses: "Showing signs of aging, prone to exhaustion"
+        intellectual_strengths: "Shrewd and resourceful in trade and negotiation"
+        intellectual_weaknesses: "Can be too focused on his personal troubles"
+        interpersonal_strengths: "Respected leader, good at rallying people"
+        interpersonal_weaknesses: "Tends to isolate himself, struggles to share his worries"
+        physical_abilities: "Good stamina from years of work"
+        magical_abilities: "None"
+        physical_illnesses_conditions: "Prone to fatigue due to stress"
+        mental_illnesses_conditions: "Mild depression due to daughter's disappearance"
+        languages_known: "Common, some trade languages"
+        preferred_communication_methods: "Direct and sincere"
+        accent: "Common, with a hint of the local fishing dialect"
+        style_and_pacing_of_speech: "Deliberate and careful"
+        pitch: "Deep and gravelly"
+        laughter: "Rare, but warm and infectious"
+        smile: "Gentle, though often forced"
+        use_of_gestures: "Subtle, mostly when emphasizing a point"
+        facial_expressions: "Expressive, often showing his concern"
+        verbal_expressions: "Sincere and heartfelt"
+        birth_date: "Born on the summer solstice, a time of abundance for the fishing trade"
+        place_of_birth: "Rothigport, a bustling port town"
+        key_family_members: "Wife Lonsa Prigtoon, daughter Phanasma Prigtoon"
+        notable_events_milestones: "Becoming Syndic of the Fisherman’s Guild, the birth of his daughter"
+        criminal_record: "None"
+        affiliations: "Fisherman’s Guild, House Ketapesh"
+        skeletons_in_the_closet: "The lengths he has gone to in searching for Phanasma"
+        character_archetype: "Desperate father, determined leader"
+        character_arc: "Journey of hope and desperation as he searches for his daughter"
+        core_values: "Family, honor, determination"
+        internal_conflicts: "Struggles with his guilt and hope"
+        external_conflicts: "Balancing his duties with his search for Phanasma"
+        goals: "Find his daughter, restore his family's honor"
+        motivations: "Love for Phanasma, duty to his family"
+        epiphanies: "Realizing the importance of seeking help from others"
+        significant_events_plot_points: "Phanasma's disappearance, discovering clues about her fate"
+
+merkti_prigtoon_dialog:
+    type: data
+    dialog:
+        1:
+            click:
+                1:
+                    statement:
+                        narration:
+                            1:
+                                - "Thank you for coming. I’ve heard of your deeds and believe you are the ones who can help me. My daughter, Phanasma, disappeared many years ago after contracting a terrible illness. Despite my efforts to keep her safe, she vanished, and I fear the worst. Yet, whispers and rumors suggest she might still be alive."
+                            2:
+                                - "Phanasma was always drawn to magic, much to my dismay. She found solace among the young mages in town. When she fell ill, I quarantined her on a small island to protect the town. But she disappeared from there, and I have been searching for her ever since."
+                            3:
+                                - "I need you to find out what happened to her. Explore the Ketapesh Family Mausoleum, where I built a tomb in her honor. Find any clues about her whereabouts or fate. If you can, bring her back to me, or at least bring me some closure."
+                            4:
+                                - "Be cautious. The mausoleum is said to be haunted, and I fear what you may find there. But if anyone can uncover the truth, it is you. Return to me with news, whatever it may be."
+
+                    questions:
+                        1:
+                            narration:
+                                - "Can you tell me more about Phanasma?"
+                            answer:
+                                narration:
+                                    1:
+                                        - "Phanasma is my only child, the light of my life. She was always different, drawn to magic and the unknown. Her interests often caused conflict between us, but I loved her dearly."
+                                        - "She disappeared many years ago after contracting Blackrot Blight, a terrible flesh-eating plague. I quarantined her on a small island near Rothigport, but she vanished. Some say she was taken, others that she fled. I need to know the truth."
+                        2:
+                            narration:
+                                - "What dangers should we expect in the mausoleum?"
+                            answer:
+                                narration:
+                                    1:
+                                        - "The mausoleum is heavily guarded and rumored to be haunted. It was built by my ancestors and contains many traps and wards to protect the dead. Be prepared for anything."
+                                        - "You may encounter undead guardians, traps, and other magical protections. Proceed with caution and be ready for a fight."
+
+                        3:
+                            narration:
+                                - "What will we find in Phanasma's crypt?"
+                            answer:
+                                narration:
+                                    1:
+                                        - "Phanasma's crypt was meant to be her final resting place, but I built it in her honor after her disappearance. You may find clues about her fate, such as diaries, letters, or magical artifacts. Anything that could shed light on what happened to her."
+                                        - "The crypt contains intricate puzzles and magical wards designed to protect her secrets. You will need to use your wits and skills to uncover the truth."
+
+                        4:
+                            narration:
+                                - "What do you know about Blackrot Blight?"
+                            answer:
+                                narration:
+                                    1:
+                                        - "Blackrot Blight is a terrible plague that eats away at the flesh. It is highly contagious and deadly. There is no known cure, but Phanasma was always researching ways to combat it. Her work may hold the key to a cure."
+                                        - "Be careful if you encounter any signs of the Blight. It can spread quickly and is difficult to treat. Protect yourselves and take precautions."
+
+                # 3:
+                #     narration:
+                #         - "Can you teach me some magic spells"
+                #     answer:
+                #         narration:
+                #             - "Yes, let me teach you"
+                #         teach: true
+                
+        2:
+            statement:
+                narration:
+                    - "Thank you for agreeing to help. I know this is a dangerous task, but finding Phanasma is worth any risk. Please, bring me news of my daughter, whatever it may be."
+                    - "Take this map. It will guide you to the island where the mausoleum is located. And here, take this advance payment to cover your expenses. Return to me with news, and you will be well rewarded."
+                    - "May the gods be with you on your journey. I will await your return with hope and dread in my heart."

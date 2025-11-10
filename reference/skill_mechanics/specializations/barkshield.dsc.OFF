@@ -1,0 +1,12 @@
+barkshield_task:
+    type: task
+    script:
+    - define perception <player.flag[skill.natural.perception_level]>
+    - if <player.location.find.blocks[oak_log|spruce_log|acacia_log|birch_log|jungle_log|dark_oak_log].within[<[perception].div[7].max[1]>].is_empty.not>:
+        - wait <element[1].div[<player.flag[current_dexterity]>].mul[100].round_up>s
+        - narrate "You assemble a makeshift shield out of some bark."
+        - define durability <util.random.int[1].to[<player.flag[skill.barkshield.level].add[1]>]>
+        - define durability <element[330].sub[<[durability]>]>
+        - give <item[shield].with[custom_model_data=10013011;durability=<[durability]>]>
+    - else:
+        - narrate "You need to be closer to some trees to make your shield."

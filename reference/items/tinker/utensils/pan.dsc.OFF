@@ -1,0 +1,7 @@
+pan:
+  type: item
+  material: bowl
+  display name: Pan 
+  mechanisms:
+    custom_model_data: 2110018
+  

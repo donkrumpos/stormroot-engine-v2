@@ -1,0 +1,115 @@
+spell_artifact_components:
+    type: data
+    artifacts:
+        glorelindil:
+            target_type: single
+            deluvic_name: "Glorelindil"
+            material: "Celestium Gem"
+            power_level: 1
+            short_description: "A legendary Celestial Focus Lens, harnessing the essence of light and stars to target a single entity with precise magical energy."
+            long_description:
+            - "Glorelindil, also known as the Celestial Focus Lens, is a powerful artifact crafted by Lumareena, the Goddess of Light and Water. It is imbued with her divine energy and is capable of channeling and amplifying celestial forces for various purposes. The lens emits a brilliant glow, casting its light far and wide to ward off darkness and bring hope to those who behold it. It is said to hold the essence of Lumareena's protective embrace, symbolizing her eternal watchfulness over the realms."
+
+        serbroth_crystalarum:
+            target_type: ally
+            deluvic_name: "serbroth_crystalarum"
+            description: "An ancient crystal orb infused with the essence of the nurturing star Serbroth."
+            material: "Novastral Crystal"
+            power_level: 4
+            secondary_traits:
+                effectiveness: "Increased damage against demonic entities."
+                secondary_effects: "Has a chance to stun the target upon impact."
+                versatility: "Can be used to amplify healing spells cast by the wielder."
+            short_description: "An orb infused with the essence of the nurturing star Serbroth."
+            long_description:
+                - "The Serbroth Crystalarum is an ancient crystal orb, believed to be created by the nurturing star Serbroth. It radiates a gentle, soothing light that brings warmth and comfort to those who bask in its glow. The orb is said to hold the essence of this celestial being, imbuing it with healing and rejuvenating properties. Its presence is often associated with feelings of serenity and renewal, making it a cherished artifact among those who seek solace and guidance."
+        astralis_elixus:
+            target_type: self
+            deluvic_name: "Astralis Elixus"
+            power_level: 2
+            short_description: "A mystical elixir distilled from celestial energies, granting enhanced magical abilities and protection to the drinker."
+            long_description:
+            - "The Astralis Elixus is a mystical elixir crafted from the ethereal energies of distant stars. Formulated by ancient alchemists versed in the secrets of the cosmos, this potent brew bestows upon its drinker enhanced magical abilities and protection."
+            - "When consumed, the Astralis Elixus imbues the imbiber with celestial vitality, enhancing their spellcasting prowess and fortifying their defenses against malevolent forces. Its transformative properties make it a coveted elixir among adventurers and mages alike."
+        harmonium_lucidor:
+            target_type: location
+            deluvic_name: "Harmonium Lucidor"
+            material: "Verdant Moss"
+            power_level: 3
+            secondary_traits:
+                effectiveness: "Provides increased protection against nature-based threats."
+                secondary_effects: "Can heal nearby allies over time while active."
+                versatility: "Can be attuned to different elemental affinities for enhanced effects."
+            short_description: "A harmonious beacon infused with the soothing melodies of nature, guiding and empowering allies in times of need."
+            long_description:
+            - "The Harmonium Lucidor is a sacred beacon infused with the harmonious melodies of nature itself. Crafted by druids attuned to the rhythms of Deluvia, this mystical artifact serves as a guiding light for allies in times of darkness."
+            - "When activated, the Harmonium Lucidor emits a soothing aura of natural energy, imbuing nearby allies with renewed vigor and courage. Its harmonizing properties make it a cherished relic among those who seek solace and strength in the embrace of nature."
+        umbra_shadowcloak:
+            target_type: area
+            deluvic_name: "Umbra Shadowcloak"
+            material: "Shadow Silk"
+            power_level: 5
+            short_description: "A cloak woven from the shadows of the night, enshrouding an area in darkness and dampening magical energies."
+            long_description:
+            - "The Umbra Shadowcloak is a cloak woven from the darkest shadows of the night. Crafted by shadowmancers skilled in the arts of concealment, this ethereal garment cloaks its wearer in an aura of darkness, obscuring their form from prying eyes."
+            - "When unfurled, the Umbra Shadowcloak casts a veil of darkness over the surrounding area, shrouding it in an impenetrable cloak of shadows. Its enigmatic properties make it a favored tool for those who seek to move unseen through the night."
+        luminar_essence:
+            target_type: nearest
+            deluvic_name: "Luminar Essence"
+            material: "Radiant Amber"
+            power_level: 3
+            short_description: "A vial containing the essence of pure light, enhancing agility and perception in allies."
+            long_description:
+            - "The Luminar Essence is a vial containing the distilled essence of pure light. Crafted by alchemists versed in the mysteries of illumination, this radiant elixir imbues its imbiber with heightened agility and perception, enhancing their combat abilities."
+            - "When ingested, the Luminar Essence suffuses the drinker with radiant energy, sharpening their senses and granting them unparalleled speed and reflexes. Its illuminating properties make it a prized asset for adventurers seeking to navigate treacherous terrain with grace and precision."
+        faenkras_heartwood:
+            target_type: arc
+            deluvic_name: "Faenkra's Blessing"
+            material: "Sylvan Heartwood"
+            power_level: 6
+            short_description: "Nature's Heartwood"
+            long_description: 
+            - "Faenkra's Blessing, known as the Heartwood of the Deluvia, is a sacred relic bestowed upon mortals by the primordial goddess Nemistri herself. It pulses with the life force of the natural world, nurturing and sustaining all living things with its boundless energy. The magical waters of Faenkra flow below Faecundia, the center region of the Kingdom of the Wood, and give it most of its fertile powers. This well, called the Well of Faenkra, is the access point to the waters."
+        wyldfyre_orbius:
+            target_type: cone
+            deluvic_name: "Wyldfyre Orbius"
+            short_description: "Elemental Orb"
+            material: "Emberstone"
+            power_level: 7
+            long_description: "The Firesoul Orb, an Elemental Orb of untamed power, is said to contain the essence of Deluvias inner forge. It blazes with the primal energies of creation, harnessing the raw forces of fire and earth to shape the world according to the will of the wielder."
+        mynixius:
+            target_type: group
+            deluvic_name: "Mynixius"
+            material: "Nightfire Opal"
+            power_level: 8
+            short_description: "Orb of Night's Fire"
+            long_description:
+            - "Mynixius, also known as the Orb of Night's Fire, is a celestial artifact that harnesses the power of the night star, Mynith, to create a radiant blaze reminiscent of the sun's warmth."
+            - "It serves as a beacon of hope and guidance in the darkest of nights, illuminating the path for travelers and adventurers alike."
+            - "The orb is said to hold a fragment of Mynith's essence, granting it unparalleled brilliance and intensity."
+            - "It is revered by those who seek solace and protection under the cloak of the night sky."
+        mist_of_the_arcane_winds:
+            target_type: multiple
+            deluvic_name: "Fogrenvarna"
+            material: "Mystical Vapor"
+            power_level: 9
+            short_description: "Arcane Mist"
+            long_description: "Fogrenvarna, known as the Mist of the Arcane Winds, is a mystical mist infused with the arcane energies of the winds. It swirls and shifts with unseen forces, granting its wielder control over the elements and the power to shape reality itself."
+        echoing_amulet:
+            target_type: environment
+            deluvic_name: "Vibradoren Amulite"
+            power_level:  10
+            short_description: "Ancient Amulet of Resonance"
+            long_description: "The Vibradoren Amulite, originating from the depths of the Riftlands' chasms, is an ancient amulet steeped in resonant energies. Crafted by forgotten artisans of a bygone era, this mystical artifact pulses with the echoes of distant realms, whispering secrets of the cosmos to those who dare to listen. Its shimmering surface resonates with a faint hum, imbuing its wearer with a sense of profound connection to the unseen forces that permeate the rifts of existence."
+        tidecallers_coral:
+            target_type: chain
+            deluvic_name: "Tidurias Coralline"
+            material: "Aquamarine Coral"
+            power_level: 11
+            short_description: "Coral of the Tides"
+            long_description:
+                - "Tidurias Coralline, crafted from Aquamarine Coral, is a mystical artifact imbued with the essence of the ocean depths. Revered by those who navigate the seas, this coral radiates a calming aura, soothing turbulent waters and beckoning creatures of the deep. When invoked, it channels the primordial power of the tides, shaping the currents and bringing balance to the aquatic realm."
+
+
+
+

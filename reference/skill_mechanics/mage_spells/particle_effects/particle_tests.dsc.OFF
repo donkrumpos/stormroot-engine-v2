@@ -1,0 +1,31 @@
+particle_1_task:
+    type: task
+    script:
+    - define vector <player.target.location.sub[<player.location>].normalize.mul[0.5]>
+    - adjust <player.target> velocity:<def[vector].x>,0.4,<def[vector].z>
+    - playeffect effect:EXPLOSION_NORMAL at:<player.target.location.add[0,1,0]> visibility:50 quantity:10 offset:0.5
+    - playeffect effect:EXPLOSION_LARGE at:<player.target.location.add[0,1,0]> visibility:50 quantity:1 offset:0.5
+
+particle_2_task:
+    type: task
+    script:
+    - foreach <player.location.up[2].points_between[<player.cursor_on>]> as:point:
+        - narrate <[point]>
+    # - repeat 150:
+    #     - playeffect effect:FLAME at:<player.location.add[1.1,1,0]> quantity:10 offset:0.00,0.08,0.05
+    #     - wait 1t
+
+particle_3_task:
+    type: task
+    script:
+    - repeat 150:
+        - playeffect effect:FLAME at:<player.location.add[<[loop_index]>,1,0]> quantity:10 offset:0.00,0.08,0.05
+        - wait 1t
+
+particle_4_task:
+    type: task
+    script:
+    - define playerLoc <player.location.forward_flat[1.4]>
+    - repeat 90:
+        - wait 1t
+        - playeffect effect:flame at:<[playerLoc].add[<location[0,1.4,2.86].rotate_around_x[<[value].to_radians>]>]> visibility:100 quantity:1 offset:0,0,0

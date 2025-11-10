@@ -1,0 +1,33 @@
+lockpicking_world:
+    type: world
+    events:
+        on player right clicks *_door|chest location_flagged:locked:
+        - if <player.item_in_hand.contains[lockpick_tools]>:
+            - if <player.has_flag[skill.lockpicking]>:
+                - if <player.flag[skill.lockpicking.level]> >= 1:
+                    - if <util.random.int[1].to[3]> == 1:
+                        - run raise_natural_skill_task def:<player>|perception
+                    - narrate "You have a chance at picking this lock."
+                    - if <location[<context.location>].has_flag[locked.level]>:
+                        - define locked_level <location[<context.location>].flag[locked.level]>
+                        - if <util.random.int[1].to[<[locked_level]>]> < <player.flag[skill.lockpicking.level]>:
+                            - narrate "You succeeded at picking this lock!"
+                        - else:
+                            - narrate "Your lockpicking failed."
+                            - determine passively cancelled
+                    - else:
+                        - if <proc[natural_skill_check_proc].context[<player>|perception|<player.flag[current_dexterity].div[11]>]> == "critical_fail":
+                            - take lockpick_tools
+                            - narrate "Your lockpick tools broke."
+                        - else if <proc[natural_skill_check_proc].context[<player>|perception|<player.flag[current_dexterity].div[11]>]>:
+                            - narrate "You succeeded at picking this lock!"
+                            - if <proc[natural_skill_check_proc].context[<player>|perception|<player.flag[current_dexterity].div[11]>]> == "critical_success":
+                                - flag <player> attribute.dexterity_level:+:1
+                        - else:
+                            - narrate "Your lockpicking failed."
+                            - determine passively cancelled
+                - else:
+                    - narrate "You need a lockpicking skill of at least 1."
+        - else:
+            - narrate "This is locked."
+            - determine passively cancelled

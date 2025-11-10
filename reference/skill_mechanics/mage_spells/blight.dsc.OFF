@@ -1,0 +1,14 @@
+blight_task:
+    type: task
+    definitions: attacker|defender
+    script:
+    - if <[attacker].has_flag[skill.spells.blight.level].not>:
+        - flag <[attacker]> skill.spells.blight.level:1
+    - define level <[attacker].flag[skill.spells.blight.level]>
+    # - define random_crop <server.vanilla_tagged_materials[crops].random.name>
+    - foreach <[attacker].location.find_blocks[farmland].within[<element[2].add[<[level]>]>]> as:block:
+        - wait 1s
+        
+        - modifyblock <[block]> dirt 
+        - if <[level]> > 30 && <util.random.int[0].to[5]> == 5:
+            - modifyblock <[block]> soul_soil

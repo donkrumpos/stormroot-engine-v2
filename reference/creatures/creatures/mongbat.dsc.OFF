@@ -1,0 +1,48 @@
+mongbat:
+    type: entity
+    entity_type: iron_golem
+        
+    flags:
+        custom_beast: true
+        karma: 10
+        fame: 10
+        biome: 
+            - forest
+            - plains
+            - dark_forest
+        rarity: 5
+        level: 1    
+        eligible_block_spawn: grass_block
+        
+        script: mongbat_task
+        undead: false
+        health: 1
+        drops:
+            bloodmoss:
+                quantity: 1
+                chance: .1
+       
+        xp: 6
+        coin_drop:
+            copper: 
+                quantity: 1
+                chance: .5
+        custom_beast: true
+        mob:
+            mongbat: true
+        custom_model_data: 1656565
+
+
+
+mongbat_world:
+    type: world
+    events:
+        on mongbat damages player:
+        - if <context.entity.has_flag[newbie]>:
+            - if <util.random.int[1].to[3]> == 3:
+                - hurt 0.5 <context.entity>
+        - else:
+            - hurt 2 <context.entity>
+        - determine passively cancelled
+        on player damages mongbat:
+        - hurt 1 <context.entity>

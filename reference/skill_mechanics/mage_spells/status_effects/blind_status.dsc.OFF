@@ -1,0 +1,7 @@
+blind_task:
+    type: task
+    debug: true
+    definitions: target|amount
+    script:
+    - title "title:<white><&chr[3116]>" stay:<[amount]>s fade_in:10t fade_out:13t targets:<[target]||<player>>
+    - cast blindness d:<[amount].add[1]> <[target]>

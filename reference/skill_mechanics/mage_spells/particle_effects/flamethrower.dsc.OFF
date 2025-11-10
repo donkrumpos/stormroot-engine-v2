@@ -1,0 +1,10 @@
+flamethrower_task:
+    type: task
+    script:
+    - repeat 64:
+        # - playeffect effect:flame at:<player.location.up[1].forward[<[value].div[2]>]> quantity:10 offset:0.02,0.18,-10.15
+        - playeffect <player.location> effect:flame data:1 quantity:0 offset:<player.location.direction.vector>
+        - wait 3t
+    #  - repeat 100:
+    #     - playeffect at:<player.eye_location.forward_flat[2]> effect:flame velocity:0,1,0 
+    #     - wait 1t

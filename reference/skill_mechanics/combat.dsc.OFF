@@ -1,0 +1,301 @@
+
+
+weapons_events:
+  type: world
+  debug: false
+  events:
+    on player item takes damage:
+    - if <context.item.has_script>:
+        #only run this for custom items. Vanilla items run default
+        - run durability_task def:<context.item>|<context.slot>
+        - determine passively cancelled
+    on entity damages entity:
+    - if <[damager].is_player.not> && <[defender].is_player.not>:
+        # stop the script because it is just two mobs attacking each other
+        - stop
+    - announce <red><context.cause>
+    - define damager <context.damager>
+    - define defender <context.entity>
+    - if <[defender].location.areas.filter[has_flag[no_pvp]].any>:
+        - stop
+        - determine cancelled
+    - if <context.damager.has_flag[newbie_aggro]> && <context.damager.flag[newbie_aggro]> == <context.entity> && <context.entity.has_flag[newbie]>:
+        - narrate "newb!"
+        - stop
+    - if <context.entity.entity_type> == ITEM_FRAME || <context.entity.entity_type> == ARMOR_STAND:
+        - stop
+    
+    
+    
+    - if <[damager].is_player>:
+        
+        - if <[damager].has_flag[hidden]>:
+            - if <[damager].has_flag[shadow_strike]>:
+                - define shadow_strike_level <[damager].flag[skill.specializations.shadow_strike.level]>
+                - define dexterity_level <proc[attribute_skill_check_proc].context[<[damager]>|dexterity]>
+                - define stealth_level <[damager].flag[skill.skills.stealth.level]>
+                - define shadow_strike_chance <[shadow_strike_level].add[<[dexterity_level]>].add[<[stealth_level]>].round_down>
+                - if <[damager].has_flag[skill.specializations.shadow_strike.level]> && <[damager].flag[skill.specializations.shadow_strike.level]> > 0 && <element[101].sub[<[shadow_strike_chance]>].max[0]> == 0:
+                    - narrate format:game_message "You strike while hidden!"
+                    - adjust <[damager]> food_level:0
+                - else:
+                    - define chance <[defender].flag[skill.skills.perception.level].add[6].round_down>
+                    - if <util.random.int[0].to[<[chance]>]> != 0:
+                        - determine passively cancelled
+                        - flag <[damager]> hidden:!
+                        - adjust <[damager]> show_to_players
+                        - narrate "<red>Revealed!" targets:<[damager]>
+                        - stop
+                - if <[defender].flag[skill.skills.perception.level]> > 100 && <proc[natural_skill_check_proc].context[<[defender]>|detect_hidden]||false> :
+                    - narrate format:game_message "<[damager].name> is attempting to strike you while hidden." target:<[defender]>
+                    - narrate format:game_message "<[defender].name> has foiled your attack." target:<[damager]>
+                    - determine passively cancelled
+                    - stop
+                - else if <[defender].flag[skill.skills.perception.level]> > 70:
+                    - narrate format:game_message "<[damager].name> is attempting to strike you while hidden." target:<[defender]>
+                    - wait 2s
+                - else if <[defender].flag[skill.skills.perception.level]> > 45:
+                    - narrate format:game_message "An attacker is attempting to strike you while hidden." target:<[defender]>
+                
+         
+            
+        # - if <[damager].flag[stat.core.stamina.level]> <= 1:
+        - if <[damager].saturation> == 0 && <[damager].food_level> < 20:
+            - narrate "<red>You are too exhausted to use this weapon" targets:<[damager]>
+            - determine cancelled
+        # - flag <[damager]> stat.core.stamina.level:-:10
+        - if <proc[natural_skill_check_proc].context[<[damager]>|focus]>:
+            - adjust <[damager]> food_level:<[damager].food_level.sub[<proc[armor_weight_proc].context[<[damager]>]>].div[4].max[1]>
+        - else:
+            - adjust <[damager]> food_level:<[damager].food_level.sub[<proc[armor_weight_proc].context[<[damager]>]>]>
+        # - narrate "exhaustion <[damager].exhaustion>"
+        - define weapon_type vanilla
+        - define weapon_speed 80
+        - if <[damager].item_in_hand.has_script>:
+            # - define weapon <player.item_in_hand.script>
+            - define weapon_type <[damager].item_in_hand.flag[weapon_type]>
+        - else if <[damager].item_in_hand.material.name> == AIR:
+            - define weapon_type wrestling
+        - else:
+            - if <[damager].item_in_hand.material.name> ==  bow:
+                - define weapon_type archery
+            - else:
+                - define weapon_type <[damager].item_in_hand.material.name.after[_]>
+            - if <[damager].item_in_hand.has_flag[hotkeyed]>:
+                - determine cancelled
+        - define attack_speed_increase <[damager].flag[stat.bonus.attack_speed_increase.level]||0>
+        
+        - define weapon_speed <[damager].item_in_hand.flag[weapon_speed]||80>
+        - if <[weapon_type]> ==  wrestling:
+            - define weapon_speed 10
+       
+        - define current_dexterity <proc[attribute_skill_check_proc].context[<[damager]>|dexterity]>
+        - define dexterity_modifier <[current_dexterity].div[3].round_down.max[1]>
+        - define attack_speed <[weapon_speed].sub[<[dexterity_modifier]>].max[0]>
+        - define attack_speed_increase <[attack_speed].mul[<[attack_speed_increase]>]>
+        - define damager_luck <proc[luck_calculator_proc].context[<[damager]>]>
+        - define attack_speed <[attack_speed].sub[<[attack_speed_increase]>]>
+        - if <[damager].has_flag[attack_speed_cooldown]>:
+            # so you can't attack twice 
+            # - narrate "cooling down"
+            - determine cancelled
+        - else:
+            - flag <[damager]> attack_speed_cooldown expire:<[attack_speed]>t
+        - if <util.random.int[0].to[4]> == 4:
+            - run raise_natural_skill_task def:<[damager]>|focus|0|0
+        - define required_strength <[damager].item_in_hand.flag[required_strength]>
+        - if <[required_strength]> > <proc[attribute_skill_check_proc].context[<[damager]>|strength]>:
+            - define strength_speed_difference <[required_strength].sub[<proc[attribute_skill_check_proc].context[<[damager]>|strength]>]>
+            
+            - flag <[damager]> stat.core.stamina.level:-:<[strength_speed_difference].mul[2].min[<[damager].flag[stat.core.max_stamina.level]>]||5>
+        # - narrate <blue><[damager].item_in_hand.flag[required_strength]||5>
+        - define hit_chance_increase <[damager].flag[stat.bonus.hit_chance_increase.level]||0>
+        - define hit_chance_increase <[hit_chance_increase].add[<[damager].item_in_hand.flag[stat.bonus.hit_chance_increase]>].mul[10]>
+        - if <proc[fighting_style_proc].context[<[weapon_type]>]> > 1:
+            - define fighting_style_bonus <proc[fighting_style_proc].context[<[weapon_type]>].mul[<[damager].flag[skill.specializations.fighting_style.level]||1>]>
+            # - define fighting_style_bonus <[damager].flag[skill.specializations.FightingStyle.level]||1>
+        - define hit_chance_bonuses <[hit_chance_increase].add[<[fighting_style_bonus].round_up||1>].add[<[damager_luck].div[10]>].add[<[damager].flag[skill.skills.focus.level]||0>]>
+        # - announce <yellow><[hit_chance_bonuses].round_up>
+        - if <proc[natural_skill_check_proc].context[<[damager]>|<[weapon_type]>|<element[10].add[<[hit_chance_bonuses].round_up>]>]>:
+            
+                # stuff can happen in here to disturb the attack
+            - run raise_natural_skill_task def:<[damager]>|<[weapon_type]>
+            - run durability_task def:<[damager].item_in_hand>|<[damager].held_item_slot>
+            - if <[damager].flag[skill.skills.arms_lore.level]> > 10:
+                - inventory adjust slot:hand "lore:Durability: <proc[durability_display_proc].context[<player.item_in_hand>]>"
+            - if <util.random.int[1].to[30]> == 30:
+                - run raise_natural_skill_task def:<[damager]>|arms_lore|0|0
+            - if <util.random.int[1].to[30]> == 50:
+                - if <[defender].is_mob>:
+                    - run raise_natural_skill_task def:<[damager]>|beast_lore|0|0
+            - inject combat_damage def:<[damager]>|<[defender]>
+
+        - else:
+            - narrate format:game_message "You miss your target" targets:<[damager]>
+            - determine cancelled
+        - determine 0
+
+
+run_active_specializations:
+    type: task
+    definitions: damager|damage|target
+    script:
+    - define active_specializations <list>
+    - foreach <player.flag[skill.specializations]> as:special:
+        - if <script[specializations_skills_data].data_key[specializations.<[key]>].contains[type]>:
+            # - narrate <script[specializations_skills_data].data_key[specializations.<[key]>.type]>
+            - if <script[specializations_skills_data].data_key[specializations.<[key]>.type]> == active:
+                - if <script[specializations_skills_data].data_key[specializations.<[key]>].contains[script]>:
+                    - run <script[specializations_skills_data].data_key[specializations.<[key]>.script]> def:<[damager]>|<[damage]||1>|<[target]>
+                    
+        
+combat_damage:
+    type: task
+    definitions: damager|defender
+    script:
+    - define minimum_weapon_damage <[damager].item_in_hand.flag[weapon_damage_min]||0>
+    - define maximum_weapon_damage <[damager].item_in_hand.flag[weapon_damage_max]||1>
+    - define tactics <[damager].flag[skill.skills.tactics.level]||0>
+    - if <proc[natural_skill_check_proc].context[<[damager]>|<[tactics]>]>:
+        - define weapon_damage <[damager].item_in_hand.flag[weapon_damage_max]>
+    - else:
+        - define weapon_damage <util.random.int[<[minimum_weapon_damage]>].to[<[maximum_weapon_damage]>]>
+    
+    - define defender_armor <proc[armor_protection_proc].context[<[defender]>]||0>
+    - define strength_modifier <proc[attribute_skill_check_proc].context[<[damager]>|strength].div[9].round_down>
+    - define strength_damage_bonus <util.random.int[0].to[<[strength_modifier]>]||0>
+    - define anatomy_damage_bonus <[damager].flag[skill.skills.anatomy.level].div[5].mul[.01]||0>
+    - if <proc[natural_skill_check_proc].context[<[damager]>|<[anatomy]>]>:
+         - define anatomy_damage_bonus <util.random.decimal[1].to[<[anatomy_damage_bonus].add[1]>]||2>
+    - else:
+        - define anatomy_damage_bonus <util.random.decimal[0].to[<[anatomy_damage_bonus]>]||0>
+    - if <util.random.int[0].to[3]> == 3:
+        - run raise_natural_skill_task def:<[damager]>|anatomy|0|0
+    - if <util.random.int[0].to[3]> == 3:
+        - run raise_natural_skill_task def:<[damager]>|tactics|0|0
+    - define damage_increase <[damager].flag[stat.bonus.damage_increase.level]||0>
+    - if <[damager].has_flag[stat.status.buff.rage.active]>:
+        - flag <[damager]> stat.status.buff.rage.level:++
+        - if <util.random.int[0].to[3]> == 3:
+            - define damage_increase <[damage_increase].add[<util.random.int[<[damager].flag[skill.specializations.rage.level]>.to[<[damager].flag[skill.specializations.rage.level].add[<[damager].flag[stat.status.buff.rage.level]>]>]]>]>
+            - narrate "<red>Your rage causes more damage <[damager].flag[stat.status.buff.rage.level]>" targets:<[damager]>
+    
+    - define final_weapon_damage <[weapon_damage].add[<[strength_damage_bonus]>].add[<[anatomy_damage_bonus]>]>
+    - define damage_increase_modifier <[final_weapon_damage].mul[<[damage_increase]>]>
+    - define final_weapon_damage <[final_weapon_damage].add[<[damage_increase_modifier]>]>
+
+
+    - define defense_chance_increase <[defender].flag[stat.bonus.defense_chance_increase.level]||0>
+    - define final_defense 0
+    - define final_defense <[defender_armor].add[<[defender_armor].mul[<[defense_chance_increase]>]>]||0>
+    - define unarmored_defense 0
+    - if <[defender].has_flag[skill.specializations.unarmored_defense.level]> && <[defender].flag[skill.specializations.unarmored_defense.level]> > 0:
+        - define unarmored_defense <[defender].flag[skill.specializations.unarmored_defense.level].round||0>
+    - if <proc[equipment_size_proc].context[<[defender]>]> && <[defender].has_flag[stat.status.buff.rage.active]>: 
+        - define unarmored_defense <[unarmored_defense].mul[<[defender].flag[stat.status.buff.rage.level]>].round>
+        - define final_defense <[final_defense].add[<[defender].flag[skill.specializations.rage.level].add[<[defender].flag[stat.status.buff.rage.level]>]>].add[<[unarmored_defense]>]>
+        - flag <[defender]> stat.status.buff.rage.level:++
+        - narrate "Your rage absorbs some damage" targets:<[defender]>
+    - else:
+        - define rando <util.random.int[<[unarmored_defense].round>].to[<[unarmored_defense].add[2]>]>
+        - define final_defense <[final_defense].add[<[unarmored_defense]>]>
+    # - narrate "<red><[final_defense]>" targets:<server.match_player[sirbandersnatch]>
+
+    - if <[damager].item_in_hand.has_flag[slayer]>:
+        - define slayer <[damager].item_in_hand.flag[slayer]>
+        
+    - if <[defender].has_flag[vulnerability]>:
+        - define vulnerability <[defender].flag[vulnerability]>
+    
+    - if <[slayer].length> > 0 && <[vulnerability].length> > 0 && <[slayer]> == <[vulnerability]>:
+        - define final_weapon_damage <[final_weapon_damage].mul[2]>
+
+    # all damage should be calculated before this, or it breaks the counter
+    - if <[final_weapon_damage].sub[<[final_defense]>]>  >= <[defender].health>:
+        - run kill_count_task def:<[damager]>|<[defender]>
+
+    # - narrate "doing <[final_weapon_damage].sub[<[final_defense]||0>]> <red> damage" targets:<server.match_player[sirbandersnatch]>
+    # - inject run_active_specializations def:<[damager]>|<[final_weapon_damage].sub[<[final_defense]>]||0>|<[defender]>
+    
+    #this runs specializations that are tied to weapon use
+    - if <[damager].item_in_offhand.has_flag[hotkeyed]>:
+        - if <script[specializations_skills_data].data_key[specializations.<[damager].item_in_offhand.flag[hotkeyed]>.type]> == queued:
+            - define weapon_type any
+            - if <script[specializations_skills_data].data_key[specializations.<[damager].item_in_offhand.flag[hotkeyed]>].contains[weapon_type]>:
+                - define weapon_type <script[specializations_skills_data].data_key[specializations.<[damager].item_in_offhand.flag[hotkeyed]>.weapon_type]>
+            - if <[damager].item_in_hand.flag[weapon_type]> == <[weapon_type]> || <[weapon_type]> == any:
+                - define skill <[damager].flag[skill.specializations.<[damager].item_in_offhand.flag[hotkeyed]>.level]||1>
+                - define tactics <[damager].flag[skill.skills.tactics.level]||0>
+                - define skills_total <[tactics].add[<[skill]>].round.min[99].max[0]>
+                - define random <util.random.int[0].to[<element[100].sub[<[skills_total]>].max[1]>]>
+                - if <[random]> == 0:
+
+                    - define script <script[specializations_skills_data].data_key[specializations.<[damager].item_in_offhand.flag[hotkeyed]>.script]>
+                    - run <[script]> def:<[damager]>|<[defender]>|<[final_weapon_damage]>|<[final_defense]>
+                - define tactics_gain <util.random.int[0].to[3]>
+                - if <[tactics_gain]> == 0:
+                    - run raise_natural_skill_task def:<[damager]>|tactics|0|0
+                
+    - else:
+        # this issues the standard damage
+        - hurt <[final_weapon_damage].sub[<[final_defense]||0>]> <[defender]>
+
+
+    - foreach <[damager].item_in_hand.flag[stat.bonus.damage_types]> as:damage_type:
+        - if <[damage_type]> > 0:
+            - run raise_natural_skill_task def:<[defender]>|<[key]>_resistance
+            - if <proc[natural_skill_check_proc].context[<[defender]>|<[key]>_resistance]>:
+                - if <[defender].as_entity.is_player>:
+                    - narrate "You feel yourself resisting magical <[key]> damage."  targets:<[defender]>
+                - foreach next
+            - define equipment_resistance <[defender].flag[stat.bonus.<[key]>_resist.level]>
+            - define damage_value <[damage_type].sub[<[equipment_resistance]>].min[0]>
+            - if <[equipment_resistance]> > 0 && <[defender].as_entity.is_player>:
+                - narrate "You feel yourself resisting magical <[key]> damage."  targets:<[defender]>
+                - narrate "<[defender].name> has resisted <[equipment_resistance]> of your damage" targets:<server.match_player[sirbandersnatch]>
+            - if <[damage_value]> > 0:
+                - hurt <[damage_value]> <[defender]>
+                - narrate "You have done some <[key]> damage." targets<[damager]>
+        
+                
+#this is our custom kill/die event
+kill_count_task:
+    type: task
+    definitions: damager|defender
+    script:
+    - if <[damager].is_player>:
+        # - narrate "<yellow>running kill counter" targets:<server.match_player[sirbandersnatch]>
+        - if <[defender].has_flag[mob.entity_type]> || :
+            - flag <[damager]> mob_kill_count.<[defender].flag[mob.entity_type]>:+:1
+        - else:
+            - flag <[damager]> mob_kill_count.<[defender].entity_type>:+:1
+
+            # this is for the NPC Wulvern's quest
+        - if <[defender].entity_type> == zombie || && <[damager].has_flag[wulvern_kill_quest.zombie]>:
+            - flag <[damager]>  wulvern_kill_quest.zombie:++
+        - if <[defender].entity_type> == creeper && <[damager].has_flag[wulvern_kill_quest.creeper]>:
+            - flag <[damager]>  wulvern_kill_quest.creeper:++
+        - if <[defender].entity_type> == skeleton && <[damager].has_flag[wulvern_kill_quest.skeleton]>:
+            - flag <[damager]> wulvern_kill_quest.skeleton:++
+
+highest_weapons_skill_proc:
+    type: procedure
+    definitions: player
+    script:
+    - definemap skill_list:
+        sword: <[player].flag[skill.skills.sword.level]>
+        mace:   <[player].flag[skill.skills.mace.level]>
+        archery:   <[player].flag[skill.skills.archery.level]>
+        wrestling:   <[player].flag[skill.skills.wrestling.level]>
+        throwing:   <[player].flag[skill.skills.throwing.level]>
+        fencing:   <[player].flag[skill.skills.fencing.level]>
+    # - define skill_list <list[<[swords]>|<[mace]>|<[archery]>|<[wrestling]>|<[throwing]>|<[fencing]>]>
+    # - define highest_number <[skill_list].highest]>
+    # - define highest_skill <[skill_list].find[<[skill_list].highest>]>
+    # - define skill_name <[skill_list].get[<[highest_skill]>]>
+    - define best_skill <[skill_list].sort_by_value.keys.last>
+    - define best_skill_value <[skill_list].sort_by_value.values.last>
+
+    
+    - determine <[best_skill]>
+

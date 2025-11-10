@@ -1,0 +1,7 @@
+dharok_weed:
+  type: item
+  material: bowl
+  display name: Dharok Weed
+  mechanisms:
+    custom_model_data: 2110023
+    

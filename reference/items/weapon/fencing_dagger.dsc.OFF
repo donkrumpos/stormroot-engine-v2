@@ -1,0 +1,43 @@
+dagger:
+  type: item
+  debug: false
+  material: shears
+  display name: Dagger
+  
+  lore:
+  - An elegent weapon
+  - for a more sophisticated time.
+  flags:
+    material_quantity: 2
+    price: 35
+    rarity: 19
+    required_strength: 9
+    item_type: weapon
+    weapon_type: fencing
+    craftable: true
+    crafting_difficulty: 8
+    two_handed: false
+    weapon_speed: 20
+    weapon_damage_max: 9
+    weapon_damage_min: 5
+    stat:
+      bonus:
+        attack_speed_increase: 0
+        hit_chance_increase: 0
+        damage_increase: 0
+        dexterity_increase: 0
+        strength_increase: 0
+        intelligence_increase: 0
+        luck: 0
+        damage_types:
+          fire: 0
+          cold: 0
+          poison: 0
+          energy: 0
+    damage: 5
+      
+    current_durability: 355
+    maximum_durability: 355
+  mechanisms:
+    custom_model_data: 72026
+   

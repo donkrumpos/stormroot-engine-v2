@@ -1,0 +1,80 @@
+katrina_ulvid_ghost:
+    type: entity
+    # display_name: "Bark Spirit"
+    entity_type: turtle
+        
+    flags:
+        karma: 30
+        fame: 30
+        biome: forest
+        rarity: 1
+        health: 100000
+        eligible_block_spawn: air
+        unique: true
+        script: katrina_ulvid_task
+        drops:
+            steeleaf:
+                quantity: 1
+                chance: .1
+            wildroot:
+                quantity: 1
+                chance: .1
+            oak_sapling:
+                quantity: 1
+                chance: .4
+            shard_of_life:
+                quantity: 1
+                chance: .05
+            oak_bark:
+                quantity: 2
+                chance: .25
+            dreamwood_twig:
+                quantity: 1
+                chance: .1
+        xp: 11
+        coin_drop:
+            copper: 
+                quantity: 1
+                chance: .5
+        custom_beast: true
+        custom_model_data: 1656564
+
+
+katrina_ulvid_task:
+    type: task
+    definitions: mob|model
+    script:
+    - adjust <[mob]> speed:0.001
+    - adjust <[model]> hide_from_players
+    # - announce <[model]>
+    # - define test ""
+    - while <[mob].is_spawned>:
+        
+        - wait <util.random.int[1].to[2]>s
+        - teleport <[mob]> <location[katrina_ulvid_ghost_spawn].up[1]>
+        # - adjust <[model]> hide_from_players
+        - foreach <cuboid[ulvid_tomb].players> as:player_see:
+            - if <[player_see].has_flag[stat.status.buff.channeling]>:
+                - adjust <[player_see]> show_entity:<[model]>
+                
+            - else:
+                - adjust <[player_see]> hide_entity:<[model]>
+    # - repeat 2:
+    #     - wait 1s
+    #     - teleport <[model]> <location[katrina_ulvid_ghost_spawn].location.up[.5]>
+    #     - wait 1s
+    #     - teleport <[model]> <location[katrina_ulvid_ghost_spawn].location.up[1]>
+    #     - wait 1s
+    #     - teleport <[model]> <location[katrina_ulvid_ghost_spawn].location.up[.5]>
+    #     - wait 1s
+    #     - teleport <[model]> <location[katrina_ulvid_ghost_spawn]>
+    #     # - wait 10t
+    #     # - teleport <[mob]> <[mob].location.down[.5]>
+    #     # - wait 10t
+    #     # - teleport <[mob]> <[mob].location.down[.5]>
+    #     # - wait 10t
+    #     # - teleport <[mob]> <[mob].location.up[.5]>
+    #     # - wait 10t
+    #     # - teleport <[mob]> <[mob].location.up[.5]>
+       
+   

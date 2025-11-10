@@ -1,0 +1,83 @@
+wolf_form_command:
+    type: command
+    name: wolf
+    script:
+    - if <player.has_flag[skill.wolfform].not>:
+        - narrate "You don't have the Wolf Form skill."
+        - stop
+    - if <player.flag[skill.wolfform.level]||0> < 1:
+        - narrate "You need an Wolf Form level of at least one to use it."
+        - stop
+    - if <player.has_flag[wolf]>:
+        - mount cancel <player>
+        - remove <player.flag[wolf.horse]>
+        - remove <player.flag[wolf.wolf]>
+        # - give <player.flag[wolf.offhand]> slot:41
+        - flag player wolf:!
+        - narrate "You are no longer in Wolf Form."
+        - invisible <player> state:false
+       
+        - inventory update
+    - else:
+        - narrate "You are now in Wolf Form."
+        # - narrate <player.item_in_offhand>
+        # - flag <player> wolf.offhand:<player.item_in_offhand>
+        # - equip <player> offhand:air
+        - fakeitem <item[air].repeat_as_list[54]> slot:1 
+        # - fakeitem air slot:6 
+        - flag player wolf
+        - spawn wolf save:wolf
+        - spawn horse[age=baby;tame=true;INVENTORY_CONTENTS=li@i@saddle] save:horse
+        - attach <entry[wolf].spawned_entity> to:<entry[horse].spawned_entity>
+        - define this_horse <entry[horse].spawned_entity>
+        - define this_wolf <entry[wolf].spawned_entity>
+        - flag player wolf.horse:<[this_horse]>
+        - flag player wolf.wolf:<[this_wolf]>
+        - invisible <[this_horse]> state:true
+        - invisible <player> state:true
+        - mount <player>|<[this_horse]>
+
+
+
+
+# wolf_form_world:
+#     type: world
+#     events:
+#         on player damages entity:
+#             - if <player.has_flag[wolf]>:
+#                 - narrate "claw"
+#         on player right clicks entity:
+#         - if <script[npc_data].data_key[npc].contains[<context.entity.name>]>:
+#             #stop the script because this is not for server npcs
+#             - stop
+#         - if <player.has_flag[wolf]>:
+#             - define target <context.entity>
+#             - define location <context.entity.location>
+#             - repeat 4:
+#                 - wait 5t
+#                 - teleport <[target]> <[location].left[2]>
+#                 - hurt 1 <[target]>
+#                 - look <player.flag[wolf.wolf].as_entity> <[target].location>
+#                 - animate <player.flag[wolf.wolf].as_entity> animation:wolf_shake
+#                 - wait 5t
+#                 - teleport <[target]> <[location].right[2]>
+#                 - hurt 1 <[target]>
+#                 # - animate <player.flag[wolf.wolf].as_entity> animation:wolf_shake
+#             # - fakeitem <item[air].repeat_as_list[54]> slot:1 
+#             # - determine passively cancelled
+
+#         on player picksup item:
+#         - if <player.has_flag[wolf]>:
+#             - fakeitem <item[air].repeat_as_list[54]> slot:1 
+#             - determine passively cancelled
+#         on player opens inventory:
+#         - if <player.has_flag[wolf]>:
+#             - determine passively cancelled
+#         on player exits vehicle:
+#         - if <player.has_flag[wolf]>:
+#             - mount <player>|<player.flag[wolf.horse]>
+#             - determine cancelled
+#         on player dies:
+#          - if <player.has_flag[wolf]>:
+#             - remove <player.flag[wolf.horse]>
+#             - flag player wolf:!
